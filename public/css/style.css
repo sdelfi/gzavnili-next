@@ -2005,7 +2005,7 @@ label.checked-label {
     text-decoration: underline
 }
 .news .news-list .item .more,
-.news .news-list .item a.title {
+.news .news-list .item .title {
     text-decoration: none;
     font-family: Montserrat
 }
@@ -2111,7 +2111,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     font-size: 0;
     margin-bottom: 5px
 }
-.news .news-list .item a.title {
+.news .news-list .item .title {
     color: #20599d;
     font-size: 20px;
     font-weight: 700;

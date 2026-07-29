@@ -105,10 +105,19 @@ export function Calculator() {
   const [parcelType, setParcelType] = useState<ParcelType | "">("");
   const [day, setDay] = useState("");
   const [result, setResult] = useState<{ price: number; eta: string | null } | null>(null);
+  const [errors, setErrors] = useState<{ service?: string; parcelType?: string }>({});
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Mirrors jquery.validate's default `required` message, since that's what the legacy
+    // `../http/views/homecals.cfm` form used (`jQuery('.pricecalc_form').validate();`) — a
+    // <label class="error"> next to the field, not a native HTML5 validation bubble.
+    setErrors({
+      service: service ? undefined : "This field is required.",
+      parcelType: parcelType ? undefined : "This field is required.",
+    });
     if (!service || !parcelType) return;
+
     const price = computePrice(
       Number(weight) || 0,
       Number(length) || 0,
@@ -123,7 +132,7 @@ export function Calculator() {
   };
 
   return (
-    <form className="form pricecalc_form" onSubmit={handleSubmit}>
+    <form className="form pricecalc_form" onSubmit={handleSubmit} noValidate>
       <div className="row">
         <div className="input-group col col-9">
           <Input
@@ -136,6 +145,7 @@ export function Calculator() {
         </div>
         <div className="input-group col col-3">
           <Select
+            instanceId="cal_weighttype"
             options={WEIGHT_UNITS}
             value={weightUnit}
             onChange={(v) => setWeightUnit(v as WeightUnit)}
@@ -171,29 +181,50 @@ export function Calculator() {
           />
         </div>
         <div className="input-group col col-3">
-          <Select options={SIZE_UNITS} value={sizeUnit} onChange={(v) => setSizeUnit(v as SizeUnit)} />
+          <Select
+            instanceId="cal_type"
+            options={SIZE_UNITS}
+            value={sizeUnit}
+            onChange={(v) => setSizeUnit(v as SizeUnit)}
+          />
         </div>
       </div>
       <div className="input-group">
         <Select
+          instanceId="cal_service"
           required
           placeholder="Choose Service Type"
           options={SERVICES}
           value={service}
-          onChange={(v) => setService(v as Service)}
+          onChange={(v) => {
+            setService(v as Service);
+            setErrors((prev) => ({ ...prev, service: undefined }));
+          }}
+          error={errors.service}
         />
       </div>
       <div className="input-group">
         <Select
+          instanceId="cal_ptype"
           required
           placeholder="Choose Parcel Type"
           options={PARCEL_TYPES}
           value={parcelType}
-          onChange={(v) => setParcelType(v as ParcelType)}
+          onChange={(v) => {
+            setParcelType(v as ParcelType);
+            setErrors((prev) => ({ ...prev, parcelType: undefined }));
+          }}
+          error={errors.parcelType}
         />
       </div>
       <div className="input-group">
-        <Select placeholder="Received in USA Day" options={DAYS} value={day} onChange={setDay} />
+        <Select
+          instanceId="cal_day"
+          placeholder="Received in USA Day"
+          options={DAYS}
+          value={day}
+          onChange={setDay}
+        />
       </div>
       <div className="btn-block">
         <button type="submit" className="btn btn-blue">
@@ -203,7 +234,7 @@ export function Calculator() {
 
       {result && (
         <div className="btn-block">
-          <h4>
+          <h4 className="w-100">
             Estimated Charge: {currency.format(result.price)}
             {result.eta && (
               <>

@@ -84,25 +84,25 @@ const FAQ_ITEMS = [
 
 const NEWS_ITEMS = [
   {
-    image: "https://www.gzavnili.com/include/pages/files/ge/ganrigi.jpg",
-    title: "More care on faster transit!",
-    date: "November 14th, 2016",
+    image: '/img/news/ganrigi.jpg',
+    title: 'More care on faster transit!',
+    date: 'November 14th, 2016',
     teaser:
-      "Very excited to inform you, that for Express service we started using Block Space service. That means we are buying space every time on all flights from USA to Georgia, which virtually eliminates the delay if the flight is not canceled.",
+      'Very excited to inform you, that for Express service we started using Block Space service. That means we are buying space every time on all flights from USA to Georgia, which virtually eliminates the delay if the flight is not canceled.',
   },
   {
-    image: "https://www.gzavnili.com/include/pages/files/ge/6%20times.jpg",
-    title: "We do most frequent shipping!",
-    date: "September 5th, 2016",
+    image: '/img/news/6_times.jpg',
+    title: 'We do most frequent shipping!',
+    date: 'September 5th, 2016',
     teaser:
-      "We are pleased to announce to the friends and supporters of Gzavnili LLC the release of the most frequent parcel service from USA to Georgia. There are 3 airlines involved in this service, with six connection fights. This service is available for all faithful customers with promise of best present-day service.",
+      'We are pleased to announce to the friends and supporters of Gzavnili LLC the release of the most frequent parcel service from USA to Georgia. There are 3 airlines involved in this service, with six connection fights. This service is available for all faithful customers with promise of best present-day service.',
   },
   {
-    image: "https://www.gzavnili.com/include/pages/files/ge/choose%20a%20speed.jpg",
-    title: "You select the price and speed!",
-    date: "August 19th, 2016",
+    image: '/img/news/choose_a_speed.jpg',
+    title: 'You select the price and speed!',
+    date: 'August 19th, 2016',
     teaser:
-      "Another pleasant news for precious customers of the Gzavnili - now can choose how fast do you want to get a parcel from the United States 2 Georgia. At the same time, Gzavnili is guarantee that each type of service always will offer have the lowest price.",
+      'Another pleasant news for precious customers of the Gzavnili - now can choose how fast do you want to get a parcel from the United States 2 Georgia. At the same time, Gzavnili is guarantee that each type of service always will offer have the lowest price.',
   },
 ];
 
@@ -111,111 +111,106 @@ export default function Home() {
     <>
       <HomeHero />
 
-      <section className="trustus">
-        <div className="container">
-          <div className="trustus-l">
-            <Image src="/img/trustus.jpg" alt="" width={284} height={550} />
+      <section className='trustus'>
+        <div className='container'>
+          <div className='trustus-l'>
+            <Image src='/img/trustus.jpg' alt='' width={284} height={550} />
           </div>
 
-          <div className="trustus-r">
+          <div className='trustus-r'>
             <h2>A Faster, Cheaper and Safer Shipping!</h2>
-            <div className="redline"></div>
+            <div className='redline'></div>
 
             <p>
-              Are you looking for a faster, cheaper and safer way to ship your goods? Gzavnilli
-              invites you to enjoy the fastest and safest shipping services to Georgia
+              Are you looking for a faster, cheaper and safer way to ship your goods? Gzavnilli invites you to enjoy the
+              fastest and safest shipping services to Georgia
             </p>
             <p>
-              With over 12 years of excellent service delivery, Gzavnilli boasts of over 40,000
-              active customers served from our 7 offices from around the globe and did more
-              than 250,000 Kgs of parcels sent on last year alone.
+              With over 12 years of excellent service delivery, Gzavnilli boasts of over 40,000 active customers served
+              from our 7 offices from around the globe and did more than 250,000 Kgs of parcels sent on last year alone.
             </p>
             <p>
-              If you are looking for the best services at the best shipping rates to Georgia,
-              get in touch with Gzavnilli, your trusted partner for shipping your goods from the
-              USA to Georgia.
+              If you are looking for the best services at the best shipping rates to Georgia, get in touch with
+              Gzavnilli, your trusted partner for shipping your goods from the USA to Georgia.
             </p>
             <p>
-              We guarantee the safety of your goods, speedy delivery, affordable prices and a
-              variety of options to choose from depending on which service suits you most.
-              Besides, we use our vehicles and license which means your goods are always in safe
-              hands at all time.
+              We guarantee the safety of your goods, speedy delivery, affordable prices and a variety of options to
+              choose from depending on which service suits you most. Besides, we use our vehicles and license which
+              means your goods are always in safe hands at all time.
             </p>
 
-            <div className="advantages">
-              <div className="adv-item item-1">
+            <div className='advantages'>
+              <div className='adv-item item-1'>
                 <span>12 Years</span> of Rich Experience
               </div>
-              <div className="adv-item item-2">
+              <div className='adv-item item-2'>
                 <span>1.500.000 </span> Packages Already Delivered
               </div>
-              <div className="adv-item item-3">
+              <div className='adv-item item-3'>
                 <span>40,000</span> Active Customers
               </div>
             </div>
 
             <p>
-              If you are looking to shop online too, we have an incredible variety of online
-              stores from which you can buy and ship to tax-free state, Delaware. Our listed
-              online stores offer fantastic discounts, deals, and coupons. Just choose a store,
-              buy an item(s), use any of our office addresses and declare the parcel in your
-              account using the tracking number of your order. The rest is on us!
+              If you are looking to shop online too, we have an incredible variety of online stores from which you can
+              buy and ship to tax-free state, Delaware. Our listed online stores offer fantastic discounts, deals, and
+              coupons. Just choose a store, buy an item(s), use any of our office addresses and declare the parcel in
+              your account using the tracking number of your order. The rest is on us!
             </p>
           </div>
         </div>
       </section>
 
       <OfferParallax>
-        <div className="container">
-          <div className="txt">
+        <div className='container'>
+          <div className='txt'>
             <h2>Special offer!</h2>
             <p>
-              Enjoy great Deals, Discounts and Coupons when you shop from our partner online
-              stores. You may just get your shipping costs covered by coupons and discounts
-              received while shopping at our partner stores.
+              Enjoy great Deals, Discounts and Coupons when you shop from our partner online stores. You may just get
+              your shipping costs covered by coupons and discounts received while shopping at our partner stores.
             </p>
-            <div className="redline"></div>
+            <div className='redline'></div>
 
-            <div className="btn-block">
-              <a href="" className="btn btn-red">
-                Get Started Now! <i className="icon icon-arr1"></i>
+            <div className='btn-block'>
+              <a href='' className='btn btn-red'>
+                Get Started Now! <i className='icon icon-arr1'></i>
               </a>
             </div>
           </div>
         </div>
       </OfferParallax>
 
-      <section className="whychooseus">
-        <div className="container">
+      <section className='whychooseus'>
+        <div className='container'>
           <h2>
             8 MAIN REASONS WHY OUR
             <br />
             CUSTOMERS LOVE GZAVNILLI
             <br /> SHIPING SERVICE?
           </h2>
-          <div className="redline"></div>
-          <a id="volumecalculatoranchor" className="anchor"></a>
-          <div className="row">
-            <div className="col col-8">
+          <div className='redline'></div>
+          <a id='volumecalculatoranchor' className='anchor'></a>
+          <div className='row'>
+            <div className='col col-8'>
               {WHY_US_ITEMS.map((item) => (
-                <div className="whyus-item" key={item.title}>
-                  <div className="whyus-item-inner">
+                <div className='whyus-item' key={item.title}>
+                  <div className='whyus-item-inner'>
                     <i className={`icon ${item.icon}`}></i>
-                    <div className="whyus-info">
-                      <div className="txt">{item.title}</div>
-                      <div className="desc">{item.desc}</div>
+                    <div className='whyus-info'>
+                      <div className='txt'>{item.title}</div>
+                      <div className='desc'>{item.desc}</div>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="col col-4 calc-block">
-              <div className="calc-block-inner">
-                <div className="heading">
-                  <h3>Calculator</h3>{" "}
-                  <a href="">
-                    <i className="icon icon-info"></i>
+            <div className='col col-4 calc-block'>
+              <div className='calc-block-inner'>
+                <div className='heading'>
+                  <h3>Calculator</h3>{' '}
+                  <a href=''>
+                    <i className='icon icon-info'></i>
                   </a>
                 </div>
                 <p>Calculate price/arrival day</p>
@@ -227,16 +222,16 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="container">
-        <div className="row faq-quesions-block">
-          <section className="col col-6 faq">
+      <div className='container'>
+        <div className='row faq-quesions-block'>
+          <section className='col col-6 faq'>
             <h3>Frequently Asked Questions</h3>
 
             <FaqAccordion items={FAQ_ITEMS} />
 
-            <div className="ralign">
+            <div className='ralign'>
               <p>
-                <a href={routes.page("faq")}>See all answers</a>
+                <a href={routes.page('faq')}>See all answers</a>
               </p>
             </div>
           </section>
@@ -245,44 +240,37 @@ export default function Home() {
         </div>
       </div>
 
-      <section className="mobile-app">
-        <div className="container">
-          <div className="txt">
+      <section className='mobile-app'>
+        <div className='container'>
+          <div className='txt'>
             <h3>Mobile app</h3>
             <p>Download - Free tool, for good news! </p>
-            <div className="app-btns">
+            <div className='app-btns'>
+              <a href='https://apps.apple.com/gb/app/gzavnili-customer/id1371450204' className='appstore-btn'></a>
               <a
-                href="https://apps.apple.com/gb/app/gzavnili-customer/id1371450204"
-                className="appstore-btn"
-              ></a>
-              <a
-                href="https://play.google.com/store/apps/details?id=com.team.noty.gzavnili&hl=en"
-                className="googleplay-btn"
+                href='https://play.google.com/store/apps/details?id=com.team.noty.gzavnili&hl=en'
+                className='googleplay-btn'
               ></a>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="news">
-        <div className="container">
+      <section className='news'>
+        <div className='container'>
           <h2>Latest Company News</h2>
-          <div className="redline"></div>
-          <div className="news-list">
+          <div className='redline'></div>
+          <div className='news-list'>
             {NEWS_ITEMS.map((item) => (
-              <div className="item" key={item.title}>
-                <a href="" className="img">
-                  {/* eslint-disable-next-line @next/next/no-img-element -- external, legacy-domain
-                      hotlinked placeholder (unmigrated news content, see PROGRESS.md); unknown/
-                      varying dimensions, not worth an external-domain next/image config for
-                      content that's going away once real news items are migrated. */}
-                  <img src={item.image} alt="" />
-                </a>
-                <a href="" className="title">
+              <div className='item' key={item.title}>
+                <span className='img'>
+                  <Image src={item.image} alt={item.title} width={380} height={199} />
+                </span>
+                <span className='title'>
                   {item.title}
-                </a>
-                <div className="date">{item.date}</div>
-                <div className="teaser">{item.teaser}</div>
+                </span>
+                <div className='date'>{item.date}</div>
+                <div className='teaser'>{item.teaser}</div>
               </div>
             ))}
           </div>

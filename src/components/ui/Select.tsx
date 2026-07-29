@@ -12,33 +12,49 @@ import "./Select.css";
 export type SelectOption<T extends string = string> = { value: T; label: string };
 
 export function Select<T extends string = string>({
+  instanceId,
   options,
   value,
   onChange,
   placeholder,
   isSearchable = false,
+  error,
   ...props
 }: {
+  // Required, not optional: react-select falls back to a module-level render counter for its
+  // internal DOM ids when this is omitted, which is stable neither across server renders (the
+  // counter persists for the life of the Node process, across requests) nor between server and
+  // client (the client always restarts it at 0) — a guaranteed hydration mismatch on any page
+  // with more than one Select, or any server that's handled more than one request. Pass
+  // something stable and unique per field (its name/id is usually right there already).
+  instanceId: string;
   options: SelectOption<T>[];
   value: T | "";
   onChange: (value: T) => void;
   placeholder?: string;
+  // Same convention as ui/Input.tsx's `error` — a jquery.validate-style `<label class="error">`
+  // rendered right after the field, not a native browser validation bubble.
+  error?: string;
 } & Omit<
   ReactSelectProps<SelectOption<T>, false>,
-  "options" | "value" | "onChange" | "placeholder"
+  "options" | "value" | "onChange" | "placeholder" | "instanceId"
 >) {
   const selected = options.find((option) => option.value === value) ?? null;
 
   return (
-    <ReactSelect
-      {...props}
-      unstyled
-      isSearchable={isSearchable}
-      classNamePrefix="rselect"
-      placeholder={placeholder}
-      options={options}
-      value={selected}
-      onChange={(option) => onChange((option?.value ?? "") as T)}
-    />
+    <>
+      <ReactSelect
+        {...props}
+        instanceId={instanceId}
+        unstyled
+        isSearchable={isSearchable}
+        classNamePrefix="rselect"
+        placeholder={placeholder}
+        options={options}
+        value={selected}
+        onChange={(option) => onChange((option?.value ?? "") as T)}
+      />
+      {error && <label className="error">{error}</label>}
+    </>
   );
 }

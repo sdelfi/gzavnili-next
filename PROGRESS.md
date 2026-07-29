@@ -80,6 +80,34 @@ file for scope/sequencing.
       two real lint errors this work surfaced along the way (`react-hooks/immutability` on a
       `document.cookie` write; `<a href="/">` → `next/link` in `Header`/`Footer`) — everything
       in `src/` now lints clean (0 errors).
+- [x] Added `src/lib/routes.ts` (`routes.home()`, `routes.login()`, `routes.page("slug")` for
+      static marketing pages, etc.) and switched every internal `href`/`action` in
+      `Header`/`HeaderClient`/`Footer`/`page.tsx` to it — see AGENTS.md's new "Routing" rule.
+- [x] Added `src/components/ui/` (Input, Select, Lightbox) per AGENTS.md's new "Shared
+      components" rule, and switched every existing `<input>`/`<select>` over to them
+      (`Calculator.tsx`, `HeaderClient.tsx`'s tracking/login modals, `Footer.tsx`'s newsletter
+      field):
+      - `Select` wraps `react-select` (finally added the dependency —
+        `docs/decisions/0002-select-library.md`), `unstyled` + custom `Select.css` recreating
+        select2's look (border/height/colors, same `icons.png` sprite for the arrow). Scope
+        widened from the original decision: applied to *every* dropdown, not just ones that
+        happened to have select2 in the legacy markup — plain native `<select>`s next to
+        styled `Input`s looked inconsistent (reported as looking "trashy"). Hit and fixed a
+        real hydration-mismatch bug here: react-select needs an explicit, stable `instanceId`
+        per instance (made it a required prop on our wrapper) — without one it falls back to a
+        module-level render counter that's shared across requests on the server but resets on
+        the client, guaranteed to mismatch.
+      - `Lightbox` replaces `VideoTutorials`' earlier (reused) `Modal`/featherlight styling —
+        the real homepage wires video thumbnails to fancybox, not featherlight, so this is a
+        second, separate visual recreation (own CSS, no sprite images) matching fancybox's
+        skin instead, since the two are deliberately different lightbox styles in the legacy
+        design system (featherlight for auth popovers, fancybox for media).
+- [x] Converted every `<img>` to `next/image` (`Header`'s logo, homepage `trustus` image,
+      `VideoTutorials` thumbnails) — all local, known-dimension images. Left the homepage news
+      section's images as plain `<img>` (documented with an inline comment): they're external,
+      hotlinked from the legacy `gzavnili.com` domain with unknown/varying dimensions, and
+      transitional (real news content isn't migrated yet) — not worth an
+      external-domain `next/image` config for content that's going away.
 - [ ] Georgian-language branch of Header/Footer/homepage (currently English-only)
 - [ ] Remaining public/marketing pages (services, cargo, courier, pricing, FAQ, legal/customs, news)
 - [ ] Public unauthenticated tracking page wired to real Postgres data (Phase 1 schema/backend
