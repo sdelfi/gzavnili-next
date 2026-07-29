@@ -1,99 +1,23 @@
+import { FaqAccordion } from "@/components/FaqAccordion";
+import { HomeSlider } from "@/components/HomeSlider";
+
 // Ported from the legacy http/views/home.html (English homepage content).
 // Same markup/classes/images so css/style.css + css/style_custom.css apply unchanged.
 // Copy is the original placeholder copy from the legacy file (incl. the Lorem ipsum
 // FAQ/news blocks) — content owners can replace it later without touching structure.
+// The slider and FAQ accordion (previously lightSlider/click handlers in main.js)
+// are separate client components; everything else here stays a plain server-rendered
+// (and statically generated) page.
+const FAQ_ITEMS = Array.from({ length: 4 }, () => ({
+  question: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",
+  answer:
+    "Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.",
+}));
+
 export default function Home() {
   return (
     <>
-      <section className="homeslider">
-        <ul className="slider">
-          <li style={{ backgroundImage: "url(/img/slider-1.jpg)" }}>
-            <div className="slider-content">
-              <div className="container">
-                <div className="txt">
-                  <div className="title">Parcel Service</div>
-                  <p>
-                    Enjoy our supreme parcel services from anywhere in the USA and Georgia.
-                    We promise you most frequent, speedy, affordable and reliable shipping
-                    services for your parcels. We invite you to experience a unique shipping
-                    service from Gzavnilli, efficiency and speedy delivery!
-                  </p>
-                </div>
-              </div>
-            </div>
-          </li>
-          <li style={{ backgroundImage: "url(/img/tmp/slider-2.jpg)" }}>
-            <div className="slider-content">
-              <div className="container">
-                <div className="txt">
-                  <div className="title">Cargo Service</div>
-                  <p>
-                    Enjoy our supreme parcel services from anywhere in the USA and Georgia.
-                    We promise you most frequent, speedy, affordable and reliable shipping
-                    services for your parcels.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </li>
-          <li style={{ backgroundImage: "url(/img/tmp/slider-3.jpg)" }}>
-            <div className="slider-content">
-              <div className="container">
-                <div className="txt">
-                  <div className="title">Online Shipping</div>
-                  <p>
-                    We invite you to experience a unique shipping service from Gzavnilli,
-                    efficiency and speedy delivery! Enjoy our supreme parcel services from
-                    anywhere in the USA and Georgia.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </li>
-          <li style={{ backgroundImage: "url(/img/tmp/slider-4.jpg)" }}>
-            <div className="slider-content">
-              <div className="container">
-                <div className="txt">
-                  <div className="title">Courier Service</div>
-                  <p>
-                    We promise you most frequent, speedy, affordable and reliable shipping
-                    services for your parcels. We invite you to experience a unique shipping
-                    service from Gzavnilli, efficiency and speedy delivery! Enjoy our supreme
-                    parcel services from anywhere in the USA and Georgia. We promise you most
-                    frequent, speedy, affordable and reliable shipping services for your
-                    parcels. We invite you to experience a unique shipping service from
-                    Gzavnilli, efficiency and speedy delivery!
-                  </p>
-                </div>
-              </div>
-            </div>
-          </li>
-        </ul>
-        <div className="slider-controls">
-          <ul>
-            <li className="active">
-              <a href="#">
-                <i className="icon icon-slider-1"></i> <span>Parcel Service</span>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <i className="icon icon-slider-2"></i> <span>Cargo Service</span>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <i className="icon icon-slider-3"></i> <span>Online Shipping</span>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <i className="icon icon-slider-4"></i> <span>Courier Service</span>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      <HomeSlider />
 
       <section className="trustus">
         <div className="container">
@@ -346,22 +270,7 @@ export default function Home() {
           <section className="col col-6 faq">
             <h3>Frequently Asked Questions</h3>
 
-            <div className="faq-list">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div className="faq-item" key={i}>
-                  <div className="question">
-                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                  </div>
-                  <div className="answer">
-                    Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean
-                    imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies
-                    nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget
-                    condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem
-                    neque sed ipsum.
-                  </div>
-                </div>
-              ))}
-            </div>
+            <FaqAccordion items={FAQ_ITEMS} />
 
             <div className="ralign">
               <p>
