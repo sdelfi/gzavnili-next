@@ -1,0 +1,88 @@
+/*
+ * Extracted from public/css/style.css's `.videohelp ...` rules, merged with the real card
+ * styling that had been hiding in src/app/globals.css (originally style_custom.css, merged
+ * in and deleted — see docs/decisions/0008 area history). style.css also had
+ * `.videohelp .videos .item a`/`a i`/`a p`/`a:hover...` rules for an older markup variant
+ * (an `<a>` directly containing an icon + caption) that this component's real
+ * `<a class="item"><div class="inner">...</div></a>` structure never matches — those were
+ * dropped, not ported.
+ */
+.videohelp {
+  h3 {
+    text-transform: uppercase;
+    margin: 10px 0 15px;
+
+    @media (max-width: 599px) {
+      max-width: 400px;
+      margin: 20px auto;
+    }
+
+    @media (max-width: 479px) {
+      font-size: 30px;
+    }
+  }
+}
+
+.videos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  @media (max-width: 599px) {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+.item {
+  width: 50%;
+  margin: 0 0 20px;
+  line-height: 1;
+  position: relative;
+
+  @media (max-width: 599px) {
+    width: 100%;
+  }
+
+  &:nth-child(2n + 1) {
+    padding-right: 10px;
+
+    @media (max-width: 599px) {
+      padding-right: 0;
+    }
+  }
+
+  &:nth-child(2n) {
+    padding-left: 10px;
+
+    @media (max-width: 599px) {
+      padding-left: 0;
+    }
+  }
+}
+
+.inner {
+  cursor: pointer;
+  border: 2px solid #d0cdcd;
+  background: #f9f9f9;
+  text-align: center;
+
+  &:hover {
+    background: #fff;
+  }
+
+  p {
+    font-size: 18px;
+    margin: 12px 0;
+    color: #000;
+  }
+
+  span {
+    display: inline-block;
+    padding-left: 25px;
+    background: url('/img/hiw/video.png') no-repeat 0 50%;
+    color: #41a1ed;
+    text-decoration: underline;
+    margin: 12px 0;
+  }
+}

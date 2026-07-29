@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import cn from 'classnames';
 import { useTranslations } from 'next-intl';
 import { Lightbox } from '@/components/ui/Lightbox';
+import s from './VideoTutorials.module.css';
 
 // The real homepage content wires these up as `.fancybox.iframe` (jquery.fancybox.js) — see
 // src/components/ui/Lightbox.tsx for the plain-React/CSS recreation of fancybox's look used
@@ -24,13 +26,13 @@ export function VideoTutorials() {
   const [open, setOpen] = useState<(typeof videos)[number] | null>(null);
 
   return (
-    <section className="col col-6 videohelp">
+    <section className={cn('col', 'col-6', s.videohelp)}>
       <h3>{t('heading')}</h3>
-      <div className="videos">
+      <div className={s.videos}>
         {videos.map((video) => (
           <a
             key={video.title}
-            className="item"
+            className={s.item}
             href={video.embedUrl || undefined}
             onClick={(e) => {
               if (!video.embedUrl) return;
@@ -38,7 +40,7 @@ export function VideoTutorials() {
               setOpen(video);
             }}
           >
-            <div className="inner">
+            <div className={s.inner}>
               <p>{video.title}</p>
               <div className="img">
                 <Image alt={video.title} src={video.image} width={166} height={91} />

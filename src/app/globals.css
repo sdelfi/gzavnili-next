@@ -433,39 +433,6 @@ body.stickynav-fixed .parcel-filter-block-shadow {
   height: 0;
 }
 
-html .videohelp .videos .item {
-  line-height: 1;
-}
-
-.videohelp .videos .item .inner {
-  cursor: pointer;
-  border: 2px solid #d0cdcd;
-  background: #f9f9f9;
-}
-
-.videohelp .videos .item .inner:hover {
-  background: #fff;
-}
-
-.videohelp .videos .item .inner {
-  text-align: center;
-}
-
-.videohelp .videos .item .inner p {
-  font-size: 18px;
-  margin: 12px 0;
-  color: #000;
-}
-
-.videohelp .videos .item .inner span {
-  display: inline-block;
-  padding-left: 25px;
-  background: url(/img/hiw/video.png) no-repeat 0 50%;
-  color: #41a1ed;
-  text-decoration: underline;
-  margin: 12px 0;
-}
-
 .parcel-filter-item#defb {
   float: right;
 }
