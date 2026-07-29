@@ -1,21 +1,21 @@
 /*
- * Own copy of the featherlight lightbox styling (Modal.tsx reimplements its open/close
- * behavior in plain React and never loads featherlight.js — this file replaces the vendored
- * `http/bower_components/featherlight/release/featherlight.min.css`, formatted, not minified.
- * Source: Featherlight 1.5.0, Noël Raoul Bossart, MIT License.
+ * Structural featherlight rules only — everything this site actually overrides visually
+ * (overlay color, content padding/border, the close icon's real sprite graphic) lives in
+ * public/css/style.css already (search "featherlight" there) and must win untouched. This
+ * file exists only for the base positioning/centering the featherlight *plugin* used to
+ * provide (never expressed in this site's own CSS, since the plugin always supplied it).
+ * Source for the base rules: Featherlight 1.5.0, Noël Raoul Bossart, MIT License — trimmed to
+ * drop everything style.css already re-declares.
  */
 .featherlight {
-  display: none;
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 2147483647;
   text-align: center;
   white-space: nowrap;
   cursor: pointer;
-  background: rgba(0, 0, 0, 0.8);
 }
 
 .featherlight:before {
@@ -32,8 +32,6 @@
   vertical-align: middle;
   display: inline-block;
   overflow: auto;
-  padding: 25px 25px 0;
-  border-bottom: 25px solid transparent;
   margin-left: 5%;
   margin-right: 5%;
   max-height: 95%;
@@ -49,29 +47,9 @@
 
 .featherlight .featherlight-close-icon {
   position: absolute;
-  z-index: 9999;
-  top: 0;
-  right: 0;
-  line-height: 25px;
-  width: 25px;
   cursor: pointer;
-  text-align: center;
-  font-family: Arial, sans-serif;
-  background: rgba(255, 255, 255, 0.3);
-  color: #000;
-}
-
-.featherlight .featherlight-image {
-  width: 100%;
-}
-
-.featherlight-iframe .featherlight-content {
-  border-bottom: 0;
-  padding: 0;
-}
-
-.featherlight iframe {
-  border: 0;
+  text-indent: -9999em;
+  overflow: hidden;
 }
 
 @media only screen and (max-width: 1024px) {
@@ -79,7 +57,5 @@
     margin-left: 10px;
     margin-right: 10px;
     max-height: 98%;
-    padding: 10px 10px 0;
-    border-bottom: 10px solid transparent;
   }
 }

@@ -1,0 +1,198 @@
+.mainParallax {
+  position: relative;
+  width: 100%;
+  height: 584px;
+  overflow: hidden;
+  background: url("/img/main-bg.jpg") no-repeat center center;
+
+  .container {
+    position: relative;
+    height: 100%;
+  }
+
+  .scene {
+    height: 100%;
+  }
+}
+
+.carObject {
+  width: 100%;
+  height: 584px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  background: url("/img/car.png") no-repeat center center;
+  background-size: contain;
+}
+
+.boxesObject {
+  width: 100%;
+  height: 584px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  background: url("/img/boxes.png") no-repeat center center;
+  background-size: contain;
+}
+
+.textObject {
+  position: absolute;
+  top: 47%;
+  left: 0;
+  width: 100%;
+  z-index: 2;
+  font-size: 84px;
+  line-height: 126px;
+  margin-top: -78px;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 8px 13px 29px rgba(0, 0, 0, 0.54);
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    left: 0;
+
+    li {
+      position: absolute;
+      top: 0;
+      display: none;
+      width: 870px;
+      text-align: right;
+      animation-duration: 1s;
+      animation-fill-mode: both;
+
+      &.active {
+        display: block;
+        animation-name: fadeInUp;
+      }
+
+      &.fadeup {
+        display: block;
+        animation-name: fadeOutUp;
+      }
+    }
+  }
+
+  .textAnswer {
+    position: absolute;
+    right: 0;
+    width: 320px;
+  }
+}
+
+@media (max-width: 1199px) {
+  .mainParallax {
+    height: 533px;
+  }
+
+  .textObject {
+    font-size: 60px;
+    width: 1000px;
+    left: 50%;
+    margin-left: -500px;
+
+    ul li {
+      width: 650px;
+    }
+
+    .textAnswer {
+      width: 340px;
+    }
+  }
+
+  .carObject,
+  .boxesObject {
+    height: 100%;
+  }
+}
+
+@media (max-width: 991px) {
+  .mainParallax {
+    height: 500px;
+  }
+
+  .textObject {
+    font-size: 54px;
+    width: 800px;
+    left: 50%;
+    margin-left: -400px;
+
+    ul li {
+      width: 550px;
+    }
+
+    .textAnswer {
+      width: 230px;
+    }
+  }
+}
+
+@media (max-width: 899px) {
+  .mainParallax {
+    height: 360px;
+  }
+
+  .textObject {
+    font-size: 40px;
+    width: 580px;
+    left: 50%;
+    margin-left: -290px;
+
+    ul li {
+      width: 400px;
+    }
+
+    .textAnswer {
+      width: 160px;
+    }
+  }
+}
+
+@media (max-width: 599px) {
+  .mainParallax {
+    height: 220px;
+  }
+
+  .textObject {
+    font-size: 22px;
+    width: 330px;
+    left: 50%;
+    margin-left: -180px;
+
+    ul li {
+      width: 220px;
+    }
+
+    .textAnswer {
+      width: 85px;
+    }
+  }
+}
+
+@keyframes fadeOutUp {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(0, -100%, 0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

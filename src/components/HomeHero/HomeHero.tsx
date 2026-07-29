@@ -1,6 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
+
+import s from './HomeHero.module.css';
+import cn from 'classnames';
 
 // Replaces main.js/HomeSlider.tsx, which ported the lightSlider carousel from the dead
 // `views/home.html` template (see PROGRESS.md). The real homepage — read from
@@ -10,12 +13,12 @@ import { useEffect, useRef, useState } from "react";
 // (`#animated-strings`, driven by ../http/js/additional.js). Same markup/classes so
 // css/additional.css applies unchanged.
 const STRINGS = [
-  "All Type of Parcels?",
-  "Freight Shipments?",
-  "Fastest Shipping?",
-  "Pricing Options?",
-  "Lowest Price?",
-  "Tax-Free Shopping?",
+  'All Type of Parcels?',
+  'Freight Shipments?',
+  'Fastest Shipping?',
+  'Pricing Options?',
+  'Lowest Price?',
+  'Tax-Free Shopping?',
 ];
 
 const ROTATE_MS = 2000;
@@ -24,8 +27,8 @@ const FADE_MS = 1000;
 // xparallax/yparallax factors from additional.js:
 //   $('.parallax-layer').parallax({}, {xparallax: '40px', yparallax: '10px'}, {xparallax: '20px', yparallax: '5px'})
 const LAYERS = [
-  { className: "car-object parallax-layer", x: 40, y: 10 },
-  { className: "boxes-object parallax-layer", x: 20, y: 5 },
+  { className: s.carObject, x: 40, y: 10 },
+  { className: s.boxesObject, x: 20, y: 5 },
 ];
 
 export function HomeHero() {
@@ -55,28 +58,28 @@ export function HomeHero() {
       const relY = (e.clientY - rect.top) / rect.height - 0.5;
       setOffset({ x: relX, y: relY });
     };
-    scene.addEventListener("mousemove", onMouseMove);
-    return () => scene.removeEventListener("mousemove", onMouseMove);
+    scene.addEventListener('mousemove', onMouseMove);
+    return () => scene.removeEventListener('mousemove', onMouseMove);
   }, []);
 
   return (
-    <section className="main-parallax">
-      <div className="container">
-        <div id="parallax-scene" ref={sceneRef}>
+    <section className={s.mainParallax}>
+      <div className={s.container}>
+        <div className={s.scene} ref={sceneRef}>
           {LAYERS.map((layer) => (
             <div
               key={layer.className}
-              className={layer.className}
+              className={cn(layer.className, s.parallaxLayer)}
               style={{
                 transform: `translate(${offset.x * layer.x}px, ${offset.y * layer.y}px)`,
               }}
             />
           ))}
-          <div className="text-object">
-            <ul id="animated-strings">
-              <li className={fading ? "fadeup" : "active"}>{STRINGS[active]}</li>
+          <div className={s.textObject}>
+            <ul id='animated-strings'>
+              <li className={fading ? s.fadeup : s.active}>{STRINGS[active]}</li>
             </ul>
-            <div className="text-answer">– Yes!</div>
+            <div className={s.textAnswer}>– Yes!</div>
           </div>
         </div>
       </div>

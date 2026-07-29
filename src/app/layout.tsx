@@ -25,6 +25,8 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Open+Sans:400,400i,600,700"
           rel="stylesheet"
         />
+        <link rel="stylesheet" href="/css/tooltipster.bundle.min.css" />
+        <link rel="stylesheet" href="/css/tooltipster-sideTip-light.min.css" />
         <link rel="stylesheet" href="/css/style.css?v=1.1" />
         <link rel="stylesheet" href="/css/style_custom.css?v10" />
         <link rel="stylesheet" href="/css/additional.css?v=1" />
