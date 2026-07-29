@@ -1,0 +1,1 @@
+export { OfferParallax } from './OfferParallax';

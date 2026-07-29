@@ -1,0 +1,98 @@
+/*
+ * Extracted from public/css/style.css's `.trustus ...` rules — see AGENTS.md's "shared
+ * components" convention. `font-family: Montserrat` on `.advItem` is duplicated rather than
+ * deleted from style.css's shared multi-selector rule (that rule also covers `#login-block`/
+ * `.whychooseus`, which aren't this component's concern).
+ *
+ * Responsive migration status: base (desktop) styles only. Breakpoint overrides for
+ * `.trustus` still live in style.css's `@media` blocks and haven't been ported yet.
+ */
+.trustus {
+  padding-top: 50px;
+
+  :global(.container) {
+    display: table;
+    width: 100%;
+  }
+}
+
+.trustusL {
+  width: 42%;
+  display: table-cell;
+  text-align: center;
+  padding: 35px 4% 0 0;
+  font-size: 0;
+  vertical-align: bottom;
+}
+
+.trustusR {
+  width: 58%;
+  display: table-cell;
+  padding-bottom: 50px;
+
+  p {
+    margin: 20px 0;
+    line-height: 1.5;
+  }
+}
+
+.advantages {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.advItem {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.2;
+  position: relative;
+  color: #20599d;
+  font-family: Montserrat;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    z-index: -1;
+    background: url('/img/icons.png') 0 -687px no-repeat;
+  }
+
+  span {
+    font-size: 36px;
+    display: block;
+    line-height: 36px;
+  }
+
+  &.item1 {
+    padding: 10px 0 0 47px;
+
+    &:before {
+      width: 78px;
+      height: 80px;
+      background-position: 0 -687px;
+    }
+  }
+
+  &.item2 {
+    padding: 12px 0 0 52px;
+
+    &:before {
+      width: 78px;
+      height: 81px;
+      background-position: 0 -855px;
+    }
+  }
+
+  &.item3 {
+    padding: 10px 0 0 50px;
+
+    &:before {
+      width: 81px;
+      height: 78px;
+      background-position: 0 -1013px;
+    }
+  }
+}

@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useEffect, useRef } from 'react';
+import s from './OfferParallax.module.css';
 
 // Replaces additional.js: $('#offer-parallax').parallax_bg("50%", 0.3, 615);
 // (../http/js/jquery.parallax-bg.js) — shifts the background image vertically as the section
@@ -12,7 +13,7 @@ import { useEffect, useRef } from 'react';
 // normal-flow `.container` content despite being `position: absolute` (via `fill`) — an
 // absolutely positioned element with `z-index: auto` still paints above static siblings,
 // negative z-index is what puts it back behind them.
-export function OfferParallax({ children }: { children: React.ReactNode }) {
+export function OfferParallax() {
   const sectionRef = useRef<HTMLElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
 
@@ -31,6 +32,7 @@ export function OfferParallax({ children }: { children: React.ReactNode }) {
     window.addEventListener('scroll', update);
     window.addEventListener('resize', update);
     update();
+
     return () => {
       window.removeEventListener('scroll', update);
       window.removeEventListener('resize', update);
@@ -38,9 +40,23 @@ export function OfferParallax({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <section className="specialoffer" id="offer-parallax" ref={sectionRef}>
-      <Image ref={imageRef} src="/img/home-special-big.jpg" alt="" fill style={{ objectFit: 'cover', zIndex: -1 }} />
-      {children}
+    <section className={s.specialoffer} ref={sectionRef}>
+      <div className="container">
+        <div className={s.txt}>
+          <h2>Special offer!</h2>
+          <p>
+            Enjoy great Deals, Discounts and Coupons when you shop from our partner online stores. You may just get your
+            shipping costs covered by coupons and discounts received while shopping at our partner stores.
+          </p>
+          <div className={s.redline}></div>
+
+          <div className="btn-block">
+            <a href="" className="btn btn-red">
+              Get Started Now! <i className="icon icon-arr1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

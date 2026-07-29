@@ -1,0 +1,58 @@
+/*
+ * Extracted from public/css/style.css's `.news ...` rules — see AGENTS.md's "shared
+ * components" convention. `.title`'s `text-decoration`/`font-family` are duplicated rather
+ * than deleted from style.css's shared rule with `.news .news-list .item .more` (a "read
+ * more" link this homepage section doesn't render — out of scope here).
+ *
+ * Responsive migration status: base (desktop) styles only — breakpoint overrides still live
+ * in style.css's `@media` blocks and haven't been ported yet.
+ */
+.news {
+  padding: 140px 0 90px;
+
+  h2 {
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  :global(.redline) {
+    margin: 10px auto 50px;
+  }
+}
+
+.newsList {
+  display: flex;
+  justify-content: space-between;
+}
+
+.item {
+  width: 32.2%;
+}
+
+.img {
+  font-size: 0;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.title {
+  color: #20599d;
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 3px;
+  display: block;
+  text-decoration: none;
+  font-family: Montserrat;
+}
+
+.date {
+  color: #888;
+  text-transform: uppercase;
+  font-family: Montserrat;
+  margin-bottom: 15px;
+}
+
+.teaser {
+  font-weight: 600;
+  margin-bottom: 20px;
+}

@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import cn from 'classnames';
+import { useLocale, useTranslations } from 'next-intl';
+import { Link, usePathname } from '@/i18n/navigation';
 import { Modal } from '@/components/Modal';
 import { Input } from '@/components/ui/Input';
 import { isOfficeOpen, type OfficeId } from '@/lib/officeHours';
@@ -30,6 +31,9 @@ export function HeaderClient({
   initialOfficeId: OfficeId;
   initialOfficeOpenNow: boolean;
 }) {
+  const t = useTranslations('Header');
+  const locale = useLocale();
+  const pathname = usePathname();
   const [openDropdown, setOpenDropdown] = useState<OpenDropdown>(null);
   const [officeIndex, setOfficeIndex] = useState(() =>
     Math.max(
@@ -42,6 +46,7 @@ export function HeaderClient({
   const [loginOpen, setLoginOpen] = useState(false);
 
   const activeOffice = OFFICES[officeIndex];
+  const otherLocale = locale === 'en' ? 'ge' : 'en';
 
   useEffect(() => {
     const id = setInterval(() => setOfficeOpenNow(isOfficeOpen(activeOffice.id)), 60_000);
@@ -64,10 +69,12 @@ export function HeaderClient({
           <div className={s.topbarInner}>
             <div className={cn(s.language, { [s.active]: openDropdown === 'language' })}>
               <div className={s.languageInner}>
-                <span onClick={() => toggleDropdown('language')}>English</span>
+                <span onClick={() => toggleDropdown('language')}>{t(locale === 'en' ? 'languageEn' : 'languageGe')}</span>
                 <ul>
                   <li>
-                    <a href={routes.georgianHome()}>ქართული</a>
+                    <Link href={pathname} locale={otherLocale}>
+                      {t(otherLocale === 'en' ? 'languageEn' : 'languageGe')}
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -77,7 +84,7 @@ export function HeaderClient({
               {OFFICES.map((office, i) => (
                 <div key={office.id} className={cn(s.topbarContactsItem, { [s.active]: i === officeIndex })}>
                   <div className={s.phone}>
-                    <span>Phone:</span> <span>{office.phone}</span>
+                    <span>{t('phoneLabel')}</span> <span>{office.phone}</span>
                   </div>
                   <div className={s.mail}>
                     <a href={office.mailHref}>{office.mail}</a>
@@ -96,10 +103,10 @@ export function HeaderClient({
                 <div className={s.curr} onClick={() => toggleDropdown('office')}>
                   <div className={s.title}>{activeOffice.name}</div>
                   <div className={s.opennow} style={{ display: officeOpenNow === true ? 'block' : 'none' }}>
-                    Open Now
+                    {t('openNow')}
                   </div>
                   <div className={s.closenow} style={{ display: officeOpenNow === false ? 'block' : 'none' }}>
-                    Closed Now
+                    {t('closedNow')}
                   </div>
                 </div>
                 <ul>
@@ -130,7 +137,7 @@ export function HeaderClient({
           <ul className={s.usermenu}>
             <li>
               <a href={routes.login()}>
-                <i className="icon icon-inbox"></i> <span>Inbox</span>
+                <i className="icon icon-inbox"></i> <span>{t('inbox')}</span>
               </a>
             </li>
             <li>
@@ -141,7 +148,7 @@ export function HeaderClient({
                   setTrackingOpen(true);
                 }}
               >
-                <i className="icon icon-tracking"></i> <span>Tracking</span>
+                <i className="icon icon-tracking"></i> <span>{t('tracking')}</span>
               </a>
             </li>
             <li>
@@ -152,7 +159,7 @@ export function HeaderClient({
                   setLoginOpen(true);
                 }}
               >
-                <i className="icon icon-login"></i> <span>Login</span>
+                <i className="icon icon-login"></i> <span>{t('login')}</span>
               </a>
             </li>
           </ul>
@@ -162,37 +169,37 @@ export function HeaderClient({
               <i className="icon icon-menu">
                 <span></span>
               </i>{' '}
-              Menu
+              {t('menu')}
             </div>
             <ul className={s.headermenu}>
               <li>
                 <Link href={routes.home()}>
-                  <span>Home</span>
+                  <span>{t('nav.home')}</span>
                 </Link>
               </li>
               <li>
                 <Link href={routes.page('parcel-service')}>
-                  <span>Parcel Service</span>
+                  <span>{t('nav.parcelService')}</span>
                 </Link>
               </li>
               <li>
                 <Link href={routes.page('cargo')}>
-                  <span>Cargo</span>
+                  <span>{t('nav.cargo')}</span>
                 </Link>
               </li>
               <li>
                 <Link href={routes.page('courier')}>
-                  <span>Courier</span>
+                  <span>{t('nav.courier')}</span>
                 </Link>
               </li>
               <li>
                 <Link href={routes.page('prices')}>
-                  <span>Prices</span>
+                  <span>{t('nav.prices')}</span>
                 </Link>
               </li>
               <li>
                 <Link href={routes.page('contact')}>
-                  <span>Contact</span>
+                  <span>{t('nav.contact')}</span>
                 </Link>
               </li>
             </ul>
@@ -202,13 +209,13 @@ export function HeaderClient({
 
       <Modal open={trackingOpen} onClose={() => setTrackingOpen(false)} variant="w420">
         <div className={s.trackingBlock}>
-          <h3>Tracking package</h3>
+          <h3>{t('trackingModal.title')}</h3>
           <form action={routes.tracking()} method="post">
             <div className="input-group">
-              <Input type="text" name="id" placeholder="Tracking No" />
+              <Input type="text" name="id" placeholder={t('trackingModal.placeholder')} />
             </div>
             <button type="submit" className="btn btn-blue">
-              Track <i className="icon icon-arr1"></i>
+              {t('trackingModal.submit')} <i className="icon icon-arr1"></i>
             </button>
           </form>
         </div>
@@ -216,31 +223,31 @@ export function HeaderClient({
 
       <Modal open={loginOpen} onClose={() => setLoginOpen(false)} variant="w420">
         <div className={s.loginBlock}>
-          <h3>Login</h3>
+          <h3>{t('loginModal.title')}</h3>
           <form action={routes.login()} method="post">
             <div className="input-group">
-              <Input type="text" name="login_username" placeholder="Account number" />
+              <Input type="text" name="login_username" placeholder={t('loginModal.accountPlaceholder')} />
             </div>
             <div className="input-group">
-              <Input type="password" name="login_password" placeholder="Password" />
+              <Input type="password" name="login_password" placeholder={t('loginModal.passwordPlaceholder')} />
             </div>
             <button type="submit" className="btn btn-blue">
-              Login <i className="icon icon-arr1"></i>
+              {t('loginModal.submit')} <i className="icon icon-arr1"></i>
             </button>
           </form>
           <div className={s.or}>
-            <span>or</span>
+            <span>{t('loginModal.or')}</span>
           </div>
           <p>
             <a href={routes.testAccountLogin()} className="btn btn-blue">
-              Temporary Access <i className="icon icon-arr1"></i>
+              {t('loginModal.temporaryAccess')} <i className="icon icon-arr1"></i>
             </a>
           </p>
           <p>
-            New to Gzavnili? <a href={routes.register()}>Create an account</a>
+            {t('loginModal.newToGzavnili')} <a href={routes.register()}>{t('loginModal.createAccount')}</a>
           </p>
           <p>
-            <a href={routes.forgotPassword()}>Restore Access!</a>
+            <a href={routes.forgotPassword()}>{t('loginModal.restoreAccess')}</a>
           </p>
         </div>
       </Modal>

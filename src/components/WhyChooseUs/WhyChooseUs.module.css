@@ -1,0 +1,110 @@
+/*
+ * Extracted from public/css/style.css's `.whychooseus ...` rules — see AGENTS.md's "shared
+ * components" convention. `font-family: Montserrat` on `.txt`/`.calcBlock p` is duplicated
+ * rather than deleted from style.css's shared multi-selector rule (also covers `#login-block`/
+ * `.trustus`, outside this component's concern).
+ *
+ * Responsive migration status: base (desktop) styles only — breakpoint overrides still live
+ * in style.css's `@media` blocks and haven't been ported yet.
+ */
+.whychooseus {
+  background: #f9f9f9;
+  padding: 30px 0 35px;
+
+  h2 {
+    margin: 0 auto 10px;
+    display: block;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  :global(.redline) {
+    margin: 10px auto;
+  }
+
+  :global(.container) > :global(.row) {
+    margin-top: 40px;
+  }
+}
+
+.col8 {
+  padding-right: 1.7%;
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+  align-content: space-between;
+}
+
+.whyusItem {
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  padding: 20px 22px 10px;
+  min-height: 130px;
+  margin-bottom: 20px;
+  background: #fff;
+  width: 48.7%;
+
+  &:nth-child(2n + 1) {
+    margin-right: 2.6%;
+  }
+
+  &:nth-last-child(-n + 2) {
+    margin-bottom: 0;
+  }
+
+  i {
+    float: left;
+  }
+
+  .whyusInfo {
+    margin-left: 75px;
+
+    .txt {
+      font-size: 18px;
+      font-weight: 400;
+      margin: 7px 0;
+      line-height: 1.2;
+      font-family: Montserrat;
+    }
+
+    .desc {
+      font-style: italic;
+      color: #666;
+      line-height: 1.2;
+    }
+  }
+}
+
+.calcBlock {
+  border: 2px solid #20599d;
+  background: #fff;
+  padding: 20px;
+
+  .heading {
+    a,
+    h3 {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    h3 {
+      margin: 0 7px 0 0;
+    }
+  }
+
+  p {
+    font-size: 18px;
+    margin: 0 0 25px;
+    color: #818181;
+    font-family: Montserrat;
+  }
+
+  form :global(.btn-block) {
+    text-align: center;
+    margin-top: 30px;
+
+    :global(.btn) {
+      width: 100%;
+      max-width: 220px;
+    }
+  }
+}

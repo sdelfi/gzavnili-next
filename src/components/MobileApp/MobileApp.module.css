@@ -1,0 +1,56 @@
+/*
+ * Extracted from public/css/style.css's `.mobile-app ...` rules — see AGENTS.md's "shared
+ * components" convention.
+ *
+ * Responsive migration status: base (desktop) styles only — breakpoint overrides still live
+ * in style.css's `@media` blocks and haven't been ported yet.
+ */
+.mobileApp {
+  background: url('/img/home-app.jpg') 50% 50% no-repeat;
+  background-size: cover;
+  padding: 50px 0 80px;
+}
+
+.txt {
+  background: rgba(32, 89, 157, 0.8);
+  color: #fff;
+  padding: 40px 25px 35px 45px;
+  width: 50%;
+
+  h3 {
+    color: #fff;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 1.2;
+    margin: 15px 0 30px;
+  }
+}
+
+.appBtns {
+  .appstoreBtn {
+    background: url('/img/icons.png') 0 -2489px no-repeat;
+    width: 162px;
+    height: 60px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 5px;
+
+    &:hover {
+      opacity: 0.95;
+    }
+  }
+
+  .googleplayBtn {
+    background: url('/img/icons.png') 0 -2575px no-repeat;
+    width: 172px;
+    height: 60px;
+    display: inline-block;
+    vertical-align: middle;
+
+    &:hover {
+      opacity: 0.95;
+    }
+  }
+}
