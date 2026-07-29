@@ -1,9 +1,9 @@
 'use client';
 
-import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import s from './OfferParallax.module.css';
+import cn from 'classnames';
 
 // Replaces additional.js: $('#offer-parallax').parallax_bg("50%", 0.3, 615);
 // (../http/js/jquery.parallax-bg.js) — shifts the background image vertically as the section
@@ -47,7 +47,7 @@ export function OfferParallax() {
         <div className={s.txt}>
           <h2>{t('heading')}</h2>
           <p>{t('text')}</p>
-          <div className={s.redline}></div>
+          <div className={cn('redline', s.redline)}></div>
 
           <div className="btn-block">
             <a href="" className="btn btn-red">

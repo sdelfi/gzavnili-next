@@ -653,6 +653,7 @@
 }
 
 @media (max-width: 767px) {
+
   .header .topbar .topbarContacts .topbarContactsItem>div.mail,
   .header .topbar .topbarContacts .topbarContactsItem>div.phone {
     width: 100%
@@ -686,17 +687,17 @@
       margin-top: 0;
 
       li {
-        margin: 0 7px
+        margin: 0 7px;
       }
     }
 
-    .headermenu-block {
-      .headermenu-toggler {
-        margin: 0 15px 0 0
+    .headermenuBlock {
+      .headermenuToggler {
+        margin: 0 15px 0 0;
       }
 
       ul.headermenu {
-        top: 49px
+        top: 49px;
       }
     }
   }
@@ -708,7 +709,7 @@
     height: 335px;
 
     .topbar {
-      padding-bottom: 12px;
+      /* padding-bottom: 12px; */
 
       .language {
         z-index: 30;
@@ -758,35 +759,36 @@
       }
 
       ul.usermenu {
-        margin-top: 20px
+        margin-top: 20px;
+
+        li {
+          margin: 0 5px 0 10px;
+
+
+          a i {
+            display: none;
+          }
+        }
       }
 
-      ul.usermenu li {
-        margin: 0 5px 0 10px
-      }
-
-      ul.usermenu li a i {
-        display: none
-      }
-
-      .headermenu-block {
+      .headermenuBlock {
         position: absolute;
         top: 0;
         left: 0;
         right: 0
       }
 
-      .headermenu-block .headermenu-toggler {
+      .headermenuBlock .headermenuToggler {
         margin: 0;
         padding: 12px 22px
       }
 
-      .headermenu-block ul.headermenu {
+      .headermenuBlock ul.headermenu {
         width: 100%;
         top: 54px
       }
 
-      .headermenu-block.active .headermenu-toggler {
+      .headermenuBlock.active .headermenuToggler {
         padding: 12px 22px 17px
       }
     }

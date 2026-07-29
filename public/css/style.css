@@ -1387,7 +1387,6 @@ label.checked-label {
 
 #login-block .or span,
 #login-block p,
-.trustus .trustus-r .advantages .adv-item,
 .whychooseus .calc-block p,
 .whychooseus .col-8 .whyus-item .whyus-info .txt {
     font-family: Montserrat
@@ -5788,10 +5787,6 @@ a.btn-mail.mail-prev {
 }
 
 @media (max-width: 991px) {
-    .trustus .trustus-l {
-        width: 250px
-    }
-
     .row.faq-quesions-block {
         -ms-flex-wrap: wrap;
         flex-wrap: wrap;
@@ -6035,13 +6030,11 @@ a.btn-mail.mail-prev {
 
 @media (max-width: 899px) {
 
-    .howworks .howworks-content .howworks-l,
-    .trustus .trustus-r {
+    .howworks .howworks-content .howworks-l {
         width: 100%
     }
 
-    .howworks .howworks-content .howworks-r,
-    .trustus .trustus-l {
+    .howworks .howworks-content .howworks-r {
         display: none
     }
 
@@ -6053,9 +6046,6 @@ a.btn-mail.mail-prev {
         font-size: 30px
     }
 
-    .trustus .trustus-r .advantages {
-        margin: 50px 0
-    }
 
     .howworks {
         margin: 50px 0 30px
@@ -6749,21 +6739,6 @@ a.btn-mail.mail-prev {
 
     .footer .footer-c .footermenu.active ul {
         display: block
-    }
-
-    .trustus {
-        padding-top: 10px
-    }
-
-    .trustus .trustus-r .advantages {
-        display: block;
-        margin: 20px 0
-    }
-
-    .trustus .trustus-r .advantages .adv-item {
-        display: block;
-        width: 220px;
-        margin: 40px auto
     }
 
     .documents .documents-list .item,

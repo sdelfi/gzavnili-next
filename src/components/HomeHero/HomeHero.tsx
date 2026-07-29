@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import s from './HomeHero.module.css';
-import cn from 'classnames';
 
 // Replaces main.js/HomeSlider.tsx, which ported the lightSlider carousel from the dead
 // `views/home.html` template (see PROGRESS.md). The real homepage — read from
@@ -63,7 +62,7 @@ export function HomeHero() {
           {LAYERS.map((layer) => (
             <div
               key={layer.className}
-              className={cn(layer.className, s.parallaxLayer)}
+              className={layer.className}
               style={{
                 transform: `translate(${offset.x * layer.x}px, ${offset.y * layer.y}px)`,
               }}

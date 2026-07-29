@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "bun run css-types",
     "dev": "next dev",
+    "prebuild": "bun run css-types",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "css-types": "tcm src -p '**/*.module.css' --camelCase"
   },
   "dependencies": {
     "classnames": "^2.5.1",
@@ -27,6 +30,7 @@
     "eslint-config-next": "16.2.12",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.9.6",
+    "typed-css-modules": "^0.9.1",
     "typescript": "^5"
   },
   "ignoreScripts": [

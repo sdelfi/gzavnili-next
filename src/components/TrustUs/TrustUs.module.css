@@ -16,6 +16,10 @@
   }
 }
 
+.trustus .trustusR .advantages .advItem {
+  font-family: Montserrat;
+}
+
 .trustusL {
   width: 42%;
   display: table-cell;
@@ -93,6 +97,43 @@
       width: 81px;
       height: 78px;
       background-position: 0 -1013px;
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  .trustus .trustusL {
+    width: 250px;
+  }
+}
+
+@media (max-width: 899px) {
+  .trustus .trustusR {
+    width: 100%;
+
+    .advantages {
+      margin: 50px 0
+    }
+  }
+
+  .trustus .trustusL {
+    display: none
+  }
+}
+
+@media (max-width: 599px) {
+  .trustus {
+    padding-top: 10px;
+
+    .trustusR .advantages {
+      display: block;
+      margin: 20px 0;
+
+      .advItem {
+        display: block;
+        width: 220px;
+        margin: 40px auto
+      }
     }
   }
 }
