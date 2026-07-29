@@ -165,12 +165,11 @@ file for scope/sequencing.
       rule. - Doing this for `HeaderClient` surfaced the actual tracking/login modal styling bug:
       the real design has dedicated `#tracking-block`/`#login-block` rules in `style.css`
       (centered `h3`, constrained form width, a `#login-block` "or" divider + copy) that our
-      markup never had the hooks for — now `.trackingBlock`/`.loginBlock` module classes. - Responsive migration status is uneven and explicitly flagged in each module's header
-      comment: `HeaderClient.module.css` has the 1199/1139/991px breakpoints (991px is load
-      bearing — it's the mobile hamburger-menu behavior); `TrustUs`/`WhyChooseUs`/
-      `MobileApp`/`News` only have base/desktop styles so far, breakpoint rules for those
-      four are still sitting in `style.css`'s `@media` blocks, not yet ported. Don't delete
-      those `@media` rules until the corresponding module catches up.
+      markup never had the hooks for — now `.trackingBlock`/`.loginBlock` module classes. - Responsive migration is now complete for every homepage component (`HeaderClient`,
+      `Footer`, `HomeHero`, `TrustUs`, `WhyChooseUs`, `MobileApp`, `News`, `Faq`/
+      `FaqAccordion`, `VideoTutorials`) — all their `@media` rules have been ported out of
+      `style.css` into the matching `.module.css`, verified by re-grepping `style.css` for
+      each component's selectors after each migration.
 - [x] Added Prettier (`.prettierrc.json`: singleQuote, trailingComma all, printWidth 120) +
       `eslint-config-prettier` (disables stylistic ESLint rules that'd fight Prettier) +
       `bun format`/`bun format:check` scripts, then ran it once across the whole repo to
@@ -194,6 +193,36 @@ file for scope/sequencing.
       `/ge/` → `/ge` redirects correctly, switching locale sets a `NEXT_LOCALE` cookie.
       Every other page ported later needs the same treatment — see the decision doc's "Known
       gaps" section for how to source real Georgian copy rather than inventing it.
+- [x] Finished migrating the remaining homepage-component CSS out of `public/css/style.css`
+      into `.module.css` files (client: "не перенесено много стилей... давай лучше ты").
+      `Footer/Footer.module.css` completed (base + 1139/767/599px media, 391 lines removed
+      from `style.css`). Split the old flat `FaqAccordion.tsx` into `FaqAccordion` (the
+      reusable list/item styling, made self-contained instead of requiring an ancestor
+      `.faq`) and a new `Faq` component (section chrome: heading + "see all answers" link),
+      wired `<Faq/>` into `src/app/[locale]/page.tsx` in place of the old inline markup.
+      Migrated `VideoTutorials` into its own folder, merging the live base/responsive rules
+      from `style.css`'s `.videohelp ...` selectors with the real card styling
+      (`.videohelp .videos .item .inner...`) that had been hiding in `src/app/globals.css`
+      (merged in from the deleted `style_custom.css`) — and dropped the dead
+      `.videohelp .videos .item a`/`a i`/`a p`/`a:hover...` rules for an older markup
+      variant this component's real `<a class="item"><div class="inner">` structure never
+      matches. `.row.faq-quesions-block`/`.row.faq-videos-block>.col-6...` page-composition
+      glue rules deliberately left in `style.css` (shared between two components, not owned
+      by either — same treatment as other page-glue rules noted above). Ran a naming pass
+      across every `.module.css`: no leftover kebab-case local selectors, no declared-but-
+      unused local classes. Commit: dedf0f6 (formatting) plus the uncommitted changes from
+      this session — see `Faq`/`FaqAccordion`/`VideoTutorials`/`Footer` folders.
+- [x] Added `typed-css-modules` (`bun run css-types`, wired into `predev`/`prebuild`) to
+      generate `.module.css.d.ts` sidecars so referencing a CSS Modules class that doesn't
+      exist is a build-time TypeScript error — the tooling the client asked for to catch
+      "kebab-case forgotten to be renamed to camelCase" migration bugs. Tried
+      `eslint-plugin-css-modules` first; confirmed via a deliberate broken reference that it
+      silently detects nothing (unmaintained) and removed it. See
+      `docs/decisions/0009-css-modules-type-checking.md`. Caught two real pre-existing bugs
+      this session: `HomeHero.tsx`'s dead `s.parallaxLayer` reference, and `Footer.tsx`'s
+      `s.social` reference which only existed as a non-exported `:global(.social)` in
+      `Footer.module.css` (fixed by making `.social` a real local class, matching how
+      `.title` is already handled).
 - [ ] Remaining public/marketing pages (services, cargo, courier, pricing, FAQ, legal/customs, news)
 - [ ] Public unauthenticated tracking page wired to real Postgres data (Phase 1 schema/backend
       not built yet — this page is currently just a UI shell/modal)
