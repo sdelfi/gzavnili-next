@@ -1,0 +1,372 @@
+/*
+ * Extracted from public/css/style.css's `.footer ...` rules — see AGENTS.md's "shared
+ * components" convention. `.select2-container`/`#select2-footer-office-results` rules for a
+ * footer office-picker select were left in place, not migrated: this Footer never renders
+ * that select (the office contact info is static, not a dropdown) — dead CSS to clean up
+ * separately, not something to port here.
+ *
+ * Responsive migration status: base + 1139px + 767px + 599px are all ported. The 599px
+ * breakpoint's `.footermenu.active ul { display: block }` accordion behavior needs a click
+ * handler this component doesn't have yet (Footer is a Server Component; the footer menu
+ * titles currently do nothing on mobile) — CSS is here, the interactivity isn't.
+ */
+.footer {
+  background: #4c4c4c;
+  color: #fff;
+  padding: 32px 0 25px;
+
+  :global(.container) {
+    display: flex;
+    justify-content: space-between;
+
+    @media (max-width: 1139px) {
+      flex-wrap: wrap;
+    }
+  }
+}
+
+.footerL {
+  width: 24%;
+
+  @media (max-width: 1139px) {
+    order: 3;
+    width: 100%;
+    padding-right: 320px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+
+  @media (max-width: 767px) {
+    padding: 100px 0 0;
+    margin: 0 auto;
+    max-width: 290px;
+  }
+}
+
+.footerLt {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 12px;
+
+  @media (max-width: 1139px) {
+    max-width: 290px;
+  }
+
+  @media (max-width: 767px) {
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    @media (max-width: 767px) {
+      display: block;
+      width: 100%;
+      text-align: center;
+    }
+
+    a {
+      width: 126px;
+      height: 53px;
+      display: block;
+      background: url('/img/icons.png') 0 -2159px no-repeat;
+      text-indent: -9999em;
+
+      @media (max-width: 767px) {
+        margin: 0 auto;
+      }
+    }
+  }
+
+  :global(.social) {
+    display: flex;
+    vertical-align: middle;
+    justify-content: space-between;
+    width: 45%;
+    padding-top: 20px;
+    margin-bottom: 15px;
+
+    @media (max-width: 1139px) {
+      width: 130px;
+    }
+
+    @media (max-width: 767px) {
+      margin: 0 auto;
+      width: 170px;
+      padding: 30px 0 20px;
+    }
+
+    li {
+      display: inline-block;
+      vertical-align: middle;
+      text-indent: -9999em;
+      background: url('/img/icons.png') 0 -2000px no-repeat;
+
+      a {
+        display: block;
+      }
+    }
+  }
+}
+
+.socialFb {
+  width: 15px;
+  height: 20px;
+  background-position: 0 -2000px;
+
+  @media (max-width: 767px) {
+    width: 24px;
+    height: 29px;
+    background-position: -114px -1997px;
+
+    a {
+      height: 29px;
+    }
+  }
+}
+
+.socialTw {
+  width: 21px;
+  height: 20px;
+  background-position: 0 -2057px;
+
+  @media (max-width: 767px) {
+    width: 28px;
+    height: 24px;
+    background-position: -114px -2053px;
+
+    a {
+      height: 29px;
+    }
+  }
+}
+
+.socialGp {
+  width: 21px;
+  height: 20px;
+  background-position: 0 -2108px;
+
+  @media (max-width: 767px) {
+    width: 40px;
+    height: 25px;
+    background-position: -114px -2105px;
+
+    a {
+      height: 29px;
+    }
+  }
+}
+
+/* `.footer .footer-l .footer-lt .txt {margin-bottom:20px}` (more specific) plus
+   `.footer .footer-l .txt {font-weight:600;margin-bottom:15px}` (less specific, same
+   selector depth as ours) — combined: font-weight 600, margin-bottom 20px wins. */
+.txt {
+  font-weight: 600;
+  margin-bottom: 20px;
+
+  @media (max-width: 1139px) {
+    max-width: 400px;
+  }
+
+  @media (max-width: 767px) {
+    text-align: center;
+    padding-bottom: 15px;
+  }
+}
+
+.footerSignup {
+  margin-bottom: 30px;
+
+  @media (max-width: 1139px) {
+    position: absolute;
+    right: 0;
+    top: 55px;
+    width: 280px;
+  }
+
+  @media (max-width: 767px) {
+    top: 0;
+    width: 100%;
+    left: 0;
+    right: 0;
+  }
+
+  label {
+    font-family: Montserrat;
+    font-size: 18px;
+    text-transform: uppercase;
+    font-weight: 400;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  :global(.input-group) {
+    width: 100%;
+    position: relative;
+    margin-bottom: 10px;
+
+    &:after {
+      content: '';
+      display: table;
+      width: 100%;
+    }
+
+    input#signup-input {
+      height: 40px;
+      width: 83%;
+      float: left;
+      background: #dbdbdb;
+      border: none;
+      border-radius: 0;
+    }
+  }
+
+  .signupBtn {
+    width: 17%;
+    float: left;
+    height: 40px;
+    background: #3fa3f0;
+    display: inline-block;
+    position: relative;
+
+    &:before {
+      content: '';
+      width: 16px;
+      height: 17px;
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin: -8px 0 0 -8px;
+      background: url('/img/icons.png') 0 -2248px no-repeat;
+    }
+  }
+}
+
+.footerCopy {
+  margin: 0;
+
+  @media (max-width: 767px) {
+    text-align: center;
+  }
+}
+
+.footerC {
+  width: 47%;
+  display: flex;
+  justify-content: space-between;
+
+  @media (max-width: 1139px) {
+    order: 1;
+    width: 75%;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 767px) {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 599px) {
+    display: block;
+  }
+}
+
+.footermenu {
+  width: 30%;
+
+  @media (max-width: 599px) {
+    max-width: 290px;
+    width: 100%;
+    margin: 0 auto 13px;
+  }
+
+  .title {
+    color: #3fa3f0;
+    text-transform: uppercase;
+    font-size: 16px;
+    font-weight: 400;
+    font-family: Montserrat;
+
+    @media (max-width: 599px) {
+      background: #20599d;
+      color: #fff;
+      text-align: center;
+      line-height: 30px;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  }
+
+  ul {
+    @media (max-width: 599px) {
+      display: none;
+      background: #2a70b7;
+    }
+
+    li {
+      margin: 10px 0;
+      display: block;
+
+      @media (max-width: 599px) {
+        margin: 0;
+      }
+
+      a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 600;
+
+        @media (max-width: 599px) {
+          display: block;
+          padding: 10px 12px;
+        }
+
+        &:hover {
+          text-decoration: underline;
+        }
+
+        @media (max-width: 599px) {
+          &:hover,
+          &:active {
+            background: #3fa3f0;
+            text-decoration: none;
+          }
+        }
+      }
+    }
+  }
+
+  /* Not yet wired: needs a click handler toggling this on mobile — see file header comment. */
+  &.active {
+    @media (max-width: 599px) {
+      ul {
+        display: block;
+      }
+    }
+  }
+}
+
+.footerR {
+  width: 24%;
+
+  @media (max-width: 1139px) {
+    order: 2;
+    width: 22%;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 767px) {
+    display: none;
+    width: 100%;
+    max-width: 290px;
+  }
+}
+
+.footerContactsItem {
+  display: none;
+
+  &.active {
+    display: block;
+  }
+}

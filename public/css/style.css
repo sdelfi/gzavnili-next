@@ -1025,7 +1025,6 @@ a.add-link:hover span {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     margin: 0 -10px
 }
@@ -1445,12 +1444,6 @@ label.checked-label {
     text-decoration: underline
 }
 
-.news .news-list .item .more,
-.news .news-list .item .title {
-    text-decoration: none;
-    font-family: Montserrat
-}
-
 .faq .faq-list .faq-item .answer {
     display: none;
     border-top: 1px solid #bfbfbf;
@@ -1767,7 +1760,6 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
@@ -1936,7 +1928,6 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
@@ -2035,7 +2026,6 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
@@ -2078,7 +2068,6 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
     justify-content: space-between;
-    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     padding-top: 25px
 }
@@ -2277,7 +2266,6 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
@@ -2765,7 +2753,6 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     -webkit-box-pack: left;
     -ms-flex-pack: left;
@@ -2800,7 +2787,6 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     -webkit-box-pack: left;
     -ms-flex-pack: left;
@@ -3830,7 +3816,6 @@ section.contacts .container {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex-wrap: wrap;
     flex-wrap: wrap
 }
 
@@ -3939,7 +3924,6 @@ section.map .gmaps-contactinfo .container {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex-wrap: wrap;
     flex-wrap: wrap
 }
 
@@ -4111,7 +4095,6 @@ section.prices .prices-infoblock {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex-wrap: wrap;
     flex-wrap: wrap
 }
 
@@ -4170,7 +4153,6 @@ section.prices .prices-infoblock .item .item-inner .info .desc {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
@@ -4632,7 +4614,6 @@ fieldset legend {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     margin: 20px 0
 }
@@ -4768,7 +4749,6 @@ fieldset legend {
     -webkit-box-pack: end;
     -ms-flex-pack: end;
     justify-content: flex-end;
-    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     margin: 50px 0 75px
 }
@@ -5560,7 +5540,6 @@ a.btn-mail.mail-prev {
 
 @media (max-width: 1139px) {
     .footer .container {
-        -ms-flex-wrap: wrap;
         flex-wrap: wrap
     }
 
@@ -5788,7 +5767,6 @@ a.btn-mail.mail-prev {
 
 @media (max-width: 991px) {
     .row.faq-quesions-block {
-        -ms-flex-wrap: wrap;
         flex-wrap: wrap;
         padding-bottom: 70px
     }
@@ -5801,10 +5779,6 @@ a.btn-mail.mail-prev {
     .row.faq-quesions-block>.col.col-6.contact-form {
         max-width: 600px;
         margin: 0 auto
-    }
-
-    .mobile-app .txt {
-        width: 70%
     }
 
     .services-page .services-list {
@@ -5828,7 +5802,6 @@ a.btn-mail.mail-prev {
     }
 
     .row.faq-videos-block {
-        -ms-flex-wrap: wrap;
         flex-wrap: wrap;
         padding-bottom: 70px
     }
@@ -5859,7 +5832,6 @@ a.btn-mail.mail-prev {
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
-        -ms-flex-wrap: wrap;
         flex-wrap: wrap
     }
 
@@ -5883,7 +5855,6 @@ a.btn-mail.mail-prev {
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
-        -ms-flex-wrap: wrap;
         flex-wrap: wrap;
         -webkit-box-pack: justify;
         -ms-flex-pack: justify;
@@ -5915,7 +5886,6 @@ a.btn-mail.mail-prev {
     }
 
     section.prices .prices-list {
-        -ms-flex-wrap: wrap;
         flex-wrap: wrap
     }
 
@@ -6239,7 +6209,6 @@ a.btn-mail.mail-prev {
     }
 
     .footer .footer-l .footer-lt {
-        -ms-flex-wrap: wrap;
         flex-wrap: wrap
     }
 
@@ -6321,26 +6290,6 @@ a.btn-mail.mail-prev {
     .howonlineworks h2,
     .whychooseus-online h2 {
         font-size: 30px
-    }
-
-    .mobile-app .txt {
-        width: 100%;
-        padding: 30px 10px
-    }
-
-    .news {
-        padding: 50px 0
-    }
-
-    .news .news-list {
-        -ms-flex-wrap: wrap;
-        flex-wrap: wrap
-    }
-
-    .news .news-list .item {
-        width: 100%;
-        max-width: 374px;
-        margin: 0 auto 50px
     }
 
     .page-heading p {
@@ -6455,7 +6404,6 @@ a.btn-mail.mail-prev {
     }
 
     .requestquote .requestquote-block .whyus-list {
-        -ms-flex-wrap: wrap;
         flex-wrap: wrap
     }
 
@@ -6816,7 +6764,6 @@ a.btn-mail.mail-prev {
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
-        -ms-flex-wrap: wrap;
         flex-wrap: wrap;
         background: #f4f4f4;
         margin-bottom: 35px;
@@ -6881,7 +6828,6 @@ a.btn-mail.mail-prev {
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
-        -ms-flex-wrap: wrap;
         flex-wrap: wrap;
         background: #f4f4f4;
         margin-bottom: 35px;
@@ -7020,10 +6966,6 @@ a.btn-mail.mail-prev {
     .contact-form h3,
     .faq h3 {
         font-size: 24px
-    }
-
-    .mobile-app .txt h3 {
-        font-size: 36px
     }
 
     .faqs-page .faq .faq-block h3,
@@ -7199,7 +7141,6 @@ a.btn-mail.mail-prev {
     }
 
     section.prices .prices-notice {
-        -ms-flex-wrap: wrap;
         flex-wrap: wrap;
         padding: 18px 10px;
         margin-bottom: 40px
@@ -7236,7 +7177,6 @@ a.btn-mail.mail-prev {
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
-        -ms-flex-wrap: wrap;
         flex-wrap: wrap;
         background: #f4f4f4;
         margin-bottom: 35px;
@@ -7543,25 +7483,8 @@ a.btn-mail.mail-prev {
 }
 
 @media (max-width: 399px) {
-    .mobile-app {
-        padding: 30px 0
-    }
-
-    .account-menu-block .container,
-    .mobile-app .container {
+    .account-menu-block .container {
         padding: 0
-    }
-
-    .mobile-app .txt .app-btns .appstore-btn {
-        width: 136px;
-        height: 49px;
-        background-position: 0 -4880px
-    }
-
-    .mobile-app .txt .app-btns .googleplay-btn {
-        width: 144px;
-        height: 49px;
-        background-position: 0 -4933px
     }
 
     .account-menu-block .account-menu {

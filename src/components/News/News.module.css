@@ -20,13 +20,21 @@
   }
 }
 
+
 .newsList {
   display: flex;
   justify-content: space-between;
+
 }
 
 .item {
   width: 32.2%;
+
+  .more,
+  .title {
+    text-decoration: none;
+    font-family: Montserrat
+  }
 }
 
 .img {
@@ -55,4 +63,20 @@
 .teaser {
   font-weight: 600;
   margin-bottom: 20px;
+}
+
+@media (max-width: 767px) {
+  .news {
+    padding: 50px 0;
+
+    .newsList {
+      flex-wrap: wrap;
+
+      .item {
+        width: 100%;
+        max-width: 374px;
+        margin: 0 auto 50px
+      }
+    }
+  }
 }

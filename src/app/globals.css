@@ -622,7 +622,6 @@ ul.icons-list li.two-line {
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
-  -ms-flex-wrap: wrap;
   flex-wrap: wrap;
 }
 
@@ -708,7 +707,6 @@ ul.icons-list li a {
   }
 
   ul.icons-list a {
-    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
@@ -730,7 +728,6 @@ ul.icons-list li a {
     -webkit-box-direction: normal;
     -ms-flex-direction: row;
     flex-direction: row;
-    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
   }
 

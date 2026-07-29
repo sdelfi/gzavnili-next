@@ -1,5 +1,5 @@
 /*
- * Extracted from public/css/style.css's `.mobile-app ...` rules — see AGENTS.md's "shared
+ * Extracted from public/css/style.css's `.mobileApp ...` rules — see AGENTS.md's "shared
  * components" convention.
  *
  * Responsive migration status: base (desktop) styles only — breakpoint overrides still live
@@ -51,6 +51,50 @@
 
     &:hover {
       opacity: 0.95;
+    }
+  }
+}
+
+
+@media (max-width: 991px) {
+  .mobileApp .txt {
+    width: 70%
+  }
+}
+
+@media (max-width: 767px) {
+  .mobileApp .txt {
+    width: 100%;
+    padding: 30px 10px
+  }
+}
+
+@media (max-width: 479px) {
+  .mobileApp .txt h3 {
+    font-size: 36px
+  }
+}
+
+@media (max-width: 399px) {
+  .mobileApp {
+    padding: 30px 0
+  }
+
+  .mobileApp :global(.container) {
+    padding: 0
+  }
+
+  .mobileApp .txt .appBtns {
+    .appstoreBtn {
+      width: 136px;
+      height: 49px;
+      background-position: 0 -4880px
+    }
+
+    .googleplayBtn {
+      width: 144px;
+      height: 49px;
+      background-position: 0 -4933px
     }
   }
 }

@@ -33,3 +33,4 @@ file or the live site.
 | 0006 | No vendored legacy JS bundles; own/modern replacements only | [decisions/0006-no-vendored-legacy-js.md](decisions/0006-no-vendored-legacy-js.md) |
 | 0007 | Move large CSS `background: url()` images to `next/image` | [decisions/0007-next-image-for-css-backgrounds.md](decisions/0007-next-image-for-css-backgrounds.md) |
 | 0008 | i18n via next-intl, locale ids `en`/`ge` matching the legacy site | [decisions/0008-i18n-next-intl.md](decisions/0008-i18n-next-intl.md) |
+| 0009 | Catch CSS Modules typos via generated TS types, not an ESLint plugin | [decisions/0009-css-modules-type-checking.md](decisions/0009-css-modules-type-checking.md) |

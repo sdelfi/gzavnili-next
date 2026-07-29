@@ -1,7 +1,9 @@
 import { getTranslations } from 'next-intl/server';
+import cn from 'classnames';
 import { Link } from '@/i18n/navigation';
 import { Input } from '@/components/ui/Input';
 import { routes } from '@/lib/routes';
+import s from './Footer.module.css';
 
 // Ported from the legacy layout at http/views/layouts/new.html.
 export async function Footer() {
@@ -9,37 +11,39 @@ export async function Footer() {
   const t = await getTranslations('Footer');
 
   return (
-    <footer className="footer">
+    <footer className={s.footer}>
       <div className="container">
-        <div className="footer-l">
-          <div className="footer-lt">
+        <div className={s.footerL}>
+          <div className={s.footerLt}>
             <div className="logo">
+              {/* text-indent hides the label; style.css draws the real logo via an icons.png
+                  sprite background — same technique as Modal.tsx's close icon. */}
               <Link href={routes.home()}>Gzavnili</Link>
             </div>
             <ul className="social">
-              <li className="icon-social icon-fb-footer">
+              <li className={s.socialFb}>
                 <a href="https://www.facebook.com/gzavnili">Facebook</a>
               </li>
             </ul>
           </div>
-          <div className="txt">{t('tagline')}</div>
-          <div className="footer-signup">
+          <div className={s.txt}>{t('tagline')}</div>
+          <div className={s.footerSignup}>
             <label htmlFor="signup-input">{t('newsletterLabel')}</label>
             <div className="input-group">
               <Input type="text" id="signup-input" />
-              <a className="signup-btn">
+              <a className={s.signupBtn}>
                 <i className="icon icon-arr3"></i>
               </a>
             </div>
           </div>
-          <div className="footer-copy">
+          <div className={s.footerCopy}>
             &copy; {year} {t('copyright')}
           </div>
         </div>
 
-        <div className="footer-c">
-          <div className="footermenu">
-            <div className="title">{t('navigation.title')}</div>
+        <div className={s.footerC}>
+          <div className={s.footermenu}>
+            <div className={s.title}>{t('navigation.title')}</div>
             <ul>
               <li>
                 <Link href={routes.home()}>{t('navigation.home')}</Link>
@@ -58,8 +62,8 @@ export async function Footer() {
               </li>
             </ul>
           </div>
-          <div className="footermenu">
-            <div className="title">{t('usefulLinks.title')}</div>
+          <div className={s.footermenu}>
+            <div className={s.title}>{t('usefulLinks.title')}</div>
             <ul>
               <li>
                 <Link href={routes.page('terms-and-conditions')}>{t('usefulLinks.termsAndConditions')}</Link>
@@ -78,8 +82,8 @@ export async function Footer() {
               </li>
             </ul>
           </div>
-          <div className="footermenu">
-            <div className="title">{t('links.title')}</div>
+          <div className={s.footermenu}>
+            <div className={s.title}>{t('links.title')}</div>
             <ul>
               <li>
                 <Link href={routes.page('faq')}>{t('links.faqs')}</Link>
@@ -94,9 +98,9 @@ export async function Footer() {
           </div>
         </div>
 
-        <div className="footer-r">
+        <div className={s.footerR}>
           <div className="footer-contacts">
-            <div className="footer-contacts-item active">
+            <div className={cn(s.footerContactsItem, s.active)}>
               <p>
                 1914 Kings Highway, 2 FL <br />
                 Brooklyn NY 11229
@@ -113,7 +117,7 @@ export async function Footer() {
                 Sat-Sun 10:00-17:00
               </p>
             </div>
-            <div className="footer-contacts-item">
+            <div className={s.footerContactsItem}>
               <p>
                 41 Tashkenti Street <br />
                 Tbilisi, Georgia
