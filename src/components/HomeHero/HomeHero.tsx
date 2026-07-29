@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import s from './HomeHero.module.css';
 import cn from 'classnames';
@@ -12,15 +13,6 @@ import cn from 'classnames';
 // hero instead: car/boxes layers (jquery.parallax.min.js) plus a rotating text strip
 // (`#animated-strings`, driven by ../http/js/additional.js). Same markup/classes so
 // css/additional.css applies unchanged.
-const STRINGS = [
-  'All Type of Parcels?',
-  'Freight Shipments?',
-  'Fastest Shipping?',
-  'Pricing Options?',
-  'Lowest Price?',
-  'Tax-Free Shopping?',
-];
-
 const ROTATE_MS = 2000;
 const FADE_MS = 1000;
 
@@ -32,6 +24,8 @@ const LAYERS = [
 ];
 
 export function HomeHero() {
+  const t = useTranslations('HomeHero');
+  const strings = t.raw('strings') as string[];
   const [active, setActive] = useState(0);
   const [fading, setFading] = useState(false);
   const sceneRef = useRef<HTMLDivElement>(null);
@@ -41,13 +35,13 @@ export function HomeHero() {
     const id = setInterval(() => {
       setFading(true);
       const timeout = setTimeout(() => {
-        setActive((i) => (i + 1) % STRINGS.length);
+        setActive((i) => (i + 1) % strings.length);
         setFading(false);
       }, FADE_MS);
       return () => clearTimeout(timeout);
     }, ROTATE_MS);
     return () => clearInterval(id);
-  }, []);
+  }, [strings.length]);
 
   useEffect(() => {
     const scene = sceneRef.current;
@@ -77,9 +71,9 @@ export function HomeHero() {
           ))}
           <div className={s.textObject}>
             <ul id="animated-strings">
-              <li className={fading ? s.fadeup : s.active}>{STRINGS[active]}</li>
+              <li className={fading ? s.fadeup : s.active}>{strings[active]}</li>
             </ul>
-            <div className={s.textAnswer}>– Yes!</div>
+            <div className={s.textAnswer}>{t('answer')}</div>
           </div>
         </div>
       </div>

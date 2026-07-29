@@ -69,7 +69,9 @@ export function HeaderClient({
           <div className={s.topbarInner}>
             <div className={cn(s.language, { [s.active]: openDropdown === 'language' })}>
               <div className={s.languageInner}>
-                <span onClick={() => toggleDropdown('language')}>{t(locale === 'en' ? 'languageEn' : 'languageGe')}</span>
+                <span onClick={() => toggleDropdown('language')}>
+                  {t(locale === 'en' ? 'languageEn' : 'languageGe')}
+                </span>
                 <ul>
                   <li>
                     <Link href={pathname} locale={otherLocale}>
@@ -127,7 +129,7 @@ export function HeaderClient({
       </div>
 
       <div className={s.bottombar}>
-        <div className="container">
+        <div className={cn('container', s.container)}>
           <div className={s.logo}>
             <Link href={routes.home()}>
               <Image src="/img/logo.jpg" alt="Gzavnili, logistic company" width={190} height={80} />

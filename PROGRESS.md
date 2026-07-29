@@ -149,10 +149,51 @@ file for scope/sequencing.
       `account`/`paymentSteps`/`authenticate` view fragments for inline `<link>` tags before
       deleting anything) — interrupted by a Bash tool outage in this session.
 - [ ] Wire the calculator's `icon-info` tooltip (tooltipster) now that its CSS is loaded.
-- [ ] Download the homepage news images into `public/img/news/` and switch `page.tsx`'s
-      `NEWS_ITEMS` off the external `usa.gzavnili.com` hotlinks to local relative paths —
-      interrupted by the same Bash outage (network fetches specifically kept failing).
-- [ ] Georgian-language branch of Header/Footer/homepage (currently English-only)
+- [x] Downloaded the homepage news images into `public/img/news/` and switched `NEWS_ITEMS`
+      off the external `usa.gzavnili.com` hotlinks to local relative paths.
+- [x] Adopted a per-component folder convention (`ComponentName/ComponentName.tsx` +
+      `.module.css` + `index.ts`, see `HomeHero/` for the original example) instead of one
+      flat `src/components/*.tsx` file per component with styling left in the global
+      `public/css/*.css` files — see AGENTS.md's "shared components" rule. Decomposed under
+      this convention so far: `HomeHero`, `HeaderClient`, `OfferParallax`, `TrustUs`,
+      `WhyChooseUs`, `MobileApp`, `News`. Each migration deletes its rules from
+      `public/css/style.css`/`style_custom.css` (not just adds the module) so there's one
+      source of truth per rule, not a fork — grouped selectors that mix in something outside
+      the component's scope (e.g. `#login-block .or span, #login-block p, .trustus ...,
+.whychooseus ...` sharing one `font-family: Montserrat` declaration) are left in place
+      and the value is duplicated into the module rather than splitting/deleting the shared
+      rule. - Doing this for `HeaderClient` surfaced the actual tracking/login modal styling bug:
+      the real design has dedicated `#tracking-block`/`#login-block` rules in `style.css`
+      (centered `h3`, constrained form width, a `#login-block` "or" divider + copy) that our
+      markup never had the hooks for — now `.trackingBlock`/`.loginBlock` module classes. - Responsive migration status is uneven and explicitly flagged in each module's header
+      comment: `HeaderClient.module.css` has the 1199/1139/991px breakpoints (991px is load
+      bearing — it's the mobile hamburger-menu behavior); `TrustUs`/`WhyChooseUs`/
+      `MobileApp`/`News` only have base/desktop styles so far, breakpoint rules for those
+      four are still sitting in `style.css`'s `@media` blocks, not yet ported. Don't delete
+      those `@media` rules until the corresponding module catches up.
+- [x] Added Prettier (`.prettierrc.json`: singleQuote, trailingComma all, printWidth 120) +
+      `eslint-config-prettier` (disables stylistic ESLint rules that'd fight Prettier) +
+      `bun format`/`bun format:check` scripts, then ran it once across the whole repo to
+      normalize the quote-style split that had crept in (older files double-quoted, newer
+      component-folder files single-quoted).
+- [x] **Georgian-language branch of the homepage is done.** Set up i18n scaffolding with
+      next-intl (`en`/`ge` locale ids matching the legacy `session.language` convention, `/ge/`
+      prefix, `en` unprefixed — see `docs/decisions/0008-i18n-next-intl.md`): `[locale]` segment
+      routing, `src/proxy.ts` (Next 16 renamed `middleware.ts` → `proxy.ts` — heed the
+      deprecation warning if you ever rename it back), `messages/en.json`/`messages/ge.json`.
+      Every homepage component (`Header`/`HeaderClient`, `Footer`, `HomeHero`, `TrustUs`,
+      `SpecialOffer` (now inside `OfferParallax.tsx`), `WhyChooseUs`, `Calculator`, `Faq`,
+      `VideoTutorials`, `MobileApp`, `News`) now reads its copy from translations instead of
+      hardcoded strings. The Georgian copy isn't machine-translated — pulled from the legacy
+      app's real Georgian content: `../http/include/pages/E4562B44D65122F4B36660EF1DA9F9FE81A58F58.json`
+      (the `PageDAO` cache for `/ge/index.html`, found the same way as the English homepage
+      cache) plus `../http/views/layouts/new.html`'s `<cfif session.language eq "ge">` branches
+      for header/footer nav. Language switcher in the header now does a real locale switch
+      (next-intl's locale-aware `Link`/`usePathname`), not a dead link. Verified end-to-end at
+      runtime: `/` (English) and `/ge` (Georgian) both serve correct translated content,
+      `/ge/` → `/ge` redirects correctly, switching locale sets a `NEXT_LOCALE` cookie.
+      Every other page ported later needs the same treatment — see the decision doc's "Known
+      gaps" section for how to source real Georgian copy rather than inventing it.
 - [ ] Remaining public/marketing pages (services, cargo, courier, pricing, FAQ, legal/customs, news)
 - [ ] Public unauthenticated tracking page wired to real Postgres data (Phase 1 schema/backend
       not built yet — this page is currently just a UI shell/modal)

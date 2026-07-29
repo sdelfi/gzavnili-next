@@ -1,44 +1,18 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 
 // Ports the pricing/ETA logic that used to live server-side in
 // `../http/views/homecals.cfm` (GET-param driven, re-rendered by ColdFusion on every submit —
 // see PROGRESS.md for how {CALCULATOR} gets substituted into the real page content).
-// English branch only; rates/thresholds copied as-is from the legacy file.
+// Rates/thresholds copied as-is from the legacy file (same for both language branches there).
 type WeightUnit = 'lb' | 'kg';
 type SizeUnit = 'in' | 'cm';
 type Service = 'regular' | 'express';
 type ParcelType = 'online' | 'personal';
-
-const WEIGHT_UNITS = [
-  { value: 'lb', label: 'lb' },
-  { value: 'kg', label: 'kg' },
-];
-
-const SIZE_UNITS = [
-  { value: 'in', label: 'in' },
-  { value: 'cm', label: 'cm' },
-];
-
-const SERVICES = [{ value: 'regular', label: 'Regular Service' }];
-
-const PARCEL_TYPES = [
-  { value: 'online', label: 'Online' },
-  { value: 'personal', label: 'Personal' },
-];
-
-const DAYS = [
-  { value: '1', label: 'Monday' },
-  { value: '2', label: 'Tuesday' },
-  { value: '3', label: 'Wednesday' },
-  { value: '4', label: 'Thursday' },
-  { value: '5', label: 'Friday' },
-  { value: '6', label: 'Saturday' },
-  { value: '7', label: 'Sunday' },
-];
 
 function computePrice(
   weight: number,
@@ -77,17 +51,20 @@ function computePrice(
   return price;
 }
 
-function computeEta(day: string, service: Service): string | null {
+// Returns a 1 (Monday) - 7 (Sunday) day index, matching the `Calculator.days` translation
+// array's order, or null. Kept as data (not a translated string) so the caller can look up
+// the label in whichever locale is active.
+function computeEtaDayIndex(day: string, service: Service): number | null {
   if (!day) return null;
   const d = Number(day);
   if (service === 'express') {
-    if (d === 6 || d === 7) return 'Wednesday';
-    if (d === 1 || d === 2) return 'Friday';
-    if (d === 3 || d === 4 || d === 5) return 'Monday';
+    if (d === 6 || d === 7) return 3;
+    if (d === 1 || d === 2) return 5;
+    if (d === 3 || d === 4 || d === 5) return 1;
   } else {
-    if (d === 5 || d === 6) return 'Friday';
-    if (d === 7 || d === 1) return 'Monday';
-    if (d === 2 || d === 3 || d === 4) return 'Wednesday';
+    if (d === 5 || d === 6) return 5;
+    if (d === 7 || d === 1) return 1;
+    if (d === 2 || d === 3 || d === 4) return 3;
   }
   return null;
 }
@@ -95,6 +72,24 @@ function computeEta(day: string, service: Service): string | null {
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
 export function Calculator() {
+  const t = useTranslations('Calculator');
+  const dayLabels = t.raw('days') as string[];
+
+  const weightUnits = [
+    { value: 'lb', label: t('lb') },
+    { value: 'kg', label: t('kg') },
+  ];
+  const sizeUnits = [
+    { value: 'in', label: t('in') },
+    { value: 'cm', label: t('cm') },
+  ];
+  const services = [{ value: 'regular', label: t('regularService') }];
+  const parcelTypes = [
+    { value: 'online', label: t('online') },
+    { value: 'personal', label: t('personal') },
+  ];
+  const days = dayLabels.map((label, i) => ({ value: String(i + 1), label }));
+
   const [weight, setWeight] = useState('');
   const [weightUnit, setWeightUnit] = useState<WeightUnit>('lb');
   const [length, setLength] = useState('');
@@ -104,7 +99,7 @@ export function Calculator() {
   const [service, setService] = useState<Service | ''>('');
   const [parcelType, setParcelType] = useState<ParcelType | ''>('');
   const [day, setDay] = useState('');
-  const [result, setResult] = useState<{ price: number; eta: string | null } | null>(null);
+  const [result, setResult] = useState<{ price: number; etaDayIndex: number | null } | null>(null);
   const [errors, setErrors] = useState<{ service?: string; parcelType?: string }>({});
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -112,9 +107,10 @@ export function Calculator() {
     // Mirrors jquery.validate's default `required` message, since that's what the legacy
     // `../http/views/homecals.cfm` form used (`jQuery('.pricecalc_form').validate();`) — a
     // <label class="error"> next to the field, not a native HTML5 validation bubble.
+    const requiredMessage = t('requiredField');
     setErrors({
-      service: service ? undefined : 'This field is required.',
-      parcelType: parcelType ? undefined : 'This field is required.',
+      service: service ? undefined : requiredMessage,
+      parcelType: parcelType ? undefined : requiredMessage,
     });
     if (!service || !parcelType) return;
 
@@ -128,7 +124,7 @@ export function Calculator() {
       service,
       parcelType,
     );
-    setResult({ price, eta: computeEta(day, service) });
+    setResult({ price, etaDayIndex: computeEtaDayIndex(day, service) });
   };
 
   return (
@@ -138,7 +134,7 @@ export function Calculator() {
           <Input
             type="text"
             id="calc-weight"
-            placeholder="Weight"
+            placeholder={t('weightPlaceholder')}
             value={weight}
             onChange={(e) => setWeight(e.target.value)}
           />
@@ -146,7 +142,7 @@ export function Calculator() {
         <div className="input-group col col-3">
           <Select
             instanceId="cal_weighttype"
-            options={WEIGHT_UNITS}
+            options={weightUnits}
             value={weightUnit}
             onChange={(v) => setWeightUnit(v as WeightUnit)}
           />
@@ -157,7 +153,7 @@ export function Calculator() {
           <Input
             type="text"
             id="calc-length"
-            placeholder="Length"
+            placeholder={t('lengthPlaceholder')}
             value={length}
             onChange={(e) => setLength(e.target.value)}
           />
@@ -166,7 +162,7 @@ export function Calculator() {
           <Input
             type="text"
             id="calc-height"
-            placeholder="Height"
+            placeholder={t('heightPlaceholder')}
             value={height}
             onChange={(e) => setHeight(e.target.value)}
           />
@@ -175,7 +171,7 @@ export function Calculator() {
           <Input
             type="text"
             id="calc-width"
-            placeholder="Width"
+            placeholder={t('widthPlaceholder')}
             value={width}
             onChange={(e) => setWidth(e.target.value)}
           />
@@ -183,7 +179,7 @@ export function Calculator() {
         <div className="input-group col col-3">
           <Select
             instanceId="cal_type"
-            options={SIZE_UNITS}
+            options={sizeUnits}
             value={sizeUnit}
             onChange={(v) => setSizeUnit(v as SizeUnit)}
           />
@@ -193,8 +189,8 @@ export function Calculator() {
         <Select
           instanceId="cal_service"
           required
-          placeholder="Choose Service Type"
-          options={SERVICES}
+          placeholder={t('chooseServiceType')}
+          options={services}
           value={service}
           onChange={(v) => {
             setService(v as Service);
@@ -207,8 +203,8 @@ export function Calculator() {
         <Select
           instanceId="cal_ptype"
           required
-          placeholder="Choose Parcel Type"
-          options={PARCEL_TYPES}
+          placeholder={t('chooseParcelType')}
+          options={parcelTypes}
           value={parcelType}
           onChange={(v) => {
             setParcelType(v as ParcelType);
@@ -218,22 +214,22 @@ export function Calculator() {
         />
       </div>
       <div className="input-group">
-        <Select instanceId="cal_day" placeholder="Received in USA Day" options={DAYS} value={day} onChange={setDay} />
+        <Select instanceId="cal_day" placeholder={t('receivedInUsaDay')} options={days} value={day} onChange={setDay} />
       </div>
       <div className="btn-block">
         <button type="submit" className="btn btn-blue">
-          Calculate <i className="icon icon-arr2"></i>
+          {t('calculate')} <i className="icon icon-arr2"></i>
         </button>
       </div>
 
       {result && (
         <div className="btn-block">
           <h4 className="w-100">
-            Estimated Charge: {currency.format(result.price)}
-            {result.eta && (
+            {t('estimatedCharge')}: {currency.format(result.price)}
+            {result.etaDayIndex !== null && (
               <>
                 <br />
-                Estimated delivery: {result.eta}
+                {t('estimatedDelivery')}: {dayLabels[result.etaDayIndex - 1]}
               </>
             )}
           </h4>

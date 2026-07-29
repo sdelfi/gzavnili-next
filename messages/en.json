@@ -1,0 +1,216 @@
+{
+  "Header": {
+    "languageEn": "English",
+    "languageGe": "ქართული",
+    "phoneLabel": "Phone:",
+    "inbox": "Inbox",
+    "tracking": "Tracking",
+    "login": "Login",
+    "menu": "Menu",
+    "openNow": "Open Now",
+    "closedNow": "Closed Now",
+    "nav": {
+      "home": "Home",
+      "parcelService": "Parcel Service",
+      "cargo": "Cargo",
+      "courier": "Courier",
+      "prices": "Prices",
+      "contact": "Contact"
+    },
+    "trackingModal": {
+      "title": "Tracking package",
+      "placeholder": "Tracking No",
+      "submit": "Track"
+    },
+    "loginModal": {
+      "title": "Login",
+      "accountPlaceholder": "Account number",
+      "passwordPlaceholder": "Password",
+      "submit": "Login",
+      "or": "or",
+      "temporaryAccess": "Temporary Access",
+      "newToGzavnili": "New to Gzavnili?",
+      "createAccount": "Create an account",
+      "restoreAccess": "Restore Access!"
+    }
+  },
+  "Footer": {
+    "tagline": "Everyday is a new day for us and we work really hard to satisfy our customer everywhere.",
+    "newsletterLabel": "Newsletter Setup",
+    "copyright": "gzavnili.com. All rights reserved",
+    "navigation": {
+      "title": "Navigation",
+      "home": "Home",
+      "regularServices": "Regular services",
+      "onlineShopping": "Online shopping",
+      "cargoServices": "Cargo services",
+      "prices": "Prices",
+      "news": "News",
+      "contacts": "Contacts"
+    },
+    "usefulLinks": {
+      "title": "Useful Links",
+      "licenses": "Licenses",
+      "termsAndConditions": "Terms and Conditions",
+      "privacyPolicy": "Privacy Policy",
+      "forbiddenGoods": "Forbidden Goods",
+      "dangerousGoods": "Dangerous Goods",
+      "customClearance": "Custom Clearance"
+    },
+    "links": {
+      "title": "Links",
+      "faqs": "FAQs",
+      "getAQuotes": "Get a Quotes",
+      "volumeWeight": "Volume Weight"
+    }
+  },
+  "HomeHero": {
+    "strings": [
+      "All Type of Parcels?",
+      "Freight Shipments?",
+      "Fastest Shipping?",
+      "Pricing Options?",
+      "Lowest Price?",
+      "Tax-Free Shopping?"
+    ],
+    "answer": "– Yes!"
+  },
+  "TrustUs": {
+    "heading": "A Faster, Cheaper and Safer Shipping!",
+    "paragraphs": [
+      "Are you looking for a faster, cheaper and safer way to ship your goods? Gzavnilli invites you to enjoy the fastest and safest shipping services to Georgia",
+      "With over 12 years of excellent service delivery, Gzavnilli boasts of over 40,000 active customers served from our 7 offices from around the globe and did more than 250,000 Kgs of parcels sent on last year alone.",
+      "If you are looking for the best services at the best shipping rates to Georgia, get in touch with Gzavnilli, your trusted partner for shipping your goods from the USA to Georgia.",
+      "We guarantee the safety of your goods, speedy delivery, affordable prices and a variety of options to choose from depending on which service suits you most. Besides, we use our vehicles and license which means your goods are always in safe hands at all time."
+    ],
+    "closingParagraph": "If you are looking to shop online too, we have an incredible variety of online stores from which you can buy and ship to tax-free state, Delaware. Our listed online stores offer fantastic discounts, deals, and coupons. Just choose a store, buy an item(s), use any of our office addresses and declare the parcel in your account using the tracking number of your order. The rest is on us!",
+    "years": "12 Years",
+    "yearsLabel": "of Rich Experience",
+    "packages": "1.500.000 ",
+    "packagesLabel": "Packages Already Delivered",
+    "customers": "40,000",
+    "customersLabel": "Active Customers"
+  },
+  "SpecialOffer": {
+    "heading": "Special offer!",
+    "text": "Enjoy great Deals, Discounts and Coupons when you shop from our partner online stores. You may just get your shipping costs covered by coupons and discounts received while shopping at our partner stores.",
+    "cta": "Get Started Now!"
+  },
+  "WhyChooseUs": {
+    "heading": "8 MAIN REASONS WHY OUR<br/>CUSTOMERS LOVE GZAVNILLI<br/> SHIPING SERVICE?",
+    "items": [
+      {
+        "title": "Delivery Speed",
+        "desc": "If you prioritize speed, you’ll definitely love our services – we are the fastest."
+      },
+      {
+        "title": "Lower Price Guarantee",
+        "desc": "We've put a variety of strategies to ensure the shipping cost is lowest for each service."
+      },
+      { "title": "Frequency of Shipment", "desc": "We regularly ship; at list six times a week irrespective of size." },
+      {
+        "title": "Gzavnilli Vehicles",
+        "desc": "We use our vehicles for pickups and airport deliveries, so we’re always on time."
+      },
+      {
+        "title": "Pricing Options",
+        "desc": "Our different pricing options allows you select your preferred service and speed of delivery."
+      },
+      {
+        "title": "Gzavnili Licenses",
+        "desc": "With our license, we ship directly with airlines and give you the opportunity to have a fair price."
+      },
+      {
+        "title": "Tax-Free Shopping State",
+        "desc": "Our Tax-Free Zone guarantees you shopping without sales tax for any product."
+      },
+      {
+        "title": "We Are Open Every Day",
+        "desc": "Ship or drop at your convenient time. We operate 7 days a week to ensure reliability"
+      }
+    ],
+    "calculatorTitle": "Calculator",
+    "calculatorSubtitle": "Calculate price/arrival day"
+  },
+  "Calculator": {
+    "weightPlaceholder": "Weight",
+    "lengthPlaceholder": "Length",
+    "heightPlaceholder": "Height",
+    "widthPlaceholder": "Width",
+    "lb": "lb",
+    "kg": "kg",
+    "in": "in",
+    "cm": "cm",
+    "chooseServiceType": "Choose Service Type",
+    "regularService": "Regular Service",
+    "chooseParcelType": "Choose Parcel Type",
+    "online": "Online",
+    "personal": "Personal",
+    "receivedInUsaDay": "Received in USA Day",
+    "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    "calculate": "Calculate",
+    "requiredField": "This field is required.",
+    "estimatedCharge": "Estimated Charge",
+    "estimatedDelivery": "Estimated delivery"
+  },
+  "Faq": {
+    "heading": "Frequently Asked Questions",
+    "seeAllAnswers": "See all answers",
+    "items": [
+      {
+        "question": "Gzavnilli Shipping Days",
+        "answer": "Both Regular and Express services send parcels three times a week. Express service departure days are Monday, Wednesday, and Saturday while Regular parcels happen on Tuesday, Friday and Sunday."
+      },
+      {
+        "question": "How long is transit time?",
+        "answer": "Transit time for Express service From New York to Tbilisi is 3 calendar days (from day of departure), for regular shipment average time is 5-7 days."
+      },
+      {
+        "question": "How can I find office working schedule?",
+        "answer": "We are open throughout the year, except on Easter, Christmas and New Year. Check our contact us page for more details on this."
+      },
+      {
+        "question": "Does Gzavnilli Offer the Cheapest and Fastest Shipping Service?",
+        "answer": "Absolutely! We offer the cheapest, safest and fastest parcel services from the USA to Georgia. Our shipping services are unique, and no other company can match our standards and efficiency."
+      },
+      {
+        "question": "Which Payment Methods Does Gzavnilli Accept?",
+        "answer": "We accept almost all type of payments: PayPal, Debit or credit card payment, checks, money orders, cash, bill pay (from your online banking), wire transfer and bank deposit."
+      }
+    ]
+  },
+  "VideoTutorials": {
+    "heading": "Video Tutorials",
+    "watchVideo": "Watch video",
+    "videos": [
+      { "title": "How it Works?" },
+      { "title": "How to Declare?" },
+      { "title": "How to Pay?" },
+      { "title": "Where to send?" }
+    ]
+  },
+  "MobileApp": {
+    "heading": "Mobile app",
+    "text": "Download - Free tool, for good news! "
+  },
+  "News": {
+    "heading": "Latest Company News",
+    "items": [
+      {
+        "title": "More care on faster transit!",
+        "date": "November 14th, 2016",
+        "teaser": "Very excited to inform you, that for Express service we started using Block Space service. That means we are buying space every time on all flights from USA to Georgia, which virtually eliminates the delay if the flight is not canceled."
+      },
+      {
+        "title": "We do most frequent shipping!",
+        "date": "September 5th, 2016",
+        "teaser": "We are pleased to announce to the friends and supporters of Gzavnili LLC the release of the most frequent parcel service from USA to Georgia. There are 3 airlines involved in this service, with six connection fights. This service is available for all faithful customers with promise of best present-day service."
+      },
+      {
+        "title": "You select the price and speed!",
+        "date": "August 19th, 2016",
+        "teaser": "Another pleasant news for precious customers of the Gzavnili - now can choose how fast do you want to get a parcel from the United States 2 Georgia. At the same time, Gzavnili is guarantee that each type of service always will offer have the lowest price."
+      }
+    ]
+  }
+}

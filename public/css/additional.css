@@ -1,9 +1,0 @@
-/* part 2 */
-/* Background image moved to next/image inside OfferParallax.tsx (see that file) — lets
-   Next.js optimize/serve it (responsive sizes, automatic AVIF/WebP) instead of a flat
-   background: url() the browser has to fetch at full size regardless of viewport/format
-   support. This rule now only sets up the layer the <Image> is absolutely positioned into. */
-#offer-parallax {
-	position: relative;
-	overflow: hidden;
-}

@@ -2,28 +2,32 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { Lightbox } from '@/components/ui/Lightbox';
 
 // The real homepage content wires these up as `.fancybox.iframe` (jquery.fancybox.js) — see
 // src/components/ui/Lightbox.tsx for the plain-React/CSS recreation of fancybox's look used
 // here instead.
-type Video = { title: string; embedUrl: string; image: string };
-
-const VIDEOS: Video[] = [
-  { title: 'How it Works?', embedUrl: 'https://www.youtube.com/embed/ZuWziJarrEY', image: '/img/hiw/1.png' },
-  { title: 'How to Declare?', embedUrl: 'https://www.youtube.com/embed/dmarenxn5sQ', image: '/img/hiw/2.png' },
-  { title: 'How to Pay?', embedUrl: '', image: '/img/hiw/3.png' },
-  { title: 'Where to send?', embedUrl: 'https://www.youtube.com/embed/z_6LItMQkp4', image: '/img/hiw/4.png' },
+// embedUrl/image are positional (not translated) — index-matched to `VideoTutorials.videos`
+// in messages/*.json.
+const VIDEO_META = [
+  { embedUrl: 'https://www.youtube.com/embed/ZuWziJarrEY', image: '/img/hiw/1.png' },
+  { embedUrl: 'https://www.youtube.com/embed/dmarenxn5sQ', image: '/img/hiw/2.png' },
+  { embedUrl: '', image: '/img/hiw/3.png' },
+  { embedUrl: 'https://www.youtube.com/embed/z_6LItMQkp4', image: '/img/hiw/4.png' },
 ];
 
 export function VideoTutorials() {
-  const [open, setOpen] = useState<Video | null>(null);
+  const t = useTranslations('VideoTutorials');
+  const titles = (t.raw('videos') as { title: string }[]).map((v) => v.title);
+  const videos = VIDEO_META.map((meta, i) => ({ ...meta, title: titles[i] }));
+  const [open, setOpen] = useState<(typeof videos)[number] | null>(null);
 
   return (
     <section className="col col-6 videohelp">
-      <h3>Video Tutorials</h3>
+      <h3>{t('heading')}</h3>
       <div className="videos">
-        {VIDEOS.map((video) => (
+        {videos.map((video) => (
           <a
             key={video.title}
             className="item"
@@ -39,7 +43,7 @@ export function VideoTutorials() {
               <div className="img">
                 <Image alt={video.title} src={video.image} width={166} height={91} />
               </div>
-              <span>Watch video</span>
+              <span>{t('watchVideo')}</span>
             </div>
           </a>
         ))}

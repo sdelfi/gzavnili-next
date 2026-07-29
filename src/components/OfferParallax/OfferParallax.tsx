@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import s from './OfferParallax.module.css';
 
 // Replaces additional.js: $('#offer-parallax').parallax_bg("50%", 0.3, 615);
@@ -14,6 +15,7 @@ import s from './OfferParallax.module.css';
 // absolutely positioned element with `z-index: auto` still paints above static siblings,
 // negative z-index is what puts it back behind them.
 export function OfferParallax() {
+  const t = useTranslations('SpecialOffer');
   const sectionRef = useRef<HTMLElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
 
@@ -43,16 +45,13 @@ export function OfferParallax() {
     <section className={s.specialoffer} ref={sectionRef}>
       <div className="container">
         <div className={s.txt}>
-          <h2>Special offer!</h2>
-          <p>
-            Enjoy great Deals, Discounts and Coupons when you shop from our partner online stores. You may just get your
-            shipping costs covered by coupons and discounts received while shopping at our partner stores.
-          </p>
+          <h2>{t('heading')}</h2>
+          <p>{t('text')}</p>
           <div className={s.redline}></div>
 
           <div className="btn-block">
             <a href="" className="btn btn-red">
-              Get Started Now! <i className="icon icon-arr1"></i>
+              {t('cta')} <i className="icon icon-arr1"></i>
             </a>
           </div>
         </div>

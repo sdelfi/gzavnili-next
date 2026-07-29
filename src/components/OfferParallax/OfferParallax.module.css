@@ -11,54 +11,51 @@
   color: #fff;
   padding: 39px 0 80px;
 
-
   .txt {
     width: 50%;
 
     h2 {
-      color: #fff
+      color: #fff;
     }
-
 
     p {
       font-size: 18px;
       font-weight: 600;
-      margin: 10px 0
+      margin: 10px 0;
     }
 
     .redline {
-      margin: 30px 0 25px
+      margin: 30px 0 25px;
     }
   }
 }
-
 
 @media (max-width: 991px) {
   .specialoffer {
     padding: 20px 0 30px;
 
     .txt .redline {
-      margin: 20px 0 50px
+      margin: 20px 0 50px;
     }
   }
 }
 
 @media (max-width: 767px) {
   .specialoffer .txt {
-    width: 100%
+    width: 100%;
   }
 }
 
 @media (max-width: 479px) {
   .specialoffer .txt {
     h2 {
-      font-size: 36px
+      font-size: 36px;
     }
 
     p {
-      font-family: "Open Sans";
+      font-family: 'Open Sans';
       font-size: 14px;
-      font-weight: 600
+      font-weight: 600;
     }
   }
 }

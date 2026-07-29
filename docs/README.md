@@ -32,3 +32,4 @@ file or the live site.
 | 0005 | Header personalization via plain dynamic SSR (Cache Components/PPR tried, reverted) | [decisions/0005-cache-components.md](decisions/0005-cache-components.md) |
 | 0006 | No vendored legacy JS bundles; own/modern replacements only | [decisions/0006-no-vendored-legacy-js.md](decisions/0006-no-vendored-legacy-js.md) |
 | 0007 | Move large CSS `background: url()` images to `next/image` | [decisions/0007-next-image-for-css-backgrounds.md](decisions/0007-next-image-for-css-backgrounds.md) |
+| 0008 | i18n via next-intl, locale ids `en`/`ge` matching the legacy site | [decisions/0008-i18n-next-intl.md](decisions/0008-i18n-next-intl.md) |

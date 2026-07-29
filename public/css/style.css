@@ -5,7 +5,6 @@
 .calculator-section .calculator-infoblock:after,
 .courier-calc .courier-calc-block:after,
 .footer .footer-l .footer-signup .input-group:after,
-.header .bottombar:after,
 .helptoshop-section .helpproduct-f:after,
 .howonlineworks .howonlineworks-block:after,
 .input-group .radio-block label.error,
@@ -22,58 +21,7 @@ section.stores .store-coupons .coupon-list .item:after,
 section.stores .store-info-top:after {
     clear: both
 }
-html {
-    overflow: none;
-    padding: 0;
-    margin: 0
-}
-body {
-    overflow-x: hidden;
-    background: #fff;
-    font-family: "Open Sans", arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.4;
-    color: #4c4c4c
-}
-* {
-    box-sizing: border-box
-}
-input::-webkit-input-placeholder {
-    color: #818181;
-    opacity: 1;
-    font-weight: 400
-}
-input:-moz-placeholder {
-    color: #818181;
-    opacity: 1;
-    font-weight: 400
-}
-input::-moz-placeholder {
-    color: #818181;
-    opacity: 1;
-    font-weight: 400
-}
-input:-ms-input-placeholder {
-    color: #818181;
-    opacity: 1;
-    font-weight: 400
-}
-input:focus::-webkit-input-placeholder {
-    color: #818181;
-    opacity: .5
-}
-input:focus:-moz-placeholder {
-    color: #818181;
-    opacity: .5
-}
-input:focus::-moz-placeholder {
-    color: #818181;
-    opacity: .5
-}
-input:focus:-ms-input-placeholder {
-    color: #818181;
-    opacity: .5
-}
+
 .btn,
 .btn:hover,
 a.btn,
@@ -83,13 +31,16 @@ input.btn:hover {
     color: #fff;
     text-decoration: none
 }
+
 .featherlight .featherlight-content .featherlight-close-icon:hover,
 table.bluetable tr th a.table-sort:hover {
     opacity: .9
 }
+
 table {
     border-collapse: collapse
 }
+
 .btn,
 a.btn,
 input.btn {
@@ -104,11 +55,13 @@ input.btn {
     vertical-align: middle;
     cursor: pointer
 }
+
 .btn i.icon,
 a.btn i.icon,
 input.btn i.icon {
     margin: 0 2px 0 4px
 }
+
 .btn i.icon.icon-arr1,
 .btn i.icon.icon-arr2,
 a.btn i.icon.icon-arr1,
@@ -117,26 +70,31 @@ input.btn i.icon.icon-arr1,
 input.btn i.icon.icon-arr2 {
     line-height: 28px
 }
+
 .btn.btn-red,
 a.btn.btn-red,
 input.btn.btn-red {
     background: #ef2930
 }
+
 .btn.btn-red:hover,
 a.btn.btn-red:hover,
 input.btn.btn-red:hover {
     background: #fe494f
 }
+
 .btn.btn-blue,
 a.btn.btn-blue,
 input.btn.btn-blue {
     background: #20599d
 }
+
 .btn.btn-blue:hover,
 a.btn.btn-blue:hover,
 input.btn.btn-blue:hover {
     background: #3fa3f0
 }
+
 input[type=text],
 input[type=password],
 textarea {
@@ -149,23 +107,28 @@ textarea {
     border: 1px solid #bfbfbf;
     border-radius: 2px
 }
+
 .input-group {
     margin-bottom: 25px
 }
+
 .input-group .input-group {
     margin-bottom: 0
 }
+
 .input-group label {
     font-size: 15px;
     color: #818181;
     margin-bottom: 3px;
     display: block
 }
+
 .input-group input[type=text],
 .input-group input[type=password] {
     width: 100%;
     max-width: 600px
 }
+
 .input-group input[type=text].datepicker,
 .input-group input[type=password].datepicker {
     padding: 10px 50px 10px 17px;
@@ -174,27 +137,33 @@ textarea {
     cursor: pointer;
     background: url(../img/icons.png) 115px -5092px no-repeat
 }
+
 .input-group textarea {
     width: 100%;
     max-width: 600px;
     resize: none
 }
+
 .input-group .select2 {
-    width: 100%!important
+    width: 100% !important
 }
+
 .input-group.inline-group input,
 .input-group.inline-group label {
     display: inline-block;
     vertical-align: middle
 }
+
 .input-group .radio-block {
     padding: 5px 0
 }
+
 .input-group .radio-block:after,
 .input-group .radio-block:before {
     content: "";
     display: table
 }
+
 .input-group .radio-block label {
     float: left;
     margin: 2px 15px 2px 0;
@@ -202,32 +171,39 @@ textarea {
     line-height: 20px;
     font-weight: 600
 }
+
 .input-group .radio-block label:nth-child(3) {
     margin-right: 0
 }
+
 .input-group .radio-block label.error {
     display: block;
     width: 100%;
     font-weight: 400
 }
+
 div.icon img,
 i.icon {
     display: inline-block;
     vertical-align: middle
 }
+
 .form-smaller .input-group {
     margin-bottom: 18px
 }
+
 .form-smaller .input-group input[type=text],
 .form-smaller .input-group input[type=password],
 .form-smaller .input-group textarea {
     font-size: 13px
 }
+
 .select2-container--default .select2-selection--single {
     border-radius: 2px;
     border: 1px solid #bfbfbf;
     height: 42px
 }
+
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: #4c4c4c;
     line-height: 40px;
@@ -235,6 +211,7 @@ i.icon {
     font-family: "Open Sans";
     font-weight: 600
 }
+
 h1,
 h2,
 h3,
@@ -242,10 +219,12 @@ h4,
 p.subtitle {
     font-family: Montserrat
 }
+
 .select2-container--default .select2-selection--single .select2-selection__arrow {
     height: 40px;
     width: 25px
 }
+
 .select2-container--default .select2-selection--single .select2-selection__arrow b {
     background: url(../img/icons.png) -29px -2341px no-repeat;
     width: 10px;
@@ -253,39 +232,48 @@ p.subtitle {
     left: 4px;
     border: none
 }
+
 .select2-results__options .select2-results__option {
     padding: 6px 12px
 }
+
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
     background: #3fa3f0
 }
+
 .formline {
     margin: 10px 0 20px;
     height: 1px;
     background: #444
 }
+
 h1,
 h2,
 h3 {
     margin: 10px 0
 }
+
 .red {
     color: #ef2930
 }
+
 h1,
 h2,
 h3,
 h4 {
     color: #20599d
 }
+
 a {
     color: #3fa3f0;
     text-decoration: underline
 }
+
 a.edit,
 a:hover {
     text-decoration: none
 }
+
 h1,
 h2,
 h3,
@@ -294,29 +282,36 @@ h4 {
     font-weight: 400;
     line-height: 1.2
 }
+
 h1,
 h2 {
     font-size: 36px
 }
+
 h3 {
     font-size: 30px
 }
+
 h4 {
     font-size: 24px
 }
+
 p {
     margin: 15px 0
 }
+
 p.section-info {
     font-size: 18px;
     font-weight: 600;
     max-width: 80%;
     margin: 20px auto
 }
+
 p.subtitle {
     font-size: 24px;
     color: #666
 }
+
 .breadcrumbs,
 .breadcrumbs a,
 .page-heading,
@@ -324,156 +319,191 @@ p.subtitle {
 .page-heading h3 {
     color: #fff
 }
+
 img {
     max-width: 100%;
     height: auto
 }
+
 ul {
     margin: 0;
     padding: 0
 }
+
 .content ul {
     padding-left: 20px
 }
+
 .ralign {
     text-align: right
 }
+
 .calign {
     text-align: center
 }
+
 .calign .redline {
     margin: 17px auto 10px
 }
+
 .calign p.subtitle {
     margin: 0;
     line-height: 1
 }
+
 .nm880 {
     max-width: 880px
 }
+
 .nm600 {
     max-width: 600px
 }
+
 .pt20 {
     padding-top: 20px
 }
+
 i.icon {
     background: url(../img/icons.png) no-repeat
 }
+
 i.icon.icon-phone {
     width: 14px;
     height: 15px;
     background-position: 0 0
 }
+
 i.icon.icon-mail {
     width: 18px;
     height: 15px;
     background-position: 0 -51px
 }
+
 i.icon.icon-time {
     width: 18px;
     height: 17px;
     background-position: 0 -104px
 }
+
 i.icon.icon-tracking {
     width: 61px;
     height: 42px;
     background-position: 0 -149px
 }
+
 i.icon.icon-login {
     width: 40px;
     height: 42px;
     background-position: 0 -206px
 }
+
 i.icon.icon-inbox {
     width: 36px;
     height: 42px;
     background-position: 0 -5988px
 }
+
 i.icon.icon-slider-1 {
     width: 48px;
     height: 40px;
     background-position: 0 -274px
 }
+
 i.icon.icon-slider-2 {
     width: 40px;
     height: 40px;
     background-position: 0 -371px
 }
+
 i.icon.icon-slider-3 {
     width: 41px;
     height: 40px;
     background-position: 0 -472px
 }
+
 i.icon.icon-slider-4 {
     width: 39px;
     height: 40px;
     background-position: 0 -575px
 }
+
 i.icon.icon-arr1 {
     width: 12px;
     height: 13px;
     background-position: -35px -2251px
 }
+
 i.icon.icon-arr2 {
     width: 12px;
     height: 13px;
     background-position: -69px -2251px
 }
+
 i.icon.icon-whyus-1 {
     width: 64px;
     height: 41px;
     background-position: 0 -1204px
 }
+
 i.icon.icon-whyus-2 {
     width: 52px;
     height: 52px;
     background-position: 0 -1305px
 }
+
 i.icon.icon-whyus-3 {
     width: 47px;
     height: 44px;
     background-position: 5px -1414px
 }
+
 i.icon.icon-whyus-4 {
     width: 52px;
     height: 52px;
     background-position: 0 -1505px
 }
+
 i.icon.icon-whyus-5 {
     width: 61px;
     height: 61px;
     background-position: 0 -1596px
 }
+
 i.icon.icon-whyus-6 {
     width: 56px;
     height: 50px;
     background-position: 0 -1705px
 }
+
 i.icon.icon-whyus-7 {
     width: 60px;
     height: 57px;
     background-position: 0 -1801px
 }
+
 i.icon.icon-whyus-8 {
     width: 63px;
     height: 51px;
     background-position: 0 -1909px
 }
+
 i.icon.icon-info {
     width: 21px;
     height: 22px;
     background-position: 0 -2681px
 }
+
 i.icon.icon-info:hover {
     background-position: -40px -2681px
 }
+
 i.icon.icon-menu {
     position: relative;
     width: 22px;
     height: 18px;
     background: 0 0
 }
+
 i.icon.icon-menu span,
 i.icon.icon-menu span:after,
 i.icon.icon-menu span:before {
@@ -484,22 +514,26 @@ i.icon.icon-menu span:before {
     background: #fff;
     border-radius: 1px
 }
+
 i.icon.icon-menu span:before {
     content: "";
     top: 6px;
     left: 0
 }
+
 i.icon.icon-menu span:after {
     content: "";
     top: 12px;
     left: 0
 }
+
 i.icon.icon-menusm {
     position: relative;
     width: 16px;
     height: 13px;
     background: 0 0
 }
+
 i.icon.icon-menusm span,
 i.icon.icon-menusm span:after,
 i.icon.icon-menusm span:before {
@@ -510,54 +544,65 @@ i.icon.icon-menusm span:before {
     background: #fff;
     border-radius: 1px
 }
+
 i.icon.icon-menusm span:before {
     content: "";
     top: 5px;
     left: 0
 }
+
 i.icon.icon-menusm span:after {
     content: "";
     top: 10px;
     left: 0
 }
+
 i.icon.icon-play {
     width: 44px;
     height: 44px;
     background-position: -1px -2413px
 }
+
 i.icon.icon-play:hover {
     background-position: -64px -2413px
 }
+
 i.icon.icon-map {
     width: 22px;
     height: 30px;
     background-position: 0 -3159px
 }
+
 i.icon.icon-marker-1 {
     width: 37px;
     height: 54px;
     background-position: 0 -3232px
 }
+
 i.icon.icon-marker-2 {
     width: 37px;
     height: 54px;
     background-position: 0 -3314px
 }
+
 i.icon.icon-marker-3 {
     width: 37px;
     height: 54px;
     background-position: 0 -3398px
 }
+
 i.icon.icon-marker-4 {
     width: 37px;
     height: 54px;
     background-position: 0 -3479px
 }
+
 i.icon.icon-doc {
     width: 33px;
     height: 42px;
     background-position: 0 -3571px
 }
+
 i.icon.icon-greyround,
 i.icon.icon-inprocess,
 i.icon.icon-ok {
@@ -565,294 +610,355 @@ i.icon.icon-ok {
     height: 25px;
     border-radius: 50%
 }
+
 i.icon.icon-ok {
     background-position: 4px -3803px;
     background-color: #35c732
 }
+
 i.icon.icon-inprocess {
     background-position: 8px -3847px;
     background-color: #20599d
 }
+
 i.icon.icon-greyround {
     background: #dadada
 }
+
 i.icon.icon-markerbig {
     width: 30px;
     height: 38px;
     background-position: -48px -3151px
 }
+
 i.icon.icon-planeup {
     width: 67px;
     height: 38px;
     background-position: 0 -3655px
 }
+
 i.icon.icon-planedown {
     width: 59px;
     height: 42px;
     background-position: 0 -3721px
 }
+
 i.icon.icon-onlinestore {
     width: 57px;
     height: 54px;
     background-position: 0 -2733px
 }
+
 i.icon.icon-discount {
     width: 50px;
     height: 58px;
     background-position: 0 -2834px
 }
+
 i.icon.icon-taxfree {
     width: 45px;
     height: 48px;
     background-position: 0 -2944px
 }
+
 i.icon.icon-cashback {
     width: 56px;
     height: 53px;
     background-position: 0 -3040px
 }
+
 i.icon.icon-notice {
     width: 41px;
     height: 61px;
     background-position: 0 -4150px
 }
+
 i.icon.icon-prices-1 {
     width: 48px;
     height: 38px;
     background-position: 0 -4274px
 }
+
 i.icon.icon-prices-2 {
     width: 50px;
     height: 45px;
     background-position: 0 -4554px
 }
+
 i.icon.icon-prices-3 {
     width: 48px;
     height: 38px;
     background-position: 0 -4274px
 }
+
 i.icon.icon-prices-4 {
     width: 46px;
     height: 44px;
     background-position: 0 -4465px
 }
+
 i.icon.icon-prices-5 {
     width: 34px;
     height: 51px;
     background-position: 0 -4364px
 }
+
 i.icon.icon-prices-6 {
     width: 39px;
     height: 46px;
     background-position: 0 -4653px
 }
+
 i.icon.icon-edit {
     background-position: 0 -5021px
 }
+
 i.icon.icon-delete {
     width: 14px;
     height: 17px;
     background-position: 0 -5060px
 }
+
 i.icon.icon-add {
     width: 14px;
     height: 14px;
     background-position: 0 -5204px
 }
+
 i.icon.icon-calendar {
     width: 20px;
     height: 22px;
     background-position: 0 -5101px
 }
+
 i.icon.icon-archarr-l {
     width: 21px;
     height: 22px;
     background-position: 0 -5146px
 }
+
 i.icon.icon-archarr-r {
     width: 21px;
     height: 22px;
     background-position: -42px -5146px
 }
+
 i.icon.icon-search {
     width: 21px;
     height: 21px;
     background: url(../img/icons.png) 0 -5256px no-repeat
 }
+
 i.icon.icon-parcel-alert {
     width: 21px;
     height: 19px;
     background: url(../img/icons.png) 0 -5318px no-repeat
 }
+
 i.icon.icon-parcel-pay {
     width: 21px;
     height: 19px;
     background: url(../img/icons.png) 0 -5378px no-repeat
 }
+
 i.icon.icon-parcel-gpay {
     width: 21px;
     height: 19px;
     background: url(../img/icons.png) -50px -5378px no-repeat
 }
+
 i.icon.icon-parcel-ok {
     width: 20px;
     height: 19px;
     background: url(../img/icons.png) -50px -5317px no-repeat
 }
+
 i.icon.icon-edit {
     width: 19px;
     height: 16px;
     background: url(../img/icons.png) 0 -5441px no-repeat
 }
+
 i.icon.icon-removebig {
     width: 20px;
     height: 27px;
     background: url(../img/icons.png) 0 -5561px no-repeat
 }
+
 i.icon.icon-removegrey {
     width: 20px;
     height: 27px;
     background: url(../img/icons.png) -40px -5561px no-repeat
 }
+
 i.icon.icon-sort {
     width: 8px;
     height: 15px;
     background: url(../img/icons.png) 0 -5636px no-repeat
 }
+
 i.icon.icon-mail-back {
     width: 9px;
     height: 14px;
     background: url(../img/icons.png) 0 -5679px no-repeat
 }
+
 i.icon.icon-mail-del {
     width: 13px;
     height: 16px;
     background: url(../img/icons.png) 0 -5717px no-repeat
 }
+
 i.icon.icon-mail-reply {
     width: 15px;
     height: 12px;
     background: url(../img/icons.png) 0 -5754px no-repeat
 }
+
 i.icon.icon-mail-markunread {
     width: 16px;
     height: 14px;
     background: url(../img/icons.png) 0 -5788px no-repeat
 }
+
 i.icon.icon-mail-prev {
     width: 13px;
     height: 14px;
     background: url(../img/icons.png) 0 -5826px no-repeat
 }
+
 i.icon.icon-mail-next {
     width: 13px;
     height: 14px;
     background: url(../img/icons.png) -32px -5826px no-repeat
 }
+
 i.icon.icon-arr-blue1 {
     width: 13px;
     height: 14px;
     background: url(../img/icons.png) -60px -5826px no-repeat
 }
+
 i.icon.icon-arr-blue2 {
     width: 13px;
     height: 14px;
     background: url(../img/icons.png) -92px -5826px no-repeat
 }
+
 i.icon.icon-stores-menu-1 {
     width: 27px;
     height: 27px;
     background: url(../img/icons.png) 0 -6093px no-repeat
 }
+
 i.icon.icon-stores-menu-2 {
     width: 33px;
     height: 27px;
     background: url(../img/icons.png) 0 -6164px no-repeat
 }
+
 i.icon.icon-stores-menu-3 {
     width: 34px;
     height: 22px;
     background: url(../img/icons.png) 0 -6239px no-repeat
 }
+
 i.icon.icon-stores-menu-4 {
     width: 31px;
     height: 31px;
     background: url(../img/icons.png) 0 -6309px no-repeat
 }
+
 i.icon.icon-stores-menu-5 {
     width: 33px;
     height: 34px;
     background: url(../img/icons.png) 0 -6377px no-repeat
 }
+
 i.icon.icon-stores-menu-6 {
     width: 30px;
     height: 30px;
     background: url(../img/icons.png) 0 -6455px no-repeat
 }
+
 i.icon.icon-stores-1 {
     width: 65px;
     height: 67px;
     background: url(../img/icons.png) 0 -6556px no-repeat
 }
+
 i.icon.icon-stores-2 {
     width: 61px;
     height: 61px;
     background: url(../img/icons.png) 0 -6668px no-repeat
 }
+
 i.icon.icon-stores-3 {
     width: 60px;
     height: 60px;
     background: url(../img/icons.png) 0 -6789px no-repeat
 }
+
 i.icon.icon-stores-4 {
     width: 60px;
     height: 60px;
     background: url(../img/icons.png) 0 -6906px no-repeat
 }
+
 i.icon.icon-stores-5 {
     width: 65px;
     height: 54px;
     background: url(../img/icons.png) 0 -7023px no-repeat
 }
+
 i.icon.icon-stores-6 {
     width: 63px;
     height: 42px;
     background: url(../img/icons.png) 0 -7139px no-repeat
 }
+
 i.icon.icon-stores-7 {
     width: 49px;
     height: 49px;
     background: url(../img/icons.png) 0 -7243px no-repeat
 }
+
 i.icon.icon-stores-8 {
     width: 54px;
     height: 56px;
     background: url(../img/icons.png) 0 -7355px no-repeat
 }
+
 i.icon.icon-stores-9 {
     width: 50px;
     height: 50px;
     background: url(../img/icons.png) 0 -7477px no-repeat
 }
+
 .featherlight,
 .featherlight:last-of-type {
     background: rgba(0, 0, 0, .5)
 }
+
 a.edit {
     display: inline-block;
     vertical-align: middle;
     font-weight: 600
 }
+
 a.edit:hover span {
     text-decoration: underline
 }
+
 .featherlight {
     z-index: 9999
 }
+
 .featherlight .featherlight-content {
     padding: 35px 20px 25px;
     border-bottom: none
 }
+
 .featherlight .featherlight-content .featherlight-close-icon {
     width: 30px;
     height: 30px;
@@ -861,29 +967,36 @@ a.edit:hover span {
     background: url(../img/icons.png) 6px -4088px no-repeat;
     text-indent: -9999em
 }
+
 .breadcrumbs {
     font-size: 12px;
     margin: 0 0 13px
 }
+
 .page-heading {
     padding: 22px 0 15px
 }
+
 .page-heading h2 {
     color: #fff;
     font-size: 36px
 }
+
 .page-heading h3 {
     font-size: 24px
 }
+
 .more-block a.more,
 a.add-link span {
     font-size: 18px;
     font-family: Montserrat
 }
+
 .page-heading p {
     max-width: 60%;
     margin: 15px 0 10px
 }
+
 .redline {
     background: #ef2930;
     display: block;
@@ -891,19 +1004,23 @@ a.add-link span {
     height: 5px;
     margin: 10px 0
 }
+
 a.add-link {
     text-decoration: none;
     margin: 5px 0;
     display: inline-block
 }
+
 a.add-link span {
     margin-left: 3px;
     display: inline-block;
     vertical-align: middle
 }
+
 a.add-link:hover span {
     text-decoration: underline
 }
+
 .row {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -912,57 +1029,75 @@ a.add-link:hover span {
     flex-wrap: wrap;
     margin: 0 -10px
 }
+
 .row .col {
     padding: 0 10px
 }
+
 .row .col .input-group.nolabel {
     padding-top: 24px
 }
+
 .row .col.col-1 {
     width: 8.3333%
 }
+
 .row .col.col-2 {
     width: 16.6667%
 }
+
 .row .col.col-3 {
     width: 25%
 }
+
 .row .col.col-4 {
     width: 33.3333%
 }
+
 .row .col.col-5 {
     width: 41.6667%
 }
+
 .row .col.col-6 {
     width: 50%
 }
+
 .row .col.col-7 {
     width: 58.3333%
 }
+
 .row .col.col-8 {
     width: 66.6667%
 }
+
 .row .col.col-9 {
     width: 75%
 }
+
 .row .col.col-10 {
     width: 83.3333%
 }
+
 .row .col.col-11 {
     width: 91.6667%
 }
+
 .row .col.col-12 {
     width: 100%
 }
+
 .row.row-narrow {
     margin: 0 -5px
 }
+
 .row.row-narrow .col {
     padding: 0 5px
 }
+
 .more-block {
     text-align: right
 }
+
 .more-block a.more {
     position: relative;
     padding-right: 10px;
@@ -970,14 +1105,17 @@ a.add-link:hover span {
     text-decoration: none;
     color: #20599d
 }
+
 table.bluetable tr td,
 table.bluetable tr th {
     padding: 10px 10px 10px 30px;
     line-height: 20px
 }
+
 .more-block a.more:hover {
     text-decoration: underline
 }
+
 .more-block a.more:after {
     content: "";
     width: 5px;
@@ -989,19 +1127,24 @@ table.bluetable tr th {
     top: 50%;
     margin-top: -4px
 }
+
 .nomargin p {
     margin: 0
 }
+
 .form-txt p {
     margin: 0;
     font-weight: 600
 }
+
 table.bluetable {
     margin-bottom: 30px
 }
+
 table.bluetable.w100 {
     width: 100%
 }
+
 table.bluetable tr th {
     background: #20599d;
     color: #fff;
@@ -1011,11 +1154,13 @@ table.bluetable tr th {
     font-weight: 400;
     text-align: left
 }
+
 table.bluetable tr th a.table-sort {
     vertical-align: top;
     display: inline-block;
     margin-left: 5px
 }
+
 .icheckbox_minimal,
 .icon-parcel,
 .icon-tracking,
@@ -1023,17 +1168,21 @@ table.bluetable tr th a.table-sort {
     display: inline-block;
     vertical-align: middle
 }
+
 table.bluetable tr td div.icon img,
 table.bluetable tr td i.icon {
     margin: 0 10px 0 5px
 }
+
 table.bluetable tr:nth-child(2n) td {
     background: #f4f4f4
 }
+
 table.bluetable tr.highlighted {
     font-weight: 700;
     font-weight: 400
 }
+
 table.bluetable.bluetable-small tr th {
     padding: 8px 15px;
     border-width: 0 1px;
@@ -1041,105 +1190,128 @@ table.bluetable.bluetable-small tr th {
     border-color: #20599d;
     font-size: 14px
 }
+
 table.bluetable.bluetable-small tr td {
     padding: 8px 15px;
     font-size: 14px
 }
+
 table.bluetable.bluetable-small tr td:first-child {
     border-left: 1px solid #c7d5e6
 }
+
 table.bluetable.bluetable-small tr td:last-child {
     border-right: 1px solid #c7d5e6
 }
+
 table.bluetable.bluetable-small tr:last-child td {
     border-bottom: 1px solid #c7d5e6
 }
+
 .icon-parcel {
     background: url(../img/parcel-status.png) no-repeat
 }
+
 .icon-parcel.icon-parcel-1 {
     width: 70px;
     height: 60px;
     background-position: 0 0
 }
+
 .icon-parcel.icon-parcel-2 {
     width: 63px;
     height: 60px;
     background-position: -94px 0
 }
+
 .icon-parcel.icon-parcel-3 {
     width: 74px;
     height: 60px;
     background-position: -196px 0
 }
+
 .icon-parcel.icon-parcel-4 {
     width: 65px;
     height: 60px;
     background-position: -317px 0
 }
+
 .icon-parcel.icon-parcel-5 {
     width: 69px;
     height: 60px;
     background-position: -427px 0
 }
+
 .icon-parcel.icon-parcel-6 {
     width: 60px;
     height: 60px;
     background-position: -545px 0
 }
+
 .icon-parcel.icon-parcel-7 {
     width: 66px;
     height: 67px;
     background-position: -648px 6px
 }
+
 .icon-parcel.icon-parcel-8 {
     width: 86px;
     height: 67px;
     background-position: -758px 0
 }
+
 .icon-parcel.icon-parcel-9 {
     width: 81px;
     height: 67px;
     background-position: -871px 0
 }
+
 .icon-parcel.icon-parcel-10 {
     width: 75px;
     height: 67px;
     background-position: -996px 14px
 }
+
 .icon-parcel.icon-parcel-11 {
     width: 71px;
     height: 67px;
     background-position: -1112px 8px
 }
+
 .icon-tracking {
     background: url(../img/parcel-status.png) no-repeat
 }
+
 .icon-tracking.icon-tracking-1 {
     width: 38px;
     height: 47px;
     background-position: 0 -94px
 }
+
 .icon-tracking.icon-tracking-2 {
     width: 45px;
     height: 47px;
     background-position: -89px -94px
 }
+
 .icon-tracking.icon-tracking-3 {
     width: 51px;
     height: 49px;
     background-position: -178px -94px
 }
+
 .icon-tracking.icon-tracking-4 {
     width: 54px;
     height: 50px;
     background-position: -270px -94px
 }
+
 .icon-tracking.icon-tracking-5 {
     width: 41px;
     height: 45px;
     background-position: -370px -94px
 }
+
 .icheckbox_minimal,
 .iradio_minimal {
     margin: 0 3px 0 0;
@@ -1150,54 +1322,69 @@ table.bluetable.bluetable-small tr:last-child td {
     border: none;
     cursor: pointer
 }
+
 .icheckbox_minimal {
     background-position: 0 0
 }
+
 .icheckbox_minimal.hover {
     background-position: -20px 0
 }
+
 .icheckbox_minimal.checked {
     background-position: -40px 0
 }
+
 .icheckbox_minimal.disabled {
     background-position: -60px 0;
     cursor: default
 }
+
 .icheckbox_minimal.checked.disabled {
     background-position: -80px 0
 }
+
 .iradio_minimal {
     background-position: -99px 0
 }
+
 .iradio_minimal.hover {
     background-position: -119px 0
 }
+
 .iradio_minimal.checked {
     background-position: -139px 0
 }
+
 .iradio_minimal.disabled {
     background-position: -159px 0;
     cursor: default
 }
+
 .iradio_minimal.checked.disabled {
     background-position: -179px 0
 }
+
 label.checked-label {
     color: #3fa3f0
 }
+
 @media (-webkit-min-device-pixel-ratio: 1.25),
 (min-resolution: 120dpi) {
+
     .icheckbox_minimal,
     .iradio_minimal {
         background-image: url(minimal@2x.png);
         background-size: 200px 20px
     }
 }
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px
 }
+
 #login-block .or span,
 #login-block p,
 .trustus .trustus-r .advantages .adv-item,
@@ -1205,261 +1392,35 @@ label.checked-label {
 .whychooseus .col-8 .whyus-item .whyus-info .txt {
     font-family: Montserrat
 }
+
 .featherlight.w420 .featherlight-content {
     width: 420px
 }
-#login-block .login-social {
-    margin: 35px auto 30px;
-    text-align: center
-}
-#login-block .login-social .social-btn {
-    width: 90px;
-    height: 54px;
-    display: inline-block;
-    vertical-align: top;
-    margin: 0 8px 10px;
-    text-align: center
-}
-#login-block .login-social .social-btn:hover {
-    opacity: .95
-}
-#login-block .login-social .social-btn span {
-    display: inline-block
-}
-#login-block .login-social .social-btn.social-btn-fb {
-    background: #4461a5
-}
-#login-block .login-social .social-btn.social-btn-fb span {
-    width: 24px;
-    height: 29px;
-    margin-top: 12px;
-    background: url(../img/icons.png) -114px -1997px no-repeat
-}
-#login-block .login-social .social-btn.social-btn-tw {
-    background: #12a7e9
-}
-#login-block .login-social .social-btn.social-btn-tw span {
-    width: 28px;
-    height: 24px;
-    margin-top: 15px;
-    background: url(../img/icons.png) -114px -2053px no-repeat
-}
-#login-block .login-social .social-btn.social-btn-gp {
-    background: #f63f29
-}
-#login-block .login-social .social-btn.social-btn-gp span {
-    width: 40px;
-    height: 25px;
-    margin-top: 15px;
-    background: url(../img/icons.png) -114px -2105px no-repeat
-}
-.mobile-app .txt .app-btns .appstore-btn:hover,
-.mobile-app .txt .app-btns .googleplay-btn:hover {
-    opacity: .95
-}
-.trustus {
-    padding-top: 50px
-}
-.trustus .container {
-    display: table;
-    width: 100%
-}
-.trustus .trustus-l {
-    width: 42%;
-    display: table-cell;
-    text-align: center;
-    padding: 35px 4% 0 0;
-    font-size: 0;
-    vertical-align: bottom
-}
-.trustus .trustus-r {
-    width: 58%;
-    display: table-cell;
-    padding-bottom: 50px
-}
-.trustus .trustus-r p {
-    margin: 20px 0;
-    line-height: 1.5
-}
-.trustus .trustus-r .advantages {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    width: 100%;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
-    justify-content: space-between
-}
-.trustus .trustus-r .advantages .adv-item {
-    font-size: 18px;
-    font-weight: 700;
-    font-weight: 400;
-    line-height: 1.2;
-    position: relative;
-    color: #20599d
-}
-.trustus .trustus-r .advantages .adv-item:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: block;
-    z-index: -1;
-    background: url(../img/icons.png) 0 -687px no-repeat
-}
-.trustus .trustus-r .advantages .adv-item span {
-    font-size: 36px;
-    display: block;
-    line-height: 36px
-}
-.trustus .trustus-r .advantages .adv-item.item-1 {
-    padding: 10px 0 0 47px
-}
-.trustus .trustus-r .advantages .adv-item.item-1:before {
-    width: 78px;
-    height: 80px;
-    background-position: 0 -687px
-}
-.trustus .trustus-r .advantages .adv-item.item-2 {
-    padding: 12px 0 0 52px
-}
-.trustus .trustus-r .advantages .adv-item.item-2:before {
-    width: 78px;
-    height: 81px;
-    background-position: 0 -855px
-}
-.trustus .trustus-r .advantages .adv-item.item-3 {
-    padding: 10px 0 0 50px
-}
-.trustus .trustus-r .advantages .adv-item.item-3:before {
-    width: 81px;
-    height: 78px;
-    background-position: 0 -1013px
-}
-.specialoffer {
-    background: url(../img/home-special.jpg) 50% 50% no-repeat;
-    background-size: cover;
-    color: #fff;
-    padding: 39px 0 80px
-}
-.specialoffer .txt {
-    width: 50%
-}
-.specialoffer .txt h2 {
-    color: #fff
-}
-.specialoffer .txt p {
-    font-size: 18px;
-    font-weight: 600;
-    margin: 10px 0
-}
-.specialoffer .txt .redline {
-    margin: 30px 0 25px
-}
-.whychooseus {
-    background: #f9f9f9;
-    padding: 30px 0 35px
-}
-.whychooseus h2 {
-    margin: 0 auto 10px;
-    display: block;
-    text-transform: uppercase;
-    text-align: center
-}
-.whychooseus .redline {
-    margin: 10px auto
-}
-.whychooseus .container>.row {
-    margin-top: 40px
-}
-.whychooseus .col-8 {
-    padding-right: 1.7%;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-wrap: wrap;
-    flex-wrap: wrap;
-    position: relative;
-    -ms-flex-line-pack: justify;
-    align-content: space-between
-}
-.whychooseus .calc-block .heading a,
-.whychooseus .calc-block .heading h3 {
-    display: inline-block;
-    vertical-align: middle
-}
-.whychooseus .col-8 .whyus-item {
-    box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
-    padding: 20px 22px 10px;
-    min-height: 130px;
-    margin-bottom: 20px;
-    background: #fff;
-    width: 48.7%
-}
-.whychooseus .col-8 .whyus-item:nth-child(2n+1) {
-    margin-right: 2.6%
-}
-.whychooseus .col-8 .whyus-item:nth-last-child(-n+2) {
-    margin-bottom: 0
-}
-.whychooseus .col-8 .whyus-item i {
-    float: left
-}
-.whychooseus .col-8 .whyus-item .whyus-info {
-    margin-left: 75px
-}
-.whychooseus .col-8 .whyus-item .whyus-info .txt {
-    font-size: 18px;
-    font-weight: 700;
-    font-weight: 400;
-    margin: 7px 0;
-    line-height: 1.2
-}
-.whychooseus .col-8 .whyus-item .whyus-info .desc {
-    font-style: italic;
-    color: #666;
-    line-height: 1.2
-}
-.whychooseus .calc-block {
-    border: 2px solid #20599d;
-    background: #fff;
-    padding: 20px
-}
-.whychooseus .calc-block .heading h3 {
-    margin: 0 7px 0 0
-}
-.whychooseus .calc-block p {
-    font-size: 18px;
-    margin: 0 0 25px;
-    color: #818181
-}
-.whychooseus .calc-block form .btn-block {
-    text-align: center;
-    margin-top: 30px
-}
-.whychooseus .calc-block form .btn-block .btn {
-    width: 100%;
-    max-width: 220px
-}
+
 .faq-quesions-block {
     padding: 50px 0 120px
 }
+
 .faq h3 {
     text-transform: uppercase;
     margin: 10px 0 15px
 }
+
 .faq .faq-list {
     margin-bottom: 30px
 }
+
 .faq .faq-list .faq-item {
     border: 1px solid #bfbfbf;
     border-radius: 2px;
     margin-bottom: 15px;
     background: #f9f9f9
 }
+
 .faq .faq-list .faq-item:hover {
     background: #fff
 }
+
 .faq .faq-list .faq-item .question {
     padding: 15px 30px 15px 20px;
     line-height: 20px;
@@ -1467,6 +1428,7 @@ label.checked-label {
     position: relative;
     font-weight: 600
 }
+
 .faq .faq-list .faq-item .question:after {
     content: "";
     width: 12px;
@@ -1478,167 +1440,91 @@ label.checked-label {
     right: 20px;
     background: url(../img/icons.png) -27px -2370px no-repeat
 }
+
 .faq .faq-list .faq-item .question:hover {
     color: #3fa3f0;
     text-decoration: underline
 }
+
 .news .news-list .item .more,
 .news .news-list .item .title {
     text-decoration: none;
     font-family: Montserrat
 }
+
 .faq .faq-list .faq-item .answer {
     display: none;
     border-top: 1px solid #bfbfbf;
     padding: 10px 0 7px;
     font-weight: 600
 }
+
 .faq .faq-list .faq-item.active {
     padding: 10px 20px;
     background: #fff
 }
+
 .faq .faq-list .faq-item.active .question {
     margin: 0 0 10px;
     padding: 5px 10px 5px 0
 }
+
 .faq .faq-list .faq-item.active .question:after {
     background-position: 0 -2370px;
     right: 0
 }
+
 .faq .faq-list .faq-item.active .answer {
     display: block
 }
+
 .faq .faq-notsure {
     margin-bottom: 50px
 }
+
 .contact-form h3 {
     text-transform: uppercase;
     margin: 10px 0 15px
 }
+
 .contact-form p {
     font-weight: 600
 }
+
 .contact-form form a.btn {
     width: 220px
 }
-.mobile-app {
-    background: url(../img/home-app.jpg) 50% 50% no-repeat;
-    background-size: cover;
-    padding: 50px 0 80px
 }
-.mobile-app .txt {
-    background: rgba(32, 89, 157, .8);
-    color: #fff;
-    padding: 40px 25px 35px 45px;
-    width: 50%
-}
-.mobile-app .txt h3 {
-    color: #fff
-}
-.mobile-app .txt p {
-    font-size: 18px;
-    line-height: 1.2;
-    margin: 15px 0 30px
-}
-.mobile-app .txt .app-btns .appstore-btn {
-    background: url(../img/icons.png) 0 -2489px no-repeat;
-    width: 162px;
-    height: 60px;
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: 5px
-}
-.mobile-app .txt .app-btns .googleplay-btn {
-    background: url(../img/icons.png) 0 -2575px no-repeat;
-    width: 172px;
-    height: 60px;
-    display: inline-block;
-    vertical-align: middle
-}
-.footer .container,
-.news .news-list {
+
+.footer .container {
     display: -webkit-box;
     display: -ms-flexbox;
     -webkit-box-pack: justify
 }
+
 .news-page .news-list .item .item-r .more-block a.more:hover,
 .partners-page .page-heading .partner-info .gotoshop:hover,
 .share-block .share ul li a:hover,
 section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     opacity: .9
 }
-.news {
-    padding: 140px 0 90px
-}
-.news h2 {
-    text-align: center;
-    text-transform: uppercase
-}
-.news .redline {
-    margin: 10px auto 50px
-}
-.news .news-list {
-    display: flex;
-    -ms-flex-pack: justify;
-    justify-content: space-between
-}
-.news .news-list .item {
-    width: 32.2%
-}
-.news .news-list .item .img {
-    font-size: 0;
-    margin-bottom: 5px
-}
-.news .news-list .item .title {
-    color: #20599d;
-    font-size: 20px;
-    font-weight: 700;
-    font-weight: 400;
-    margin-bottom: 3px;
-    display: block
-}
-.news .news-list .item .date {
-    color: #888;
-    text-transform: uppercase;
-    font-family: Montserrat;
-    margin-bottom: 15px
-}
-.news .news-list .item .teaser {
-    font-weight: 600;
-    margin-bottom: 20px
-}
-.news .news-list .item .more {
-    font-size: 18px;
-    position: relative;
-    padding-right: 10px;
-    color: #20599d
-}
-.news .news-list .item .more:hover {
-    text-decoration: underline
-}
-.news .news-list .item .more:after {
-    content: "";
-    width: 5px;
-    height: 10px;
-    position: absolute;
-    right: 0;
-    top: 50%;
-    margin-top: -4px;
-    background: url(../img/icons.png) 0 -2337px no-repeat
-}
+
 .footer {
     background: #4c4c4c;
     color: #fff;
     padding: 32px 0 25px
 }
+
 .footer .container {
     display: flex;
     -ms-flex-pack: justify;
     justify-content: space-between
 }
+
 .footer .footer-l {
     width: 24%
 }
+
 .footer .footer-l .footer-lt {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -1649,9 +1535,11 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     width: 100%;
     margin-bottom: 12px
 }
+
 .footer .footer-l .footer-lt .txt {
     margin-bottom: 20px
 }
+
 .footer .footer-l .footer-lt .logo a {
     width: 126px;
     height: 53px;
@@ -1659,6 +1547,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     background: url(../img/icons.png) 0 -2159px no-repeat;
     text-indent: -9999em
 }
+
 .footer .footer-l .footer-lt ul.social {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -1671,37 +1560,45 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     padding-top: 20px;
     margin-bottom: 15px
 }
+
 .footer .footer-l .footer-lt ul.social li {
     display: inline-block;
     vertical-align: middle;
     text-indent: -9999em;
     background: url(../img/icons.png) 0 -2000px no-repeat
 }
+
 .footer .footer-l .footer-lt ul.social li a {
     display: block
 }
+
 .footer .footer-l .footer-lt ul.social li.icon-fb-footer {
     width: 15px;
     height: 20px;
     background-position: 0 -2000px
 }
+
 .footer .footer-l .footer-lt ul.social li.icon-tw-footer {
     width: 21px;
     height: 20px;
     background-position: 0 -2057px
 }
+
 .footer .footer-l .footer-lt ul.social li.icon-gp-footer {
     width: 21px;
     height: 20px;
     background-position: 0 -2108px
 }
+
 .footer .footer-l .txt {
     font-weight: 600;
     margin-bottom: 15px
 }
+
 .footer .footer-l .footer-signup {
     margin-bottom: 30px
 }
+
 .footer .footer-l .footer-signup label {
     font-family: Montserrat;
     font-size: 18px;
@@ -1711,16 +1608,19 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     margin-bottom: 8px;
     display: block
 }
+
 .footer .footer-l .footer-signup .input-group {
     width: 100%;
     position: relative;
     margin-bottom: 10px
 }
+
 .footer .footer-l .footer-signup .input-group:after {
     content: "";
     display: table;
     width: 100%
 }
+
 .footer .footer-l .footer-signup .input-group input#signup-input {
     height: 40px;
     width: 83%;
@@ -1729,6 +1629,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     border: none;
     border-radius: 0
 }
+
 .footer .footer-l .footer-signup .input-group a.signup-btn {
     width: 17%;
     float: left;
@@ -1737,6 +1638,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     display: inline-block;
     position: relative
 }
+
 .footer .footer-l .footer-signup .input-group a.signup-btn:before {
     content: "";
     width: 16px;
@@ -1748,9 +1650,11 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     margin: -8px 0 0 -8px;
     background: url(../img/icons.png) 0 -2248px no-repeat
 }
+
 .footer .footer-l .footer-copy {
     margin: 0
 }
+
 .footer .footer-c {
     width: 47%;
     display: -webkit-box;
@@ -1760,9 +1664,11 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     -ms-flex-pack: justify;
     justify-content: space-between
 }
+
 .footer .footer-c .footermenu {
     width: 30%
 }
+
 .footer .footer-c .footermenu .title {
     color: #3fa3f0;
     text-transform: uppercase;
@@ -1771,62 +1677,79 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     font-weight: 400;
     font-family: Montserrat
 }
+
 .footer .footer-c .footermenu ul li {
     margin: 10px 0;
     display: block
 }
+
 .footer .footer-c .footermenu ul li a {
     color: #fff;
     text-decoration: none;
     font-weight: 600
 }
+
 .footer .footer-c .footermenu ul li a:hover {
     text-decoration: underline
 }
+
 .footer .footer-r {
     width: 24%
 }
+
 .footer .footer-r select {
     width: 100%
 }
+
 .footer .footer-r .select2-container {
-    width: 100%!important
+    width: 100% !important
 }
+
 .footer .footer-r .select2-container--default .select2-selection--single {
     background: #dbdbdb;
     border-color: transparent;
     border-radius: 0
 }
+
 .footer .footer-r .select2-container--default .select2-selection--single .select2-selection__rendered {
     font-weight: 700;
     font-weight: 400;
     color: #818181
 }
+
 .footer .footer-r .footer-contacts .footer-contacts-item {
     display: none
 }
+
 .footer .footer-r .footer-contacts .footer-contacts-item.active {
     display: block
 }
+
 #select2-footer-office-results {
     background: #dbdbdb
 }
+
 .content {
     margin: 20px 0 30px
 }
+
 .privacy-page .page-heading {
     background: url(../img/bg-privacy.jpg) 50% 50% no-repeat;
     background-size: cover
 }
+
 .privacy-page .txt p {
     line-height: 1.3
 }
+
 .privacy-page .txt a {
     color: #20599d
 }
+
 .privacy-page .txt a:hover {
     color: #3fa3f0
 }
+
 .privacy-page .txt h3 {
     font-size: 14px;
     font-family: "Open Sans";
@@ -1834,10 +1757,12 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     margin: 20px 0 10px;
     color: #4c4c4c
 }
+
 .services-page .page-heading {
     background: url(../img/bg-services.jpg) 50% 50% no-repeat;
     background-size: cover
 }
+
 .services-page .services-list {
     margin: 45px 0;
     display: -webkit-box;
@@ -1849,16 +1774,20 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     -ms-flex-pack: justify;
     justify-content: space-between
 }
+
 .services-page .services-list .item {
     width: 23.5%;
     margin-bottom: 40px
 }
+
 .services-page .services-list .item .img {
     margin-bottom: 15px
 }
+
 .services-page .services-list .item .img a {
     line-height: 0
 }
+
 .services-page .services-list .item .title a {
     font-size: 24px;
     text-decoration: none;
@@ -1867,39 +1796,48 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     font-weight: 700;
     font-weight: 400
 }
+
 .parcel-page .page-heading {
     background: url(../img/bg-parcel.jpg) 50% 50% no-repeat;
     background-size: cover;
     padding-bottom: 50px
 }
+
 .parcel-page .whychooseus .col-8 .whyus-item {
     padding: 25px 22px 30px;
     min-height: 200px
 }
+
 .howworks {
     margin: 50px 0 145px
 }
+
 .howworks h2 {
     display: block;
     margin: 0 auto 10px;
     text-align: center
 }
+
 .howworks .redline {
     margin: 10px auto
 }
+
 .howworks .howworks-content {
     display: table;
     width: 100%;
     margin: 30px 0
 }
+
 .howworks .howworks-content .howworks-l {
     display: table-cell;
     vertical-align: middle;
     width: 56%
 }
+
 .howworks .howworks-content .howworks-l .step {
     margin-bottom: 24px
 }
+
 .howworks .howworks-content .howworks-l .step .step-num {
     width: 51px;
     height: 51px;
@@ -1916,9 +1854,11 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     display: block;
     float: left
 }
+
 .howworks .howworks-content .howworks-l .step .step-desc {
     margin: 0 0 0 75px
 }
+
 .howworks .howworks-content .howworks-l .step .step-desc .title {
     font-family: Montserrat;
     font-size: 18px;
@@ -1928,9 +1868,11 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     padding-top: 14px;
     line-height: 1.2
 }
+
 .howworks .howworks-content .howworks-l .step .step-desc p {
     margin: 3px 0
 }
+
 .howworks .howworks-content .howworks-l .step .step-desc .or {
     height: 20px;
     line-height: 20px;
@@ -1938,6 +1880,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     text-align: center;
     margin: 22px 0 2px
 }
+
 .howworks .howworks-content .howworks-l .step .step-desc .or:after {
     content: "";
     position: absolute;
@@ -1946,6 +1889,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     right: 0;
     border-bottom: 1px solid #d9d9d9
 }
+
 .howworks .howworks-content .howworks-l .step .step-desc .or span {
     font-weight: 600;
     text-transform: uppercase;
@@ -1956,6 +1900,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     z-index: 1;
     position: relative
 }
+
 .howworks .howworks-content .howworks-r {
     display: table-cell;
     vertical-align: middle;
@@ -1963,25 +1908,31 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     padding-left: 30px;
     text-align: right
 }
+
 .nextbatch {
     background: url(../img/parcel-airplane.jpg) 50% 50% no-repeat;
     background-size: cover;
     padding: 88px 0
 }
+
 .nextbatch h3 {
     font-size: 36px;
     color: #fff
 }
+
 .nextbatch h3 span {
     border-bottom: 5px solid #ef2930
 }
+
 .faq-videos-block {
     padding: 50px 0 80px
 }
+
 .videohelp h3 {
     text-transform: uppercase;
     margin: 10px 0 15px
 }
+
 .videohelp .videos {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -1992,18 +1943,22 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     -ms-flex-pack: justify;
     justify-content: space-between
 }
+
 .videohelp .videos .item {
     width: 50%;
     margin: 0 0 20px;
     line-height: 0;
     position: relative
 }
+
 .videohelp .videos .item:nth-child(2n+1) {
     padding-right: 10px
 }
+
 .videohelp .videos .item:nth-child(2n) {
     padding-left: 10px
 }
+
 .videohelp .videos .item a {
     line-height: 1.3;
     position: absolute;
@@ -2014,11 +1969,13 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     text-align: center;
     text-decoration: none
 }
+
 .videohelp .videos .item a i {
     position: relative;
     top: 50%;
     margin-top: -22px
 }
+
 .videohelp .videos .item a p {
     display: none;
     font-family: Montserrat;
@@ -2030,40 +1987,51 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     position: relative;
     top: 50%
 }
+
 .videohelp .videos .item a:hover {
     background: rgba(255, 255, 255, .8)
 }
+
 .videohelp .videos .item a:hover i {
     background-position: -64px -2413px
 }
+
 .videohelp .videos .item a:hover p {
     display: block
 }
+
 .faqs-page .page-heading {
     background: url(../img/bg-faqs.jpg) 50% 50% no-repeat;
     background-size: cover
 }
+
 .faqs-page .faq {
     padding: 30px 0
 }
+
 .faqs-page .faq .faq-block {
     margin: 20px 0
 }
+
 .faqs-page .faq .faq-block h3 {
     text-transform: none;
     margin: 10px 0
 }
+
 .faqs-page .faq .faq-block .faq-list {
     margin: 20px 0
 }
+
 .courier-page .page-heading {
     background: url(../img/bg-courier.jpg) 50% 50% no-repeat;
     background-size: cover;
     padding-bottom: 80px
 }
+
 .courier-pickup {
     padding: 50px 0 30px
 }
+
 .courier-pickup .pickup-locations {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -2075,6 +2043,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     justify-content: space-between;
     margin-top: 40px
 }
+
 .courier-pickup .pickup-locations .item {
     width: 24%;
     box-shadow: 0 1px 1px rgba(0, 0, 0, .15);
@@ -2082,12 +2051,15 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     margin-bottom: 20px;
     padding: 25px 18px
 }
+
 .courier-pickup .pickup-locations .item i {
     float: left
 }
+
 .courier-pickup .pickup-locations .item .item-r {
     margin-left: 37px
 }
+
 .courier-pickup .pickup-locations .item .item-r .title {
     font-family: Montserrat;
     font-size: 18px;
@@ -2095,9 +2067,11 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     font-weight: 400;
     padding: 3px 0
 }
+
 .courier-office {
     padding: 30px 0
 }
+
 .courier-office .courier-offices {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -2109,9 +2083,11 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     flex-wrap: wrap;
     padding-top: 25px
 }
+
 .courier-office .courier-offices .item {
     width: 49%
 }
+
 .courier-office .courier-offices .item .title {
     font-family: Montserrat;
     font-size: 18px;
@@ -2119,25 +2095,31 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     font-weight: 400;
     color: #20599d
 }
+
 .courier-office .courier-offices .item .desc {
     margin-bottom: 20px
 }
+
 .courier-office .courier-offices .item .map img {
     width: 100%
 }
+
 .courier-options {
     padding: 50px 0 30px
 }
+
 .courier-options .courier-options-cols {
     display: table;
     width: 100%;
     padding: 75px 0
 }
+
 .courier-options .courier-options-cols .courier-options-col {
     display: table-cell;
     width: 47%;
     padding-right: 3%
 }
+
 .courier-options .courier-options-cols .courier-options-col .title {
     font-size: 18px;
     font-family: Montserrat;
@@ -2146,10 +2128,12 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     color: #20599d;
     padding: 0 0 10px 75px
 }
+
 .courier-options .courier-options-cols .courier-options-col .item {
     margin-bottom: 32px;
     min-height: 50px
 }
+
 .courier-options .courier-options-cols .courier-options-col .item .item-l {
     width: 50px;
     height: 50px;
@@ -2164,19 +2148,23 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     line-height: 50px;
     float: left
 }
+
 .courier-options .courier-options-cols .courier-options-col .item .item-r {
     margin-left: 75px;
     padding-top: 3px
 }
+
 .courier-options .courier-options-cols .courier-options-col .item .item-r p {
     margin: 5px 0
 }
+
 .courier-options .courier-options-cols .or-col {
     display: table-cell;
     vertical-align: middle;
     position: relative;
     width: 30px
 }
+
 .courier-options .courier-options-cols .or-col:after {
     content: "";
     position: absolute;
@@ -2185,6 +2173,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     bottom: 10%;
     border-left: 1px solid #d9d9d9
 }
+
 .courier-options .courier-options-cols .or-col span {
     text-transform: uppercase;
     font-weight: 600;
@@ -2195,29 +2184,35 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     z-index: 1;
     position: relative
 }
+
 .courier-calc .courier-calc-txt {
     margin: 0 0 30px 300px
 }
+
 .courier-calc .courier-calc-txt p {
     max-width: 100%;
     text-align: left
 }
+
 .courier-calc .courier-calc-block {
     position: relative;
     border: 4px solid #20599d;
     padding: 0 40px 0 0
 }
+
 .courier-calc .courier-calc-block:after,
 .courier-calc .courier-calc-block:before {
     content: "";
     display: table
 }
+
 .courier-calc .courier-calc-block img.courier-calc-img {
     z-index: 1;
     position: absolute;
     bottom: 0;
     left: 40px
 }
+
 .courier-calc .courier-calc-block .courier-form {
     padding: 20px 0 30px;
     float: right;
@@ -2225,48 +2220,60 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     position: relative;
     z-index: 2
 }
+
 .courier-calc .courier-calc-block .courier-form .btn-block {
     text-align: right;
     padding-top: 5px
 }
+
 .courier-calc .courier-calc-block .courier-form .btn-block a.btn {
     width: 220px
 }
+
 .courier-georgia {
     padding: 70px 0
 }
+
 .courier-georgia .txt {
     padding-top: 15px
 }
+
 .courier-georgia .txt p {
     font-weight: 600
 }
+
 .courier-georgia .georgia-map {
     display: table;
     width: 100%;
     margin: 40px 0
 }
+
 .courier-georgia .georgia-map .map-markers {
     width: 33%;
     display: table-cell;
     vertical-align: middle;
     padding-right: 20px
 }
+
 .courier-georgia .georgia-map .map-markers .item {
     margin-bottom: 20px;
     min-height: 54px
 }
+
 .courier-georgia .georgia-map .map-markers .item i {
     float: left
 }
+
 .courier-georgia .georgia-map .map-markers .item .desc {
     padding-top: 12px;
     margin-left: 55px
 }
+
 .news-page .page-heading {
     background: url(../img/bg-news.jpg) 50% 50% no-repeat;
     background-size: cover
 }
+
 .news-page .news-list {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -2278,12 +2285,14 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     justify-content: space-between;
     padding: 45px 0 0
 }
+
 .news-page .news-list .item {
     width: 49%;
     margin-bottom: 65px;
     position: relative;
     min-height: 200px
 }
+
 .article-page .article .date:after,
 .news-page .news-list .item .item-r .date:after {
     height: 5px;
@@ -2294,20 +2303,25 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     left: 0;
     right: 0
 }
+
 .news-page .news-list .item .img {
     float: left;
     line-height: 0
 }
+
 .news-page .news-list .item .img a {
     display: block
 }
+
 .news-page .news-list .item .item-r {
     margin-left: 220px
 }
+
 .news-page .news-list .item .item-r .title {
     margin-bottom: 5px;
     min-height: 64px
 }
+
 .news-page .news-list .item .item-r .title a {
     text-transform: uppercase;
     color: #20599d;
@@ -2318,9 +2332,11 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     line-height: 1.1;
     text-decoration: none
 }
+
 .news-page .news-list .item .item-r .title a:hover {
     color: #3fa3f0
 }
+
 .news-page .news-list .item .item-r .date {
     color: #3fa3f0;
     font-family: Montserrat;
@@ -2329,11 +2345,13 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     position: relative;
     margin-bottom: 10px
 }
+
 .news-page .news-list .item .item-r .date:after {
     position: absolute;
     display: block;
     background: #ef2930
 }
+
 .news-page .news-list .item .item-r .date span {
     background: #fff;
     z-index: 1;
@@ -2341,25 +2359,31 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     display: inline-block;
     padding-right: 8px
 }
+
 .news-page .news-list .item .item-r .teaser {
     padding-bottom: 35px
 }
+
 .news-page .news-list .item .item-r .more-block {
     position: absolute;
     right: 0;
     bottom: 5px
 }
+
 .news-page .news-list .item .item-r .more-block a.more {
     text-decoration: underline;
     font-size: 16px
 }
+
 .article-page .page-heading {
     background: url(../img/bg-news.jpg) 50% 50% no-repeat;
     background-size: cover
 }
+
 .article-page .article {
     padding: 20px 0 70px
 }
+
 .article-page .article .date {
     color: #3fa3f0;
     font-family: Montserrat;
@@ -2368,12 +2392,14 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     position: relative;
     margin-bottom: 2px
 }
+
 .article-page .article .date:after {
     position: absolute;
     display: block;
     max-width: 360px;
     background: #ef2930
 }
+
 .article-page .article .date span {
     background: #fff;
     z-index: 1;
@@ -2381,80 +2407,99 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     display: inline-block;
     padding-right: 8px
 }
+
 .article-page .article .article-content:after,
 .article-page .article .article-content:before {
     content: "";
     display: table
 }
+
 .article-page .article .article-content .img {
     float: left;
     margin: 20px 20px 10px 0;
     line-height: 0
 }
+
 .share-block .share .txt,
 .share-block .share ul {
     vertical-align: middle;
     line-height: 16px;
     display: inline-block
 }
+
 .share-block {
     text-align: right;
     padding: 30px 0
 }
+
 .share-block .share .txt {
     font-family: Montserrat;
     color: #20599d;
     font-size: 16px;
     padding-right: 10px
 }
+
 .share-block .share ul {
     height: 16px
 }
+
 .share-block .share ul li {
     display: inline-block;
     margin: 0 15px
 }
+
 .share-block .share ul li a {
     text-indent: -9999em;
     display: block;
     width: 16px;
     height: 16px
 }
+
 .share-block .share ul li.share-icon-fb a {
     background: url(../img/icons.png) -56px -2005px no-repeat
 }
+
 .share-block .share ul li.share-icon-tw a {
     background: url(../img/icons.png) -60px -2061px no-repeat
 }
+
 .share-block .share ul li.share-icon-gp a {
     background: url(../img/icons.png) -60px -2112px no-repeat
 }
+
 .partners-page .page-heading {
     background: url(../img/bg-partners.jpg) 50% 50% no-repeat;
     background-size: cover
 }
+
 .partners-page .page-heading .partner-info .col-left {
     width: 65%
 }
+
 .partners-page .page-heading .partner-info .col-right {
     width: 35%
 }
+
 .partners-page .page-heading .partner-info h3 {
     margin-top: 0;
     font-size: 30px
 }
+
 .partners-page .page-heading .partner-info h3 a {
     color: #fff
 }
+
 .partners-page .page-heading .partner-info p {
     max-width: 80%
 }
+
 .partners-page .page-heading .partner-info .gotoshop {
     border-bottom: 1px solid #fff;
     display: inline-block;
     line-height: 1;
     margin: 10px 0 40px
 }
+
 .partners-page .page-heading .partner-info .gotoshop a {
     color: #fff;
     font-family: Montserrat;
@@ -2462,19 +2507,23 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     position: relative;
     text-decoration: none
 }
+
 .partners-page .partner-tabs .ptabs ul li.active span,
 .partners-page .partner-tabs .ptabs ul li:hover span {
     color: #20599d;
     border-bottom: 3px solid #20599d
 }
+
 .partners-page .page-heading .partner-info ul.advantages li,
 .partners-page .partner-tabs .ptabs ul li span {
     font-size: 24px;
     font-family: Montserrat
 }
+
 .partners-page .page-heading .partner-info ul.advantages {
     margin-top: 3px
 }
+
 .partners-page .page-heading .partner-info ul.advantages li {
     padding-left: 30px;
     font-weight: 700;
@@ -2482,6 +2531,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     list-style: none;
     position: relative
 }
+
 .partners-page .page-heading .partner-info ul.advantages li:before {
     content: "";
     width: 24px;
@@ -2493,35 +2543,44 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     margin-top: -10px;
     background: url(../img/icons.png) 0 -4839px no-repeat
 }
+
 .partners-page .partner-tabs {
     padding: 40px 0 50px
 }
+
 .partners-page .partner-tabs .ptabs {
     text-align: center
 }
+
 .partners-page .partner-tabs .ptabs ul li {
     display: inline-block;
     padding: 0 30px;
     cursor: pointer;
     vertical-align: top
 }
+
 .partners-page .partner-tabs .ptabs-content {
     padding: 50px 0 0
 }
+
 .partners-page .partner-tabs .ptabs-content .ptabs-content-item {
     display: none
 }
+
 .partners-page .partner-tabs .ptabs-content .ptabs-content-item.active {
     display: block
 }
+
 .partner-list {
     margin: 0 -1%
 }
+
 .partner-list:after,
 .partner-list:before {
     content: "";
     display: table
 }
+
 .partner-list .item {
     float: left;
     height: 170px;
@@ -2531,37 +2590,46 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     margin: 0 1% 25px;
     box-shadow: 0 1px 0 rgba(0, 0, 0, .1)
 }
+
 .partner-list .item .img {
     margin: 20px 10px 10px
 }
+
 .partner-list .item .img a img {
     height: 93px;
     width: auto;
     max-width: 100%
 }
+
 .partner-list .item .link a {
     font-family: Montserrat;
     font-weight: 700;
     font-weight: 400
 }
+
 .cargo-page .page-heading {
     background: url(../img/bg-cargo.jpg) 50% 50% no-repeat;
     background-size: cover;
     padding-bottom: 50px
 }
+
 .requestquote {
     padding: 30px 0 20px;
     background: #f9f9f9
 }
+
 .requestquote .calign {
     margin: 30px 0 35px
 }
+
 .requestquote .calign h2 {
     text-transform: uppercase
 }
+
 .requestquote .requestquote-block {
     margin: 35px 0
 }
+
 .requestquote .requestquote-block .whyus-list {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -2574,6 +2642,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     -ms-flex-pack: justify;
     justify-content: space-between
 }
+
 .requestquote .requestquote-block .whyus-list .whyus-item {
     box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
     padding: 15px 22px;
@@ -2581,12 +2650,15 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     background: #fff;
     width: 100%
 }
+
 .requestquote .requestquote-block .whyus-list .whyus-item i {
     float: left
 }
+
 .requestquote .requestquote-block .whyus-list .whyus-item .whyus-info {
     margin-left: 66px
 }
+
 .requestquote .requestquote-block .whyus-list .whyus-item .whyus-info .txt {
     font-family: Montserrat;
     font-size: 18px;
@@ -2595,43 +2667,54 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     margin: 7px 0;
     line-height: 1.2
 }
+
 .requestquote .requestquote-block .whyus-list .whyus-item .whyus-info .desc {
     font-style: italic;
     color: #666;
     line-height: 1.2
 }
+
 .requestquote .requestquote-block .whyus-list .whyus-item:last-child {
     margin-bottom: 0
 }
+
 .requestquote .requestquote-block form {
     border: 2px solid #20599d;
     padding: 25px 20px;
     background: #fff
 }
+
 .requestquote .requestquote-block form textarea#req-message {
     height: 133px
 }
+
 .requestquote .requestquote-block form .btn-block {
     text-align: right;
     margin: 2px 0 0
 }
+
 .requestquote .requestquote-block form .btn-block .btn {
     width: 220px
 }
+
 .howtolower {
     padding: 40px 0 30px
 }
+
 .howtolower .calign {
     margin-bottom: 30px
 }
+
 .howtolower .howtolower-list {
     margin: 60px 0;
     background: url(../img/cargo-airplane.jpg) 0 10% no-repeat;
     padding-left: 42%
 }
+
 .howtolower .howtolower-list .item {
     margin: 30px 0
 }
+
 .howtolower .howtolower-list .item .title {
     font-family: Montserrat;
     font-weight: 700;
@@ -2639,15 +2722,18 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     color: #20599d;
     font-size: 18px
 }
+
 .howtolower .howtolower-list .item p {
     margin: 0
 }
+
 .cargopickup {
     background: url(../img/cargo-airplane2.jpg) 50% 50% no-repeat;
     background-size: cover;
     padding: 100px 0 130px;
     margin-bottom: 40px
 }
+
 .documents .documents-list .item,
 .incoterms .incoterms-list .item {
     box-shadow: 0 1px 1px rgba(0, 0, 0, .15);
@@ -2655,22 +2741,27 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     width: 31.3333%;
     min-height: 160px
 }
+
 .cargopickup h3 {
     font-size: 36px;
     color: #fff;
     max-width: 500px
 }
+
 .cargopickup h3 span {
     border-bottom: 5px solid #ef2930
 }
+
 .incoterms-page .page-heading {
     background: url(../img/bg-documents.jpg) 50% 50% no-repeat;
     background-size: cover
 }
+
 .incoterms .intro {
     margin: 25px 0 20px;
     font-weight: 600
 }
+
 .incoterms .incoterms-list {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -2682,10 +2773,12 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     justify-content: left;
     margin: 20px 0 60px
 }
+
 .incoterms .incoterms-list .item {
     margin: 0 1% 20px;
     background: #f9f9f9
 }
+
 .incoterms .incoterms-list .item .title {
     font-family: Montserrat;
     font-size: 18px;
@@ -2693,14 +2786,17 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     font-weight: 400;
     color: #20599d
 }
+
 .documents-page .page-heading {
     background: url(../img/bg-documents.jpg) 50% 50% no-repeat;
     background-size: cover
 }
+
 .documents .intro {
     margin: 25px 0 20px;
     font-weight: 600
 }
+
 .documents .documents-list {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -2712,16 +2808,20 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     justify-content: left;
     margin: 20px 0 60px
 }
+
 .documents .documents-list .item {
     margin: 0 1% 20px;
     background: #f9f9f9
 }
+
 .documents .documents-list .item i {
     float: left
 }
+
 .documents .documents-list .item .item-r {
     margin-left: 55px
 }
+
 .documents .documents-list .item .item-r .title {
     font-family: Montserrat;
     font-size: 18px;
@@ -2730,19 +2830,24 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     color: #20599d;
     margin: 10px 0
 }
+
 .documents .documents-list .item .item-r .links {
     text-align: right
 }
+
 .documents .documents-list .item .item-r .links a {
     margin-left: 10px
 }
+
 .licenses-page .page-heading {
     background: url(../img/bg-privacy.jpg) 50% 50% no-repeat;
     background-size: cover
 }
+
 .licenses .licenses-cols {
     padding: 75px 0
 }
+
 .licenses .licenses-cols .licenses-col .img {
     text-align: center;
     height: 160px;
@@ -2756,6 +2861,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     -ms-flex-pack: center;
     justify-content: center
 }
+
 .tracking-page .page-heading .tracking-form .input-group:after,
 .tracking-page .page-heading .tracking-form .input-group:before,
 .tracking-points:after,
@@ -2763,16 +2869,20 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     display: table;
     content: ""
 }
+
 .licenses .licenses-cols .licenses-col .txt .more-block {
     margin-top: 30px
 }
+
 .tracking-page .page-heading {
     background: url(../img/bg-tracking.jpg) 50% 50% no-repeat;
     background-size: cover
 }
+
 .tracking-page .page-heading .tracking-form {
     float: right
 }
+
 .tracking-page .page-heading .tracking-form .input-group input[type=text] {
     width: 235px;
     height: 40px;
@@ -2780,6 +2890,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     border-radius: 0;
     float: left
 }
+
 .tracking-page .page-heading .tracking-form .input-group input[type=submit] {
     width: 47px;
     border: none;
@@ -2789,65 +2900,82 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     text-indent: -9999em;
     cursor: pointer
 }
+
 .tracking-points {
     margin: -30px 0 70px
 }
+
 .tracking-points .end-point,
 .tracking-points .starting-point {
     width: 180px
 }
+
 .tracking-points .end-point .icons,
 .tracking-points .starting-point .icons {
     border-bottom: 2px solid #20599d;
     padding-bottom: 3px;
     margin-bottom: 10px
 }
+
 .tracking-points .end-point .date,
 .tracking-points .starting-point .date {
     font-size: 18px;
     line-height: 1.2;
     margin-bottom: 15px
 }
+
 .tracking-points .end-point .location,
 .tracking-points .starting-point .location {
     font-size: 18px
 }
+
 .tracking-points .starting-point {
     float: left
 }
+
 .tracking-points .starting-point .icons {
     padding-top: 4px
 }
+
 .tracking-points .starting-point .icons .icon {
     margin-right: 5px
 }
+
 .tracking-points .end-point {
     float: right
 }
+
 .tracking-points .end-point .icons {
     text-align: right
 }
+
 .tracking-points .end-point .icons .icon {
     margin-left: 5px
 }
+
 .tracking {
     padding: 35px 0 100px
 }
+
 .tracking .tracking-details .shipment-facts table tr td,
 .tracking .tracking-details .travel-history table tr td {
     padding: 8px 15px
 }
+
 .tracking .tracking-results {
     text-align: center
 }
+
 .tracking .tracking-results h2 {
     font-size: 24px;
     margin: 10px 0 5px
 }
+
 .tracking .tracking-results .tracking-no {
     font-family: Montserrat;
     font-size: 18px
 }
+
 .tracking .tracking-details .travel-history h3,
 .tracking .tracking-results .timeline .step .desc,
 .tracking .tracking-results .timeline-mobile {
@@ -2855,12 +2983,14 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     color: #20599d;
     font-family: Montserrat
 }
+
 .tracking .tracking-results .timeline {
     width: 100%;
     max-width: 380px;
     margin: 40px auto 0;
     position: relative
 }
+
 .tracking .tracking-results .timeline:after {
     width: 100%;
     content: "";
@@ -2873,6 +3003,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     margin-top: -1px;
     z-index: 0
 }
+
 .tracking .tracking-results .timeline .timeline-inner {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -2885,6 +3016,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     z-index: 1;
     position: relative
 }
+
 .tracking .tracking-results .timeline .step {
     position: relative;
     z-index: 1;
@@ -2893,6 +3025,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     background: #dadada;
     border-radius: 50%
 }
+
 .tracking .tracking-results .timeline .step .desc {
     position: absolute;
     top: 35px;
@@ -2903,20 +3036,24 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     text-align: center;
     line-height: 1.1
 }
+
 .tracking .tracking-results .timeline-mobile {
     display: none;
     font-weight: 700;
     font-weight: 400;
     margin: 20px 0
 }
+
 .tracking .tracking-details .travel-history h3 {
     font-weight: 700;
     font-weight: 400;
     margin-bottom: 15px
 }
+
 .tracking .tracking-details .travel-history table {
     width: 100%
 }
+
 .tracking .tracking-details .travel-history table tr th {
     font-weight: 700;
     color: #fff;
@@ -2927,24 +3064,30 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     border-color: #20599d;
     text-align: left
 }
+
 .tracking .tracking-details .shipment-facts table tr:nth-child(2n+1) td,
 .tracking .tracking-details .travel-history table tr:nth-child(2n) td {
     background: #efefef
 }
+
 .tracking .tracking-details .travel-history table tr td:first-child {
     border-left: 1px solid #c7d5e6
 }
+
 .tracking .tracking-details .travel-history table tr td:last-child {
     border-right: 1px solid #c7d5e6
 }
+
 .tracking .tracking-details .travel-history table tr:last-child td {
     border-bottom: 1px solid #c7d5e6
 }
+
 .tracking .tracking-details .travel-history .travel-history-mobile {
     display: none;
     margin: 20px 0;
     font-size: 18px
 }
+
 .tracking .tracking-details .shipment-facts h3 {
     font-size: 24px;
     font-family: Montserrat;
@@ -2953,16 +3096,19 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     color: #20599d;
     margin-bottom: 15px
 }
+
 .tracking .tracking-details .shipment-facts table {
     width: 100%;
     border: 1px solid #dfdfdf
 }
+
 .online-page .page-heading {
     background: url(../img/bg-online.jpg) 50% 50% no-repeat;
     background-size: cover;
     padding: 22px 0 85px;
     position: relative
 }
+
 .stores-menu-block {
     position: absolute;
     bottom: 0;
@@ -2974,14 +3120,17 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     margin: 0 auto;
     z-index: 10
 }
+
 .stores-menu-block ul.stores-menu {
     display: table;
     width: 100%
 }
+
 .stores-menu-block ul.stores-menu li {
     display: table-cell;
     vertical-align: middle
 }
+
 .stores-menu-block ul.stores-menu li a {
     color: #fff;
     font-size: 18px;
@@ -2992,40 +3141,49 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     border-bottom: 7px solid transparent;
     display: inline-block
 }
+
 .stores-menu-block ul.stores-menu li a .svg-icon {
     margin-right: 5px;
     display: inline-block;
     vertical-align: middle;
     color-fill: #fff
 }
+
 .stores-menu-block ul.stores-menu li a .svg-icon.svg-icon-1 {
     width: 27px;
     height: 27px
 }
+
 .stores-menu-block ul.stores-menu li a .svg-icon.svg-icon-2 {
     width: 33px;
     height: 27px
 }
+
 .stores-menu-block ul.stores-menu li a .svg-icon.svg-icon-3 {
     width: 34px;
     height: 22px
 }
+
 .stores-menu-block ul.stores-menu li a .svg-icon.svg-icon-4 {
     width: 31px;
     height: 31px
 }
+
 .stores-menu-block ul.stores-menu li a .svg-icon.svg-icon-5 {
     width: 33px;
     height: 34px
 }
+
 .stores-menu-block ul.stores-menu li a .svg-icon.svg-icon-6 {
     width: 30px;
     height: 30px
 }
+
 .stores-menu-block ul.stores-menu li a span {
     vertical-align: middle;
     display: inline-block
 }
+
 .howonlineworks .howonlineworks-block:after,
 .howonlineworks .howonlineworks-block:before,
 .partnershops .partnershops-group .partnershops-heading:after,
@@ -3035,72 +3193,90 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     display: table;
     content: ""
 }
+
 .stores-menu-block ul.stores-menu li.active a,
 .stores-menu-block ul.stores-menu li:hover a {
     border-bottom-color: #3fa3f0
 }
+
 .whychooseus-online {
     padding: 30px 0;
     margin-bottom: 65px
 }
+
 .whychooseus-online .calign h2 {
     text-transform: uppercase
 }
+
 .whychooseus-online .calign .redline {
     margin-top: 10px
 }
+
 .whychooseus-online .calign p {
     margin: 30px auto;
     max-width: 75%
 }
+
 .whychooseus-online .whychooseus-online-list .item {
     width: 30%;
     margin-right: 5%;
     float: left
 }
+
 .whychooseus-online .whychooseus-online-list .item:last-child {
     margin-right: 0
 }
+
 .whychooseus-online .whychooseus-online-list .item .img {
     float: left;
     width: 70px;
     text-align: center
 }
+
 .whychooseus-online .whychooseus-online-list .item .item-r {
     margin-left: 85px
 }
+
 .whychooseus-online .whychooseus-online-list .item .title {
     font-family: Montserrat;
     font-weight: 600;
     color: #4c4c4c;
     font-size: 18px
 }
+
 .whychooseus-online .whychooseus-online-list .item p {
     color: #666;
     font-style: italic;
     margin: 5px 0;
     font-size: 14px
 }
+
 .howonlineworks {
     padding: 0 0 100px
 }
+
 .howonlineworks .howonlineworks-block {
     margin: 60px 0 130px
 }
+
 .howonlineworks .howonlineworks-block:last-child {
     margin-bottom: 0
 }
+
 .howonlineworks .howonlineworks-block .img {
     float: right;
     padding: 0 0 10px 20px
 }
+
 .howonlineworks .howonlineworks-block .info h3 {
     font-size: 24px;
     margin: 0 0 20px
 }
+
 .howonlineworks .howonlineworks-block .info .item {
     margin-bottom: 10px
 }
+
 .howonlineworks .howonlineworks-block .info .item .title {
     font-family: Montserrat;
     font-weight: 700;
@@ -3108,32 +3284,41 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     font-size: 18px;
     margin-bottom: 5px
 }
+
 .howonlineworks .howonlineworks-block .info .item p {
     margin: 0 0 20px
 }
+
 .partnershops .partnershops-group {
     margin-bottom: 50px
 }
+
 .partnershops .partnershops-group .partnershops-heading {
     padding-top: 5px;
     margin-bottom: 30px
 }
+
 .partnershops .partnershops-group .partnershops-heading:after {
     clear: both
 }
+
 .partnershops .partnershops-group .partnershops-heading .title {
     float: left
 }
+
 .partnershops .partnershops-group .partnershops-heading .title a {
     text-decoration: none;
     color: #20599d
 }
+
 .partnershops .partnershops-group .partnershops-heading .title a:hover {
     color: #3fa3f0
 }
+
 .partnershops .partnershops-group .partnershops-heading .title i.icon {
     margin-right: 10px
 }
+
 .partnershops .partnershops-group .partnershops-heading .title span {
     display: inline-block;
     vertical-align: middle;
@@ -3142,33 +3327,40 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     font-weight: 700;
     font-weight: 400
 }
+
 .partnershops .partnershops-group .partnershops-heading .seeall {
     float: right;
     padding-top: 15px;
     font-size: 18px
 }
+
 .partnershops .partnershops-group .partnershops-list {
     margin-bottom: 10px
 }
+
 .partnershops .partnershops-group .partnershops-list:after,
 .partnershops .partnershops-group .partnershops-list:before {
     content: "";
     display: table
 }
+
 .partnershops .partnershops-group .partnershops-list .item {
     float: left;
     width: 23.5%;
     margin: 0 2% 3% 0
 }
+
 .partnershops .partnershops-group .partnershops-list .item:nth-child(4n) {
     margin-right: 0
 }
+
 .partnershops .partnershops-group .partnershops-list .item a {
     display: block;
     position: relative;
     line-height: 0;
     padding: 13% 20%
 }
+
 .partnershops .partnershops-group .partnershops-list .item a .store-logo {
     position: relative;
     width: 100%;
@@ -3178,6 +3370,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     text-align: center;
     vertical-align: middle
 }
+
 .partnershops .partnershops-group .partnershops-list .item a .store-logo span {
     text-align: center;
     width: 120px;
@@ -3186,6 +3379,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     -webkit-transform: translateY(-50%);
     transform: translateY(-50%)
 }
+
 .partnershops .partnershops-group .partnershops-list .item a .store-logo img {
     position: relative;
     top: 50%;
@@ -3194,91 +3388,114 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     max-width: 120px;
     margin: 0 auto
 }
+
 .partnershops .partnershops-group .partnershops-list .item .partner-tooltip {
     display: none
 }
+
 .partnershops .partnershops-group .btn-blue {
     width: 220px
 }
+
 .tooltipster-sidetip .tooltipster-content {
     padding: 0;
     overflow: hidden
 }
+
 .tooltipster-sidetip .tooltipster-content .partner-tooltip {
     line-height: 0
 }
+
 .tooltipster-sidetip .tooltipster-content .partner-tooltip img {
     max-width: 300px
 }
+
 .helptoshop {
     text-align: center;
     margin: 25px 0 0
 }
+
 .helptoshop img {
     padding-left: 30px
 }
+
 .helptoshop h3 {
     margin: 30px 0 10px
 }
+
 .helptoshop p.subtitle {
     font-size: 15px;
     color: #818181;
     max-width: 400px;
     margin: 0 auto 50px
 }
+
 .helptoshop p {
     margin: 20px 0
 }
+
 .helptoshop .helptoshop-form input {
     width: 100%;
     font-size: 13px
 }
+
 .helptoshop .helptoshop-form textarea {
     font-size: 13px
 }
+
 .helptoshop .helptoshop-form .btn-block a.add {
     font-size: 16px;
     margin-right: 20px
 }
+
 .helptoshop .helptoshop-form .btn-block a.btn {
     width: 175px
 }
+
 .stores-page .page-heading {
     background: url(../img/bg-stores.jpg) 50% 50% no-repeat;
     background-size: cover;
     padding: 22px 0 85px;
     position: relative
 }
+
 section.stores {
     padding: 27px 0 80px
 }
+
 section.stores .store-back {
     padding-bottom: 27px
 }
+
 section.stores .store-back a {
     text-decoration: none;
     border-bottom: 1px solid #3fa3f0;
     font-size: 16px;
     font-family: Montserrat
 }
+
 section.stores .store-back a:hover {
     border-bottom: none
 }
+
 section.stores .store-info-top {
     margin-bottom: 20px;
     position: relative
 }
+
 section.stores .store-info-top:after,
 section.stores .store-info-top:before {
     content: "";
     display: table
 }
+
 section.stores .store-info-top .store-info-l {
     width: 60%;
     float: left;
     margin-bottom: 20px;
     padding-right: 30px
 }
+
 section.stores .store-info-top .store-info-l .store-img {
     display: block;
     line-height: 0;
@@ -3286,6 +3503,7 @@ section.stores .store-info-top .store-info-l .store-img {
     position: relative;
     max-width: 580px
 }
+
 section.stores .store-info-top .store-info-l .store-img .store-logo {
     background: #fff;
     display: block;
@@ -3296,6 +3514,7 @@ section.stores .store-info-top .store-info-l .store-img .store-logo {
     line-height: 140px;
     font-size: 20px
 }
+
 section.stores .store-info-top .store-info-l .store-img .store-logo img {
     margin-left: auto;
     margin-right: auto;
@@ -3303,71 +3522,88 @@ section.stores .store-info-top .store-info-l .store-img .store-logo img {
     vertical-align: middle;
     max-width: 100%
 }
+
 section.stores .store-info-top .store-info-r {
     width: 40%;
     float: left;
     margin-bottom: 20px
 }
+
 section.stores .store-info-top .store-info-r p {
     color: #20599d;
     font-size: 18px;
     margin: 0 0 12px
 }
+
 section.stores .store-info-top .store-info-r .store-pmethods {
     margin-bottom: 40px
 }
+
 section.stores .store-info-top .store-info-r .store-pmethods .method {
     display: inline-block;
     vertical-align: middle;
     margin: 0 10px 10px 0
 }
+
 section.stores .store-info-top .store-info-r .store-freeshipping {
     background: url(../img/usa-map.jpg) 5px 30px no-repeat;
     min-height: 160px
 }
+
 section.stores .store-info-top .store-info-r .store-freeshipping p span {
     color: #000
 }
+
 section.stores .store-info-txt {
     margin-bottom: 50px
 }
+
 section.stores .store-info-txt p {
     font-size: 14px
 }
+
 section.stores .store-coupons h3 {
     font-size: 24px;
     font-family: Montserrat;
     font-weight: 400;
     margin-bottom: 20px
 }
+
 section.stores .store-coupons .coupon-list {
     margin-bottom: 50px
 }
+
 section.stores .store-coupons .coupon-list .item {
     border-bottom: 1px solid #d1d1d1;
     margin-bottom: 18px;
     padding-bottom: 18px
 }
+
 section.stores .store-coupons .coupon-list .item:after,
 section.stores .store-coupons .coupon-list .item:before {
     content: "";
     display: table
 }
+
 section.stores .store-coupons .coupon-list .item .item-l {
     float: left;
     width: 67%
 }
+
 section.stores .store-coupons .coupon-list .item .item-l .title {
     font-size: 18px
 }
+
 section.stores .store-coupons .coupon-list .item .item-l .date {
     color: #666
 }
+
 section.stores .store-coupons .coupon-list .item .reveal-btn {
     float: right;
     width: 33%;
     text-align: right
 }
+
 section.stores .store-coupons .coupon-list .item .reveal-btn a {
     background: url(../img/reveal-btn.jpg) no-repeat;
     width: 156px;
@@ -3381,12 +3617,14 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a {
     padding: 18px 10px 9px;
     text-decoration: none
 }
+
 section.stores .store-coupons .coupon-list .item .reveal-btn-code {
     float: right;
     width: 200px;
     height: 55px;
     position: relative
 }
+
 section.stores .store-coupons .coupon-list .item .reveal-btn-code .cover-btn {
     border: 3px solid #20599d;
     background: #daedfc;
@@ -3406,13 +3644,16 @@ section.stores .store-coupons .coupon-list .item .reveal-btn-code .cover-btn {
     opacity: 1;
     visibility: visible
 }
+
 section.stores .store-coupons .coupon-list .item .reveal-btn-code .cover-btn:hover {
     box-shadow: 0 3px 7px rgba(0, 0, 0, .5)
 }
+
 section.stores .store-coupons .coupon-list .item .reveal-btn-code .cover-btn.hidden {
     opacity: 0;
     visibility: hidden
 }
+
 section.stores .store-coupons .coupon-list .item .reveal-btn-code .hidden-code {
     background: #eaeaea;
     box-shadow: 0 1px 3px rgba(0, 0, 0, .2) inset;
@@ -3430,6 +3671,7 @@ section.stores .store-coupons .coupon-list .item .reveal-btn-code .hidden-code {
     -webkit-transition: all 1.3s ease;
     transition: all 1.3s ease
 }
+
 section.stores .store-coupons .coupon-list .item .reveal-btn-code .hidden-code .code {
     opacity: 0;
     -webkit-transition: all 1.3s ease;
@@ -3437,36 +3679,45 @@ section.stores .store-coupons .coupon-list .item .reveal-btn-code .hidden-code .
     color: #000;
     font-weight: 700
 }
+
 section.stores .store-coupons .coupon-list .item .reveal-btn-code .hidden-code .link {
     opacity: 0;
     -webkit-transition: all 1.3s ease;
     transition: all 1.3s ease
 }
+
 section.stores .store-coupons .coupon-list .item .reveal-btn-code .hidden-code.active {
     text-shadow: none
 }
+
 section.stores .store-coupons .coupon-list .item .reveal-btn-code .hidden-code.active .code,
 section.stores .store-coupons .coupon-list .item .reveal-btn-code .hidden-code.active .link {
     opacity: 1;
     visibility: visible
 }
+
 section.stores .store-coupons .loadmore {
     text-align: center
 }
+
 section.stores .store-coupons .loadmore a {
     font-family: Montserrat
 }
+
 section.related-stores {
     padding-bottom: 80px
 }
+
 section.related-stores .related-stores-h {
     margin-bottom: 20px
 }
+
 section.related-stores .related-stores-h:after,
 section.related-stores .related-stores-h:before {
     content: "";
     display: table
 }
+
 section.related-stores .related-stores-h h3 {
     font-size: 24px;
     font-family: Montserrat;
@@ -3475,19 +3726,23 @@ section.related-stores .related-stores-h h3 {
     float: left;
     padding-right: 30px
 }
+
 section.related-stores .related-stores-list .item .info .title,
 section.related-stores .related-stores-list .item .link a {
     font-size: 18px
 }
+
 section.related-stores .related-stores-h .seeall {
     float: right;
     padding-top: 17px
 }
+
 section.related-stores .related-stores-list:after,
 section.related-stores .related-stores-list:before {
     content: "";
     display: table
 }
+
 section.related-stores .related-stores-list .item {
     width: 23.5%;
     float: left;
@@ -3495,15 +3750,18 @@ section.related-stores .related-stores-list .item {
     border: 1px solid #bfbfbf;
     border-radius: 2px
 }
+
 section.related-stores .related-stores-list .item:nth-child(4n) {
     margin-right: 0
 }
+
 section.related-stores .related-stores-list .item .img a {
     padding: 20%;
     position: relative;
     line-height: 0;
     display: block
 }
+
 section.related-stores .related-stores-list .item .img a .store-logo {
     background: #fff;
     display: block;
@@ -3513,6 +3771,7 @@ section.related-stores .related-stores-list .item .img a .store-logo {
     padding: 10px 0;
     width: 100%
 }
+
 section.related-stores .related-stores-list .item .img a .store-logo img {
     left: 50%;
     margin-left: -60px;
@@ -3520,6 +3779,7 @@ section.related-stores .related-stores-list .item .img a .store-logo img {
     position: absolute;
     top: 50%
 }
+
 section.related-stores .related-stores-list .item .img a .store-logo span {
     display: block;
     height: 60px;
@@ -3527,22 +3787,28 @@ section.related-stores .related-stores-list .item .img a .store-logo span {
     text-align: center;
     width: 100%
 }
+
 section.related-stores .related-stores-list .item .img .partner-tooltip {
     display: none
 }
+
 section.related-stores .related-stores-list .item .info {
     padding: 12px
 }
+
 section.related-stores .related-stores-list .item .info .details div {
     margin: 3px 0
 }
+
 section.related-stores .related-stores-list .item .link {
     text-align: center
 }
+
 section.related-stores .loadmore {
     display: none;
     text-align: center
 }
+
 section.related-stores .loadmore a.btn {
     font-size: 14px;
     font-weight: 400;
@@ -3551,13 +3817,16 @@ section.related-stores .loadmore a.btn {
     height: 44px;
     font-family: "Open Sans"
 }
+
 .contacts-page .page-heading {
     background: url(../img/bg-contacts.jpg) 50% 50% no-repeat;
     background-size: cover
 }
+
 section.contacts {
     padding: 33px 0 80px
 }
+
 section.contacts .container {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -3565,33 +3834,41 @@ section.contacts .container {
     -ms-flex-wrap: wrap;
     flex-wrap: wrap
 }
+
 section.contacts .txt {
     width: 43%;
     padding-right: 10px
 }
+
 section.contacts .txt h2 {
     font-size: 24px
 }
+
 section.contacts .contacts-form {
     width: 57%;
     padding: 33px 22px;
     background: #f9f9f9
 }
+
 section.contacts .contacts-form textarea {
     height: 109px
 }
+
 section.contacts .contacts-form .btn-block {
     text-align: right
 }
+
 section.contacts .contacts-form .btn-block a.btn {
     width: 130px;
     height: 43px;
     line-height: 18px
 }
+
 section.map {
     position: relative;
     min-height: 300px
 }
+
 section.map .gmaps-switcher {
     position: absolute;
     right: 0;
@@ -3599,9 +3876,11 @@ section.map .gmaps-switcher {
     top: 0;
     z-index: 1
 }
+
 section.map .gmaps-switcher .container {
     position: relative
 }
+
 section.map .gmaps-switcher ul {
     background: #f9f9f9;
     border-radius: 20px;
@@ -3611,6 +3890,7 @@ section.map .gmaps-switcher ul {
     top: 25px;
     position: absolute
 }
+
 section.map .gmaps-switcher ul li {
     font-family: Montserrat;
     font-weight: 700;
@@ -3623,31 +3903,39 @@ section.map .gmaps-switcher ul li {
     border-radius: 15px;
     display: inline-block
 }
+
 section.map .gmaps-switcher ul li.active {
     background: #20599d;
     color: #fff
 }
+
 section.map .gmaps-switcher ul li.active:hover {
     background: #20599d
 }
+
 section.map .gmaps-switcher ul li:hover {
     background: #ebedef
 }
+
 section.map .gmaps .gmap-item {
     display: none
 }
+
 section.map .gmaps .gmap-item.active {
     display: block
 }
+
 section.map .gmaps #map1,
 section.map .gmaps #map2 {
     width: 100%;
     height: 355px
 }
+
 section.map .gmaps-contactinfo {
     background: #f9f9f9;
     padding: 35px 0 5px
 }
+
 section.map .gmaps-contactinfo .container {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -3655,6 +3943,7 @@ section.map .gmaps-contactinfo .container {
     -ms-flex-wrap: wrap;
     flex-wrap: wrap
 }
+
 section.map .gmaps-contactinfo .item .address:before,
 section.map .gmaps-contactinfo .item .email:before,
 section.map .gmaps-contactinfo .item .phone:before {
@@ -3664,9 +3953,11 @@ section.map .gmaps-contactinfo .item .phone:before {
     top: 5px;
     content: ""
 }
+
 section.map .gmaps-contactinfo .item {
     margin: 0 70px 30px 0
 }
+
 section.map .gmaps-contactinfo .item .title {
     font-family: Montserrat;
     font-size: 18px;
@@ -3676,43 +3967,51 @@ section.map .gmaps-contactinfo .item .title {
     margin-bottom: 17px;
     padding-left: 30px
 }
+
 section.map .gmaps-contactinfo .item .address {
     position: relative;
     padding-left: 30px;
     font-size: 16px;
     margin-bottom: 17px
 }
+
 section.map .gmaps-contactinfo .item .address:before {
     width: 18px;
     position: absolute;
     background: url(../img/icons.png) 0 -3912px no-repeat
 }
+
 section.map .gmaps-contactinfo .item .phone {
     position: relative;
     padding-left: 30px;
     font-size: 16px;
     margin-bottom: 15px
 }
+
 section.map .gmaps-contactinfo .item .phone:before {
     width: 18px;
     position: absolute;
     background: url(../img/icons.png) 0 -3972px no-repeat
 }
+
 section.map .gmaps-contactinfo .item .email {
     position: relative;
     padding-left: 30px;
     font-size: 16px;
     margin-bottom: 15px
 }
+
 section.map .gmaps-contactinfo .item .email:before {
     width: 22px;
     position: absolute;
     background: url(../img/icons.png) 0 -4031px no-repeat
 }
+
 .prices-page .page-heading {
     background: url(../img/bg-prices.jpg) 50% 50% no-repeat;
     background-size: cover
 }
+
 section.prices .prices-list {
     padding: 30px 0;
     display: -webkit-box;
@@ -3722,6 +4021,7 @@ section.prices .prices-list {
     -ms-flex-pack: justify;
     justify-content: space-between
 }
+
 section.prices .prices-list .item {
     background: #f9f9f9;
     padding: 45px 10px 120px;
@@ -3729,6 +4029,7 @@ section.prices .prices-list .item {
     text-align: center;
     width: 23.5%
 }
+
 section.prices .prices-list .item .title {
     font-family: Montserrat;
     font-size: 18px;
@@ -3736,9 +4037,11 @@ section.prices .prices-list .item .title {
     font-weight: 700;
     font-weight: 400
 }
+
 section.prices .prices-list .item .title.red {
     color: #ef2930
 }
+
 section.prices .prices-list .item .val {
     font-family: Montserrat;
     font-size: 30px;
@@ -3747,11 +4050,13 @@ section.prices .prices-list .item .val {
     font-weight: 400;
     margin-bottom: 20px
 }
+
 section.prices .prices-list .item ul.info {
     padding: 0 20px;
     max-width: 230px;
     margin: 0 auto
 }
+
 section.prices .prices-list .item ul.info li {
     border-bottom: 1px solid #c6c6c6;
     padding: 10px 0;
@@ -3759,9 +4064,11 @@ section.prices .prices-list .item ul.info li {
     font-size: 16px;
     display: block
 }
+
 section.prices .prices-list .item ul.info li:last-child {
     border-bottom: 0
 }
+
 section.prices .prices-list .item .btn-block {
     position: absolute;
     bottom: 25px;
@@ -3769,6 +4076,7 @@ section.prices .prices-list .item .btn-block {
     right: 30px;
     text-align: center
 }
+
 section.prices .prices-list .item .btn-block a.btn {
     max-width: 185px;
     width: 100%;
@@ -3776,6 +4084,7 @@ section.prices .prices-list .item .btn-block a.btn {
     height: 43px;
     line-height: 17px
 }
+
 section.prices .prices-notice {
     border: 3px solid #f4242c;
     background: #f4e1e1;
@@ -3789,13 +4098,16 @@ section.prices .prices-notice {
     -ms-flex-align: center;
     align-items: center
 }
+
 section.prices .prices-notice .img {
     width: 75px
 }
+
 section.prices .prices-notice .txt p {
     margin: 5px 0;
     font-family: Montserrat
 }
+
 section.prices .prices-infoblock {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -3803,6 +4115,7 @@ section.prices .prices-infoblock {
     -ms-flex-wrap: wrap;
     flex-wrap: wrap
 }
+
 section.prices .prices-infoblock .item {
     width: 31.3333%;
     margin: 0 1% 30px;
@@ -3810,19 +4123,24 @@ section.prices .prices-infoblock .item {
     box-shadow: 0 1px 0 rgba(0, 0, 0, .15);
     min-height: 155px
 }
+
 .accounteditreceiver .btn-block .btn,
 .accountsettings .btn-block .btn {
     width: 220px
 }
+
 section.prices .prices-infoblock .item .item-inner {
     padding: 25px 15px
 }
+
 section.prices .prices-infoblock .item .item-inner .img {
     float: left
 }
+
 section.prices .prices-infoblock .item .item-inner .info {
     margin-left: 70px
 }
+
 section.prices .prices-infoblock .item .item-inner .info .title {
     font-family: Montserrat;
     font-weight: 700;
@@ -3830,20 +4148,25 @@ section.prices .prices-infoblock .item .item-inner .info .title {
     font-size: 18px;
     margin: 5px 0
 }
+
 section.prices .prices-infoblock .item .item-inner .info .desc {
     font-style: italic
 }
+
 .account-page {
     margin-bottom: 50px
 }
+
 .account-page h1 {
     font-size: 24px
 }
+
 .account-menu-block {
     background: #f9f9f9;
     padding: 0;
     margin-bottom: 30px
 }
+
 .account-menu-block .container {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -3854,6 +4177,7 @@ section.prices .prices-infoblock .item .item-inner .info .desc {
     -ms-flex-pack: justify;
     justify-content: space-between
 }
+
 .account-menu-block .account-menu .account-toggler {
     display: none;
     background: #3fa3f0;
@@ -3864,42 +4188,52 @@ section.prices .prices-infoblock .item .item-inner .info .desc {
     text-transform: uppercase;
     cursor: pointer
 }
+
 .account-menu-block .account-menu .account-toggler i.icon {
     margin: 0 5px 3px 0
 }
+
 .account-menu-block .account-menu .account-toggler:hover {
     background: #60b5f6
 }
+
 .account-menu-block .account-menu ul {
     margin: 20px 0;
     line-height: 20px
 }
+
 .account-menu-block .account-menu ul li {
     display: inline-block;
     vertical-align: middle;
     margin: 0 12px
 }
+
 .account-menu-block .account-menu ul li:nth-child(1) {
     margin-left: 0
 }
+
 .account-menu-block .account-menu ul li a {
     font-size: 14px;
     font-weight: 600;
     color: #20599d;
     text-decoration: none
 }
+
 .account-menu-block .account-menu ul li a:hover {
     text-decoration: underline
 }
+
 .account-menu-block .hello {
     margin: 20px 0 20px 10px;
     line-height: 20px
 }
+
 fieldset {
     border: none;
     padding: 0;
     margin: 0
 }
+
 .fieldset-block .legend,
 fieldset legend {
     font-weight: 700;
@@ -3909,27 +4243,33 @@ fieldset legend {
     color: #20599d;
     margin-bottom: 15px
 }
+
 .fieldset-block.inline-block {
     margin: 40px 0
 }
+
 .fieldset-block.inline-block .legend {
     display: inline-block;
     vertical-align: middle;
     margin: 10px 50px 10px 0
 }
+
 .fieldset-block.inline-block .input-group {
     display: inline-block;
     vertical-align: middle;
     margin: 0
 }
+
 .fieldset-block.inline-block .input-group label {
     display: inline-block;
     vertical-align: middle;
     margin-right: 30px
 }
+
 .fieldset-block.inline-block .input-group label input[type=checkbox] {
     vertical-align: middle
 }
+
 .filter-block {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -3940,21 +4280,26 @@ fieldset legend {
     -ms-flex-pack: justify;
     justify-content: space-between
 }
+
 .filter-block .filter-date {
     margin-bottom: 25px
 }
+
 .filter-block .filter-date .input-group {
     display: inline-block
 }
+
 .filter-block .filter-date .label {
     font-size: 16px;
     font-weight: 700;
     font-weight: 400;
     margin-bottom: 27px
 }
+
 .filter-block .filter-date input {
     margin: 0 10px
 }
+
 .filter-block .filter-pager {
     padding-top: 52px;
     text-align: right;
@@ -3963,6 +4308,7 @@ fieldset legend {
     display: -ms-flexbox;
     display: flex
 }
+
 .filter-block .filter-pager .curr {
     font-size: 18px;
     font-weight: 600;
@@ -3974,6 +4320,7 @@ fieldset legend {
     order: 1;
     -webkit-order: 1
 }
+
 .filter-block .filter-pager a.filter-arr.filter-arr-l {
     -webkit-box-ordinal-group: 3;
     -ms-flex-order: 2;
@@ -3981,6 +4328,7 @@ fieldset legend {
     -webkit-order: 2;
     margin: 5px
 }
+
 .filter-block .filter-pager a.filter-arr.filter-arr-r {
     -webkit-box-ordinal-group: 4;
     -ms-flex-order: 3;
@@ -3988,24 +4336,31 @@ fieldset legend {
     -webkit-order: 3;
     margin: 5px 0 5px 5px
 }
+
 .accountsettings h1 {
     margin: 45px 0 30px
 }
+
 .accountsettings .btn-block {
     margin: 20px 0
 }
+
 .accounteditreceiver h1 {
     margin: 45px 0 30px
 }
+
 .accounteditreceiver .form-txt {
     margin-top: 20px
 }
+
 .accounteditreceiver .btn-block {
     margin: 20px 0
 }
+
 .accountrecievers h1 {
     margin: 45px 0 30px
 }
+
 .paymentactivity .heading {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -4017,15 +4372,19 @@ fieldset legend {
     justify-content: space-between;
     margin-bottom: 10px
 }
+
 .paymentactivity .heading h1 {
     margin: 30px 0
 }
+
 .paymentactivity .heading .currbalance {
     text-align: right
 }
+
 .paymentactivity .heading .currbalance label {
     font-weight: 600
 }
+
 .paymentactivity .heading .currbalance .val {
     font-size: 36px;
     font-weight: 700;
@@ -4033,36 +4392,44 @@ fieldset legend {
     line-height: 1.1;
     color: #20599d
 }
+
 .parcel-filter-block .parcel-filter-item ul.customer-folders li a,
 .parcel-filter-block .parcel-filter-item ul.parcel-status li a {
     color: #4c4c4c
 }
+
 .archiveparcels .heading {
     display: table;
     width: 100%;
     margin-bottom: 35px
 }
+
 .archiveparcels .heading .search-parcels,
 .archiveparcels .heading h1 {
     display: table-cell;
     vertical-align: middle
 }
+
 .archiveparcels .heading h1 {
     width: 210px
 }
+
 .archiveparcels table.archiveparcels-table td:nth-child(1),
 .archiveparcels table.archiveparcels-table th:nth-child(1) {
     padding: 10px 5px 10px 10px;
     width: 30px
 }
+
 .search-parcels .input-group {
     position: relative;
     margin-bottom: 0
 }
+
 .search-parcels .input-group input[type=text] {
     width: 100%;
     max-width: 100%
 }
+
 .search-parcels .input-group a.btn-search {
     position: absolute;
     right: 1px;
@@ -4073,33 +4440,40 @@ fieldset legend {
     top: 1px;
     border: none
 }
+
 .myparcels .heading {
     display: table;
     width: 100%;
     margin: 35px 0
 }
+
 .myparcels .heading .search-parcels,
 .myparcels .heading h1 {
     display: table-cell;
     vertical-align: middle
 }
+
 .myparcels .heading h1 {
     width: 200px
 }
+
 .myparcels .heading .search-parcels .search-parcels-inner {
     display: table;
     width: 100%
 }
+
 .myparcels .heading .search-parcels .search-parcels-inner .input-group {
     display: table-cell;
     vertical-align: middle;
     position: relative;
     margin: 0
 }
+
 .myparcels .heading .search-parcels .search-parcels-inner .input-group input[type=text] {
     width: 100%;
     max-width: 100%
 }
+
 .myparcels .heading .search-parcels .search-parcels-inner .input-group a.btn-search {
     position: absolute;
     right: 1px;
@@ -4110,80 +4484,99 @@ fieldset legend {
     top: 1px;
     border: none
 }
+
 .myparcels .heading .search-parcels .search-parcels-inner .btn-block {
     display: table-cell;
     vertical-align: middle;
     width: 195px;
     padding-left: 15px
 }
+
 .myparcels .heading .search-parcels .search-parcels-inner .btn-block a.btn {
     width: 100%;
     height: 40px;
     font-size: 16px;
     padding: 5px 10px
 }
+
 .myparcels table.myparcels-table tr th {
     padding: 10px 5px 10px 15px
 }
+
 .myparcels table.myparcels-table tr th:nth-child(1) {
     width: 30px;
     padding: 10px 5px 10px 10px
 }
+
 .myparcels table.myparcels-table tr th:nth-child(2) {
     padding: 10px 5px;
     width: 80px
 }
+
 .myparcels table.myparcels-table tr td {
     padding: 10px 5px 10px 15px
 }
+
 .myparcels table.myparcels-table tr td:nth-child(1) {
     padding: 10px 5px 10px 10px;
     width: 30px
 }
+
 .myparcels table.myparcels-table tr td:nth-child(2) {
     padding: 10px 5px;
     width: 80px;
     text-align: center
 }
+
 .myparcels table.myparcels-table tr td i.icon {
     margin: 0 5px
 }
+
 .myparcels .gotoarchive {
     text-align: center
 }
+
 .myparcels .gotoarchive a {
     font-size: 18px
 }
+
 .parcel-filter-block {
     margin-bottom: 40px
 }
+
 .parcel-filter-block:after,
 .parcel-filter-block:before {
     content: "";
     display: table
 }
+
 .parcel-filter-block .parcel-filter-item {
     float: left;
     margin-right: 50px
 }
+
 .parcel-filter-block .parcel-filter-item:last-child {
     margin-right: 0
 }
+
 .parcel-filter-block .parcel-filter-item .label {
     font-size: 16px;
     font-weight: 700;
     font-weight: 400;
     margin-bottom: 15px
 }
+
 .parcel-filter-block .parcel-filter-item .label a {
     font-size: 14px;
     font-weight: 400;
     margin-left: 7px
 }
+
 .parcel-filter-block .parcel-filter-item .select2 {
     display: none;
-    width: 265px!important
+    width: 265px !important
 }
+
 .parcel-filter-block .parcel-filter-item ul.parcel-status li {
     display: block;
     float: left;
@@ -4191,21 +4584,27 @@ fieldset legend {
     margin: 0 15px 0 10px;
     text-align: center
 }
+
 .parcel-filter-block .parcel-filter-item ul.parcel-status li:first-child {
     margin-left: 0
 }
+
 .parcel-filter-block .parcel-filter-item ul.parcel-status li:last-child {
     margin-right: 0
 }
+
 .parcel-filter-block .parcel-filter-item ul.parcel-status li a span {
     display: block
 }
+
 .parcel-filter-block .parcel-filter-item ul.parcel-status.actions li {
     width: 110px
 }
+
 .parcel-filter-block .parcel-filter-item ul.parcel-status.actions li a i {
     margin-bottom: 4px
 }
+
 .parcel-filter-block .parcel-filter-item ul.customer-folders li {
     display: inline-block;
     vertical-align: top;
@@ -4213,18 +4612,23 @@ fieldset legend {
     margin: 0 10px;
     text-align: center
 }
+
 .parcel-filter-block .parcel-filter-item ul.customer-folders li:first-child {
     margin-left: 0
 }
+
 .parcel-filter-block .parcel-filter-item ul.customer-folders li:last-child {
     margin-right: 0
 }
+
 .parcel-filter-block .parcel-filter-item ul.customer-folders li a span {
     display: block
 }
+
 .accountparceltracking h1 {
     margin-top: 45px
 }
+
 .acc-tracking-panel {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -4233,45 +4637,56 @@ fieldset legend {
     flex-wrap: wrap;
     margin: 20px 0
 }
+
 .acc-tracking-panel .trackingno {
     font-size: 18px;
     font-weight: 700;
     font-weight: 400;
     padding: 20px 20px 20px 0
 }
+
 .acc-tracking-panel .acc-tracking-menu ul li {
     display: inline-block;
     width: 90px;
     text-align: center;
     margin-bottom: 10px
 }
+
 .acc-tracking-panel .acc-tracking-menu ul li a {
     color: #4c4c4c;
     display: inline-block
 }
+
 .acc-tracking-panel .acc-tracking-menu ul li a i {
     margin-bottom: 10px
 }
+
 .acc-tracking-panel .acc-tracking-menu ul li a span {
     display: block
 }
+
 .acc-tracking-cols>.row>.col.acc-tracking-col-2 .acc-tracking-block {
     margin-bottom: 10px;
     width: 100%
 }
+
 .acc-tracking-cols .acc-tracking-block {
     margin-bottom: 40px
 }
+
 .acc-tracking-cols .acc-tracking-block h3 {
     font-size: 20px;
     margin-bottom: 15px
 }
+
 .acc-tracking-cols .tracking-points {
     margin: 10px 0 0
 }
+
 .accountdelreq h1 {
     margin: 45px 0 30px
 }
+
 .accountdelreq .delreq-step {
     background: #f9f9f9;
     border-radius: 3px;
@@ -4280,9 +4695,11 @@ fieldset legend {
     line-height: 20px;
     margin-bottom: 40px
 }
+
 .accountdelreq .delreq-step.step-1 {
     margin-bottom: 50px
 }
+
 .accountdelreq .delreq-step .title {
     font-weight: 700;
     font-weight: 400;
@@ -4290,6 +4707,7 @@ fieldset legend {
     line-height: 20px;
     margin-right: 10px
 }
+
 .accountdelreq .delreq-btn-block-1 {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -4303,38 +4721,47 @@ fieldset legend {
     align-content: center;
     margin: 40px 0 90px
 }
+
 .accountdelreq .delreq-btn-block-1 .note {
     max-width: 600px;
     margin-top: 7px;
     padding-right: 10px
 }
+
 .accountdelreq .delreq-btn-block-1 .btn-block {
     text-align: right
 }
+
 .accountdelreq .delreq-btn-block-1 .btn-block .btn {
     width: 180px
 }
+
 .accountdelreq .search-parcels {
     margin-bottom: 33px
 }
+
 .accountdelreq table.delreq-table tr th:nth-child(1) {
     width: 30px;
     padding: 10px 5px 10px 10px
 }
+
 .accountdelreq table.delreq-table tr th:nth-child(2) {
     text-align: center;
     width: 120px;
     padding: 10px
 }
+
 .accountdelreq table.delreq-table tr td:nth-child(1) {
     width: 30px;
     padding: 10px 5px 10px 10px
 }
+
 .accountdelreq table.delreq-table tr td:nth-child(2) {
     text-align: center;
     width: 120px;
     padding: 10px
 }
+
 .accountdelreq .delreq-btn-block-2 {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -4346,40 +4773,49 @@ fieldset legend {
     flex-wrap: wrap;
     margin: 50px 0 75px
 }
+
 .accountdelreq .delreq-btn-block-2 .delreq-total {
     padding-right: 30px
 }
+
 .accountdelreq .delreq-btn-block-2 .delreq-total .item {
     display: inline-block;
     vertical-align: top;
     padding-right: 50px
 }
+
 .accountdelreq .delreq-btn-block-2 .delreq-total .item .label {
     font-weight: 600;
     color: #818181;
     display: block
 }
+
 .accountdelreq .delreq-btn-block-2 .delreq-total .item .val {
     font-size: 24px;
     font-weight: 700;
     font-weight: 400
 }
+
 .accountdelreq .delreq-btn-block-2 .btn-block .btn {
     width: 180px
 }
+
 .accountdelreq .delreq-info:after,
 .accountdelreq .delreq-info:before {
     content: "";
     display: table
 }
+
 .accountdelreq .delreq-info .delreq-infoblock {
     width: 50%;
     padding-right: 50px;
     float: left
 }
+
 .accountdelreq .delreq-info .delreq-infoblock .delreq-infoblock-h {
     margin-bottom: 20px
 }
+
 .accountdelreq .delreq-info .delreq-infoblock .delreq-infoblock-h .title {
     font-weight: 700;
     font-weight: 400;
@@ -4390,25 +4826,30 @@ fieldset legend {
     vertical-align: middle;
     margin-right: 20px
 }
+
 .accountdelreq .delreq-info .delreq-infoblock .delreq-infoblock-h a.edit {
     display: inline-block;
     vertical-align: middle
 }
+
 .accountdelreq .delreq-info .delreq-infoblock .line .col,
 .accountdelreq .delreq-info .delreq-infoblock .row .col {
     margin-bottom: 23px
 }
+
 .accountdelreq .delreq-info .delreq-infoblock .line .label,
 .accountdelreq .delreq-info .delreq-infoblock .row .label {
     color: #818181;
     font-weight: 600;
     margin-bottom: 3px
 }
+
 .accountdelreq .delreq-info .delreq-infoblock .line .val a,
 .accountdelreq .delreq-info .delreq-infoblock .row .val a {
     font-size: 18px;
     color: #4c4c4c
 }
+
 .accountdelreq .delreq-info .delreq-infoblock .line .line-block,
 .accountdelreq .delreq-info .delreq-infoblock .row .line-block {
     display: inline-block;
@@ -4416,22 +4857,26 @@ fieldset legend {
     margin-right: 45px;
     margin-bottom: 23px
 }
+
 .accountdelreq .delreq-info .delreq-infoblock .line .line-block .val,
 .accountdelreq .delreq-info .delreq-infoblock .row .line-block .val {
     font-size: 24px;
     font-weight: 700;
     font-weight: 400
 }
+
 .accountdelreq .delreq-btn-block-3 {
     text-align: right;
     margin: 70px 0
 }
+
 .accountdelreq .delreq-btn-block-3 .btn-block {
     width: 280px;
     margin-left: 20px;
     display: inline-block;
     text-align: center
 }
+
 .accountdelreq .delreq-btn-block-3 .btn-block .btn {
     margin-bottom: 10px;
     display: block;
@@ -4440,17 +4885,21 @@ fieldset legend {
     font-size: 16px;
     line-height: 28px
 }
+
 .accountdelreq .delreq-btn-block-3 .btn-block span {
     font-weight: 600;
     font-size: 12px
 }
+
 .accountreg .faq h3 {
     font-size: 18px;
     margin-top: 0
 }
+
 .accountreg .form-txt {
     margin-top: 20px
 }
+
 .accreg-btn-block {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -4462,26 +4911,32 @@ fieldset legend {
     flex-wrap: nowrap;
     margin: 50px 0
 }
+
 .accreg-btn-block .agree {
     width: 45%;
     font-size: 12px;
     margin-top: 7px
 }
+
 .accreg-btn-block .agree .icheckbox_minimal {
     float: left
 }
+
 .accreg-btn-block .agree span {
     margin-left: 25px;
     display: block
 }
+
 .accreg-btn-block .btn-block {
     width: 50%;
     text-align: right
 }
+
 .accountaddparcel .btn-block .btn,
 .accreg-btn-block .btn-block .btn {
     width: 220px
 }
+
 .accountaddparcel .heading {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -4493,28 +4948,36 @@ fieldset legend {
     justify-content: space-between;
     margin: 40px 0 30px
 }
+
 .accountaddparcel .heading h1 {
     margin-right: 20px
 }
+
 .accountaddparcel .heading .havequestions {
     margin: 13px 0 0;
     text-align: right
 }
+
 .accountaddparcel .fieldset-block {
     margin-bottom: 50px
 }
+
 .accountletterforms h1 {
     margin: 45px 0 30px
 }
+
 .accountletterforms .documents-list {
     margin: 0 -1%
 }
+
 .accountmkpay h1 {
     margin: 45px 0 30px
 }
+
 .mkpay-btn-block {
     margin: 10px 0
 }
+
 .mkpay-btn-block .btn {
     margin-bottom: 10px;
     display: block;
@@ -4523,15 +4986,18 @@ fieldset legend {
     font-size: 16px;
     line-height: 28px
 }
+
 .mkpay-btn-block span {
     font-weight: 600;
     font-size: 12px;
     display: block;
     text-align: center
 }
+
 .accountshipaddress h1 {
     margin: 45px 0 15px
 }
+
 .accountshipaddress .shipaddress-info {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -4543,13 +5009,16 @@ fieldset legend {
     flex-wrap: nowrap;
     margin: 50px 0
 }
+
 .accountshipaddress .shipaddress-info .shipaddress-infoblock {
     width: 50%;
     padding-right: 20px
 }
+
 .accountshipaddress .shipaddress-info .shipaddress-infoblock .shipaddress-infoblock-h {
     margin-bottom: 30px
 }
+
 .accountshipaddress .shipaddress-info .shipaddress-infoblock .shipaddress-infoblock-h .title {
     color: #20599d;
     font-family: Montserrat;
@@ -4557,26 +5026,32 @@ fieldset legend {
     font-weight: 700;
     font-weight: 400
 }
+
 .accountshipaddress .shipaddress-info .shipaddress-infoblock .shipaddress-infoblock-h p {
     margin: 8px 0
 }
+
 .accountshipaddress .shipaddress-info .shipaddress-infoblock .row .col {
     margin-bottom: 23px
 }
+
 .accountshipaddress .shipaddress-info .shipaddress-infoblock .row .col .label {
     color: #818181;
     font-weight: 600;
     margin-bottom: 3px
 }
+
 .accountshipaddress .shipaddress-info .shipaddress-infoblock .row .col .val a {
     color: #4c4c4c;
     font-size: 18px;
     line-height: 26px
 }
+
 .accountshipaddress .shipaddress-info .shipaddress-infoblock .row .col .val a:hover {
     color: #3fa3f0;
     text-decoration: underline
 }
+
 .accountshipaddress .shipaddress-info .shipaddress-infoblock .row .col .val a:hover:after {
     content: "";
     width: 20px;
@@ -4586,6 +5061,7 @@ fieldset legend {
     background: url(../img/icons.png) 0 -5496px no-repeat;
     margin-left: 10px
 }
+
 .calculator-section .calculator-infoblock:after,
 .calculator-section .calculator-infoblock:before,
 .helptoshop-section .helpproduct-f:after,
@@ -4593,111 +5069,138 @@ fieldset legend {
     content: "";
     display: table
 }
+
 .helptoshop-page .page-heading {
     background: url(../img/bg-online.jpg) 50% 50% no-repeat;
     background-size: cover;
     padding: 22px 0 50px
 }
+
 .helptoshop-section {
     padding: 30px 90px 60px
 }
+
 .helptoshop-section .helpproduct {
     position: relative
 }
+
 .helptoshop-section .helpproduct .title {
     font-family: Montserrat;
     font-size: 18px;
     color: #20599d;
     padding: 0 50px 20px 0
 }
+
 .helptoshop-section .helpproduct a.helpproduct-remove {
     position: absolute;
     right: -55px;
     top: 12px
 }
+
 .account-search,
 .account-search .input-group {
     position: relative
 }
+
 .helptoshop-section .helpproduct a.helpproduct-remove:hover {
     opacity: .9
 }
+
 .helptoshop-section .helpproduct .select2,
 .helptoshop-section .helpproduct input {
     font-size: 13px;
     font-weight: 400
 }
+
 .helptoshop-section .helpproduct input[type=text] {
     padding: 10px 8px
 }
+
 .helptoshop-section .helpproduct .helpproduct-links {
     text-align: right;
     padding: 5px 0 0
 }
+
 .helptoshop-section .helpproduct-option {
     background: #f9f9f9;
     box-shadow: 0 2px 3px rgba(0, 0, 0, .16) inset;
     margin: 5px 0 55px
 }
+
 .helptoshop-section .helpproduct-option .helpproduct {
     padding: 20px 17px
 }
+
 .helptoshop-section .helpproduct-option .helpproduct .title {
     color: #666
 }
+
 .helptoshop-section .helpproduct-f {
     padding: 10px 0 25px
 }
+
 .helptoshop-section .helpproduct-f a.addproduct {
     float: left;
     font-family: Montserrat;
     font-size: 16px;
     color: #3fa3f0
 }
+
 .helptoshop-section .helpproduct-f .total {
     float: right;
     font-family: Montserrat;
     font-size: 20px;
     color: #20599d
 }
+
 .helptoshop-section textarea#helpproduct-comments {
     max-width: 100%;
     font-size: 13px;
     font-weight: 400
 }
+
 .helptoshop-section .btn-block .btn {
     width: 180px
 }
+
 .calculator-page .page-heading {
     background: url(../img/bg-online.jpg) 50% 50% no-repeat;
     background-size: cover
 }
+
 .calculator-section {
     padding: 30px 0 100px
 }
+
 .calculator-section .calculator-infoblocks {
     margin-bottom: 30px
 }
+
 .calculator-section .calculator-infoblock {
     margin-bottom: 100px
 }
+
 .btn-mail,
 .calculator-section .calculator-form .heading a,
 a.btn-mail {
     display: inline-block;
     vertical-align: middle
 }
+
 .calculator-section .calculator-infoblock img {
     float: left;
     padding: 0 50px
 }
+
 .calculator-section .calculator-infoblock .txt {
     padding-top: 40px;
     margin-left: 450px
 }
+
 .calculator-section .calculator-infoblock .txt h3 {
     font-size: 24px
 }
+
 .calculator-section .calculator-form {
     border: 2px solid #20599d;
     background: #fff;
@@ -4705,54 +5208,66 @@ a.btn-mail {
     margin: 0 auto;
     max-width: 780px
 }
+
 .calculator-section .calculator-form .heading h3 {
     display: inline-block;
     vertical-align: middle;
     margin: 0 7px 0 0
 }
+
 .calculator-section .calculator-form p {
     font-size: 18px;
     font-family: Montserrat;
     margin: 0 0 25px;
     color: #818181
 }
+
 .calculator-section .calculator-form form .btn-block {
     text-align: center;
     margin-top: 30px
 }
+
 .calculator-section .calculator-form form .btn-block .btn {
     width: 100%;
     max-width: 220px
 }
+
 .calculator-section .calculator-form form .calculator-est {
     font-family: Montserrat;
     padding-top: 15px;
     text-align: right
 }
+
 .calculator-section .calculator-form form .calculator-est .label {
     font-size: 25px;
     color: #666;
     margin-right: 3px
 }
+
 .calculator-section .calculator-form form .calculator-est .val {
     font-size: 36px;
     font-weight: 700;
     font-weight: 400;
     color: #444
 }
+
 .account-inbox .heading {
     margin-bottom: 25px
 }
+
 .account-search {
     padding-right: 38px
 }
+
 .account-search .input-group .select2 {
     font-size: 13px
 }
+
 .account-search .input-group input[type=text] {
     max-width: 100%;
     width: 100%
 }
+
 .account-search .input-group a.btn-search {
     border: none;
     height: 40px;
@@ -4763,44 +5278,55 @@ a.btn-mail {
     top: 1px;
     width: 60px
 }
+
 .account-search .search-clear {
     position: absolute;
     right: 0;
     top: 6px
 }
+
 table.accountinbox-table th:nth-child(1) {
     padding: 10px 5px 10px 10px;
     width: 30px
 }
+
 table.accountinbox-table th:nth-child(3) {
     width: 160px
 }
+
 table.accountinbox-table td {
     font-size: 14px
 }
+
 table.accountinbox-table td a {
     color: #4c4c4c;
     text-decoration: none
 }
+
 table.accountinbox-table td a:hover {
     text-decoration: underline
 }
+
 table.accountinbox-table td:nth-child(1) {
     padding: 10px 5px 10px 10px;
     width: 30px
 }
+
 table.accountinbox-table td:nth-child(3) {
     width: 160px
 }
+
 table.accountinbox-table tr:hover td {
     background: #e1e4e8
 }
+
 .btn-mail,
 a.btn-mail {
     cursor: pointer;
     text-decoration: none;
     margin: 0 18px
 }
+
 .account-mail .mail-block:after,
 .account-mail .mail-block:before,
 .account-mail .mail-panel:after,
@@ -4808,18 +5334,22 @@ a.btn-mail {
     display: table;
     content: ""
 }
+
 .btn-mail:first-child,
 a.btn-mail:first-child {
     margin-left: 0
 }
+
 .btn-mail:last-child,
 a.btn-mail:last-child {
     margin-right: 0
 }
+
 .btn-mail:hover span,
 a.btn-mail:hover span {
     text-decoration: underline
 }
+
 .btn-mail.mail-back,
 a.btn-mail.mail-back {
     color: #818181;
@@ -4829,15 +5359,18 @@ a.btn-mail.mail-back {
     padding: 10px 20px;
     line-height: 20px
 }
+
 .btn-mail.mail-back:hover,
 a.btn-mail.mail-back:hover {
     background-color: #eee;
     text-decoration: none
 }
+
 .btn-mail.mail-back .icon,
 a.btn-mail.mail-back .icon {
     margin: 0 7px 3px 0
 }
+
 .btn-mail.mail-del,
 .btn-mail.mail-markunread,
 .btn-mail.mail-reply,
@@ -4851,6 +5384,7 @@ a.btn-mail.mail-reply {
     text-transform: uppercase;
     padding: 5px 0
 }
+
 .btn-mail.mail-next,
 .btn-mail.mail-prev,
 a.btn-mail.mail-next,
@@ -4861,55 +5395,68 @@ a.btn-mail.mail-prev {
     color: #20599d;
     padding: 5px 0
 }
+
 .account-mail {
     margin-bottom: 70px
 }
+
 .account-mail .heading {
     margin-bottom: 25px
 }
+
 .account-mail .mail-container {
     max-width: 980px;
     margin: 0 auto;
     padding: 0 20px
 }
+
 .account-mail .mail-panel {
     background: #f9f9f9;
     padding: 10px 0
 }
+
 .account-mail .mail-panel .mail-panel-l {
     float: left
 }
+
 .account-mail .mail-panel .mail-nav {
     float: right;
     padding: 5px 0
 }
+
 .account-mail .mail-block {
     margin: 20px 0;
     border: 1px solid #b6b6b6;
     padding: 30px
 }
+
 .account-mail .mail-block .mail-img {
     float: left;
     text-align: center;
     width: 270px;
     padding-right: 20px
 }
+
 .account-mail .mail-block .mail-content {
     margin-left: 270px;
     font-size: 16px
 }
+
 .account-mail .mail-block .mail-content .mail-h {
     font-size: 18px;
     font-weight: 700
 }
+
 .account-mail .mail-block .mail-content ul {
     margin: 15px 0
 }
+
 .account-mail .mail-block .mail-content ul li {
     position: relative;
     padding: 2px 0 2px 17px;
     display: block
 }
+
 .account-mail .mail-block .mail-content ul li:before {
     content: "";
     display: block;
@@ -4920,20 +5467,24 @@ a.btn-mail.mail-prev {
     top: 8px;
     background: url(../img/icons.png) 0 -5857px no-repeat
 }
+
 .account-mail .mail-block .mail-content ul.alert li {
     padding-left: 21px
 }
+
 .account-mail .mail-block .mail-content ul.alert li:before {
     width: 14px;
     height: 13px;
     background: url(../img/icons.png) 0 -5930px no-repeat
 }
+
 .account-mail .mail-block .mail-content .note {
     position: relative;
     padding: 0 0 0 37px;
     font-style: italic;
     margin: 15px 0
 }
+
 .account-mail .mail-block .mail-content .note:before {
     content: "";
     display: block;
@@ -4944,60 +5495,76 @@ a.btn-mail.mail-prev {
     top: 0;
     background: url(../img/icons.png) 0 -5887px no-repeat
 }
+
 .account-mail .mail-block-bottom {
     text-align: right;
     padding: 0 5px
 }
+
 @media (max-width: 1199px) {
 
     .news-page .news-list .item {
         min-height: 155px;
         margin-bottom: 40px
     }
+
     .news-page .news-list .item .img {
         width: 155px
     }
+
     .news-page .news-list .item .item-r {
         margin-left: 175px
     }
+
     .news-page .news-list .item .item-r .title {
         min-height: 85px
     }
+
     .whychooseus-online .whychooseus-online-list {
         margin: 50px 0 20px
     }
+
     .howonlineworks {
         padding-bottom: 20px
     }
+
     .howonlineworks .howonlineworks-block {
         margin: 50px 0
     }
+
     .howonlineworks .howonlineworks-block .img {
         max-width: 50%
     }
+
     .helptoshop-section {
         padding: 30px 0 60px
     }
+
     .helptoshop-section .helpproduct a.helpproduct-remove {
         right: 0;
         top: 0
     }
+
     .helptoshop-section .helpproduct-option .helpproduct a.helpproduct-remove {
         top: 18px;
         right: 18px
     }
+
     .calculator-section .calculator-infoblock img {
         padding: 0
     }
+
     .calculator-section .calculator-infoblock .txt {
         margin-left: 380px
     }
 }
+
 @media (max-width: 1139px) {
     .footer .container {
         -ms-flex-wrap: wrap;
         flex-wrap: wrap
     }
+
     .footer .footer-l {
         -webkit-box-ordinal-group: 4;
         -ms-flex-order: 3;
@@ -5007,21 +5574,26 @@ a.btn-mail.mail-prev {
         margin-bottom: 10px;
         position: relative
     }
+
     .footer .footer-l .footer-lt {
         max-width: 290px
     }
+
     .footer .footer-l .footer-lt ul.social {
         width: 130px
     }
+
     .footer .footer-l .txt {
         max-width: 400px
     }
+
     .footer .footer-l .footer-signup {
         position: absolute;
         right: 0;
         top: 55px;
         width: 280px
     }
+
     .footer .footer-c {
         -webkit-box-ordinal-group: 2;
         -ms-flex-order: 1;
@@ -5029,6 +5601,7 @@ a.btn-mail.mail-prev {
         width: 75%;
         margin-bottom: 20px
     }
+
     .footer .footer-r {
         -webkit-box-ordinal-group: 3;
         -ms-flex-order: 2;
@@ -5036,18 +5609,23 @@ a.btn-mail.mail-prev {
         width: 22%;
         margin-bottom: 20px
     }
+
     .courier-calc .courier-calc-txt {
         margin-left: 240px
     }
+
     .courier-calc .courier-calc-block {
         padding: 0 20px
     }
+
     .courier-calc .courier-calc-block img.courier-calc-img {
         left: -20px
     }
+
     .requestquote p.intro {
         text-align: center
     }
+
     .requestquote .requestquote-block .whyus-list {
         width: 100%;
         -webkit-box-orient: horizontal;
@@ -5056,42 +5634,53 @@ a.btn-mail.mail-prev {
         flex-direction: row;
         margin: 30px 0 50px
     }
+
     .requestquote .requestquote-block .whyus-list .whyus-item {
         margin-bottom: 0;
         width: 32%
     }
+
     .requestquote .requestquote-block .whyus-list .whyus-item i {
         display: none
     }
+
     .requestquote .requestquote-block .whyus-list .whyus-item .whyus-info {
         margin-left: 0
     }
+
     .requestquote .requestquote-block .cargoform {
         width: 100%;
         max-width: 780px;
         margin: 0 auto
     }
+
     .howtolower .howtolower-list {
         background-size: auto 350px
     }
+
     section.contacts {
         padding: 30px 0
     }
+
     section.contacts .txt {
         width: 100%
     }
+
     section.contacts .contacts-form {
         width: 100%;
         max-width: 680px;
         margin: 30px auto 0
     }
+
     .account-menu-block .account-menu ul li {
         margin: 0 10px
     }
+
     .account-menu-block .account-menu ul li a {
         font-size: 13px
     }
- /*   .parcel-filter-block:after,
+
+    /*   .parcel-filter-block:after,
     .parcel-filter-block:before {
         content: "";
         display: table
@@ -5115,25 +5704,31 @@ a.btn-mail.mail-prev {
         width: 100%;
         margin-bottom: 20px
     }
+
     .acc-tracking-cols .row .col.acc-tracking-col-2 {
         width: 100%
     }
+
     .acc-tracking-cols .row .col.acc-tracking-col-2 .acc-tracking-block {
         width: 50%
     }
+
     .online-page .page-heading,
     .stores-page .page-heading {
         padding-bottom: 20px
     }
+
     .stores-menu-block {
         position: relative;
         height: 64px
     }
+
     .stores-menu-block ul.stores-menu {
         position: absolute;
         top: 64px;
         width: 300px
     }
+
     .stores-menu-block ul.stores-menu li {
         display: none;
         background: #2a70b7;
@@ -5142,6 +5737,7 @@ a.btn-mail.mail-prev {
         border-color: #fff;
         border-style: solid
     }
+
     .stores-menu-block ul.stores-menu li a {
         border-bottom: 1px solid rgba(255, 255, 255, .3);
         display: block;
@@ -5150,11 +5746,13 @@ a.btn-mail.mail-prev {
         line-height: 36px;
         height: 50px
     }
+
     .stores-menu-block ul.stores-menu li a:active,
     .stores-menu-block ul.stores-menu li a:hover {
         border-bottom: 1px solid rgba(255, 255, 255, .3);
         background: #20599d
     }
+
     .stores-menu-block ul.stores-menu li.active {
         width: 300px;
         display: block;
@@ -5165,6 +5763,7 @@ a.btn-mail.mail-prev {
         left: 0;
         background: 0 0
     }
+
     .stores-menu-block ul.stores-menu li.active:after {
         content: "";
         display: block;
@@ -5175,104 +5774,92 @@ a.btn-mail.mail-prev {
         right: 21px;
         top: 29px
     }
+
     .stores-menu-block ul.stores-menu li.active a {
         padding: 16px 10px;
         line-height: 22px;
         height: 60px;
         border: none
     }
+
     .stores-menu-block ul.stores-menu.expanded li {
         display: block
     }
 }
+
 @media (max-width: 991px) {
     .trustus .trustus-l {
         width: 250px
     }
-    .specialoffer {
-        padding: 20px 0 30px
-    }
-    .specialoffer .txt .redline {
-        margin: 20px 0 50px
-    }
-    .whychooseus .container>.row {
-        display: block;
-        width: 100%;
-        margin: 0
-    }
-    .whychooseus .container>.row>.col.col-8 {
-        width: 100%;
-        padding: 0 0 20px;
-        margin: 0
-    }
-    .whychooseus .container>.row>.col.col-8 .whyus-item {
-        padding: 15px
-    }
-    .whychooseus .container>.row>.col.col-8 .whyus-item .whyus-info {
-        margin-left: 70px
-    }
-    .whychooseus .container>.row>.col.calc-block {
-        width: 100%;
-        max-width: 600px;
-        margin: 0 auto
-    }
-    .whychooseus .container>.row>.col.calc-block .heading,
-    .whychooseus .container>.row>.col.calc-block p {
-        text-align: center
-    }
+
     .row.faq-quesions-block {
         -ms-flex-wrap: wrap;
         flex-wrap: wrap;
         padding-bottom: 70px
     }
+
     .row.faq-quesions-block>.col.col-6 {
         width: 100%;
         margin-bottom: 20px
     }
+
     .row.faq-quesions-block>.col.col-6.contact-form {
         max-width: 600px;
         margin: 0 auto
     }
+
     .mobile-app .txt {
         width: 70%
     }
+
     .services-page .services-list {
         margin: 80px 0
     }
+
     .services-page .services-list .item {
         width: 48%
     }
+
     .services-page .services-list .item .img a img {
         width: 100%
     }
+
     .services-page .services-list .item .title a {
         font-size: 30px
     }
+
     .more-block {
         margin-right: 10px
     }
+
     .row.faq-videos-block {
         -ms-flex-wrap: wrap;
         flex-wrap: wrap;
         padding-bottom: 70px
     }
+
     .row.faq-videos-block>.col.col-6 {
         width: 100%;
         margin-bottom: 20px
     }
+
     .row.faq-videos-block>.col.col-6.videohelp {
         max-width: 600px;
         margin: 0 auto
     }
+
     .row.faq-videos-block>.col.col-6.videohelp .videos .item img {
         width: 100%
     }
+
     .courier-pickup .pickup-locations .item i {
         display: none
     }
+
     .courier-pickup .pickup-locations .item .item-r {
         margin-left: 0
     }
+
     .courier-georgia .georgia-map {
         display: -webkit-box;
         display: -ms-flexbox;
@@ -5280,6 +5867,7 @@ a.btn-mail.mail-prev {
         -ms-flex-wrap: wrap;
         flex-wrap: wrap
     }
+
     .courier-georgia .georgia-map .map {
         width: 100%;
         margin-bottom: 20px;
@@ -5289,6 +5877,7 @@ a.btn-mail.mail-prev {
         display: block;
         text-align: center
     }
+
     .courier-georgia .georgia-map .map-markers {
         width: 100%;
         max-width: 800px;
@@ -5305,44 +5894,57 @@ a.btn-mail.mail-prev {
         -ms-flex-pack: justify;
         justify-content: space-between
     }
+
     .courier-georgia .georgia-map .map-markers .markers-group {
         width: 48%
     }
+
     .article-page .article .article-content .img {
         max-width: 50%
     }
+
     .partners-page .page-heading .partner-info p {
         max-width: 100%
     }
+
     .incoterms .incoterms-list {
         margin: 20px 0
     }
+
     .tracking .tracking-details .travel-history {
         width: 64%
     }
+
     .tracking .tracking-details .shipment-facts {
         width: 36%
     }
+
     section.prices .prices-list {
         -ms-flex-wrap: wrap;
         flex-wrap: wrap
     }
+
     section.prices .prices-list .item {
         width: 48%;
         margin-bottom: 20px
     }
+
     section.prices .prices-infoblock .item {
         width: 48%
     }
+
     .account-menu-block .container {
         padding-left: 0
     }
+
     .account-menu-block .account-menu {
         position: relative
     }
+
     .account-menu-block .account-menu .account-toggler {
         display: block
     }
+
     .account-menu-block .account-menu ul {
         display: none;
         position: absolute;
@@ -5354,75 +5956,95 @@ a.btn-mail.mail-prev {
         margin: 0;
         z-index: 10
     }
+
     .account-menu-block .account-menu ul li {
         margin: 0;
         display: block
     }
+
     .account-menu-block .account-menu ul li a {
         font-size: 16px;
         color: #fff;
         padding: 10px 15px;
         display: block
     }
+
     .account-menu-block .account-menu ul li a:active,
     .account-menu-block .account-menu ul li a:hover {
         background: #60b5f6;
         text-decoration: none
     }
+
     .account-menu-block .account-menu.active ul {
         display: block
     }
+
     table.bluetable tr td,
     table.bluetable tr th {
         padding-left: 10px
     }
+
     .accountdelreq .delreq-btn-block-2 .delreq-total {
         padding-right: 0
     }
+
     .accountreg .row .col.col-6.col-regform,
     .accountreg .row .col.col-6.faq,
     .helptoshop-section .helpproduct .row .col.col-sm-12 {
         width: 100%
     }
+
     .partnershops .partnershops-group .partnershops-list .item {
         width: 48%;
         margin-right: 4%
     }
+
     .partnershops .partnershops-group .partnershops-list .item:nth-child(4n) {
         margin-right: inherit
     }
+
     .partnershops .partnershops-group .partnershops-list .item:nth-child(2n) {
         margin-right: 0
     }
+
     section.related-stores .related-stores-h .seeall {
         display: none
     }
+
     section.related-stores .related-stores-list .item {
         width: 48%;
         margin: 0 4% 4% 0
     }
+
     section.related-stores .related-stores-list .item:nth-child(4n) {
         margin-right: inherit
     }
+
     section.related-stores .related-stores-list .item:nth-child(2n) {
         margin-right: 0
     }
+
     section.related-stores .related-stores-list .item .img img {
         width: 100%
     }
+
     section.related-stores .loadmore {
         display: block
     }
 }
+
 @media (max-width: 899px) {
+
     .howworks .howworks-content .howworks-l,
     .trustus .trustus-r {
         width: 100%
     }
+
     .howworks .howworks-content .howworks-r,
     .trustus .trustus-l {
         display: none
     }
+
     .courier-georgia h2,
     .courier-office h2,
     .courier-options h2,
@@ -5430,42 +6052,53 @@ a.btn-mail.mail-prev {
     .courier-pickup h2 {
         font-size: 30px
     }
+
     .trustus .trustus-r .advantages {
         margin: 50px 0
     }
+
     .howworks {
         margin: 50px 0 30px
     }
+
     .courier-pickup {
         padding: 20px 0
     }
+
     .courier-pickup .pickup-locations .item {
         width: 48%
     }
+
     .courier-office {
         padding: 0
     }
+
     .courier-office .courier-offices .item {
         width: 100%;
         margin-bottom: 50px
     }
+
     .courier-options {
         padding: 20px 0
     }
+
     .courier-options .courier-options-cols {
         display: block;
         padding: 30px 0
     }
+
     .courier-options .courier-options-cols .courier-options-col {
         display: block;
         width: 100%
     }
+
     .courier-options .courier-options-cols .or-col {
         display: block;
         width: 100%;
         text-align: center;
         margin: 0 0 30px
     }
+
     .courier-options .courier-options-cols .or-col:before {
         content: "";
         display: block;
@@ -5476,72 +6109,91 @@ a.btn-mail.mail-prev {
         top: 9px;
         border-top: 1px solid #d9d9d9
     }
+
     .courier-options .courier-options-cols .or-col:after {
         display: none
     }
+
     .courier-options .courier-options-cols .or-col span {
         margin: 0 auto;
         padding: 0 12px;
         display: inline-block
     }
+
     .courier-calc .courier-calc-txt,
     .documents .documents-list .item .item-r {
         margin-left: 0
     }
+
     .courier-calc .courier-calc-block img.courier-calc-img,
     .documents .documents-list .item i {
         display: none
     }
+
     .courier-calc .courier-calc-block .courier-form {
         max-width: 100%
     }
+
     .courier-georgia {
         padding: 40px 0 0
     }
+
     .news-page .news-list .item {
         width: 100%;
         margin-bottom: 25px
     }
+
     .news-page .news-list .item .item-r .title {
         min-height: 42px
     }
+
     .partners-page .partner-tabs .ptabs ul li {
         padding: 0 15px
     }
+
     .partner-list .item {
         width: 31%
     }
+
     .howtolower .howtolower-list {
         background: 0 0;
         padding-left: 0
     }
+
     .whychooseus-online {
         padding-bottom: 0
     }
+
     .whychooseus-online .whychooseus-online-list .item {
         width: 100%;
         margin: 0 0 50px;
         text-align: center
     }
+
     .whychooseus-online .whychooseus-online-list .item .img {
         float: none;
         width: auto;
         margin-bottom: 10px
     }
+
     .whychooseus-online .whychooseus-online-list .item .item-r {
         margin-left: 0
     }
+
     .accountshipaddress .shipaddress-info {
         display: block
     }
+
     .accountshipaddress .shipaddress-info .shipaddress-infoblock {
         width: 100%;
         padding: 0;
         margin-bottom: 30px
     }
+
     .account-mail .mail-panel .mail-panel-l {
         width: 100%
     }
+
     .account-mail .mail-panel .mail-nav {
         float: left;
         display: block;
@@ -5551,175 +6203,193 @@ a.btn-mail.mail-prev {
 
 
 @media (max-width: 887px) {
-	
-	 .parcel-filter-block:after,
+
+    .parcel-filter-block:after,
     .parcel-filter-block:before {
         content: "";
         display: table
     }
+
     .parcel-filter-block:after {
         clear: both
     }
+
     .parcel-filter-block .parcel-filter-item {
         width: 50%;
         float: left;
         margin: 0
     }
+
     .parcel-filter-block .parcel-filter-item .select2 {
         display: block
     }
+
     .parcel-filter-block .parcel-filter-item ul.customer-folders,
     .parcel-filter-block .parcel-filter-item ul.parcel-status {
         display: none
-    } 
-	
-}	
+    }
+
+}
 
 
 @media (max-width: 767px) {
     .row .col.col-sm-6 {
         width: 50%
     }
-    .header .topbar .topbar-contacts .topbar-contacts-item>div.mail,
-    .header .topbar .topbar-contacts .topbar-contacts-item>div.phone,
+
     .row .col.col-sm-12 {
         width: 100%
     }
-    .header .topbar .topbar-contacts .topbar-contacts-item {
-        padding: 16px 20px 0
-    }
-    .header .topbar .topbar-contacts .topbar-contacts-item>div {
-        display: block;
-        margin: 0 0 15px
-    }
-    .header .topbar .topbar-contacts .topbar-contacts-item>div span {
-        display: inline
-    }
-    .header .topbar .topbar-contacts .topbar-contacts-item.active {
-        display: block
-    }
+
+
     .footer .footer-l {
         padding: 100px 0 0;
         margin: 0 auto;
         max-width: 290px
     }
+
     .footer .footer-l .footer-lt {
         -ms-flex-wrap: wrap;
         flex-wrap: wrap
     }
+
     .footer .footer-l .footer-lt .logo {
         display: block;
         width: 100%;
         text-align: center
     }
+
     .footer .footer-l .footer-lt .logo a {
         margin: 0 auto
     }
+
     .footer .footer-l .footer-lt ul.social {
         margin: 0 auto;
         width: 170px;
         padding: 30px 0 20px
     }
+
     .footer .footer-l .footer-lt ul.social li.icon-fb-footer {
         width: 24px;
         height: 29px;
         background-position: -114px -1997px
     }
+
     .footer .footer-l .footer-lt ul.social li.icon-fb-footer a {
         height: 29px
     }
+
     .footer .footer-l .footer-lt ul.social li.icon-tw-footer {
         width: 28px;
         height: 24px;
         background-position: -114px -2053px
     }
+
     .footer .footer-l .footer-lt ul.social li.icon-tw-footer a {
         height: 29px
     }
+
     .footer .footer-l .footer-lt ul.social li.icon-gp-footer {
         width: 40px;
         height: 25px;
         background-position: -114px -2105px
     }
+
     .footer .footer-l .footer-lt ul.social li.icon-gp-footer a {
         height: 29px
     }
+
     .footer .footer-l .txt {
         text-align: center;
         padding-bottom: 15px
     }
+
     .footer .footer-l .footer-signup {
         top: 0;
         width: 100%;
         left: 0;
         right: 0
     }
+
     .footer .footer-l .footer-copy {
         text-align: center
     }
+
     .footer .footer-c {
         width: 100%;
         margin-bottom: 20px
     }
+
     .footer .footer-r {
         display: none;
         width: 100%;
         max-width: 290px
     }
+
     .cargo-page .page-heading h1,
     .cargo-page .page-heading h2,
     .howonlineworks h2,
     .whychooseus-online h2 {
         font-size: 30px
     }
-    .specialoffer .txt {
-        width: 100%
-    }
+
     .mobile-app .txt {
         width: 100%;
         padding: 30px 10px
     }
+
     .news {
         padding: 50px 0
     }
+
     .news .news-list {
         -ms-flex-wrap: wrap;
         flex-wrap: wrap
     }
+
     .news .news-list .item {
         width: 100%;
         max-width: 374px;
         margin: 0 auto 50px
     }
+
     .page-heading p {
         max-width: 100%
     }
+
     .courier-calc .courier-calc-block {
         max-width: 600px;
         margin: 0 auto
     }
+
     .courier-calc .courier-calc-block .row .col.col-5 .input-group.nolabel:first-child {
         padding-top: 0
     }
+
     .partners-page .page-heading .partner-info .col-left {
         width: 100%
     }
+
     .partners-page .page-heading .partner-info .col-right {
         display: none
     }
+
     .partners-page .partner-tabs {
         padding: 25px 0
     }
+
     .partners-page .partner-tabs .ptabs {
         position: relative;
         height: 54px;
         margin: 0 auto;
         width: 290px
     }
+
     .partners-page .partner-tabs .ptabs ul {
         position: absolute;
         top: 54px
     }
+
     .partners-page .partner-tabs .ptabs ul li {
         display: none;
         margin: 0 auto;
@@ -5729,9 +6399,11 @@ a.btn-mail.mail-prev {
         background: #20599d;
         border-bottom: 1px solid #ccc
     }
+
     .partners-page .partner-tabs .ptabs ul li span {
         color: #fff
     }
+
     .partners-page .partner-tabs .ptabs ul li.active {
         display: block;
         background: #fff;
@@ -5741,6 +6413,7 @@ a.btn-mail.mail-prev {
         left: 0;
         right: 0
     }
+
     .partners-page .partner-tabs .ptabs ul li.active:after {
         content: "";
         width: 14px;
@@ -5752,13 +6425,16 @@ a.btn-mail.mail-prev {
         margin-top: -4px;
         background: url(../img/icons.png) -92px -2340px no-repeat
     }
+
     .partners-page .partner-tabs .ptabs ul li.active span {
         color: #20599d;
         border-bottom: 0
     }
+
     .partners-page .partner-tabs .ptabs.expanded ul li {
         display: block
     }
+
     .partners-page .partner-tabs .ptabs.expanded ul li.active {
         display: block;
         border-bottom: 3px solid #20599d;
@@ -5767,83 +6443,106 @@ a.btn-mail.mail-prev {
         left: 0;
         right: 0
     }
+
     .partners-page .partner-tabs .ptabs.expanded ul li.active span {
         border-bottom: none
     }
+
     .partners-page .partner-tabs .ptabs.expanded ul li.active:hover span {
         color: #20599d
     }
+
     .partners-page .partner-tabs .ptabs.expanded ul li:hover span {
         color: #fff
     }
+
     .partner-list .item {
         width: 48%
     }
+
     .requestquote {
         padding-bottom: 5px
     }
+
     .requestquote .requestquote-block .whyus-list {
         -ms-flex-wrap: wrap;
         flex-wrap: wrap
     }
+
     .requestquote .requestquote-block .whyus-list .whyus-item {
         width: 100%;
         margin-bottom: 20px
     }
+
     .requestquote .requestquote-block form>.row>.col {
         width: 100%
     }
+
     .howtolower {
         padding: 20px 0 0
     }
+
     .howtolower .howtolower-list {
         margin-bottom: 40px
     }
+
     .documents .documents-list .item,
     .incoterms .incoterms-list .item {
         width: 48%
     }
+
     .licenses .licenses-cols .licenses-col {
         margin-bottom: 30px
     }
+
     .licenses .licenses-cols .licenses-col:last-child {
         margin-bottom: 0
     }
+
     .tracking .tracking-points {
         margin-top: 50px
     }
+
     .tracking .tracking-details .travel-history {
         width: 100%;
         margin-bottom: 20px
     }
+
     .tracking .tracking-details .shipment-facts {
         width: 100%
     }
+
     .howonlineworks .howonlineworks-block .img {
         float: none;
         padding: 0;
         margin-bottom: 20px;
         max-width: 100%
     }
+
     .helptoshop .helptoshop-form {
         max-width: 600px;
         margin: 0 auto
     }
+
     .sm600 {
         max-width: 600px
     }
+
     .filter-block {
         display: block
     }
+
     .filter-block .filter-date {
         margin-bottom: 0
     }
+
     .filter-block .filter-pager {
         padding-top: 0;
         text-align: center;
         margin: 0 auto 20px;
         display: block
     }
+
     .filter-block .filter-pager .curr {
         -webkit-box-ordinal-group: 3;
         -ms-flex-order: 2;
@@ -5851,6 +6550,7 @@ a.btn-mail.mail-prev {
         -webkit-order: 2;
         margin: 5px 10px
     }
+
     .filter-block .filter-pager a.filter-arr.filter-arr-l {
         -webkit-box-ordinal-group: 2;
         -ms-flex-order: 1;
@@ -5858,6 +6558,7 @@ a.btn-mail.mail-prev {
         -webkit-order: 1;
         margin: 5px 5px 5px 0
     }
+
     .filter-block .filter-pager a.filter-arr.filter-arr-r {
         -webkit-box-ordinal-group: 4;
         -ms-flex-order: 3;
@@ -5865,69 +6566,86 @@ a.btn-mail.mail-prev {
         -webkit-order: 3;
         margin: 5px 0 5px 5px
     }
+
     .archiveparcels .heading,
     .archiveparcels .heading .search-parcels,
     .archiveparcels .heading h1,
     .myparcels .heading {
         display: block
     }
+
     .myparcels .heading .search-parcels,
     .myparcels .heading h1 {
         display: block;
         width: 100%
     }
+
     .acc-tracking-cols .row .col.acc-tracking-col-2,
     .acc-tracking-cols .row .col.acc-tracking-col-2 .acc-tracking-block {
         width: 100%
     }
+
     .acc-tracking-cols .row .col.acc-tracking-col-2 .acc-tracking-block .input-group input[type=text] {
         max-width: 100%
     }
+
     .accountdelreq .delreq-btn-block-2 {
         display: block
     }
+
     .accountdelreq .delreq-btn-block-2 .delreq-total {
         margin-bottom: 20px
     }
+
     .accountdelreq .delreq-btn-block-2 .delreq-total:after,
     .accountdelreq .delreq-btn-block-2 .delreq-total:before {
         content: "";
         display: table
     }
+
     .accountdelreq .delreq-btn-block-2 .delreq-total:after {
         clear: both
     }
+
     .accountdelreq .delreq-btn-block-2 .delreq-total .item {
         width: 50%;
         float: left;
         margin-bottom: 20px;
         padding-right: 10px
     }
+
     .accountdelreq .delreq-btn-block-2 .btn-block {
         text-align: center
     }
+
     .accountdelreq .delreq-info .delreq-infoblock {
         width: 100%;
         padding-right: 0;
         margin-bottom: 40px
     }
+
     .accountdelreq .delreq-btn-block-3 {
         text-align: center;
         margin: 20px 0
     }
+
     .accountdelreq .delreq-btn-block-3 .btn-block {
         margin: 0 10px 20px
     }
+
     .calculator-section .calculator-infoblock {
         margin-bottom: 50px
     }
+
     .calculator-section .calculator-infoblock img {
         width: 30%
     }
+
     .calculator-section .calculator-infoblock .txt {
         padding-top: 0;
         margin-left: 32%
     }
+
     .account-mail .mail-panel .mail-panel-l a.btn-mail {
         width: 100%;
         border: 1px solid #bbb;
@@ -5936,69 +6654,68 @@ a.btn-mail.mail-prev {
         padding: 10px;
         border-bottom: none
     }
+
     .account-mail .mail-panel .mail-panel-l a.btn-mail:last-child {
         border-bottom: 1px solid #bbb
     }
+
     .account-mail .mail-panel .mail-nav {
         float: left;
         display: block;
         margin-top: 10px
     }
+
     .account-mail .mail-block {
         margin-top: 0
     }
+
     .account-mail .mail-block .mail-img {
         float: none;
         margin: 0 auto 20px
     }
+
     .account-mail .mail-block .mail-content {
         margin: 0
     }
+
     section.stores .store-info-top .store-info-l {
         width: 100%;
         padding: 0
     }
+
     section.stores .store-info-top .store-info-r {
         width: 100%
     }
+
     section.related-stores .related-stores-h h3 {
         display: block;
         float: none
     }
 }
+
 @media (max-width: 599px) {
     .tracking-page .page-heading {
         position: relative
     }
+
     .container {
         padding: 0 10px
     }
+
     .row .col.col-xs-12 {
         width: 100%
     }
-    .header .bottombar .logo a img {
-        width: 127px
-    }
-    .header .bottombar ul.usermenu {
-        margin-top: 0
-    }
-    .header .bottombar ul.usermenu li {
-        margin: 0 7px
-    }
-    .header .bottombar .headermenu-block .headermenu-toggler {
-        margin: 0 15px 0 0
-    }
-    .header .bottombar .headermenu-block ul.headermenu {
-        top: 49px
-    }
+
     .footer .footer-c {
         display: block
     }
+
     .footer .footer-c .footermenu {
         max-width: 290px;
         width: 100%;
         margin: 0 auto 13px
     }
+
     .footer .footer-c .footermenu .title {
         background: #20599d;
         color: #fff;
@@ -6008,38 +6725,47 @@ a.btn-mail.mail-prev {
         font-size: 16px;
         cursor: pointer
     }
+
     .footer .footer-c .footermenu ul {
         display: none;
         background: #2a70b7
     }
+
     .footer .footer-c .footermenu ul li {
         margin: 0;
         display: block
     }
+
     .footer .footer-c .footermenu ul li a {
         display: block;
         padding: 10px 12px
     }
+
     .footer .footer-c .footermenu ul li a:active,
     .footer .footer-c .footermenu ul li a:hover {
         background: #3fa3f0;
         text-decoration: none
     }
+
     .footer .footer-c .footermenu.active ul {
         display: block
     }
+
     .trustus {
         padding-top: 10px
     }
+
     .trustus .trustus-r .advantages {
         display: block;
         margin: 20px 0
     }
+
     .trustus .trustus-r .advantages .adv-item {
         display: block;
         width: 220px;
         margin: 40px auto
     }
+
     .documents .documents-list .item,
     .incoterms .incoterms-list .item,
     .services-page .services-list .item,
@@ -6048,55 +6774,69 @@ a.btn-mail.mail-prev {
     section.prices .prices-list .item {
         width: 100%
     }
+
     .faq .ralign {
         text-align: center
     }
+
     .services-page .services-list .item {
         max-width: 400px;
         margin: 0 auto 40px
     }
+
     .videohelp h3 {
         max-width: 400px;
         margin: 20px auto
     }
+
     .videohelp .videos {
         max-width: 400px;
         margin: 0 auto
     }
+
     .videohelp .videos .item:nth-child(2n),
     .videohelp .videos .item:nth-child(2n+1) {
         padding: 0
     }
+
     .tracking-page .page-heading .tracking-form {
         position: absolute;
         bottom: -90px;
         left: 50%;
         margin-left: -130px
     }
+
     .tracking-page .page-heading .tracking-form .input-group input[type=text] {
         border: 1px solid #bfbfbf;
         border-right: none
     }
+
     .tracking {
         padding-top: 90px
     }
+
     section.prices .prices-list .item .val {
         font-size: 24px;
         margin-top: 10px
     }
+
     .accounteditreceiver .form-txt {
         margin-top: 0
     }
+
     table.bluetable.archiveparcels-table {
         width: 100%;
         display: block
     }
+
     table.bluetable.archiveparcels-table thead {
         display: none
     }
+
     table.bluetable.archiveparcels-table tbody {
         display: block
     }
+
     table.bluetable.archiveparcels-table tr {
         display: -webkit-box;
         display: -ms-flexbox;
@@ -6107,49 +6847,61 @@ a.btn-mail.mail-prev {
         margin-bottom: 35px;
         padding: 20px 0
     }
+
     table.bluetable.archiveparcels-table tr th {
         display: none
     }
+
     table.bluetable.archiveparcels-table tr td:before {
         color: #888;
         font-size: 16px;
         display: block
     }
+
     table.bluetable.archiveparcels-table tr td {
         display: block;
         width: 50%;
         font-size: 18px
     }
+
     table.bluetable.archiveparcels-table tr td:nth-child(1),
     table.bluetable.archiveparcels-table tr td:nth-child(4),
     table.bluetable.archiveparcels-table tr td:nth-child(5) {
         display: none
     }
+
     table.bluetable.archiveparcels-table tr td:nth-child(2):before {
         content: "Tracking #"
     }
+
     table.bluetable.archiveparcels-table tr td:nth-child(3) {
         -webkit-box-ordinal-group: 4;
         -ms-flex-order: 3;
         order: 3;
         -webkit-order: 3
     }
+
     table.bluetable.archiveparcels-table tr td:nth-child(3):before {
         content: "Note"
     }
+
     table.bluetable.archiveparcels-table tr td:nth-child(6):before {
         content: "Delivered on"
     }
+
     table.bluetable.myparcels-table {
         width: 100%;
         display: block
     }
+
     table.bluetable.myparcels-table thead {
         display: none
     }
+
     table.bluetable.myparcels-table tbody {
         display: block
     }
+
     table.bluetable.myparcels-table tr {
         display: -webkit-box;
         display: -ms-flexbox;
@@ -6160,197 +6912,145 @@ a.btn-mail.mail-prev {
         margin-bottom: 35px;
         padding: 20px 0
     }
+
     table.bluetable.myparcels-table tr th {
         display: none
     }
+
     table.bluetable.myparcels-table tr td:before {
         color: #888;
         font-size: 16px;
         display: block
     }
+
     table.bluetable.myparcels-table tr td {
         display: block;
         width: 50%;
         font-size: 18px
     }
+
     table.bluetable.myparcels-table tr td.td-checkbox {
         display: none
     }
+
     table.bluetable.myparcels-table tr td.td-icons {
         width: 100%;
         text-align: left;
         padding: 0 10px
     }
+
     table.bluetable.myparcels-table tr td.td-trackingnum:before {
         content: "Tracking #"
     }
+
     table.bluetable.myparcels-table tr td.td-group:before {
         content: "Group"
     }
+
     table.bluetable.myparcels-table tr td.td-rec:before {
         content: "Receiver"
     }
+
     table.bluetable.myparcels-table tr td.td-note:before {
         content: "Note"
     }
+
     table.bluetable.myparcels-table tr td.td-status:before {
         content: "Status"
     }
+
     table.bluetable.myparcels-table tr td.td-weight:before {
         content: "Weight"
     }
+
     table.bluetable.myparcels-table tr td.td-price:before {
         content: "Price"
     }
+
     table.bluetable.myparcels-table tr td.td-estimated:before {
         content: "Estimated Delivery"
     }
+
     table.bluetable.myparcels-table tr td.td-expectit:before {
         content: "Expect It"
     }
+
     table.bluetable.myparcels-table tr td.td-received:before {
         content: "Received"
     }
+
     table.bluetable.myparcels-table tr.highlighted {
         font-weight: 400
     }
+
     .parcel-filter-block {
         margin-bottom: 10px
     }
+
     .parcel-filter-block .parcel-filter-item {
         width: 100%;
         margin-bottom: 20px
     }
+
     .helptoshop-section .helpproduct .row .col.col-xs-12 {
         width: 100%
     }
+
     .helptoshop-section .helpproduct-option {
         margin: 50px 0
     }
+
     .account-mail .mail-container {
         padding: 0 10px
     }
+
     .account-mail .mail-block {
         padding: 10px
     }
 }
+
 @media (max-width: 479px) {
+
     .contact-form .btn-block,
     .courier-calc .courier-calc-block .courier-form .btn-block,
     .helptoshop .btn-block,
     .requestquote .requestquote-block .cargoform form .btn-block {
         text-align: center
     }
+
     h1 {
         font-size: 27px
     }
+
     h2 {
         font-size: 24px
     }
+
     h3 {
         font-size: 21px
     }
+
     form .row {
         margin: 0 -5px
     }
+
     form .row .col {
         padding: 0 5px
     }
-    .header {
-        height: 335px
-    }
-    .header .topbar {
-        padding-bottom: 12px
-    }
-    .header .topbar .language {
-        z-index: 30;
-        position: relative
-    }
-    .header .topbar .language span {
-        width: 130px;
-        padding: 14px 35px 14px 12px
-    }
-    .header .topbar .office {
-        position: absolute;
-        top: 133px;
-        left: 0;
-        right: 0;
-        width: 100%
-    }
-    .header .topbar .office .curr {
-        padding: 7px 30px 7px 12px
-    }
-    .header .topbar .office .curr .title:after {
-        top: 18px
-    }
-    .header .topbar .topbar-contacts {
-        position: absolute;
-        top: 181px;
-        left: 0;
-        right: 0;
-        width: 100%
-    }
-    .header .topbar .topbar-contacts .topbar-contacts-item {
-        background: #f9f9f9;
-        padding-bottom: 5px
-    }
-    .header .bottombar {
-        padding-bottom: 0
-    }
-    .header .bottombar .container {
-        padding: 0 5px
-    }
-    .header .bottombar ul.usermenu {
-        margin-top: 20px
-    }
-    .header .bottombar ul.usermenu li {
-        margin: 0 5px 0 10px
-    }
-    .header .bottombar ul.usermenu li a i {
-        display: none
-    }
-    .header .bottombar .headermenu-block {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0
-    }
-    .header .bottombar .headermenu-block .headermenu-toggler {
-        margin: 0;
-        padding: 12px 22px
-    }
-    .header .bottombar .headermenu-block ul.headermenu {
-        width: 100%;
-        top: 54px
-    }
-    .header .bottombar .headermenu-block.active .headermenu-toggler {
-        padding: 12px 22px 17px
-    }
-    .specialoffer .txt h2 {
-        font-size: 36px
-    }
-    .specialoffer .txt p {
-        font-family: "Open Sans";
-        font-size: 14px;
-        font-weight: 600
-    }
-    .whychooseus .container>.row>.col.col-8 .whyus-item {
-        width: 100%;
-        margin: 0 0 10px
-    }
-    .whychooseus .container>.row>.col.col-8 .whyus-item:nth-child(2n+1) {
-        margin: 0 0 10px
-    }
+
     .whychooseus .calc-block .heading h3 {
         font-size: 30px
     }
+
     .contact-form h3,
     .faq h3 {
         font-size: 24px
     }
+
     .mobile-app .txt h3 {
         font-size: 36px
     }
+
     .faqs-page .faq .faq-block h3,
     .howworks h2,
     .nextbatch h3,
@@ -6359,173 +7059,204 @@ a.btn-mail.mail-prev {
     .videohelp h3 {
         font-size: 30px
     }
+
     .featherlight .featherlight-content {
         padding: 35px 10px 25px
     }
+
     .featherlight.w420 .featherlight-content {
         width: 96%
     }
-    #login-block .login-social:after,
-    #login-block .login-social:before {
-        content: "";
-        display: table
-    }
+
     .breadcrumbs,
     .howworks .howworks-content .howworks-l .step .step-num,
     .news-page .news-list .item .img,
     .tracking .tracking-results .timeline {
         display: none
     }
-    #login-block .login-social:after {
-        clear: both
-    }
-    #login-block .login-social .social-btn {
-        width: 29.3333%;
-        margin: 0 2%;
-        float: left
-    }
+
     .page-heading {
         padding: 32px 0
     }
+
     .page-heading.wide {
         padding: 10px 0
     }
+
     .howworks .howworks-content .howworks-l .step .step-desc {
         margin-left: 0
     }
+
     .nextbatch {
         padding: 20px 0
     }
+
     .nextbatch h3 {
         line-height: 1.4
     }
+
     .faqs-page .faq .faq-block {
         margin: 20px 0 60px
     }
+
     .courier-page .page-heading,
     .parcel-page .page-heading {
         padding-bottom: 10px
     }
+
     .courier-pickup .pickup-locations .item {
         width: 100%
     }
+
     .courier-office .courier-offices .item:last-child {
         margin-bottom: 0
     }
+
     .courier-calc .courier-calc-block {
         padding: 0 10px
     }
+
     .news-page .news-list .item {
         margin-bottom: 40px
     }
+
     .news-page .news-list .item .item-r {
         margin-left: 0
     }
+
     .news-page .news-list .item .item-r .title {
         min-height: 0
     }
+
     .article-page .page-heading h1 {
         font-size: 24px
     }
+
     .howtolower h2,
     .requestquote .calign h2 {
         font-size: 36px
     }
+
     .article-page .article .article-content .img {
         max-width: 100%;
         width: 100%;
         float: none;
         margin: 20px 0 10px
     }
+
     .partner-list .item {
         width: 100%;
         margin: 0 0 20px
     }
+
     .requestquote .requestquote-block {
         margin-top: 0
     }
+
     .requestquote .requestquote-block .whyus-list {
         padding: 0;
         margin-top: 0
     }
+
     .requestquote .requestquote-block .cargoform {
         padding: 0
     }
+
     .requestquote .requestquote-block .cargoform form {
         padding: 25px 10px
     }
+
     .requestquote .requestquote-block .cargoform .col-req-citydel,
     .requestquote .requestquote-block .cargoform .col-req-citydep,
     .requestquote .requestquote-block .cargoform .col-req-freight,
     .requestquote .requestquote-block .cargoform .col-req-icoterms {
         width: 100%
     }
+
     .howtolower .howtolower-list {
         margin: 20px 0
     }
+
     .cargopickup {
         padding: 50px 0;
         margin-bottom: 0
     }
+
     .tracking .tracking-results .timeline-mobile {
         display: block
     }
+
     .tracking .tracking-points .starting-point {
         float: none;
         margin: 0 auto 50px
     }
+
     .tracking .tracking-points .end-point {
         float: none;
         margin: 0 auto
     }
+
     .tracking .tracking-details .travel-history table {
         display: none
     }
+
     .tracking .tracking-details .travel-history .travel-history-mobile {
         display: block;
         margin: 20px 0
     }
+
     .whychooseus-online .whychooseus-online-list .item {
         width: 100%
     }
+
     .helptoshop h3,
     .partnershops h2 {
         font-size: 30px
     }
+
     .helptoshop .btn-block a.add {
         margin-bottom: 20px;
         display: inline-block
     }
+
     section.contacts .contacts-form {
         padding: 25px 10px
     }
+
     section.prices .prices-notice {
         -ms-flex-wrap: wrap;
         flex-wrap: wrap;
         padding: 18px 10px;
         margin-bottom: 40px
     }
+
     section.prices .prices-notice .img {
         width: 100%;
         margin: 10px 0 30px;
         text-align: center
     }
+
     .btn-block.xs100 .btn {
-        width: 100%!important
+        width: 100% !important
     }
+
     .btn-block.xscenter {
-        text-align: center!important
+        text-align: center !important
     }
+
     table.bluetable {
         width: 100%;
         display: block
     }
+
     table.bluetable thead {
         display: none
     }
+
     table.bluetable tbody {
         display: block
     }
+
     table.bluetable tr {
         display: -webkit-box;
         display: -ms-flexbox;
@@ -6537,117 +7268,149 @@ a.btn-mail.mail-prev {
         padding: 17px 0;
         border: 3px solid #f4f4f4
     }
+
     table.bluetable.acctrackingtable tr td:before,
     table.bluetable.delreq-table tr td:before {
         margin-bottom: 2px
     }
+
     table.bluetable tr th {
         display: none
     }
+
     table.bluetable tr td {
         display: block;
         width: 50%
     }
+
     table.bluetable tr td:before {
         color: #888;
         font-size: 16px;
         display: block
     }
+
     table.bluetable tr.checked-tr {
         border: 3px solid #20599d
     }
-  table.bluetable.accountrecievers-table tr td.td-firstname:before {
-    content: "First Name";
-  }
 
-  table.bluetable.accountrecievers-table tr td.td-city:before {
-    content: "City";
-  }
+    table.bluetable.accountrecievers-table tr td.td-firstname:before {
+        content: "First Name";
+    }
 
-  table.bluetable.accountrecievers-table tr td.td-lastname:before {
-    content: "Last Name";
-  }
+    table.bluetable.accountrecievers-table tr td.td-city:before {
+        content: "City";
+    }
+
+    table.bluetable.accountrecievers-table tr td.td-lastname:before {
+        content: "Last Name";
+    }
+
     table.bluetable.paymentactivity-table tr td:nth-child(1):before {
         content: "Date"
     }
+
     table.bluetable.paymentactivity-table tr td:nth-child(2):before {
         content: "Type"
     }
+
     table.bluetable.paymentactivity-table tr td:nth-child(3) {
         width: 100%
     }
+
     table.bluetable.paymentactivity-table tr td:nth-child(3):before {
         content: "Details"
     }
+
     table.bluetable.paymentactivity-table tr td:nth-child(4):before {
         content: "Amount, USD"
     }
+
     table.bluetable.paymentactivity-table tr td:nth-child(5):before {
         content: "Balance"
     }
+
     table.bluetable.acctrackingtable tr td {
         border: none;
         width: 100%;
         font-size: 18px
     }
+
     table.bluetable.acctrackingtable tr td:nth-child(1):before {
         content: "Date"
     }
+
     table.bluetable.acctrackingtable tr td:nth-child(2):before {
         content: "Activity"
     }
+
     table.bluetable.acctrackingtable tr td:nth-child(3):before {
         content: "Location"
     }
+
     table.bluetable.delreq-table tr td {
         font-size: 18px
     }
+
     table.bluetable.delreq-table tr td:nth-child(1) {
         display: none
     }
+
     .filter-block .filter-date .input-group label,
     .paymentactivity .heading {
         display: block
     }
+
     table.bluetable.delreq-table tr td:nth-child(2) {
         width: 50%;
         text-align: left
     }
+
     table.bluetable.delreq-table tr td:nth-child(2):before {
         content: "Weight (kg)"
     }
+
     table.bluetable.delreq-table tr td:nth-child(3):before {
         content: "Tracking"
     }
+
     table.bluetable.delreq-table tr td:nth-child(4) {
         width: 100%
     }
+
     table.bluetable.delreq-table tr td:nth-child(4):before {
         content: "Note"
     }
+
     table.bluetable.delreq-table tr td:nth-child(5):before {
         content: "City"
     }
+
     table.bluetable.delreq-table tr td:nth-child(6):before {
         content: "Delivered"
     }
+
     .filter-block .filter-date .label {
         margin-bottom: 10px
     }
+
     .filter-block .filter-date .input-group {
         margin-right: 25px
     }
+
     .filter-block .filter-date .input-group:last-child {
         margin-right: 0
     }
+
     .filter-block .filter-date .input-group input {
         margin: 0
     }
+
     .input-group input[type=text].datepicker {
         padding: 10px 31px 10px 8px;
         width: 132px;
         background-position: 100px -5092px
     }
+
     .paymentactivity .heading .currbalance {
         text-align: left;
         display: -webkit-box;
@@ -6660,152 +7423,179 @@ a.btn-mail.mail-prev {
         justify-content: space-between;
         margin-bottom: 50px
     }
+
     .paymentactivity .heading .currbalance .add-link {
         margin-top: 30px
     }
+
     .myparcels .heading .search-parcels .search-parcels-inner {
         display: block
     }
+
     .myparcels .heading .search-parcels .search-parcels-inner .input-group {
         display: block;
         margin-bottom: 20px
     }
+
     .myparcels .heading .search-parcels .search-parcels-inner .btn-block {
         display: block;
         padding-left: 0;
         width: 100%
     }
+
     .acc-tracking-panel .acc-tracking-menu ul li {
         margin-bottom: 20px
     }
+
     .tracking-points .starting-point {
         margin: 0 auto 50px;
         float: none
     }
+
     .tracking-points .end-point {
         margin: 0 auto;
         float: none
     }
+
     .accountdelreq .delreq-btn-block-1 {
         margin-top: 20px;
         display: block
     }
+
     .accountdelreq .delreq-btn-block-1 .note {
         margin-bottom: 20px
     }
+
     .accountreg .form-txt {
         margin-top: 0
     }
+
     .accreg-btn-block {
         margin: 20px 0 50px;
         display: block
     }
+
     .accreg-btn-block .agree {
         width: 100%;
         margin: 40px 0
     }
+
     .accreg-btn-block .btn-block {
         width: 100%;
         text-align: center
     }
+
     .accountaddparcel .heading {
         display: block
     }
+
     .accountaddparcel .heading .havequestions {
         text-align: left
     }
+
     .helptoshop-section .helpproduct-f a.addproduct {
         float: none;
         margin-bottom: 20px;
         display: inline-block
     }
+
     .helptoshop-section .helpproduct-f .total {
         float: none
     }
+
     .helptoshop-section .btn-block {
         text-align: center
     }
+
     .calculator-section .calculator-infoblock img {
         width: auto;
         float: none;
         padding: 0;
         margin: 0 auto 10px
     }
+
     .calculator-section .calculator-infoblock .txt {
         margin: 0
     }
+
     .calculator-section .calculator-form {
         padding: 20px
     }
+
     table.accountinbox-table tr:hover td {
         background: inherit
     }
+
     .partnershops .partnershops-group .partnershops-heading .title {
         float: none;
         text-align: center
     }
+
     .partnershops .partnershops-group .partnershops-heading .seeall {
         display: none
     }
+
     .partnershops .partnershops-group .partnershops-list .item {
         width: 100%;
         margin-right: 0
     }
+
     .partnershops .partnershops-group .partnershops-list .item:nth-child(2n) {
         margin-right: inherit
     }
+
     section.stores .store-coupons .coupon-list .item .item-l {
         float: none;
         margin: 0 0 20px;
         width: 100%
     }
+
     section.stores .store-coupons .coupon-list .item .reveal-btn,
     section.stores .store-coupons .coupon-list .item .reveal-btn-code {
         float: none;
         width: 200px;
         text-align: left
     }
+
     section.related-stores .related-stores-list .item {
         width: 100%;
         margin: 0 0 30px
     }
+
     section.related-stores .related-stores-list .item:nth-child(2n) {
         margin-right: inherit
     }
 }
+
 @media (max-width: 399px) {
-    .header .topbar .office {
-        top: 126px
-    }
-    .header .bottombar .logo a img {
-        width: 110px
-    }
-    .header .bottombar ul.usermenu {
-        margin-top: 17px
-    }
     .mobile-app {
         padding: 30px 0
     }
+
     .account-menu-block .container,
     .mobile-app .container {
         padding: 0
     }
+
     .mobile-app .txt .app-btns .appstore-btn {
         width: 136px;
         height: 49px;
         background-position: 0 -4880px
     }
+
     .mobile-app .txt .app-btns .googleplay-btn {
         width: 144px;
         height: 49px;
         background-position: 0 -4933px
     }
+
     .account-menu-block .account-menu {
         -webkit-box-ordinal-group: 3;
         -ms-flex-order: 2;
         order: 2;
         width: 100%
     }
+
     .account-menu-block .hello {
         -webkit-box-ordinal-group: 2;
         -ms-flex-order: 1;
@@ -6813,10 +7603,12 @@ a.btn-mail.mail-prev {
         width: 100%;
         margin: 10px
     }
+
     .parcel-filter-block .parcel-filter-item .label {
         margin-bottom: 10px
     }
+
     .parcel-filter-block .parcel-filter-item .select2 {
-        width: 100%!important
+        width: 100% !important
     }
 }
