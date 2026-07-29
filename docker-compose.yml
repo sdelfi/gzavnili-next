@@ -9,7 +9,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./docker/data/postgres:/var/lib/postgresql/data
 
   # Uncomment when the app needs caching/queues/sessions.
   # redis:
@@ -20,6 +20,6 @@ services:
   #   volumes:
   #     - redis_data:/data
 
-volumes:
-  postgres_data:
+# volumes:
+  # postgres_data:
   # redis_data:
