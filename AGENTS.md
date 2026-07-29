@@ -8,3 +8,11 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 Do not add a `Co-Authored-By:` trailer (or any AI-attribution trailer) to commit
 messages in this repo.
+
+# Progress log
+
+After any implementation work in this repo (features, fixes, refactors — not
+one-off investigation), update `PROGRESS.md`: check off the step(s) completed,
+and add new unchecked items for anything the work revealed as still
+outstanding. Keep entries terse and reference the commit hash. Do this as part
+of the same change, not as a separate follow-up.
