@@ -1,43 +1,43 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
+import { useState } from 'react';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 
 // Ports the pricing/ETA logic that used to live server-side in
 // `../http/views/homecals.cfm` (GET-param driven, re-rendered by ColdFusion on every submit —
 // see PROGRESS.md for how {CALCULATOR} gets substituted into the real page content).
 // English branch only; rates/thresholds copied as-is from the legacy file.
-type WeightUnit = "lb" | "kg";
-type SizeUnit = "in" | "cm";
-type Service = "regular" | "express";
-type ParcelType = "online" | "personal";
+type WeightUnit = 'lb' | 'kg';
+type SizeUnit = 'in' | 'cm';
+type Service = 'regular' | 'express';
+type ParcelType = 'online' | 'personal';
 
 const WEIGHT_UNITS = [
-  { value: "lb", label: "lb" },
-  { value: "kg", label: "kg" },
+  { value: 'lb', label: 'lb' },
+  { value: 'kg', label: 'kg' },
 ];
 
 const SIZE_UNITS = [
-  { value: "in", label: "in" },
-  { value: "cm", label: "cm" },
+  { value: 'in', label: 'in' },
+  { value: 'cm', label: 'cm' },
 ];
 
-const SERVICES = [{ value: "regular", label: "Regular Service" }];
+const SERVICES = [{ value: 'regular', label: 'Regular Service' }];
 
 const PARCEL_TYPES = [
-  { value: "online", label: "Online" },
-  { value: "personal", label: "Personal" },
+  { value: 'online', label: 'Online' },
+  { value: 'personal', label: 'Personal' },
 ];
 
 const DAYS = [
-  { value: "1", label: "Monday" },
-  { value: "2", label: "Tuesday" },
-  { value: "3", label: "Wednesday" },
-  { value: "4", label: "Thursday" },
-  { value: "5", label: "Friday" },
-  { value: "6", label: "Saturday" },
-  { value: "7", label: "Sunday" },
+  { value: '1', label: 'Monday' },
+  { value: '2', label: 'Tuesday' },
+  { value: '3', label: 'Wednesday' },
+  { value: '4', label: 'Thursday' },
+  { value: '5', label: 'Friday' },
+  { value: '6', label: 'Saturday' },
+  { value: '7', label: 'Sunday' },
 ];
 
 function computePrice(
@@ -53,26 +53,26 @@ function computePrice(
   let tweight = 0;
   let aweight = weight;
 
-  if (sizeUnit === "cm") tweight = (length * height * width) / 6000;
-  if (sizeUnit === "in") tweight = (length * height * width) / 366;
-  if (weightUnit === "lb") tweight *= 2.2;
+  if (sizeUnit === 'cm') tweight = (length * height * width) / 6000;
+  if (sizeUnit === 'in') tweight = (length * height * width) / 366;
+  if (weightUnit === 'lb') tweight *= 2.2;
   if (tweight > aweight) aweight = tweight;
 
   let price = 0;
-  if (weightUnit === "lb") {
+  if (weightUnit === 'lb') {
     if (aweight < 0.44) aweight = 0.44;
-    if (service === "regular") {
+    if (service === 'regular') {
       price = aweight * 3.6;
-      if (parcelType === "personal" && aweight < 13.23) price = aweight * 2.7;
+      if (parcelType === 'personal' && aweight < 13.23) price = aweight * 2.7;
     }
-    if (service === "express") price = aweight * 3.15;
+    if (service === 'express') price = aweight * 3.15;
   } else {
     if (aweight < 0.2) aweight = 0.2;
-    if (service === "regular") {
+    if (service === 'regular') {
       price = aweight * 8;
-      if (parcelType === "personal" && aweight < 6) price = aweight * 6;
+      if (parcelType === 'personal' && aweight < 6) price = aweight * 6;
     }
-    if (service === "express") price = aweight * 7;
+    if (service === 'express') price = aweight * 7;
   }
   return price;
 }
@@ -80,30 +80,30 @@ function computePrice(
 function computeEta(day: string, service: Service): string | null {
   if (!day) return null;
   const d = Number(day);
-  if (service === "express") {
-    if (d === 6 || d === 7) return "Wednesday";
-    if (d === 1 || d === 2) return "Friday";
-    if (d === 3 || d === 4 || d === 5) return "Monday";
+  if (service === 'express') {
+    if (d === 6 || d === 7) return 'Wednesday';
+    if (d === 1 || d === 2) return 'Friday';
+    if (d === 3 || d === 4 || d === 5) return 'Monday';
   } else {
-    if (d === 5 || d === 6) return "Friday";
-    if (d === 7 || d === 1) return "Monday";
-    if (d === 2 || d === 3 || d === 4) return "Wednesday";
+    if (d === 5 || d === 6) return 'Friday';
+    if (d === 7 || d === 1) return 'Monday';
+    if (d === 2 || d === 3 || d === 4) return 'Wednesday';
   }
   return null;
 }
 
-const currency = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
 export function Calculator() {
-  const [weight, setWeight] = useState("");
-  const [weightUnit, setWeightUnit] = useState<WeightUnit>("lb");
-  const [length, setLength] = useState("");
-  const [height, setHeight] = useState("");
-  const [width, setWidth] = useState("");
-  const [sizeUnit, setSizeUnit] = useState<SizeUnit>("in");
-  const [service, setService] = useState<Service | "">("");
-  const [parcelType, setParcelType] = useState<ParcelType | "">("");
-  const [day, setDay] = useState("");
+  const [weight, setWeight] = useState('');
+  const [weightUnit, setWeightUnit] = useState<WeightUnit>('lb');
+  const [length, setLength] = useState('');
+  const [height, setHeight] = useState('');
+  const [width, setWidth] = useState('');
+  const [sizeUnit, setSizeUnit] = useState<SizeUnit>('in');
+  const [service, setService] = useState<Service | ''>('');
+  const [parcelType, setParcelType] = useState<ParcelType | ''>('');
+  const [day, setDay] = useState('');
   const [result, setResult] = useState<{ price: number; eta: string | null } | null>(null);
   const [errors, setErrors] = useState<{ service?: string; parcelType?: string }>({});
 
@@ -113,8 +113,8 @@ export function Calculator() {
     // `../http/views/homecals.cfm` form used (`jQuery('.pricecalc_form').validate();`) — a
     // <label class="error"> next to the field, not a native HTML5 validation bubble.
     setErrors({
-      service: service ? undefined : "This field is required.",
-      parcelType: parcelType ? undefined : "This field is required.",
+      service: service ? undefined : 'This field is required.',
+      parcelType: parcelType ? undefined : 'This field is required.',
     });
     if (!service || !parcelType) return;
 
@@ -218,13 +218,7 @@ export function Calculator() {
         />
       </div>
       <div className="input-group">
-        <Select
-          instanceId="cal_day"
-          placeholder="Received in USA Day"
-          options={DAYS}
-          value={day}
-          onChange={setDay}
-        />
+        <Select instanceId="cal_day" placeholder="Received in USA Day" options={DAYS} value={day} onChange={setDay} />
       </div>
       <div className="btn-block">
         <button type="submit" className="btn btn-blue">

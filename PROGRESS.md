@@ -86,70 +86,63 @@ file for scope/sequencing.
 - [x] Added `src/components/ui/` (Input, Select, Lightbox) per AGENTS.md's new "Shared
       components" rule, and switched every existing `<input>`/`<select>` over to them
       (`Calculator.tsx`, `HeaderClient.tsx`'s tracking/login modals, `Footer.tsx`'s newsletter
-      field):
-      - `Select` wraps `react-select` (finally added the dependency —
-        `docs/decisions/0002-select-library.md`), `unstyled` + custom `Select.css` recreating
-        select2's look (border/height/colors, same `icons.png` sprite for the arrow). Scope
-        widened from the original decision: applied to *every* dropdown, not just ones that
-        happened to have select2 in the legacy markup — plain native `<select>`s next to
-        styled `Input`s looked inconsistent (reported as looking "trashy"). Hit and fixed a
-        real hydration-mismatch bug here: react-select needs an explicit, stable `instanceId`
-        per instance (made it a required prop on our wrapper) — without one it falls back to a
-        module-level render counter that's shared across requests on the server but resets on
-        the client, guaranteed to mismatch.
-      - `Lightbox` replaces `VideoTutorials`' earlier (reused) `Modal`/featherlight styling —
-        the real homepage wires video thumbnails to fancybox, not featherlight, so this is a
-        second, separate visual recreation (own CSS, no sprite images) matching fancybox's
-        skin instead, since the two are deliberately different lightbox styles in the legacy
-        design system (featherlight for auth popovers, fancybox for media).
+      field): - `Select` wraps `react-select` (finally added the dependency —
+      `docs/decisions/0002-select-library.md`), `unstyled` + custom `Select.css` recreating
+      select2's look (border/height/colors, same `icons.png` sprite for the arrow). Scope
+      widened from the original decision: applied to _every_ dropdown, not just ones that
+      happened to have select2 in the legacy markup — plain native `<select>`s next to
+      styled `Input`s looked inconsistent (reported as looking "trashy"). Hit and fixed a
+      real hydration-mismatch bug here: react-select needs an explicit, stable `instanceId`
+      per instance (made it a required prop on our wrapper) — without one it falls back to a
+      module-level render counter that's shared across requests on the server but resets on
+      the client, guaranteed to mismatch. - `Lightbox` replaces `VideoTutorials`' earlier (reused) `Modal`/featherlight styling —
+      the real homepage wires video thumbnails to fancybox, not featherlight, so this is a
+      second, separate visual recreation (own CSS, no sprite images) matching fancybox's
+      skin instead, since the two are deliberately different lightbox styles in the legacy
+      design system (featherlight for auth popovers, fancybox for media).
 - [x] Converted every `<img>` to `next/image` (`Header`'s logo, homepage `trustus` image,
       `VideoTutorials` thumbnails) — all local, known-dimension images. Left the homepage news
       section's images as plain `<img>` (documented with an inline comment): they're external,
       hotlinked from the legacy `gzavnili.com` domain with unknown/varying dimensions, and
       transitional (real news content isn't migrated yet) — not worth an
       external-domain `next/image` config for content that's going away.
-- [x] Fixed real UI bugs reported after visual review against https://usa.gzavnili.com/:
-      - `Select.css`: dropdown options were bold (`font-weight: 600`, copy-pasted from the
-        closed-control value's styling by mistake) — only the closed/selected value should be
-        bold per the real select2 look; options are `400`.
-      - Calculator's required-field errors were showing the browser's native "Please fill out
-        this field" bubble instead of our custom `<label class="error">` — react-select's
-        `required` prop renders a hidden native `<input required>`, and native HTML5
-        validation blocks form submission (hence our `onSubmit` handler) before it ever runs.
-        Added `noValidate` to the form; `Input`/`Select` now both take an `error?: string` that
-        renders the jquery.validate-style `<label class="error">` this site actually uses
-        (`../http/views/homecals.cfm`'s `jQuery('.pricecalc_form').validate();`), wired into
-        Calculator's two required selects.
-      - **The tracking/login modal looked visibly different from the real site** (close icon,
-        overlay darkness, spacing). Root cause: `public/css/style.css` already carries this
-        site's *real* featherlight overrides (overlay `rgba(0,0,0,.5)`, content
-        `padding:35px 20px 25px`, and — the visible giveaway — a real close-icon *graphic* from
-        the `icons.png` sprite, not text) — see style.css around line 837. `Modal.css` (written
-        from generic featherlight defaults when `bower_components` was deleted, per
-        `docs/decisions/0006-no-vendored-legacy-js.md`) redeclared those same properties with
-        different values and — since it loads after the global stylesheets — silently won,
-        fighting the real design instead of matching it. Trimmed `Modal.css` to only the
-        structural rules style.css never had to define (positioning/centering — those were
-        always the plugin's job, not the site's CSS); removed `Modal.tsx`'s hardcoded inline
-        `background: rgba(0,0,0,.8)` (was overriding the real `.5` from CSS) and its unicode
-        "✕" glyph (now real but visually hidden via `text-indent`, letting style.css's sprite
-        background show through, matching the original close-icon graphic exactly).
-      - `#offer-parallax`'s 330 KB background image (`home-special-big.jpg`) moved from a CSS
-        `background: url()` (in `additional.css`) into `OfferParallax.tsx` as a real
-        `next/image` layer (`fill` + `zIndex: -1` to sit behind the static `.container`
-        content — an absolutely positioned `z-index: auto` element still paints above static
-        siblings by default). Gets automatic AVIF/WebP content-negotiation for free from
-        Next's built-in image optimizer (works because production runs the real Next server on
-        our own VDS, not a static export) — a CSS background has no equivalent. See
-        `docs/decisions/0007-next-image-for-css-backgrounds.md`.
-      - Added `tooltipster.bundle.min.css`/`tooltipster-sideTip-light.min.css` to the root
-        layout — found while auditing `public/css/` for cruft (client asked "тут все css
-        нужны?"): unlike `bootstrap.min.css`/`grid.css`/`jquery.dataTables.min.css`/
-        `loginpage*.css`/`paymentsteps.css` (genuinely not referenced anywhere yet — still
-        under investigation, see below), tooltipster is loaded unconditionally on *every* page
-        in `../http/views/layouts/new.html`, so it was a real missing dependency, not
-        speculative future-page cruft. The actual tooltip *behavior* (JS init, likely for the
-        calculator's `icon-info` hint) isn't wired yet — CSS-only fix so far.
+- [x] Fixed real UI bugs reported after visual review against https://usa.gzavnili.com/: - `Select.css`: dropdown options were bold (`font-weight: 600`, copy-pasted from the
+      closed-control value's styling by mistake) — only the closed/selected value should be
+      bold per the real select2 look; options are `400`. - Calculator's required-field errors were showing the browser's native "Please fill out
+      this field" bubble instead of our custom `<label class="error">` — react-select's
+      `required` prop renders a hidden native `<input required>`, and native HTML5
+      validation blocks form submission (hence our `onSubmit` handler) before it ever runs.
+      Added `noValidate` to the form; `Input`/`Select` now both take an `error?: string` that
+      renders the jquery.validate-style `<label class="error">` this site actually uses
+      (`../http/views/homecals.cfm`'s `jQuery('.pricecalc_form').validate();`), wired into
+      Calculator's two required selects. - **The tracking/login modal looked visibly different from the real site** (close icon,
+      overlay darkness, spacing). Root cause: `public/css/style.css` already carries this
+      site's _real_ featherlight overrides (overlay `rgba(0,0,0,.5)`, content
+      `padding:35px 20px 25px`, and — the visible giveaway — a real close-icon _graphic_ from
+      the `icons.png` sprite, not text) — see style.css around line 837. `Modal.css` (written
+      from generic featherlight defaults when `bower_components` was deleted, per
+      `docs/decisions/0006-no-vendored-legacy-js.md`) redeclared those same properties with
+      different values and — since it loads after the global stylesheets — silently won,
+      fighting the real design instead of matching it. Trimmed `Modal.css` to only the
+      structural rules style.css never had to define (positioning/centering — those were
+      always the plugin's job, not the site's CSS); removed `Modal.tsx`'s hardcoded inline
+      `background: rgba(0,0,0,.8)` (was overriding the real `.5` from CSS) and its unicode
+      "✕" glyph (now real but visually hidden via `text-indent`, letting style.css's sprite
+      background show through, matching the original close-icon graphic exactly). - `#offer-parallax`'s 330 KB background image (`home-special-big.jpg`) moved from a CSS
+      `background: url()` (in `additional.css`) into `OfferParallax.tsx` as a real
+      `next/image` layer (`fill` + `zIndex: -1` to sit behind the static `.container`
+      content — an absolutely positioned `z-index: auto` element still paints above static
+      siblings by default). Gets automatic AVIF/WebP content-negotiation for free from
+      Next's built-in image optimizer (works because production runs the real Next server on
+      our own VDS, not a static export) — a CSS background has no equivalent. See
+      `docs/decisions/0007-next-image-for-css-backgrounds.md`. - Added `tooltipster.bundle.min.css`/`tooltipster-sideTip-light.min.css` to the root
+      layout — found while auditing `public/css/` for cruft (client asked "тут все css
+      нужны?"): unlike `bootstrap.min.css`/`grid.css`/`jquery.dataTables.min.css`/
+      `loginpage*.css`/`paymentsteps.css` (genuinely not referenced anywhere yet — still
+      under investigation, see below), tooltipster is loaded unconditionally on _every_ page
+      in `../http/views/layouts/new.html`, so it was a real missing dependency, not
+      speculative future-page cruft. The actual tooltip _behavior_ (JS init, likely for the
+      calculator's `icon-info` hint) isn't wired yet — CSS-only fix so far.
 - [ ] Finish the `public/css/` cruft audit: confirm whether `bootstrap.min.css`, `grid.css`,
       `jquery.dataTables.min.css`, `loginpage.css`/`loginpage.src.css`, `paymentsteps.css` are
       referenced by any legacy page (checked `new.html` — not there; still need to check

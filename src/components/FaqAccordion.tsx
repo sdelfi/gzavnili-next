@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
 // Replaces the main.js handler:
 //   $('.faq-item .question').click(function() {
@@ -15,7 +15,7 @@ export function FaqAccordion({ items }: { items: { question: string; answer: str
   return (
     <div className="faq-list">
       {items.map((item, i) => (
-        <div className={`faq-item${openIndex === i ? " active" : ""}`} key={i}>
+        <div className={`faq-item${openIndex === i ? ' active' : ''}`} key={i}>
           <div className="question" onClick={() => setOpenIndex(openIndex === i ? null : i)}>
             {item.question}
           </div>

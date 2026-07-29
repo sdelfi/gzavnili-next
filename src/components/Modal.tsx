@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { createPortal } from "react-dom";
-import "./Modal.css";
+import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import './Modal.css';
 
 // React port of what the featherlight jQuery plugin used to render (see
 // http/bower_components/featherlight/src/featherlight.js). Same markup/classes
@@ -27,18 +27,18 @@ export function Modal({
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === 'Escape') onClose();
     };
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
   }, [open, onClose]);
 
   if (!open) return null;
 
   return createPortal(
     <div
-      className={`featherlight${variant ? ` ${variant}` : ""}`}
-      style={{ display: "block" }}
+      className={`featherlight${variant ? ` ${variant}` : ''}`}
+      style={{ display: 'block' }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}

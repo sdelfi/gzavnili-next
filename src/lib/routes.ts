@@ -4,29 +4,29 @@
 
 // Known static marketing pages ported (or referenced) so far — extend as more are added.
 export type StaticPageSlug =
-  | "parcel-service"
-  | "cargo"
-  | "courier"
-  | "prices"
-  | "contact"
-  | "faq"
-  | "terms-and-conditions"
-  | "privacy-policy"
-  | "forbidden-items"
-  | "dangerous-items"
-  | "custom-clearence"
-  | "help-to-shop"
-  | "volumeweight";
+  | 'parcel-service'
+  | 'cargo'
+  | 'courier'
+  | 'prices'
+  | 'contact'
+  | 'faq'
+  | 'terms-and-conditions'
+  | 'privacy-policy'
+  | 'forbidden-items'
+  | 'dangerous-items'
+  | 'custom-clearence'
+  | 'help-to-shop'
+  | 'volumeweight';
 
 export const routes = {
-  home: () => "/",
-  georgianHome: () => "/ge/",
-  tracking: () => "/tracking.html",
-  login: () => "/authenticate/login",
-  logout: () => "/authenticate/logout",
-  register: () => "/authenticate/register",
-  forgotPassword: () => "/authenticate/forgot/",
-  testAccountLogin: () => "/authenticate/login/?testaccount=1",
+  home: () => '/',
+  georgianHome: () => '/ge/',
+  tracking: () => '/tracking.html',
+  login: () => '/authenticate/login',
+  logout: () => '/authenticate/logout',
+  register: () => '/authenticate/register',
+  forgotPassword: () => '/authenticate/forgot/',
+  testAccountLogin: () => '/authenticate/login/?testaccount=1',
   /** Any other static `<slug>.html` marketing page. */
   page: (slug: StaticPageSlug) => `/${slug}.html`,
 };

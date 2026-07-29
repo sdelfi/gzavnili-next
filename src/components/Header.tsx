@@ -1,6 +1,6 @@
-import { HeaderClient } from "./HeaderClient";
-import { isOfficeOpen } from "@/lib/officeHours";
-import { getPreferredOfficeId } from "@/lib/preferences";
+import { HeaderClient } from './HeaderClient';
+import { isOfficeOpen } from '@/lib/officeHours';
+import { getPreferredOfficeId } from '@/lib/preferences';
 
 // Async Server Component: reads the office cookie and computes the real open/closed status
 // at request time, so HeaderClient never has to guess and then correct itself. This makes

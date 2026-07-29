@@ -76,7 +76,7 @@ export function HomeHero() {
             />
           ))}
           <div className={s.textObject}>
-            <ul id='animated-strings'>
+            <ul id="animated-strings">
               <li className={fading ? s.fadeup : s.active}>{STRINGS[active]}</li>
             </ul>
             <div className={s.textAnswer}>– Yes!</div>

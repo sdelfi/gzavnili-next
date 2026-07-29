@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import "normalize.css";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+import 'normalize.css';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: "Gzavnili",
-  description: "Faster, cheaper, reliable parcel, cargo, and courier shipping.",
+  title: 'Gzavnili',
+  description: 'Faster, cheaper, reliable parcel, cargo, and courier shipping.',
 };
 
 // CSS ported as-is from http/views/layouts/new.html — same files, copied into public/.

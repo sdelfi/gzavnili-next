@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Image from "next/image";
-import { Lightbox } from "@/components/ui/Lightbox";
+import { useState } from 'react';
+import Image from 'next/image';
+import { Lightbox } from '@/components/ui/Lightbox';
 
 // The real homepage content wires these up as `.fancybox.iframe` (jquery.fancybox.js) — see
 // src/components/ui/Lightbox.tsx for the plain-React/CSS recreation of fancybox's look used
@@ -10,10 +10,10 @@ import { Lightbox } from "@/components/ui/Lightbox";
 type Video = { title: string; embedUrl: string; image: string };
 
 const VIDEOS: Video[] = [
-  { title: "How it Works?", embedUrl: "https://www.youtube.com/embed/ZuWziJarrEY", image: "/img/hiw/1.png" },
-  { title: "How to Declare?", embedUrl: "https://www.youtube.com/embed/dmarenxn5sQ", image: "/img/hiw/2.png" },
-  { title: "How to Pay?", embedUrl: "", image: "/img/hiw/3.png" },
-  { title: "Where to send?", embedUrl: "https://www.youtube.com/embed/z_6LItMQkp4", image: "/img/hiw/4.png" },
+  { title: 'How it Works?', embedUrl: 'https://www.youtube.com/embed/ZuWziJarrEY', image: '/img/hiw/1.png' },
+  { title: 'How to Declare?', embedUrl: 'https://www.youtube.com/embed/dmarenxn5sQ', image: '/img/hiw/2.png' },
+  { title: 'How to Pay?', embedUrl: '', image: '/img/hiw/3.png' },
+  { title: 'Where to send?', embedUrl: 'https://www.youtube.com/embed/z_6LItMQkp4', image: '/img/hiw/4.png' },
 ];
 
 export function VideoTutorials() {

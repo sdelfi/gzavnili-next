@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useEffect, useRef } from "react";
+import Image from 'next/image';
+import { useEffect, useRef } from 'react';
 
 // Replaces additional.js: $('#offer-parallax').parallax_bg("50%", 0.3, 615);
 // (../http/js/jquery.parallax-bg.js) — shifts the background image vertically as the section
@@ -28,24 +28,18 @@ export function OfferParallax({ children }: { children: React.ReactNode }) {
       image.style.transform = `translateY(${y}px)`;
     };
 
-    window.addEventListener("scroll", update);
-    window.addEventListener("resize", update);
+    window.addEventListener('scroll', update);
+    window.addEventListener('resize', update);
     update();
     return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
     };
   }, []);
 
   return (
     <section className="specialoffer" id="offer-parallax" ref={sectionRef}>
-      <Image
-        ref={imageRef}
-        src="/img/home-special-big.jpg"
-        alt=""
-        fill
-        style={{ objectFit: "cover", zIndex: -1 }}
-      />
+      <Image ref={imageRef} src="/img/home-special-big.jpg" alt="" fill style={{ objectFit: 'cover', zIndex: -1 }} />
       {children}
     </section>
   );

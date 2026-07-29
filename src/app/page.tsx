@@ -1,10 +1,10 @@
-import Image from "next/image";
-import { FaqAccordion } from "@/components/FaqAccordion";
-import { HomeHero } from "@/components/HomeHero";
-import { Calculator } from "@/components/Calculator";
-import { OfferParallax } from "@/components/OfferParallax";
-import { VideoTutorials } from "@/components/VideoTutorials";
-import { routes } from "@/lib/routes";
+import Image from 'next/image';
+import { FaqAccordion } from '@/components/FaqAccordion';
+import { HomeHero } from '@/components/HomeHero';
+import { Calculator } from '@/components/Calculator';
+import { OfferParallax } from '@/components/OfferParallax';
+import { VideoTutorials } from '@/components/VideoTutorials';
+import { routes } from '@/lib/routes';
 
 // Rebuilt from the real cached homepage content (see PROGRESS.md):
 // ../http/include/pages/14FE4559026D4C5B5EB530EE70300C52D99E70D7.json, `content` field —
@@ -13,72 +13,72 @@ import { routes } from "@/lib/routes";
 // `views/home.html`, which turned out to be dead code (never included by the live layout).
 const WHY_US_ITEMS = [
   {
-    icon: "icon-whyus-1",
-    title: "Delivery Speed",
-    desc: "If you prioritize speed, you’ll definitely love our services – we are the fastest.",
+    icon: 'icon-whyus-1',
+    title: 'Delivery Speed',
+    desc: 'If you prioritize speed, you’ll definitely love our services – we are the fastest.',
   },
   {
-    icon: "icon-whyus-7",
-    title: "Lower Price Guarantee",
+    icon: 'icon-whyus-7',
+    title: 'Lower Price Guarantee',
     desc: "We've put a variety of strategies to ensure the shipping cost is lowest for each service.",
   },
   {
-    icon: "icon-whyus-2",
-    title: "Frequency of Shipment",
-    desc: "We regularly ship; at list six times a week irrespective of size.",
+    icon: 'icon-whyus-2',
+    title: 'Frequency of Shipment',
+    desc: 'We regularly ship; at list six times a week irrespective of size.',
   },
   {
-    icon: "icon-whyus-8",
-    title: "Gzavnilli Vehicles",
-    desc: "We use our vehicles for pickups and airport deliveries, so we’re always on time.",
+    icon: 'icon-whyus-8',
+    title: 'Gzavnilli Vehicles',
+    desc: 'We use our vehicles for pickups and airport deliveries, so we’re always on time.',
   },
   {
-    icon: "icon-whyus-5",
-    title: "Pricing Options",
-    desc: "Our different pricing options allows you select your preferred service and speed of delivery.",
+    icon: 'icon-whyus-5',
+    title: 'Pricing Options',
+    desc: 'Our different pricing options allows you select your preferred service and speed of delivery.',
   },
   {
-    icon: "icon-whyus-3",
-    title: "Gzavnili Licenses",
-    desc: "With our license, we ship directly with airlines and give you the opportunity to have a fair price.",
+    icon: 'icon-whyus-3',
+    title: 'Gzavnili Licenses',
+    desc: 'With our license, we ship directly with airlines and give you the opportunity to have a fair price.',
   },
   {
-    icon: "icon-whyus-4",
-    title: "Tax-Free Shopping State",
-    desc: "Our Tax-Free Zone guarantees you shopping without sales tax for any product.",
+    icon: 'icon-whyus-4',
+    title: 'Tax-Free Shopping State',
+    desc: 'Our Tax-Free Zone guarantees you shopping without sales tax for any product.',
   },
   {
-    icon: "icon-whyus-6",
-    title: "We Are Open Every Day",
-    desc: "Ship or drop at your convenient time. We operate 7 days a week to ensure reliability",
+    icon: 'icon-whyus-6',
+    title: 'We Are Open Every Day',
+    desc: 'Ship or drop at your convenient time. We operate 7 days a week to ensure reliability',
   },
 ];
 
 const FAQ_ITEMS = [
   {
-    question: "Gzavnilli Shipping Days",
+    question: 'Gzavnilli Shipping Days',
     answer:
-      "Both Regular and Express services send parcels three times a week. Express service departure days are Monday, Wednesday, and Saturday while Regular parcels happen on Tuesday, Friday and Sunday.",
+      'Both Regular and Express services send parcels three times a week. Express service departure days are Monday, Wednesday, and Saturday while Regular parcels happen on Tuesday, Friday and Sunday.',
   },
   {
-    question: "How long is transit time?",
+    question: 'How long is transit time?',
     answer:
-      "Transit time for Express service From New York to Tbilisi is 3 calendar days (from day of departure), for regular shipment average time is 5-7 days.",
+      'Transit time for Express service From New York to Tbilisi is 3 calendar days (from day of departure), for regular shipment average time is 5-7 days.',
   },
   {
-    question: "How can I find office working schedule?",
+    question: 'How can I find office working schedule?',
     answer:
-      "We are open throughout the year, except on Easter, Christmas and New Year. Check our contact us page for more details on this.",
+      'We are open throughout the year, except on Easter, Christmas and New Year. Check our contact us page for more details on this.',
   },
   {
-    question: "Does Gzavnilli Offer the Cheapest and Fastest Shipping Service?",
+    question: 'Does Gzavnilli Offer the Cheapest and Fastest Shipping Service?',
     answer:
-      "Absolutely! We offer the cheapest, safest and fastest parcel services from the USA to Georgia. Our shipping services are unique, and no other company can match our standards and efficiency.",
+      'Absolutely! We offer the cheapest, safest and fastest parcel services from the USA to Georgia. Our shipping services are unique, and no other company can match our standards and efficiency.',
   },
   {
-    question: "Which Payment Methods Does Gzavnilli Accept?",
+    question: 'Which Payment Methods Does Gzavnilli Accept?',
     answer:
-      "We accept almost all type of payments: PayPal, Debit or credit card payment, checks, money orders, cash, bill pay (from your online banking), wire transfer and bank deposit.",
+      'We accept almost all type of payments: PayPal, Debit or credit card payment, checks, money orders, cash, bill pay (from your online banking), wire transfer and bank deposit.',
   },
 ];
 
@@ -111,15 +111,15 @@ export default function Home() {
     <>
       <HomeHero />
 
-      <section className='trustus'>
-        <div className='container'>
-          <div className='trustus-l'>
-            <Image src='/img/trustus.jpg' alt='' width={284} height={550} />
+      <section className="trustus">
+        <div className="container">
+          <div className="trustus-l">
+            <Image src="/img/trustus.jpg" alt="" width={284} height={550} />
           </div>
 
-          <div className='trustus-r'>
+          <div className="trustus-r">
             <h2>A Faster, Cheaper and Safer Shipping!</h2>
-            <div className='redline'></div>
+            <div className="redline"></div>
 
             <p>
               Are you looking for a faster, cheaper and safer way to ship your goods? Gzavnilli invites you to enjoy the
@@ -139,14 +139,14 @@ export default function Home() {
               means your goods are always in safe hands at all time.
             </p>
 
-            <div className='advantages'>
-              <div className='adv-item item-1'>
+            <div className="advantages">
+              <div className="adv-item item-1">
                 <span>12 Years</span> of Rich Experience
               </div>
-              <div className='adv-item item-2'>
+              <div className="adv-item item-2">
                 <span>1.500.000 </span> Packages Already Delivered
               </div>
-              <div className='adv-item item-3'>
+              <div className="adv-item item-3">
                 <span>40,000</span> Active Customers
               </div>
             </div>
@@ -162,55 +162,55 @@ export default function Home() {
       </section>
 
       <OfferParallax>
-        <div className='container'>
-          <div className='txt'>
+        <div className="container">
+          <div className="txt">
             <h2>Special offer!</h2>
             <p>
               Enjoy great Deals, Discounts and Coupons when you shop from our partner online stores. You may just get
               your shipping costs covered by coupons and discounts received while shopping at our partner stores.
             </p>
-            <div className='redline'></div>
+            <div className="redline"></div>
 
-            <div className='btn-block'>
-              <a href='' className='btn btn-red'>
-                Get Started Now! <i className='icon icon-arr1'></i>
+            <div className="btn-block">
+              <a href="" className="btn btn-red">
+                Get Started Now! <i className="icon icon-arr1"></i>
               </a>
             </div>
           </div>
         </div>
       </OfferParallax>
 
-      <section className='whychooseus'>
-        <div className='container'>
+      <section className="whychooseus">
+        <div className="container">
           <h2>
             8 MAIN REASONS WHY OUR
             <br />
             CUSTOMERS LOVE GZAVNILLI
             <br /> SHIPING SERVICE?
           </h2>
-          <div className='redline'></div>
-          <a id='volumecalculatoranchor' className='anchor'></a>
-          <div className='row'>
-            <div className='col col-8'>
+          <div className="redline"></div>
+          <a id="volumecalculatoranchor" className="anchor"></a>
+          <div className="row">
+            <div className="col col-8">
               {WHY_US_ITEMS.map((item) => (
-                <div className='whyus-item' key={item.title}>
-                  <div className='whyus-item-inner'>
+                <div className="whyus-item" key={item.title}>
+                  <div className="whyus-item-inner">
                     <i className={`icon ${item.icon}`}></i>
-                    <div className='whyus-info'>
-                      <div className='txt'>{item.title}</div>
-                      <div className='desc'>{item.desc}</div>
+                    <div className="whyus-info">
+                      <div className="txt">{item.title}</div>
+                      <div className="desc">{item.desc}</div>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className='col col-4 calc-block'>
-              <div className='calc-block-inner'>
-                <div className='heading'>
+            <div className="col col-4 calc-block">
+              <div className="calc-block-inner">
+                <div className="heading">
                   <h3>Calculator</h3>{' '}
-                  <a href=''>
-                    <i className='icon icon-info'></i>
+                  <a href="">
+                    <i className="icon icon-info"></i>
                   </a>
                 </div>
                 <p>Calculate price/arrival day</p>
@@ -222,14 +222,14 @@ export default function Home() {
         </div>
       </section>
 
-      <div className='container'>
-        <div className='row faq-quesions-block'>
-          <section className='col col-6 faq'>
+      <div className="container">
+        <div className="row faq-quesions-block">
+          <section className="col col-6 faq">
             <h3>Frequently Asked Questions</h3>
 
             <FaqAccordion items={FAQ_ITEMS} />
 
-            <div className='ralign'>
+            <div className="ralign">
               <p>
                 <a href={routes.page('faq')}>See all answers</a>
               </p>
@@ -240,37 +240,35 @@ export default function Home() {
         </div>
       </div>
 
-      <section className='mobile-app'>
-        <div className='container'>
-          <div className='txt'>
+      <section className="mobile-app">
+        <div className="container">
+          <div className="txt">
             <h3>Mobile app</h3>
             <p>Download - Free tool, for good news! </p>
-            <div className='app-btns'>
-              <a href='https://apps.apple.com/gb/app/gzavnili-customer/id1371450204' className='appstore-btn'></a>
+            <div className="app-btns">
+              <a href="https://apps.apple.com/gb/app/gzavnili-customer/id1371450204" className="appstore-btn"></a>
               <a
-                href='https://play.google.com/store/apps/details?id=com.team.noty.gzavnili&hl=en'
-                className='googleplay-btn'
+                href="https://play.google.com/store/apps/details?id=com.team.noty.gzavnili&hl=en"
+                className="googleplay-btn"
               ></a>
             </div>
           </div>
         </div>
       </section>
 
-      <section className='news'>
-        <div className='container'>
+      <section className="news">
+        <div className="container">
           <h2>Latest Company News</h2>
-          <div className='redline'></div>
-          <div className='news-list'>
+          <div className="redline"></div>
+          <div className="news-list">
             {NEWS_ITEMS.map((item) => (
-              <div className='item' key={item.title}>
-                <span className='img'>
+              <div className="item" key={item.title}>
+                <span className="img">
                   <Image src={item.image} alt={item.title} width={380} height={199} />
                 </span>
-                <span className='title'>
-                  {item.title}
-                </span>
-                <div className='date'>{item.date}</div>
-                <div className='teaser'>{item.teaser}</div>
+                <span className="title">{item.title}</span>
+                <div className="date">{item.date}</div>
+                <div className="teaser">{item.teaser}</div>
               </div>
             ))}
           </div>

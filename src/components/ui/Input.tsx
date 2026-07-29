@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes } from "react";
+import type { InputHTMLAttributes } from 'react';
 
 // Shared text/password input. style.css already styles `input[type=text]`/`input[type=password]`
 // globally (border, padding, font — see public/css/style.css:139-149), so this component's job
@@ -11,10 +11,7 @@ import type { InputHTMLAttributes } from "react";
 // `<label class="error">` right after the field — not a native HTML5 validation bubble. `error`
 // reproduces that same markup/class (`.error { color: red !important }` in
 // public/css/style_custom.css) instead of relying on `required`/`:invalid`.
-export function Input({
-  error,
-  ...props
-}: InputHTMLAttributes<HTMLInputElement> & { error?: string }) {
+export function Input({ error, ...props }: InputHTMLAttributes<HTMLInputElement> & { error?: string }) {
   return (
     <>
       <input {...props} />

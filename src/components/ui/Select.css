@@ -24,14 +24,14 @@
 .rselect__placeholder,
 .rselect__single-value {
   color: #4c4c4c;
-  font-family: "Open Sans", arial;
+  font-family: 'Open Sans', arial;
   font-weight: 600;
   font-size: 15px;
 }
 
 .rselect__input-container {
   color: #4c4c4c;
-  font-family: "Open Sans", arial;
+  font-family: 'Open Sans', arial;
   font-weight: 600;
   font-size: 15px;
 }
@@ -53,7 +53,7 @@
 }
 
 .rselect__dropdown-indicator::before {
-  content: "";
+  content: '';
   display: block;
   width: 10px;
   height: 6px;
@@ -76,7 +76,7 @@
 .rselect__option {
   padding: 6px 12px;
   color: #4c4c4c;
-  font-family: "Open Sans", arial;
+  font-family: 'Open Sans', arial;
   font-weight: 400;
   font-size: 15px;
   cursor: pointer;

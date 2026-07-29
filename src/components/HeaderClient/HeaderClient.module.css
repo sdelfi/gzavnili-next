@@ -64,7 +64,7 @@
     cursor: pointer;
 
     &:after {
-      content: "";
+      content: '';
       width: 10px;
       height: 6px;
       position: absolute;
@@ -72,7 +72,7 @@
       margin-top: -3px;
       right: 11px;
       display: block;
-      background: url("/img/icons.png") -61px -2341px no-repeat;
+      background: url('/img/icons.png') -61px -2341px no-repeat;
     }
 
     &:hover {
@@ -157,14 +157,14 @@
     width: 32%;
 
     &:before {
-      content: "";
+      content: '';
       width: 14px;
       height: 15px;
       display: block;
       position: absolute;
       left: 0;
       top: 3px;
-      background: url("/img/icons.png") no-repeat;
+      background: url('/img/icons.png') no-repeat;
     }
   }
 
@@ -173,27 +173,27 @@
     width: 27%;
 
     &:before {
-      content: "";
+      content: '';
       width: 18px;
       height: 15px;
       display: block;
       position: absolute;
       left: 0;
       top: 6px;
-      background: url("/img/icons.png") 0 -51px no-repeat;
+      background: url('/img/icons.png') 0 -51px no-repeat;
     }
   }
 
   .time {
     &:before {
-      content: "";
+      content: '';
       width: 18px;
       height: 17px;
       display: block;
       position: absolute;
       left: 0;
       top: 2px;
-      background: url("/img/icons.png") 0 -104px no-repeat;
+      background: url('/img/icons.png') 0 -104px no-repeat;
     }
   }
 
@@ -234,7 +234,7 @@
       position: relative;
 
       &:after {
-        content: "";
+        content: '';
         width: 10px;
         height: 6px;
         position: absolute;
@@ -242,7 +242,7 @@
         margin-top: -3px;
         right: -23px;
         display: block;
-        background: url("/img/icons.png") -61px -2341px no-repeat;
+        background: url('/img/icons.png') -61px -2341px no-repeat;
       }
     }
 
@@ -310,7 +310,7 @@
 
   &:after,
   &:before {
-    content: "";
+    content: '';
     display: table;
   }
 
@@ -435,7 +435,7 @@
           display: block;
 
           &:after {
-            content: "";
+            content: '';
             display: block;
             left: 50%;
             padding-bottom: inherit;
@@ -468,7 +468,7 @@
 
           a {
             white-space: nowrap;
-            font-family: "Open Sans";
+            font-family: 'Open Sans';
             text-decoration: none;
             font-size: 16px;
             color: #fff;
@@ -522,7 +522,7 @@
         > a {
           display: block;
           padding: 10px 12px;
-          font-family: "Open Sans";
+          font-family: 'Open Sans';
           font-weight: 400;
           color: #fff;
 
@@ -610,7 +610,7 @@
     margin: 40px 0 20px;
 
     &:after {
-      content: "";
+      content: '';
       position: absolute;
       top: 9px;
       left: 0;

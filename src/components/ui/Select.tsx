@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import ReactSelect, { type Props as ReactSelectProps } from "react-select";
-import "./Select.css";
+import ReactSelect, { type Props as ReactSelectProps } from 'react-select';
+import './Select.css';
 
 // Shared select. The legacy site skins every <select> via select2 (see
 // docs/decisions/0002-select-library.md) — react-select is the replacement, styled here
@@ -29,16 +29,13 @@ export function Select<T extends string = string>({
   // something stable and unique per field (its name/id is usually right there already).
   instanceId: string;
   options: SelectOption<T>[];
-  value: T | "";
+  value: T | '';
   onChange: (value: T) => void;
   placeholder?: string;
   // Same convention as ui/Input.tsx's `error` — a jquery.validate-style `<label class="error">`
   // rendered right after the field, not a native browser validation bubble.
   error?: string;
-} & Omit<
-  ReactSelectProps<SelectOption<T>, false>,
-  "options" | "value" | "onChange" | "placeholder" | "instanceId"
->) {
+} & Omit<ReactSelectProps<SelectOption<T>, false>, 'options' | 'value' | 'onChange' | 'placeholder' | 'instanceId'>) {
   const selected = options.find((option) => option.value === value) ?? null;
 
   return (
@@ -52,7 +49,7 @@ export function Select<T extends string = string>({
         placeholder={placeholder}
         options={options}
         value={selected}
-        onChange={(option) => onChange((option?.value ?? "") as T)}
+        onChange={(option) => onChange((option?.value ?? '') as T)}
       />
       {error && <label className="error">{error}</label>}
     </>

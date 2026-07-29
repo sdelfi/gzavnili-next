@@ -3,7 +3,7 @@
   width: 100%;
   height: 584px;
   overflow: hidden;
-  background: url("/img/main-bg.jpg") no-repeat center center;
+  background: url('/img/main-bg.jpg') no-repeat center center;
 
   .container {
     position: relative;
@@ -22,7 +22,7 @@
   left: 0;
   top: 0;
   z-index: 1;
-  background: url("/img/car.png") no-repeat center center;
+  background: url('/img/car.png') no-repeat center center;
   background-size: contain;
 }
 
@@ -33,7 +33,7 @@
   left: 0;
   top: 0;
   z-index: 3;
-  background: url("/img/boxes.png") no-repeat center center;
+  background: url('/img/boxes.png') no-repeat center center;
   background-size: contain;
 }
 

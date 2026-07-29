@@ -1,4 +1,4 @@
-import type { OfficeId } from "./officeHours";
+import type { OfficeId } from './officeHours';
 
 export type Office = {
   id: OfficeId;
@@ -13,33 +13,33 @@ export type Office = {
 // see src/components/Header.tsx / HeaderPersonalized.tsx / HeaderClient.tsx.
 export const OFFICES: Office[] = [
   {
-    id: "tbilisi",
-    name: "Tbilisi",
-    phone: "+995 332 247 00 22",
-    mail: "tbilisi@gzavnili.com",
-    mailHref: "mailto:tbilisi@gzavnili.com",
-    hours: "Mon-Fri 11:00-19:00 · Sat-Sun 11:00-17:00",
+    id: 'tbilisi',
+    name: 'Tbilisi',
+    phone: '+995 332 247 00 22',
+    mail: 'tbilisi@gzavnili.com',
+    mailHref: 'mailto:tbilisi@gzavnili.com',
+    hours: 'Mon-Fri 11:00-19:00 · Sat-Sun 11:00-17:00',
   },
   {
-    id: "newyork",
-    name: "New York",
-    phone: "+1 718 676 0022",
-    mail: "info@gzavnili.com",
-    mailHref: "mailto:info@gzavnili.com",
-    hours: "Mon-Fri 9:00-19:00 · Sat-Sun 10:00-17:00",
+    id: 'newyork',
+    name: 'New York',
+    phone: '+1 718 676 0022',
+    mail: 'info@gzavnili.com',
+    mailHref: 'mailto:info@gzavnili.com',
+    hours: 'Mon-Fri 9:00-19:00 · Sat-Sun 10:00-17:00',
   },
   {
-    id: "delaware",
-    name: "Delaware",
-    phone: "+1 718 676 0022",
-    mail: "wilmington@gzavnili.com",
-    mailHref: "mailto:wilmington@gzavnili.com",
-    hours: "Mon-Fri 9:00-19:00 · Sat-Sun Closed",
+    id: 'delaware',
+    name: 'Delaware',
+    phone: '+1 718 676 0022',
+    mail: 'wilmington@gzavnili.com',
+    mailHref: 'mailto:wilmington@gzavnili.com',
+    hours: 'Mon-Fri 9:00-19:00 · Sat-Sun Closed',
   },
 ];
 
-export const DEFAULT_OFFICE_ID: OfficeId = "tbilisi";
-export const OFFICE_COOKIE = "office";
+export const DEFAULT_OFFICE_ID: OfficeId = 'tbilisi';
+export const OFFICE_COOKIE = 'office';
 
 export function isOfficeId(value: string | undefined): value is OfficeId {
   return !!value && OFFICES.some((office) => office.id === value);

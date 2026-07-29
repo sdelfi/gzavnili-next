@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { createPortal } from "react-dom";
-import "./Lightbox.css";
+import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import './Lightbox.css';
 
 // Visual replacement for fancybox (jquery.fancybox.js — see ../http/js/fancybox/), which the
 // real homepage content wires the video-tutorial thumbnails to via `.fancybox.iframe`. We
@@ -23,10 +23,10 @@ export function Lightbox({
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === 'Escape') onClose();
     };
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
   }, [open, onClose]);
 
   if (!open) return null;
