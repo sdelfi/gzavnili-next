@@ -327,6 +327,7 @@
         }
 
         @media (max-width: 599px) {
+
           &:hover,
           &:active {
             background: #3fa3f0;

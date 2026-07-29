@@ -240,8 +240,6 @@
     clear: both; }
     .container.loginpage .vertical-align-middle,
   .container.loginpage .vertical-align-center {
-        display: -webkit-box;
-    display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
     -webkit-box-align: center;
