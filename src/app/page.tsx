@@ -1,101 +1,460 @@
-const services = [
-  {
-    title: "Parcel Service",
-    description: "Standard shipping from the US, tracked door to door.",
-  },
-  {
-    title: "Cargo",
-    description: "Freight forwarding for bulk and heavy shipments.",
-  },
-  {
-    title: "Courier",
-    description: "Expedited delivery when timing matters most.",
-  },
-];
-
-const nav = [
-  { label: "Parcel Service", href: "#parcel" },
-  { label: "Cargo", href: "#cargo" },
-  { label: "Courier", href: "#courier" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "FAQ", href: "#faq" },
-  { label: "Contact", href: "#contact" },
-];
-
+// Ported from the legacy http/views/home.html (English homepage content).
+// Same markup/classes/images so css/style.css + css/style_custom.css apply unchanged.
+// Copy is the original placeholder copy from the legacy file (incl. the Lorem ipsum
+// FAQ/news blocks) — content owners can replace it later without touching structure.
 export default function Home() {
   return (
-    <div className="flex flex-1 flex-col bg-white dark:bg-black">
-      <header className="border-b border-black/8 dark:border-white/[.145]">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <span className="text-lg font-semibold tracking-tight">
-            Gzavnili
-          </span>
-          <nav className="hidden gap-6 text-sm font-medium text-zinc-600 dark:text-zinc-400 sm:flex">
-            {nav.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="transition-colors hover:text-black dark:hover:text-zinc-50"
-              >
-                {item.label}
+    <>
+      <section className="homeslider">
+        <ul className="slider">
+          <li style={{ backgroundImage: "url(/img/slider-1.jpg)" }}>
+            <div className="slider-content">
+              <div className="container">
+                <div className="txt">
+                  <div className="title">Parcel Service</div>
+                  <p>
+                    Enjoy our supreme parcel services from anywhere in the USA and Georgia.
+                    We promise you most frequent, speedy, affordable and reliable shipping
+                    services for your parcels. We invite you to experience a unique shipping
+                    service from Gzavnilli, efficiency and speedy delivery!
+                  </p>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li style={{ backgroundImage: "url(/img/tmp/slider-2.jpg)" }}>
+            <div className="slider-content">
+              <div className="container">
+                <div className="txt">
+                  <div className="title">Cargo Service</div>
+                  <p>
+                    Enjoy our supreme parcel services from anywhere in the USA and Georgia.
+                    We promise you most frequent, speedy, affordable and reliable shipping
+                    services for your parcels.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li style={{ backgroundImage: "url(/img/tmp/slider-3.jpg)" }}>
+            <div className="slider-content">
+              <div className="container">
+                <div className="txt">
+                  <div className="title">Online Shipping</div>
+                  <p>
+                    We invite you to experience a unique shipping service from Gzavnilli,
+                    efficiency and speedy delivery! Enjoy our supreme parcel services from
+                    anywhere in the USA and Georgia.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li style={{ backgroundImage: "url(/img/tmp/slider-4.jpg)" }}>
+            <div className="slider-content">
+              <div className="container">
+                <div className="txt">
+                  <div className="title">Courier Service</div>
+                  <p>
+                    We promise you most frequent, speedy, affordable and reliable shipping
+                    services for your parcels. We invite you to experience a unique shipping
+                    service from Gzavnilli, efficiency and speedy delivery! Enjoy our supreme
+                    parcel services from anywhere in the USA and Georgia. We promise you most
+                    frequent, speedy, affordable and reliable shipping services for your
+                    parcels. We invite you to experience a unique shipping service from
+                    Gzavnilli, efficiency and speedy delivery!
+                  </p>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <div className="slider-controls">
+          <ul>
+            <li className="active">
+              <a href="#">
+                <i className="icon icon-slider-1"></i> <span>Parcel Service</span>
               </a>
-            ))}
-          </nav>
-          <a
-            href="/account"
-            className="rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
-          >
-            Log in
-          </a>
+            </li>
+            <li>
+              <a href="#">
+                <i className="icon icon-slider-2"></i> <span>Cargo Service</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i className="icon icon-slider-3"></i> <span>Online Shipping</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i className="icon icon-slider-4"></i> <span>Courier Service</span>
+              </a>
+            </li>
+          </ul>
         </div>
-      </header>
+      </section>
 
-      <main className="flex-1">
-        <section className="mx-auto max-w-5xl px-6 py-24 text-center sm:text-left">
-          <h1 className="max-w-2xl text-4xl font-semibold leading-tight tracking-tight text-black dark:text-zinc-50 sm:text-5xl">
-            Faster shipping, lower cost, delivered reliably.
-          </h1>
-          <p className="mt-6 max-w-xl text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Track a parcel, get a shipping quote, or manage your account —
-            all in one place.
-          </p>
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-            <a
-              href="#pricing"
-              className="flex h-12 items-center justify-center rounded-full bg-foreground px-6 text-base font-medium text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
-            >
-              Get a quote
-            </a>
-            <a
-              href="/tracking"
-              className="flex h-12 items-center justify-center rounded-full border border-solid border-black/8 px-6 text-base font-medium transition-colors hover:border-transparent hover:bg-black/4 dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            >
-              Track a parcel
-            </a>
+      <section className="trustus">
+        <div className="container">
+          <div className="trustus-l">
+            <img src="/img/trustus.jpg" alt="" />
           </div>
-        </section>
 
-        <section className="border-t border-black/8 dark:border-white/[.145]">
-          <div className="mx-auto grid max-w-5xl gap-8 px-6 py-16 sm:grid-cols-3">
-            {services.map((service) => (
-              <div key={service.title} id={service.title.toLowerCase().replace(/\s+/g, "-")}>
-                <h2 className="text-xl font-semibold text-black dark:text-zinc-50">
-                  {service.title}
-                </h2>
-                <p className="mt-2 text-base leading-7 text-zinc-600 dark:text-zinc-400">
-                  {service.description}
-                </p>
+          <div className="trustus-r">
+            <h2>Trust Us To Deliver Your Goods!</h2>
+            <div className="redline"></div>
+
+            <p>
+              With 7 years of experience delivering excellence, over 11,000 active customers
+              and more than 7 offices around the globe, Gzavnilli is your trusted partner for
+              shipping your goods to Georgia and within the USA.
+            </p>
+
+            <p>
+              We guarantee the safety of your goods, speedy delivery, affordable prices and a
+              variety of options to choose from depending on which service suits you most. In
+              addition, we use our own vehicles and license which means your goods are always
+              in safe hands at all time.
+            </p>
+
+            <div className="advantages">
+              <div className="adv-item item-1">
+                <span>7</span> years of <br />
+                experience
+              </div>
+              <div className="adv-item item-2">
+                <span>7</span> offices around <br />
+                the world
+              </div>
+              <div className="adv-item item-3">
+                <span>11 000+</span> active <br />
+                customers
+              </div>
+            </div>
+
+            <p>
+              More than just shipping, we also offer you a variety of trusted online shopping
+              stores from which you can shop to tax-free state - Delaware. Moreover, these
+              shopping stores offer a huge pack of discounts, deals, coupons and cashbacks,
+              some of which may even cover your shipping costs. Simply shop from them, use any
+              of our office addresses and declare the parcel in your account using the
+              tracking number of your order. The rest is on us!
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="specialoffer">
+        <div className="container">
+          <div className="txt">
+            <h2>Special offer!</h2>
+            <p>
+              Enjoy great Deals, Discounts and Cashbacks when you shop from our partner
+              online stores. You may just get your shipping costs covered by coupons,
+              discounts and commissions received while shopping with our partner stores.
+            </p>
+            <div className="redline"></div>
+
+            <div className="btn-block">
+              <a href="#" className="btn btn-red">
+                Get Started Now! <i className="icon icon-arr1"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="whychooseus">
+        <div className="container">
+          <h2>Why choose us?</h2>
+          <div className="redline"></div>
+          <div className="row">
+            <div className="col col-8">
+              <div className="whyus-item">
+                <div className="whyus-item-inner">
+                  <i className="icon icon-whyus-1"></i>
+                  <div className="whyus-info">
+                    <div className="txt">The speed of delivery</div>
+                    <div className="desc">
+                      If you prioritize speed, you&rsquo;ll definitely love our services –
+                      we are the fastest.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="whyus-item">
+                <div className="whyus-item-inner">
+                  <i className="icon icon-whyus-7"></i>
+                  <div className="whyus-info">
+                    <div className="txt">Lower price guarantee</div>
+                    <div className="desc">
+                      We&apos;ve put a variety of strategies to ensure the shipping cost is
+                      lowest for each service.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="whyus-item">
+                <div className="whyus-item-inner">
+                  <i className="icon icon-whyus-2"></i>
+                  <div className="whyus-info">
+                    <div className="txt">The frequency of shipments</div>
+                    <div className="desc">
+                      We regularly ship, up to five times a week irrespective of size.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="whyus-item">
+                <div className="whyus-item-inner">
+                  <i className="icon icon-whyus-8"></i>
+                  <div className="whyus-info">
+                    <div className="txt">Own vehicles</div>
+                    <div className="desc">
+                      We use our own vehicles for pickups and doorstep deliveries to ensure
+                      you always pay less
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="whyus-item">
+                <div className="whyus-item-inner">
+                  <i className="icon icon-whyus-3"></i>
+                  <div className="whyus-info">
+                    <div className="txt">Your choice of price</div>
+                    <div className="desc">
+                      We are offer to you option to choose rice of service and speed of
+                      transit
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="whyus-item">
+                <div className="whyus-item-inner">
+                  <i className="icon icon-whyus-5"></i>
+                  <div className="whyus-info">
+                    <div className="txt">Own License</div>
+                    <div className="desc">
+                      With our license, we ship directly with airlines and give you the
+                      opportunity to have a fair price.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="whyus-item">
+                <div className="whyus-item-inner">
+                  <i className="icon icon-whyus-4"></i>
+                  <div className="whyus-info">
+                    <div className="txt">Partner Shopping Portal with a Tax-Free Zone</div>
+                    <div className="desc">
+                      Our Tax-Free Zone guarantee that you&apos;ll enjoy easy, fun and
+                      affordable shopping and shipping.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="whyus-item">
+                <div className="whyus-item-inner">
+                  <i className="icon icon-whyus-6"></i>
+                  <div className="whyus-info">
+                    <div className="txt">We are open seven days per week</div>
+                    <div className="desc">
+                      Ship or drop at your convenient time. We operate 7 days a week to
+                      ensure reliability.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="col col-4 calc-block">
+              <div className="calc-block-inner">
+                <div className="heading">
+                  <h3>Calculator</h3>{" "}
+                  <a href="#">
+                    <i className="icon icon-info"></i>
+                  </a>
+                </div>
+                <p>Calculate price/arrival day</p>
+
+                <form action="#">
+                  <div className="row">
+                    <div className="input-group col col-9">
+                      <label htmlFor="calc-weight">Weight*</label>
+                      <input type="text" id="calc-weight" />
+                    </div>
+                    <div className="input-group col col-3 nolabel">
+                      <select>
+                        <option value="lb">lb</option>
+                        <option value="kg">kg</option>
+                        <option value="g">g</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="input-group col col-3">
+                      <label htmlFor="calc-length">Length*</label>
+                      <input type="text" id="calc-length" />
+                    </div>
+                    <div className="input-group col col-3">
+                      <label htmlFor="calc-height">Height</label>
+                      <input type="text" id="calc-height" />
+                    </div>
+                    <div className="input-group col col-3">
+                      <label htmlFor="calc-width">Width</label>
+                      <input type="text" id="calc-width" />
+                    </div>
+                    <div className="input-group col col-3 nolabel">
+                      <select>
+                        <option value="in">in</option>
+                        <option value="cm">cm</option>
+                        <option value="m">m</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="input-group">
+                    <label>Choose service</label>
+                    <select>
+                      <option>Regular Shipping</option>
+                      <option>Accelerated Shipping</option>
+                      <option>Decelerated Shipping</option>
+                    </select>
+                  </div>
+                  <div className="input-group">
+                    <label>Receiving Day</label>
+                    <select>
+                      <option>Sunday</option>
+                      <option>Monday</option>
+                      <option>Doesn&apos;t Matter</option>
+                    </select>
+                  </div>
+                  <div className="btn-block">
+                    <a href="#" className="btn btn-blue">
+                      Calculate <i className="icon icon-arr2"></i>
+                    </a>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="container">
+        <div className="row faq-quesions-block">
+          <section className="col col-6 faq">
+            <h3>Frequently Asked Questions</h3>
+
+            <div className="faq-list">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div className="faq-item" key={i}>
+                  <div className="question">
+                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+                  </div>
+                  <div className="answer">
+                    Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean
+                    imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies
+                    nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget
+                    condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem
+                    neque sed ipsum.
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="ralign">
+              <p>
+                For more questions follow link <a href="/faq.html">Cargo Service</a>
+              </p>
+            </div>
+          </section>
+          <section className="col col-6 contact-form">
+            <h3>Have Any More Questions?</h3>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod
+              bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo
+              commodo.
+            </p>
+
+            <form action="#">
+              <div className="row">
+                <div className="input-group col col-6 col-xs-12">
+                  <label htmlFor="contact-name">Your name</label>
+                  <input type="text" id="contact-name" />
+                </div>
+                <div className="input-group col col-6 col-xs-12">
+                  <label htmlFor="contact-email">Your e-mail</label>
+                  <input type="text" id="contact-email" />
+                </div>
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="contact-subject">Subject matter</label>
+                <select id="contact-subject">
+                  <option>Online Shopping</option>
+                  <option>Offline Shopping</option>
+                  <option>Shipping</option>
+                </select>
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="contact-message">Text message</label>
+                <textarea id="contact-message" rows={3}></textarea>
+              </div>
+              <div className="btn-block ralign">
+                <a className="btn btn-blue">
+                  Send <i className="icon icon-arr1"></i>
+                </a>
+              </div>
+            </form>
+          </section>
+        </div>
+      </div>
+
+      <section className="mobile-app">
+        <div className="container">
+          <div className="txt">
+            <h3>Mobile app</h3>
+            <p>Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum.</p>
+            <div className="app-btns">
+              <a href="#" className="appstore-btn"></a>
+              <a href="#" className="googleplay-btn"></a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="news">
+        <div className="container">
+          <h2>Latest News</h2>
+          <div className="redline"></div>
+          <div className="news-list">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div className="item" key={i}>
+                <a href="#" className="img">
+                  <img src="/img/tmp/news-380.jpg" alt="" />
+                </a>
+                <a href="#" className="title">
+                  Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+                </a>
+                <div className="date">November 5, 2015</div>
+                <div className="teaser">
+                  Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean
+                  imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies
+                  nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum
+                  rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.
+                </div>
+                <div className="ralign">
+                  <a href="#" className="more">
+                    Read more
+                  </a>
+                </div>
               </div>
             ))}
           </div>
-        </section>
-      </main>
-
-      <footer className="border-t border-black/8 px-6 py-8 text-sm text-zinc-600 dark:border-white/[.145] dark:text-zinc-400">
-        <div className="mx-auto max-w-5xl">
-          © {new Date().getFullYear()} Gzavnili
         </div>
-      </footer>
-    </div>
+      </section>
+    </>
   );
 }

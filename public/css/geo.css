@@ -1,0 +1,91 @@
+﻿@font-face {
+    font-family: 'arial_georegular';
+    src: url('../fonts/arial_geo-webfont.woff2') format('woff2'),
+         url('../fonts/arial_geo-webfont.woff') format('woff');
+
+}
+body,
+input[type="text"],
+input[type="password"],
+div, span, p, h1, h2, h3, h4, h5,a, label, button, th,td,
+textarea, legend,
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+	font-family: "arial_georegular", "Open Sans", arial !important;
+}
+
+h1, h2, h3,th{
+	font-weight:bold !important;
+	
+}
+
+.header .bottombar ul.headermenu>li>a {
+    color: #20599d;
+    font-size: 18px;
+    display: block;
+    padding: 20px 13px;
+    text-decoration: none;
+    font-weight: 300;
+    position: relative;
+}
+
+
+.header .bottombar ul.usermenu li a span {
+    display: block;
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #20599d;
+}
+
+@media (max-width: 599px) {
+	html table.bluetable.myparcels-table tr td.td-delivery-date:before {
+		content: "ჩატანის თარიღი"
+	}	
+	html table.bluetable.myparcels-table tr td.td-paid:before {
+		content: "გადახდილია"
+	}	
+	html table.bluetable.myparcels-table tr td.td-dept:before {
+		content: "გადასადელია"
+	}
+	table.bluetable.myparcels-table tr td.td-reciever-name:before {
+		content: "Receiver Name"
+	}
+	table.bluetable.myparcels-table tr td.td-reciever-phone:before {
+		content: "Receiver Phone"
+	}
+	html table.bluetable.myparcels-table tr td.td-shipping-date:before {
+		content: "გაგზავნის დღე"
+	}
+	html table.bluetable.accountrecievers-table tr td.td-firstname:before {
+		content: "სახელი";
+	}
+	html table.bluetable.accountrecievers-table tr td.td-city:before {
+		content: "ქალაქი";
+	}
+	html table.bluetable.accountrecievers-table tr td.td-lastname:before {
+		content: "გვარი";
+	}
+	html table.bluetable.myparcels-table tr td.td-trackingnum:before {
+		content: "ამანათის ნომერი"
+	}
+	html table.bluetable.myparcels-table tr td.td-note:before {
+		content: "დარქმეული სახელი"
+	}
+	html table.bluetable.myparcels-table tr td.td-status:before {
+		content: "სტატუსი"
+	}
+	html table.bluetable.myparcels-table tr td.td-weight:before {
+		content: "წონა"
+	}
+	html table.bluetable.myparcels-table tr td.td-price:before {
+		content: "ფასი"
+	}
+	html table.bluetable.myparcels-table tr td.td-estimated:before {
+		content: "სავარაუდო მიღება"
+	}
+	html table.bluetable.myparcels-table tr td.td-expectit:before {
+		content: "სავარაუდო გაცემა"
+	}
+	html table.bluetable.myparcels-table tr td.td-received:before {
+		content: "მიღების დრო"
+	}
+}
