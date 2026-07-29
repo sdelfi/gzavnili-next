@@ -1,0 +1,642 @@
+/*
+ * Extracted from public/css/style.css's `.header`/`#tracking-block`/`#login-block` rules
+ * (and style_custom.css's `.closenow` color override) and scoped to this component instead —
+ * see AGENTS.md's "shared components" convention and the HomeHero.module.css precedent.
+ * `.btn`/`.input-group` stay global (:global()) since those are genuinely shared across many
+ * components, not unique to Header — only the header-specific overrides of them (widths,
+ * margins) live here.
+ */
+/*
+ * Responsive migration status: base (desktop) styles below are fully ported. Breakpoints
+ * migrated so far: 1199px, 1139px, 991px (the "mobile menu" breakpoint — toggler shows,
+ * desktop menu becomes an absolute dropdown). NOT yet migrated: 767px, 599px, 479px, 399px —
+ * those rules are still in public/css/style.css under `.header ...` inside their
+ * `@media` blocks (search for them there) and haven't been deleted, specifically so the
+ * header doesn't silently break at those widths until this file catches up. The 767px one in
+ * particular has a selector grouped with an unrelated `.row .col.col-sm-12` rule that needs
+ * splitting carefully, not a blind cut-and-paste.
+ */
+.header {
+  font-family: Montserrat;
+}
+
+.topbar {
+  background: #f9f9f9;
+  padding-bottom: 0;
+  margin-bottom: 17px;
+
+  .topbarInner {
+    display: table;
+    width: 100%;
+  }
+
+  @media (max-width: 1199px) {
+    :global(.container) {
+      padding: 0 10px;
+    }
+  }
+
+  @media (max-width: 991px) {
+    :global(.container) {
+      padding: 0;
+    }
+  }
+}
+
+.language {
+  width: 100px;
+  display: table-cell;
+  vertical-align: top;
+
+  .languageInner {
+    position: relative;
+    z-index: 20;
+  }
+
+  span {
+    background: #3fa3f0;
+    display: block;
+    vertical-align: top;
+    padding: 15px 35px 15px 12px;
+    color: #fff;
+    line-height: 21px;
+    position: relative;
+    cursor: pointer;
+
+    &:after {
+      content: "";
+      width: 10px;
+      height: 6px;
+      position: absolute;
+      top: 50%;
+      margin-top: -3px;
+      right: 11px;
+      display: block;
+      background: url("/img/icons.png") -61px -2341px no-repeat;
+    }
+
+    &:hover {
+      background: #60b5f6;
+    }
+  }
+
+  ul {
+    display: none;
+    position: absolute;
+    top: 100%;
+    background: #20599d;
+    min-width: 100%;
+    left: 0;
+
+    li {
+      display: block;
+
+      a {
+        display: block;
+        padding: 10px 12px;
+        color: #fff;
+        text-decoration: none;
+
+        &:hover {
+          background: #60b5f6;
+        }
+      }
+    }
+  }
+
+  &.active ul {
+    display: block;
+  }
+
+  @media (max-width: 991px) {
+    span {
+      padding: 20px 35px 20px 12px;
+    }
+  }
+}
+
+.topbarContacts {
+  width: auto;
+  display: table-cell;
+  vertical-align: top;
+}
+
+.topbarContactsItem {
+  display: none;
+  padding: 16px 20px 0 60px;
+
+  &.active {
+    display: table;
+    width: 100%;
+  }
+
+  div {
+    display: table-cell;
+    padding: 0 20px 0 25px;
+    line-height: 21px;
+    position: relative;
+
+    i {
+      margin-right: 3px;
+    }
+
+    span {
+      text-align: left;
+      white-space: nowrap;
+      margin-right: 2px;
+    }
+
+    a {
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+
+  .phone {
+    padding-left: 20px;
+    width: 32%;
+
+    &:before {
+      content: "";
+      width: 14px;
+      height: 15px;
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 3px;
+      background: url("/img/icons.png") no-repeat;
+    }
+  }
+
+  .mail {
+    padding-left: 25px;
+    width: 27%;
+
+    &:before {
+      content: "";
+      width: 18px;
+      height: 15px;
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 6px;
+      background: url("/img/icons.png") 0 -51px no-repeat;
+    }
+  }
+
+  .time {
+    &:before {
+      content: "";
+      width: 18px;
+      height: 17px;
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 2px;
+      background: url("/img/icons.png") 0 -104px no-repeat;
+    }
+  }
+
+  @media (max-width: 991px) {
+    div span {
+      display: block;
+    }
+  }
+}
+
+.office {
+  width: 150px;
+  display: table-cell;
+  vertical-align: top;
+
+  .officeInner {
+    position: relative;
+    z-index: 20;
+  }
+
+  .curr {
+    background: #3fa3f0;
+    display: block;
+    vertical-align: top;
+    padding: 8px 40px 8px 12px;
+    color: #fff;
+    line-height: 20px;
+    position: relative;
+    cursor: pointer;
+
+    &:hover {
+      background: #60b5f6;
+    }
+
+    .title {
+      color: #fff;
+      line-height: 21px;
+      position: relative;
+
+      &:after {
+        content: "";
+        width: 10px;
+        height: 6px;
+        position: absolute;
+        top: 50%;
+        margin-top: -3px;
+        right: -23px;
+        display: block;
+        background: url("/img/icons.png") -61px -2341px no-repeat;
+      }
+    }
+
+    /* style.css: .opennow { color: #20599d } / style_custom.css: .closenow { color: white } —
+       genuinely different colors in the real design, not a copy-paste of the same value. */
+    .opennow {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: #20599d;
+      line-height: 14px;
+    }
+
+    .closenow {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: #fff;
+      line-height: 14px;
+    }
+  }
+
+  ul {
+    display: none;
+    position: absolute;
+    top: 100%;
+    background: #20599d;
+    min-width: 100%;
+    left: 0;
+
+    li {
+      display: block;
+      cursor: pointer;
+      padding: 10px 12px;
+      color: #fff;
+      text-decoration: none;
+
+      &.active {
+        display: none;
+      }
+
+      &:hover {
+        background: #60b5f6;
+      }
+    }
+  }
+
+  &.active ul {
+    display: block;
+  }
+
+  @media (max-width: 991px) {
+    width: 135px;
+
+    .curr {
+      padding: 13px 30px 13px 12px;
+
+      .title:after {
+        right: -19px;
+      }
+    }
+  }
+}
+
+.bottombar {
+  padding-bottom: 11px;
+
+  &:after,
+  &:before {
+    content: "";
+    display: table;
+  }
+
+  .logo {
+    padding: 0 12px;
+    line-height: 0;
+    float: left;
+
+    a {
+      display: block;
+    }
+
+    @media (max-width: 1139px) {
+      padding: 0;
+
+      img {
+        width: 160px;
+      }
+    }
+  }
+
+  .usermenu {
+    float: right;
+    margin-top: 5px;
+
+    li {
+      display: inline-block;
+      vertical-align: middle;
+      margin: 0 5px 0 20px;
+
+      &:nth-child(1) {
+        margin-left: 0;
+      }
+
+      a {
+        text-decoration: none;
+        text-align: center;
+        display: block;
+
+        i {
+          display: block;
+          margin: 0 auto 7px;
+          position: relative;
+        }
+
+        span {
+          display: block;
+          font-size: 11px;
+          text-transform: uppercase;
+          color: #20599d;
+        }
+
+        &:hover span {
+          color: #3fa3f0;
+        }
+      }
+
+      &.logged a span {
+        color: #ef2930;
+      }
+
+      &.logged a:hover span {
+        color: #ff6d72;
+      }
+    }
+  }
+
+  .headermenuBlock {
+    position: relative;
+    float: right;
+
+    @media (max-width: 991px) {
+      &.active .headermenu {
+        display: block;
+      }
+    }
+  }
+
+  .headermenuToggler {
+    display: none;
+    background: #20599d;
+    color: #fff;
+    font-size: 18px;
+    font-family: Montserrat;
+    font-weight: 400;
+    padding: 12px 18px 12px 12px;
+    float: right;
+    margin: 10px 25px 0 0;
+    cursor: pointer;
+
+    i {
+      margin-right: 8px;
+    }
+
+    @media (max-width: 991px) {
+      display: block;
+    }
+  }
+
+  .headermenu {
+    display: table;
+    z-index: 20;
+    position: relative;
+    margin: 5px 20px 0 0;
+
+    > li {
+      display: table-cell;
+      vertical-align: top;
+      position: relative;
+
+      > a {
+        color: #20599d;
+        font-size: 18px;
+        display: block;
+        padding: 20px 23px;
+        text-decoration: none;
+        font-weight: 400;
+        position: relative;
+
+        span {
+          position: relative;
+          display: block;
+
+          &:after {
+            content: "";
+            display: block;
+            left: 50%;
+            padding-bottom: inherit;
+            transition:
+              width 0.3s ease-out 0s,
+              left 0.3s ease-out 0s,
+              background-color 0.3s ease-out 0s;
+            width: 0;
+            height: 3px;
+            background-color: #ef2930;
+            border-radius: 1px;
+            position: absolute;
+            bottom: -10px;
+          }
+        }
+      }
+
+      ul {
+        visibility: hidden;
+        opacity: 0;
+        background: #20599d;
+        position: absolute;
+        top: 55px;
+        left: 25px;
+        min-width: 220px;
+        transition: all 0.3s ease 0s;
+
+        li {
+          display: block;
+
+          a {
+            white-space: nowrap;
+            font-family: "Open Sans";
+            text-decoration: none;
+            font-size: 16px;
+            color: #fff;
+            padding: 10px 22px;
+            display: block;
+
+            &:hover {
+              background: #2a70b7;
+            }
+          }
+        }
+      }
+
+      &:hover {
+        > a span:after {
+          left: 0;
+          width: 100% !important;
+        }
+
+        ul {
+          opacity: 1;
+          visibility: visible;
+        }
+      }
+    }
+
+    @media (max-width: 1139px) {
+      > li > a {
+        padding: 20px 15px;
+      }
+
+      > li ul {
+        left: 17px;
+      }
+    }
+
+    /* Below 991px this becomes the mobile dropdown revealed by `.headermenuBlock.active`
+       (the toggler click) instead of a hover-revealed desktop submenu. */
+    @media (max-width: 991px) {
+      display: none;
+      position: absolute;
+      top: 59px;
+      margin: 0;
+      left: 0;
+      background: #2a70b7;
+      width: 220px;
+
+      > li {
+        display: block;
+
+        > a {
+          display: block;
+          padding: 10px 12px;
+          font-family: "Open Sans";
+          font-weight: 400;
+          color: #fff;
+
+          &:hover {
+            background: #20599d !important;
+          }
+        }
+
+        ul {
+          display: block;
+          background: #255fad;
+          position: relative;
+          left: inherit;
+          top: inherit;
+          visibility: visible;
+          opacity: 1;
+
+          li a {
+            padding: 8px 10px 8px 20px;
+
+            &:hover {
+              background: #20599d;
+            }
+          }
+        }
+
+        &:hover {
+          > a {
+            background: 0 0;
+          }
+
+          > a span:after {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+.trackingBlock {
+  h3 {
+    font-size: 24px;
+    margin: 10px 30px;
+    text-align: center;
+  }
+
+  form {
+    margin: 30px auto 20px;
+    max-width: 290px;
+
+    :global(.input-group) {
+      margin-bottom: 10px;
+    }
+
+    :global(.btn) {
+      width: 100%;
+      margin-top: 0;
+    }
+  }
+}
+
+.loginBlock {
+  h3 {
+    font-size: 24px;
+    margin: 10px 30px;
+    text-align: center;
+  }
+
+  form {
+    margin: 30px auto 20px;
+    max-width: 290px;
+
+    :global(.btn) {
+      width: 100%;
+      margin-top: 17px;
+    }
+  }
+
+  .or {
+    height: 20px;
+    line-height: 20px;
+    position: relative;
+    text-align: center;
+    margin: 40px 0 20px;
+
+    &:after {
+      content: "";
+      position: absolute;
+      top: 9px;
+      left: 0;
+      right: 0;
+      border-bottom: 1px solid #d9d9d9;
+    }
+
+    span {
+      font-size: 20px;
+      color: #b7b7b7;
+      font-weight: 400;
+      padding: 0 12px;
+      background: #fff;
+      display: inline-block;
+      line-height: 20px;
+      z-index: 1;
+      position: relative;
+      font-family: Montserrat;
+    }
+  }
+
+  p {
+    font-weight: 400;
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 15px;
+    font-family: Montserrat;
+  }
+}
