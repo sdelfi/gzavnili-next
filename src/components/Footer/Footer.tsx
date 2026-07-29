@@ -15,12 +15,12 @@ export async function Footer() {
       <div className="container">
         <div className={s.footerL}>
           <div className={s.footerLt}>
-            <div className="logo">
+            <div className={s.logo}>
               {/* text-indent hides the label; style.css draws the real logo via an icons.png
                   sprite background — same technique as Modal.tsx's close icon. */}
               <Link href={routes.home()}>Gzavnili</Link>
             </div>
-            <ul className="social">
+            <ul className={s.social}>
               <li className={s.socialFb}>
                 <a href="https://www.facebook.com/gzavnili">Facebook</a>
               </li>
@@ -29,12 +29,13 @@ export async function Footer() {
           <div className={s.txt}>{t('tagline')}</div>
           <div className={s.footerSignup}>
             <label htmlFor="signup-input">{t('newsletterLabel')}</label>
-            <div className="input-group">
-              <Input type="text" id="signup-input" />
+            <div className={s.inputGroup}>
+              <Input type="text" id="signup-input" className={s.signupInput} />
               <a className={s.signupBtn}>
                 <i className="icon icon-arr3"></i>
               </a>
             </div>
+            <a href="https://tawk.to/chat/56ba62ae4003e62e173fad2a/default/?$_tawk_popout=true">Chat</a>
           </div>
           <div className={s.footerCopy}>
             &copy; {year} {t('copyright')}
@@ -99,38 +100,37 @@ export async function Footer() {
         </div>
 
         <div className={s.footerR}>
-          <div className="footer-contacts">
-            <div className={cn(s.footerContactsItem, s.active)}>
-              <p>
-                1914 Kings Highway, 2 FL <br />
-                Brooklyn NY 11229
-              </p>
-              <p>
-                Tel: +1 718 676 0022 <br />
-                Fax: +1 718 988 4444
-              </p>
-              <p>
-                <a href="mailto:info@gzavnili.com">info@gzavnili.com</a>
-              </p>
-              <p>
-                Mon-Fri 9:00-19:00 <br />
-                Sat-Sun 10:00-17:00
-              </p>
-            </div>
-            <div className={s.footerContactsItem}>
-              <p>
-                41 Tashkenti Street <br />
-                Tbilisi, Georgia
-              </p>
-              <p>Tel: +995 332 247 00 22</p>
-              <p>
-                <a href="mailto:tbilisi@gzavnili.com">tbilisi@gzavnili.com</a>
-              </p>
-              <p>
-                Mon-Fri 9:00-20:00 <br />
-                Sat-Sun 10:00-17:00
-              </p>
-            </div>
+          {/* // TODO: copy dropdown and logic from original site */}
+          <div className={cn(s.footerContactsItem, s.active)}>
+            <p>
+              1914 Kings Highway, 2 FL <br />
+              Brooklyn NY 11229
+            </p>
+            <p>
+              Tel: +1 718 676 0022 <br />
+              Fax: +1 718 988 4444
+            </p>
+            <p>
+              <a href="mailto:info@gzavnili.com">info@gzavnili.com</a>
+            </p>
+            <p>
+              Mon-Fri 9:00-19:00 <br />
+              Sat-Sun 10:00-17:00
+            </p>
+          </div>
+          <div className={s.footerContactsItem}>
+            <p>
+              41 Tashkenti Street <br />
+              Tbilisi, Georgia
+            </p>
+            <p>Tel: +995 332 247 00 22</p>
+            <p>
+              <a href="mailto:tbilisi@gzavnili.com">tbilisi@gzavnili.com</a>
+            </p>
+            <p>
+              Mon-Fri 9:00-20:00 <br />
+              Sat-Sun 10:00-17:00
+            </p>
           </div>
         </div>
       </div>

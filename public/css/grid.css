@@ -309,10 +309,6 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
     .col-sm-12,
     .col-md-12,
     .col-lg-12 {
-        /*
-		-ms-flex-preferred-size: 0;
-        flex-basis: 0;
-		*/
         -webkit-box-flex: 1;
         -ms-flex-positive: 1;
         flex-grow: 1;

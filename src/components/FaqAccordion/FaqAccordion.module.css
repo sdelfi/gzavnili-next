@@ -1,0 +1,71 @@
+/*
+ * Extracted from public/css/style.css's `.faq .faq-list ...` rules. Made self-contained
+ * (doesn't require an ancestor `.faq` class) since this component is meant to be reusable
+ * wherever an accordion is needed, not just inside the homepage's Faq section — see
+ * src/components/Faq/Faq.tsx for the section that currently uses it.
+ */
+.faqList {
+  margin-bottom: 30px;
+}
+
+.faqItem {
+  border: 1px solid #bfbfbf;
+  border-radius: 2px;
+  margin-bottom: 15px;
+  background: #f9f9f9;
+
+  &:hover {
+    background: #fff;
+  }
+
+  &.active {
+    padding: 10px 20px;
+    background: #fff;
+
+    .question {
+      margin: 0 0 10px;
+      padding: 5px 10px 5px 0;
+
+      &:after {
+        background-position: 0 -2370px;
+        right: 0;
+      }
+    }
+
+    .answer {
+      display: block;
+    }
+  }
+}
+
+.question {
+  padding: 15px 30px 15px 20px;
+  line-height: 20px;
+  cursor: pointer;
+  position: relative;
+  font-weight: 600;
+
+  &:after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    display: block;
+    position: absolute;
+    top: 50%;
+    margin-top: -6px;
+    right: 20px;
+    background: url('/img/icons.png') -27px -2370px no-repeat;
+  }
+
+  &:hover {
+    color: #3fa3f0;
+    text-decoration: underline;
+  }
+}
+
+.answer {
+  display: none;
+  border-top: 1px solid #bfbfbf;
+  padding: 10px 0 7px;
+  font-weight: 600;
+}
