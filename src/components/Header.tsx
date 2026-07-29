@@ -1,20 +1,16 @@
-import { Suspense } from "react";
 import { HeaderClient } from "./HeaderClient";
-import { HeaderPersonalized } from "./HeaderPersonalized";
-import { DEFAULT_OFFICE_ID } from "@/lib/offices";
+import { isOfficeOpen } from "@/lib/officeHours";
+import { getPreferredOfficeId } from "@/lib/preferences";
 
-// Server Component wrapper: HeaderPersonalized reads the office cookie (a runtime API), so
-// it has to sit behind a Suspense boundary to keep the rest of the (public) route tree
-// statically generated — see docs/decisions/0005-cache-components.md. The fallback is what
-// ships in the prerendered static shell; it can't compute `new Date()` at build time (Next
-// rejects that — no request-data source yet), so it renders with the open/closed badge
-// hidden. HeaderPersonalized resolves almost immediately at request time (cookie read + a
-// timezone calculation, no I/O), so in practice visitors see the correct badge on first
-// paint, not a placeholder-then-swap.
-export function Header() {
-  return (
-    <Suspense fallback={<HeaderClient initialOfficeId={DEFAULT_OFFICE_ID} initialOfficeOpenNow={null} />}>
-      <HeaderPersonalized />
-    </Suspense>
-  );
+// Async Server Component: reads the office cookie and computes the real open/closed status
+// at request time, so HeaderClient never has to guess and then correct itself. This makes
+// every route using this layout dynamically rendered (no static shell) rather than
+// statically generated — see docs/decisions/0005-cache-components.md for why: an earlier
+// version tried to keep static generation via a Suspense-streamed fallback, but that
+// guarantees a two-phase render (wrong default shown first, then swapped), which is worse
+// for above-the-fold identity like "which office is selected" than paying for a per-request
+// render of a cookie read + a timezone calculation (no I/O — still fast off our own VDS).
+export async function Header() {
+  const officeId = await getPreferredOfficeId();
+  return <HeaderClient initialOfficeId={officeId} initialOfficeOpenNow={isOfficeOpen(officeId)} />;
 }

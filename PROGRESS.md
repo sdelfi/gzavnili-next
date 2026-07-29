@@ -55,19 +55,20 @@ file for scope/sequencing.
       and a `docs/README.md` indexing everything plus the live-site reference
       (https://usa.gzavnili.com/). Removed `docs/migrations/08-cost-estimate.md` per client
       request.
-- [x] Fixed the header's "Open Now"/"Closed Now" flash: enabled Next 16's Cache Components
-      (`cacheComponents: true` in `next.config.ts`) so `Header` can read the visitor's saved
-      office from a cookie and compute the real open/closed status **server-side, before first
-      paint**, while the rest of every public page stays statically generated (build output:
-      `◐ Partial Prerender`). Split `Header.tsx` (static Suspense wrapper) /
-      `HeaderPersonalized.tsx` (async Server Component, reads the cookie) / `HeaderClient.tsx`
-      (the interactive half, now driven by initial props instead of a post-mount
-      `useEffect`+flash). Office selection now actually persists (it didn't before — reset to
-      Tbilisi/English on every load) via a plain, non-httpOnly cookie
-      (`src/lib/preferences.ts`, `src/lib/offices.ts`) — deliberately not `localStorage`, which
-      can't be read server-side. Full writeup + gotchas hit (non-deterministic `Date()` during
-      prerendering, `next/headers` leaking into client bundles):
-      `docs/decisions/0005-cache-components.md`.
+- [x] Fixed the header's "Open Now"/"Closed Now" flash and made the office selection actually
+      persist (it didn't before — reset to Tbilisi/English on every load): `Header.tsx` is now
+      an async Server Component that reads the visitor's office from a cookie
+      (`src/lib/preferences.ts`, `src/lib/offices.ts` — deliberately a cookie, not
+      `localStorage`, which can't be read server-side) and computes the real open/closed status
+      before first paint, in a single render. **First attempt used Next 16 Cache Components**
+      (`cacheComponents: true` + a Suspense-streamed `HeaderPersonalized`) to keep the rest of
+      the site statically generated — reverted after it caused a worse, client-visible bug: PPR
+      always ships its (static, build-time) Suspense fallback first, so a visitor who'd picked
+      "New York" saw "Tbilisi" flash on screen before correcting itself on every reload. Went
+      with plain dynamic (per-request) SSR instead — one correct render, no swap, at the cost of
+      the whole site now being `ƒ dynamic` rather than `○ static` in `next build`'s output (see
+      `docs/decisions/0005-cache-components.md` for the full history/reasoning and why that
+      trade-off is fine for now).
 - [x] Deleted `public/bower_components/` and legacy `public/js/` (9.2 MB, nothing in `src/`
       loaded any of it) — `normalize.css` and the featherlight CSS classes `Modal.tsx` reuses
       are now a real npm package and an owned `Modal.css` respectively, not vendored copies.
