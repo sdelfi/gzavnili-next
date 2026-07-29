@@ -1,28 +1,42 @@
 # 0002 — react-select as the select2 replacement
 
-**Status:** decided, not yet implemented (no page ported so far actually uses select2 markup).
+**Status:** implemented as `src/components/ui/Select.tsx`, used everywhere a `<select>`
+appears (not only pages that had select2 applied — see "Revised scope" below).
 
 ## Decision
 
 Use [react-select](https://react-select.com/) wherever the legacy site used select2
-(`http/js/select2/`), instead of porting select2/jQuery itself.
+(`http/js/select2/`), instead of porting select2/jQuery itself. Wrapped in a shared
+`src/components/ui/Select.tsx` (per AGENTS.md's shared-components rule) rather than calling
+react-select directly from each form.
 
 ## Why
 
 There's no official React port of select2. select2 is used across the legacy account/
 checkout/payment pages (`main.js`, `main2.js`) for searchable dropdowns (e.g. office picker
-in `main.js` around the `deliveryOffice-col` select) — not on the homepage, whose calculator
-(`http/views/homecals.cfm`) uses plain native `<select>` elements with no select2 class.
-react-select was picked over a native-`<select>` + custom CSS approach because it's the most
-widely used, actively maintained option and supports restyling via `classNamePrefix` close to
-the current select2 look, without hand-building search/keyboard-nav behavior.
+in `main.js` around the `deliveryOffice-col` select). react-select was picked over a
+native-`<select>` + custom CSS approach because it's the most widely used, actively maintained
+option and supports full restyling via `classNamePrefix`/`unstyled` without hand-building
+search/keyboard-nav behavior.
+
+`src/components/ui/Select.css` recreates the visual rules from
+`public/css/style.css`'s `.select2-container--default...` block (border/height/colors, and the
+same `icons.png` sprite coordinates for the dropdown arrow) against react-select's own class
+names — the two libraries have different DOM structure, so this is a recreation of the look,
+not a reuse of the actual select2 CSS rules.
+
+## Revised scope
+
+The original version of this decision scoped react-select only to pages that had select2
+applied, and left the homepage calculator's plain `<select>`s alone (its markup in
+`http/views/homecals.cfm` never had a select2 class). In practice, once the calculator was
+built, unstyled native `<select>`s sitting next to `Input`-styled text fields looked
+inconsistent enough to be reported as looking "trashy." Standardized on `Select` for every
+dropdown in the app instead of tracking which legacy page happened to apply select2 — one
+dropdown component, one look, everywhere.
 
 ## How to apply
 
-- When porting any page that used select2 (account, checkout, payment-steps — see
-  `grep -rl select2 http/views` in the legacy repo for the full list), use react-select for
-  those fields, styled via `classNamePrefix` against the ported `css/style.css` select2 rules
-  rather than react-select's default theme.
-- Plain `<select>` stays plain `<select>` where the legacy markup didn't apply select2 (as on
-  the homepage calculator) — don't upgrade those without a reason.
-- Add `react-select` to `package.json` when the first such page is actually ported, not before.
+New dropdowns use `Select` (`src/components/ui/Select.tsx`), not a bare `<select>`. Options are
+passed as `{ value, label }[]`; `required` renders a hidden native input so HTML5 form
+validation still works the same way the original `required` attribute did.

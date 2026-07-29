@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
 
 // Ports the pricing/ETA logic that used to live server-side in
 // `../http/views/homecals.cfm` (GET-param driven, re-rendered by ColdFusion on every submit —
@@ -10,6 +12,23 @@ type WeightUnit = "lb" | "kg";
 type SizeUnit = "in" | "cm";
 type Service = "regular" | "express";
 type ParcelType = "online" | "personal";
+
+const WEIGHT_UNITS = [
+  { value: "lb", label: "lb" },
+  { value: "kg", label: "kg" },
+];
+
+const SIZE_UNITS = [
+  { value: "in", label: "in" },
+  { value: "cm", label: "cm" },
+];
+
+const SERVICES = [{ value: "regular", label: "Regular Service" }];
+
+const PARCEL_TYPES = [
+  { value: "online", label: "Online" },
+  { value: "personal", label: "Personal" },
+];
 
 const DAYS = [
   { value: "1", label: "Monday" },
@@ -107,7 +126,7 @@ export function Calculator() {
     <form className="form pricecalc_form" onSubmit={handleSubmit}>
       <div className="row">
         <div className="input-group col col-9">
-          <input
+          <Input
             type="text"
             id="calc-weight"
             placeholder="Weight"
@@ -116,19 +135,16 @@ export function Calculator() {
           />
         </div>
         <div className="input-group col col-3">
-          <select
-            id="cal_weighttype"
+          <Select
+            options={WEIGHT_UNITS}
             value={weightUnit}
-            onChange={(e) => setWeightUnit(e.target.value as WeightUnit)}
-          >
-            <option value="lb">lb</option>
-            <option value="kg">kg</option>
-          </select>
+            onChange={(v) => setWeightUnit(v as WeightUnit)}
+          />
         </div>
       </div>
       <div className="row">
         <div className="input-group col col-3">
-          <input
+          <Input
             type="text"
             id="calc-length"
             placeholder="Length"
@@ -137,7 +153,7 @@ export function Calculator() {
           />
         </div>
         <div className="input-group col col-3">
-          <input
+          <Input
             type="text"
             id="calc-height"
             placeholder="Height"
@@ -146,7 +162,7 @@ export function Calculator() {
           />
         </div>
         <div className="input-group col col-3">
-          <input
+          <Input
             type="text"
             id="calc-width"
             placeholder="Width"
@@ -155,42 +171,29 @@ export function Calculator() {
           />
         </div>
         <div className="input-group col col-3">
-          <select id="cal_type" value={sizeUnit} onChange={(e) => setSizeUnit(e.target.value as SizeUnit)}>
-            <option value="in">in</option>
-            <option value="cm">cm</option>
-          </select>
+          <Select options={SIZE_UNITS} value={sizeUnit} onChange={(v) => setSizeUnit(v as SizeUnit)} />
         </div>
       </div>
       <div className="input-group">
-        <select
+        <Select
           required
+          placeholder="Choose Service Type"
+          options={SERVICES}
           value={service}
-          onChange={(e) => setService(e.target.value as Service)}
-        >
-          <option value="">Choose Service Type</option>
-          <option value="regular">Regular Service</option>
-        </select>
+          onChange={(v) => setService(v as Service)}
+        />
       </div>
       <div className="input-group">
-        <select
+        <Select
           required
+          placeholder="Choose Parcel Type"
+          options={PARCEL_TYPES}
           value={parcelType}
-          onChange={(e) => setParcelType(e.target.value as ParcelType)}
-        >
-          <option value="">Choose Parcel Type</option>
-          <option value="online">Online</option>
-          <option value="personal">Personal</option>
-        </select>
+          onChange={(v) => setParcelType(v as ParcelType)}
+        />
       </div>
       <div className="input-group">
-        <select value={day} onChange={(e) => setDay(e.target.value)}>
-          <option value="">Received in USA Day</option>
-          {DAYS.map((d) => (
-            <option key={d.value} value={d.value}>
-              {d.label}
-            </option>
-          ))}
-        </select>
+        <Select placeholder="Received in USA Day" options={DAYS} value={day} onChange={setDay} />
       </div>
       <div className="btn-block">
         <button type="submit" className="btn btn-blue">

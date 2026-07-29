@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Modal } from "./Modal";
+import Image from "next/image";
+import { Lightbox } from "@/components/ui/Lightbox";
 
-// The real homepage content wires these up as `.fancybox.iframe` (jquery.fancybox.js), which
-// we don't load. Reuses the featherlight-styled Modal component for the lightbox instead —
-// visually not identical to fancybox, but same open/close behavior with no jQuery plugin.
+// The real homepage content wires these up as `.fancybox.iframe` (jquery.fancybox.js) — see
+// src/components/ui/Lightbox.tsx for the plain-React/CSS recreation of fancybox's look used
+// here instead.
 type Video = { title: string; embedUrl: string; image: string };
 
 const VIDEOS: Video[] = [
@@ -36,7 +37,7 @@ export function VideoTutorials() {
             <div className="inner">
               <p>{video.title}</p>
               <div className="img">
-                <img alt={video.title} src={video.image} />
+                <Image alt={video.title} src={video.image} width={166} height={91} />
               </div>
               <span>Watch video</span>
             </div>
@@ -44,7 +45,7 @@ export function VideoTutorials() {
         ))}
       </div>
 
-      <Modal open={!!open} onClose={() => setOpen(null)}>
+      <Lightbox open={!!open} onClose={() => setOpen(null)}>
         {open && (
           <iframe
             width="640"
@@ -55,7 +56,7 @@ export function VideoTutorials() {
             allowFullScreen
           />
         )}
-      </Modal>
+      </Lightbox>
     </section>
   );
 }

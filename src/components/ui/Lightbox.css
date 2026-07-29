@@ -1,0 +1,64 @@
+/*
+ * Own recreation of fancybox 2's "skin" (light rounded box, close button floating outside
+ * the top-right corner, dark overlay) — see ../http/js/fancybox/jquery.fancybox.css for the
+ * original. Not a pixel-for-pixel port (no sprite images, no drag/zoom/gallery-nav — those
+ * aren't used by anything we've ported), just the same visual language.
+ */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 8020;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.lightbox-skin {
+  position: relative;
+  background: #f9f9f9;
+  color: #444;
+  border-radius: 4px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.lightbox-inner {
+  overflow: hidden;
+  line-height: 0;
+}
+
+.lightbox-inner iframe {
+  display: block;
+  border: 0;
+  max-width: 100%;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: -18px;
+  right: -18px;
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  border-radius: 50%;
+  text-align: center;
+  cursor: pointer;
+  background: #f9f9f9;
+  color: #444;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  z-index: 8040;
+}
+
+@media (max-width: 599px) {
+  .lightbox-close {
+    top: -14px;
+    right: -14px;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    font-size: 13px;
+  }
+}

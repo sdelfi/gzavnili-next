@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Modal } from "@/components/Modal";
+import { Input } from "@/components/ui/Input";
 import { isOfficeOpen, type OfficeId } from "@/lib/officeHours";
 import { OFFICES, setOfficeCookie } from "@/lib/offices";
+import { routes } from "@/lib/routes";
 
 // The interactive half of Header (dropdown toggles, office switching, tracking/login
 // popovers) — reimplements what main.js used to do via jQuery. Same markup/classes as
@@ -51,32 +54,32 @@ export function HeaderClient({
   };
 
   return (
-    <header className='header'>
-      <div className='topbar' style={{ background: '#f9f9f9', paddingBottom: 0, marginBottom: 17 }}>
-        <div className='container'>
-          <div className='topbar-inner'>
-            <div className={`language${openDropdown === 'language' ? ' active' : ''}`}>
-              <div className='language-inner'>
-                <span onClick={() => toggleDropdown('language')}>English</span>
+    <header className="header">
+      <div className="topbar" style={{ background: "#f9f9f9", paddingBottom: 0, marginBottom: 17 }}>
+        <div className="container">
+          <div className="topbar-inner">
+            <div className={`language${openDropdown === "language" ? " active" : ""}`}>
+              <div className="language-inner">
+                <span onClick={() => toggleDropdown("language")}>English</span>
                 <ul>
                   <li>
-                    <a href='/ge/'>ქართული</a>
+                    <a href={routes.georgianHome()}>ქართული</a>
                   </li>
                 </ul>
               </div>
             </div>
 
-            <div className='topbar-contacts'>
+            <div className="topbar-contacts">
               {OFFICES.map((office, i) => (
-                <div key={office.id} className={`topbar-contacts-item${i === officeIndex ? ' active' : ''}`}>
-                  <div className='phone'>
+                <div key={office.id} className={`topbar-contacts-item${i === officeIndex ? " active" : ""}`}>
+                  <div className="phone">
                     <span>Phone:</span> <span>{office.phone}</span>
                   </div>
-                  <div className='mail'>
+                  <div className="mail">
                     <a href={office.mailHref}>{office.mail}</a>
                   </div>
-                  <div className='time'>
-                    {office.hours.split(' · ').map((line) => (
+                  <div className="time">
+                    {office.hours.split(" · ").map((line) => (
                       <span key={line}>{line} </span>
                     ))}
                   </div>
@@ -84,26 +87,26 @@ export function HeaderClient({
               ))}
             </div>
 
-            <div className={`office${openDropdown === 'office' ? ' active' : ''}`}>
-              <div className='office-inner'>
-                <div className='curr' onClick={() => toggleDropdown('office')}>
-                  <div className='title'>{activeOffice.name}</div>
+            <div className={`office${openDropdown === "office" ? " active" : ""}`}>
+              <div className="office-inner">
+                <div className="curr" onClick={() => toggleDropdown("office")}>
+                  <div className="title">{activeOffice.name}</div>
                   <div
-                    className='opennow'
-                    style={{ color: 'white', display: officeOpenNow === true ? 'block' : 'none' }}
+                    className="opennow"
+                    style={{ color: "white", display: officeOpenNow === true ? "block" : "none" }}
                   >
                     Open Now
                   </div>
                   <div
-                    className='closenow'
-                    style={{ color: 'white', display: officeOpenNow === false ? 'block' : 'none' }}
+                    className="closenow"
+                    style={{ color: "white", display: officeOpenNow === false ? "block" : "none" }}
                   >
                     Closed Now
                   </div>
                 </div>
                 <ul>
                   {OFFICES.map((office, i) => (
-                    <li key={office.id} className={i === officeIndex ? 'active' : ''} onClick={() => selectOffice(i)}>
+                    <li key={office.id} className={i === officeIndex ? "active" : ""} onClick={() => selectOffice(i)}>
                       {office.name}
                     </li>
                   ))}
@@ -114,125 +117,125 @@ export function HeaderClient({
         </div>
       </div>
 
-      <div className='bottombar'>
-        <div className='container'>
-          <div className='logo'>
-            <Link href='/'>
-              <img src='/img/logo.jpg' alt='Gzavnili, logistic company' />
+      <div className="bottombar">
+        <div className="container">
+          <div className="logo">
+            <Link href={routes.home()}>
+              <Image src="/img/logo.jpg" alt="Gzavnili, logistic company" width={190} height={80} />
             </Link>
           </div>
 
-          <ul className='usermenu'>
-            <li className='login-link1'>
-              <a href='/authenticate/login'>
-                <i className='icon icon-inbox'></i> <span>Inbox</span>
+          <ul className="usermenu">
+            <li className="login-link1">
+              <a href={routes.login()}>
+                <i className="icon icon-inbox"></i> <span>Inbox</span>
               </a>
             </li>
-            <li className='tracking-link'>
+            <li className="tracking-link">
               <a
-                href='/tracking.html'
+                href={routes.tracking()}
                 onClick={(e) => {
                   e.preventDefault();
                   setTrackingOpen(true);
                 }}
               >
-                <i className='icon icon-tracking'></i> <span>Tracking</span>
+                <i className="icon icon-tracking"></i> <span>Tracking</span>
               </a>
             </li>
-            <li className='login-link1'>
+            <li className="login-link1">
               <a
-                href='/authenticate/login'
+                href={routes.login()}
                 onClick={(e) => {
                   e.preventDefault();
                   setLoginOpen(true);
                 }}
               >
-                <i className='icon icon-login'></i> <span>Login</span>
+                <i className="icon icon-login"></i> <span>Login</span>
               </a>
             </li>
           </ul>
 
-          <div className={`headermenu-block${openDropdown === 'menu' ? ' active' : ''}`}>
-            <div className='headermenu-toggler' onClick={() => toggleDropdown('menu')}>
-              <i className='icon icon-menu'>
+          <div className={`headermenu-block${openDropdown === "menu" ? " active" : ""}`}>
+            <div className="headermenu-toggler" onClick={() => toggleDropdown("menu")}>
+              <i className="icon icon-menu">
                 <span></span>
-              </i>{' '}
+              </i>{" "}
               Menu
             </div>
-            <ul className='headermenu'>
+            <ul className="headermenu">
               <li>
-                <Link href='/'>
+                <Link href={routes.home()}>
                   <span>Home</span>
                 </Link>
               </li>
               <li>
-                <a href='/parcel-service.html'>
+                <Link href={routes.page("parcel-service")}>
                   <span>Parcel Service</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a href='/cargo.html'>
+                <Link href={routes.page("cargo")}>
                   <span>Cargo</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a href='/courier.html'>
+                <Link href={routes.page("courier")}>
                   <span>Courier</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a href='/prices.html'>
+                <Link href={routes.page("prices")}>
                   <span>Prices</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a href='/contact.html'>
+                <Link href={routes.page("contact")}>
                   <span>Contact</span>
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
         </div>
       </div>
 
-      <Modal open={trackingOpen} onClose={() => setTrackingOpen(false)} variant='w420'>
+      <Modal open={trackingOpen} onClose={() => setTrackingOpen(false)} variant="w420">
         <h3>Tracking package</h3>
-        <form action='/tracking.html' method='post'>
-          <div className='input-group'>
-            <input type='text' name='id' placeholder='Tracking No' />
+        <form action={routes.tracking()} method="post">
+          <div className="input-group">
+            <Input type="text" name="id" placeholder="Tracking No" />
           </div>
-          <button type='submit' className='btn btn-blue'>
-            Track <i className='icon icon-arr1'></i>
+          <button type="submit" className="btn btn-blue">
+            Track <i className="icon icon-arr1"></i>
           </button>
         </form>
       </Modal>
 
-      <Modal open={loginOpen} onClose={() => setLoginOpen(false)} variant='w420'>
+      <Modal open={loginOpen} onClose={() => setLoginOpen(false)} variant="w420">
         <h3>Login</h3>
-        <form action='/authenticate/login' method='post'>
-          <div className='input-group'>
-            <input type='text' name='login_username' placeholder='Account number' />
+        <form action={routes.login()} method="post">
+          <div className="input-group">
+            <Input type="text" name="login_username" placeholder="Account number" />
           </div>
-          <div className='input-group'>
-            <input type='password' name='login_password' placeholder='Password' />
+          <div className="input-group">
+            <Input type="password" name="login_password" placeholder="Password" />
           </div>
-          <button type='submit' className='btn btn-blue'>
-            Login <i className='icon icon-arr1'></i>
+          <button type="submit" className="btn btn-blue">
+            Login <i className="icon icon-arr1"></i>
           </button>
         </form>
-        <div className='or'>
+        <div className="or">
           <span>or</span>
         </div>
         <p>
-          <a href='/authenticate/login/?testaccount=1' className='btn btn-blue'>
-            Temporary Access <i className='icon icon-arr1'></i>
+          <a href={routes.testAccountLogin()} className="btn btn-blue">
+            Temporary Access <i className="icon icon-arr1"></i>
           </a>
         </p>
         <p>
-          New to Gzavnili? <a href='/authenticate/register'>Create an account</a>
+          New to Gzavnili? <a href={routes.register()}>Create an account</a>
         </p>
         <p>
-          <a href='/authenticate/forgot/'>Restore Access!</a>
+          <a href={routes.forgotPassword()}>Restore Access!</a>
         </p>
       </Modal>
     </header>

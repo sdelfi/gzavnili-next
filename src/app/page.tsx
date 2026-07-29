@@ -1,8 +1,10 @@
+import Image from "next/image";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { HomeHero } from "@/components/HomeHero";
 import { Calculator } from "@/components/Calculator";
 import { OfferParallax } from "@/components/OfferParallax";
 import { VideoTutorials } from "@/components/VideoTutorials";
+import { routes } from "@/lib/routes";
 
 // Rebuilt from the real cached homepage content (see PROGRESS.md):
 // ../http/include/pages/14FE4559026D4C5B5EB530EE70300C52D99E70D7.json, `content` field —
@@ -112,7 +114,7 @@ export default function Home() {
       <section className="trustus">
         <div className="container">
           <div className="trustus-l">
-            <img src="/img/trustus.jpg" alt="" />
+            <Image src="/img/trustus.jpg" alt="" width={284} height={550} />
           </div>
 
           <div className="trustus-r">
@@ -234,7 +236,7 @@ export default function Home() {
 
             <div className="ralign">
               <p>
-                <a href="/faq.html">See all answers</a>
+                <a href={routes.page("faq")}>See all answers</a>
               </p>
             </div>
           </section>
@@ -270,6 +272,10 @@ export default function Home() {
             {NEWS_ITEMS.map((item) => (
               <div className="item" key={item.title}>
                 <a href="" className="img">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- external, legacy-domain
+                      hotlinked placeholder (unmigrated news content, see PROGRESS.md); unknown/
+                      varying dimensions, not worth an external-domain next/image config for
+                      content that's going away once real news items are migrated. */}
                   <img src={item.image} alt="" />
                 </a>
                 <a href="" className="title">

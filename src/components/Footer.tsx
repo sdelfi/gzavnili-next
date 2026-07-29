@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Input } from "@/components/ui/Input";
+import { routes } from "@/lib/routes";
 
 // Ported from the legacy layout at http/views/layouts/new.html (English branch only).
 export function Footer() {
@@ -10,7 +12,7 @@ export function Footer() {
         <div className="footer-l">
           <div className="footer-lt">
             <div className="logo">
-              <Link href="/">Gzavnili</Link>
+              <Link href={routes.home()}>Gzavnili</Link>
             </div>
             <ul className="social">
               <li className="icon-social icon-fb-footer">
@@ -25,7 +27,7 @@ export function Footer() {
           <div className="footer-signup">
             <label htmlFor="signup-input">Newsletter Setup</label>
             <div className="input-group">
-              <input type="text" id="signup-input" />
+              <Input type="text" id="signup-input" />
               <a className="signup-btn">
                 <i className="icon icon-arr3"></i>
               </a>
@@ -41,19 +43,19 @@ export function Footer() {
             <div className="title">Navigation</div>
             <ul>
               <li>
-                <Link href="/">Home</Link>
+                <Link href={routes.home()}>Home</Link>
               </li>
               <li>
-                <a href="/parcel-service.html">Regular services</a>
+                <Link href={routes.page("parcel-service")}>Regular services</Link>
               </li>
               <li>
-                <a href="/cargo.html">Cargo services</a>
+                <Link href={routes.page("cargo")}>Cargo services</Link>
               </li>
               <li>
-                <a href="/prices.html">Prices</a>
+                <Link href={routes.page("prices")}>Prices</Link>
               </li>
               <li>
-                <a href="/contact.html">Contacts</a>
+                <Link href={routes.page("contact")}>Contacts</Link>
               </li>
             </ul>
           </div>
@@ -61,19 +63,19 @@ export function Footer() {
             <div className="title">Useful Links</div>
             <ul>
               <li>
-                <a href="/terms-and-conditions.html">Terms and Conditions</a>
+                <Link href={routes.page("terms-and-conditions")}>Terms and Conditions</Link>
               </li>
               <li>
-                <a href="/privacy-policy.html">Privacy Policy</a>
+                <Link href={routes.page("privacy-policy")}>Privacy Policy</Link>
               </li>
               <li>
-                <a href="/forbidden-items.html">Forbidden Goods</a>
+                <Link href={routes.page("forbidden-items")}>Forbidden Goods</Link>
               </li>
               <li>
-                <a href="/dangerous-items.html">Dangerous Goods</a>
+                <Link href={routes.page("dangerous-items")}>Dangerous Goods</Link>
               </li>
               <li>
-                <a href="/custom-clearence.html">Custom Clearance</a>
+                <Link href={routes.page("custom-clearence")}>Custom Clearance</Link>
               </li>
             </ul>
           </div>
@@ -81,13 +83,13 @@ export function Footer() {
             <div className="title">Links</div>
             <ul>
               <li>
-                <a href="/faq.html">FAQs</a>
+                <Link href={routes.page("faq")}>FAQs</Link>
               </li>
               <li>
-                <a href="/help-to-shop.html">Get a Quotes</a>
+                <Link href={routes.page("help-to-shop")}>Get a Quotes</Link>
               </li>
               <li>
-                <a href="/volumeweight.html">Volume Weight</a>
+                <Link href={routes.page("volumeweight")}>Volume Weight</Link>
               </li>
             </ul>
           </div>
