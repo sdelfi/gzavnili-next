@@ -22,10 +22,9 @@
     margin: 10px auto;
   }
 
-  .container> :global(.row) {
+  .container > :global(.row) {
     margin-top: 40px;
   }
-
 
   .col8 {
     padding-right: 1.7%;
@@ -80,7 +79,6 @@
     padding: 20px;
 
     .heading {
-
       a,
       h3 {
         display: inline-block;
@@ -147,7 +145,7 @@
 }
 
 @media (max-width: 479px) {
-  .whychooseus .container>.row>.col.col8 .whyusItem {
+  .whychooseus .container > .row > .col.col8 .whyusItem {
     width: 100%;
     margin: 0 0 10px;
 

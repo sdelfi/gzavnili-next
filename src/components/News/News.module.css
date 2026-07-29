@@ -20,11 +20,9 @@
   }
 }
 
-
 .newsList {
   display: flex;
   justify-content: space-between;
-
 }
 
 .item {
@@ -33,7 +31,7 @@
   .more,
   .title {
     text-decoration: none;
-    font-family: Montserrat
+    font-family: Montserrat;
   }
 }
 
@@ -75,7 +73,7 @@
       .item {
         width: 100%;
         max-width: 374px;
-        margin: 0 auto 50px
+        margin: 0 auto 50px;
       }
     }
   }

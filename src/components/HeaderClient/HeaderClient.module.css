@@ -20,7 +20,7 @@
   font-family: Montserrat;
 
   .bottombar:after {
-    clear: both
+    clear: both;
   }
 }
 
@@ -427,12 +427,12 @@
     position: relative;
     margin: 5px 20px 0 0;
 
-    >li {
+    > li {
       display: table-cell;
       vertical-align: top;
       position: relative;
 
-      >a {
+      > a {
         color: #20599d;
         font-size: 18px;
         display: block;
@@ -494,7 +494,7 @@
       }
 
       &:hover {
-        >a span:after {
+        > a span:after {
           left: 0;
           width: 100% !important;
         }
@@ -507,11 +507,11 @@
     }
 
     @media (max-width: 1139px) {
-      >li>a {
+      > li > a {
         padding: 20px 15px;
       }
 
-      >li ul {
+      > li ul {
         left: 17px;
       }
     }
@@ -527,10 +527,10 @@
       background: #2a70b7;
       width: 220px;
 
-      >li {
+      > li {
         display: block;
 
-        >a {
+        > a {
           display: block;
           padding: 10px 12px;
           font-family: 'Open Sans';
@@ -561,11 +561,11 @@
         }
 
         &:hover {
-          >a {
+          > a {
             background: 0 0;
           }
 
-          >a span:after {
+          > a span:after {
             display: none;
           }
         }
@@ -653,34 +653,33 @@
 }
 
 @media (max-width: 767px) {
-
-  .header .topbar .topbarContacts .topbarContactsItem>div.mail,
-  .header .topbar .topbarContacts .topbarContactsItem>div.phone {
-    width: 100%
+  .header .topbar .topbarContacts .topbarContactsItem > div.mail,
+  .header .topbar .topbarContacts .topbarContactsItem > div.phone {
+    width: 100%;
   }
 
   .header .topbar .topbarContacts .topbarContactsItem {
-    padding: 16px 20px 0
+    padding: 16px 20px 0;
   }
 
-  .header .topbar .topbarContacts .topbarContactsItem>div {
+  .header .topbar .topbarContacts .topbarContactsItem > div {
     display: block;
-    margin: 0 0 15px
+    margin: 0 0 15px;
   }
 
-  .header .topbar .topbarContacts .topbarContactsItem>div span {
-    display: inline
+  .header .topbar .topbarContacts .topbarContactsItem > div span {
+    display: inline;
   }
 
   .header .topbar .topbarContacts .topbarContactsItem.active {
-    display: block
+    display: block;
   }
 }
 
 @media (max-width: 599px) {
   .header .bottombar {
     .logo a img {
-      width: 127px
+      width: 127px;
     }
 
     ul.usermenu {
@@ -703,7 +702,6 @@
   }
 }
 
-
 @media (max-width: 479px) {
   .header {
     height: 335px;
@@ -713,12 +711,12 @@
 
       .language {
         z-index: 30;
-        position: relative
+        position: relative;
       }
 
       .language span {
         width: 130px;
-        padding: 14px 35px 14px 12px
+        padding: 14px 35px 14px 12px;
       }
 
       .office {
@@ -729,11 +727,11 @@
         width: 100%;
 
         .curr {
-          padding: 7px 30px 7px 12px
+          padding: 7px 30px 7px 12px;
         }
 
         .curr .title:after {
-          top: 18px
+          top: 18px;
         }
       }
 
@@ -746,7 +744,7 @@
 
         .topbarContactsItem {
           background: #f9f9f9;
-          padding-bottom: 5px
+          padding-bottom: 5px;
         }
       }
     }
@@ -755,7 +753,7 @@
       padding-bottom: 0;
 
       .container {
-        padding: 0 5px
+        padding: 0 5px;
       }
 
       ul.usermenu {
@@ -763,7 +761,6 @@
 
         li {
           margin: 0 5px 0 10px;
-
 
           a i {
             display: none;
@@ -775,21 +772,21 @@
         position: absolute;
         top: 0;
         left: 0;
-        right: 0
+        right: 0;
       }
 
       .headermenuBlock .headermenuToggler {
         margin: 0;
-        padding: 12px 22px
+        padding: 12px 22px;
       }
 
       .headermenuBlock ul.headermenu {
         width: 100%;
-        top: 54px
+        top: 54px;
       }
 
       .headermenuBlock.active .headermenuToggler {
-        padding: 12px 22px 17px
+        padding: 12px 22px 17px;
       }
     }
   }
@@ -798,15 +795,15 @@
 @media (max-width: 399px) {
   .header {
     .topbar .office {
-      top: 126px
+      top: 126px;
     }
 
     .bottombar .logo a img {
-      width: 110px
+      width: 110px;
     }
 
     .bottombar ul.usermenu {
-      margin-top: 17px
+      margin-top: 17px;
     }
   }
 }

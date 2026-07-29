@@ -112,12 +112,12 @@
     width: 100%;
 
     .advantages {
-      margin: 50px 0
+      margin: 50px 0;
     }
   }
 
   .trustus .trustusL {
-    display: none
+    display: none;
   }
 }
 
@@ -132,7 +132,7 @@
       .advItem {
         display: block;
         width: 220px;
-        margin: 40px auto
+        margin: 40px auto;
       }
     }
   }

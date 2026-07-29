@@ -280,10 +280,10 @@ body .popover {
   display: block;
 }
 
-.popover2>.arrow,
-.popover2>.arrow:after,
-.popover>.arrow,
-.popover>.arrow:after {
+.popover2 > .arrow,
+.popover2 > .arrow:after,
+.popover > .arrow,
+.popover > .arrow:after {
   position: absolute;
   display: block;
   width: 0;
@@ -292,19 +292,19 @@ body .popover {
   border-style: solid;
 }
 
-.popover2>.arrow,
-.popover>.arrow {
+.popover2 > .arrow,
+.popover > .arrow {
   border-width: 11px;
 }
 
-.popover2>.arrow:after,
-.popover>.arrow:after {
+.popover2 > .arrow:after,
+.popover > .arrow:after {
   border-width: 10px;
   content: '';
 }
 
-.popover2.top>.arrow,
-.popover.top>.arrow {
+.popover2.top > .arrow,
+.popover.top > .arrow {
   left: 50%;
   margin-left: -11px;
   border-bottom-width: 0;
@@ -313,8 +313,8 @@ body .popover {
   bottom: -11px;
 }
 
-.popover2.top>.arrow:after,
-.popover.top>.arrow:after {
+.popover2.top > .arrow:after,
+.popover.top > .arrow:after {
   content: ' ';
   bottom: 1px;
   margin-left: -10px;
@@ -322,8 +322,8 @@ body .popover {
   border-top-color: white;
 }
 
-.popover2.right>.arrow,
-.popover.right>.arrow {
+.popover2.right > .arrow,
+.popover.right > .arrow {
   top: 50%;
   left: -11px;
   margin-top: -11px;
@@ -332,8 +332,8 @@ body .popover {
   border-right-color: fadein(rgba(0, 0, 0, 0.2), 5%);
 }
 
-.popover2.right>.arrow:after,
-.popover.right>.arrow:after {
+.popover2.right > .arrow:after,
+.popover.right > .arrow:after {
   content: ' ';
   left: 1px;
   bottom: -10px;
@@ -341,8 +341,8 @@ body .popover {
   border-right-color: white;
 }
 
-.popover2.bottom>.arrow,
-.popover.bottom>.arrow {
+.popover2.bottom > .arrow,
+.popover.bottom > .arrow {
   left: 50%;
   margin-left: -11px;
   border-top-width: 0;
@@ -351,8 +351,8 @@ body .popover {
   top: -11px;
 }
 
-.popover2.bottom>.arrow:after,
-.popover.bottom>.arrow:after {
+.popover2.bottom > .arrow:after,
+.popover.bottom > .arrow:after {
   content: ' ';
   top: 1px;
   margin-left: -10px;
@@ -360,8 +360,8 @@ body .popover {
   border-bottom-color: white;
 }
 
-.popover2.left>.arrow,
-.popover.left>.arrow {
+.popover2.left > .arrow,
+.popover.left > .arrow {
   top: 50%;
   right: -11px;
   margin-top: -11px;
@@ -370,8 +370,8 @@ body .popover {
   border-left-color: fadein(rgba(0, 0, 0, 0.2), 5%);
 }
 
-.popover2.left>.arrow:after,
-.popover.left>.arrow:after {
+.popover2.left > .arrow:after,
+.popover.left > .arrow:after {
   content: ' ';
   right: 1px;
   border-right-width: 0;
@@ -401,7 +401,7 @@ html .parcel-filter-block {
   margin-bottom: 0;
 }
 
-div.parcel-filter-block>*:last-child {
+div.parcel-filter-block > *:last-child {
   margin-bottom: 30px;
   padding-bottom: 10px;
 }
@@ -454,7 +454,7 @@ html .courier-calc .courier-calc-block img.courier-calc-img {
   padding-left: 10px;
 }
 
-.courier-calc .courier-calc-block .courier-form .dublicate-row .col-3>input {
+.courier-calc .courier-calc-block .courier-form .dublicate-row .col-3 > input {
   padding-left: 6px;
   padding-right: 6px;
 }
@@ -568,7 +568,7 @@ ul.icons-list li {
   list-style: none;
 }
 
-ul.icons-list li>a {
+ul.icons-list li > a {
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: nowrap;
@@ -808,66 +808,65 @@ html .myparcels .heading {
   padding-top: 0;
 }
 
-
 html {
   overflow: none;
   padding: 0;
-  margin: 0
+  margin: 0;
 }
 
 body {
   overflow-x: hidden;
   background: #fff;
-  font-family: "Open Sans", arial, sans-serif;
+  font-family: 'Open Sans', arial, sans-serif;
   font-size: 14px;
   line-height: 1.4;
-  color: #4c4c4c
+  color: #4c4c4c;
 }
 
 * {
-  box-sizing: border-box
+  box-sizing: border-box;
 }
 
 input::-webkit-input-placeholder {
   color: #818181;
   opacity: 1;
-  font-weight: 400
+  font-weight: 400;
 }
 
 input:-moz-placeholder {
   color: #818181;
   opacity: 1;
-  font-weight: 400
+  font-weight: 400;
 }
 
 input::-moz-placeholder {
   color: #818181;
   opacity: 1;
-  font-weight: 400
+  font-weight: 400;
 }
 
 input:-ms-input-placeholder {
   color: #818181;
   opacity: 1;
-  font-weight: 400
+  font-weight: 400;
 }
 
 input:focus::-webkit-input-placeholder {
   color: #818181;
-  opacity: .5
+  opacity: 0.5;
 }
 
 input:focus:-moz-placeholder {
   color: #818181;
-  opacity: .5
+  opacity: 0.5;
 }
 
 input:focus::-moz-placeholder {
   color: #818181;
-  opacity: .5
+  opacity: 0.5;
 }
 
 input:focus:-ms-input-placeholder {
   color: #818181;
-  opacity: .5
+  opacity: 0.5;
 }
