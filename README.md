@@ -1,8 +1,9 @@
 # gzavnili-next
 
-Next.js rewrite of gzavnili.com. See `../docs/` (in the parent legacy repo, one level up)
-for the full migration plan, current-state audit, and target architecture — this project
-is the Phase 2+ implementation target described there.
+Next.js rewrite of gzavnili.com. See [`docs/`](docs/README.md) for the full migration plan,
+current-state audit, and target architecture — this project is the Phase 2+ implementation
+target described there. Live legacy site (source of truth for current behavior/design):
+https://usa.gzavnili.com/
 
 ## Local development
 
@@ -26,6 +27,10 @@ bun dev                   # http://localhost:3000
 
 ## Stack
 
-- Next.js (App Router), TypeScript, Tailwind CSS
+- Next.js (App Router), TypeScript — no Tailwind; legacy CSS (`http/css/*`) ported as-is,
+  see `docs/decisions/`
 - Postgres
 - Package manager / runtime: bun
+- No separate backend service / no monorepo split: the API layer is Next.js Route Handlers
+  in this same app (decision recorded in `docs/migrations/03-target-architecture.md` §2 and
+  `docs/decisions/0001-no-monorepo.md`)

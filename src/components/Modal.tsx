@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
+import "./Modal.css";
 
 // React port of what the featherlight jQuery plugin used to render (see
 // http/bower_components/featherlight/src/featherlight.js). Same markup/classes

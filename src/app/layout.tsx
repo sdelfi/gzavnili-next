@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import "normalize.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -24,8 +25,6 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Open+Sans:400,400i,600,700"
           rel="stylesheet"
         />
-        <link rel="stylesheet" href="/bower_components/featherlight/release/featherlight.min.css" />
-        <link rel="stylesheet" href="/bower_components/normalize-css/normalize.css" />
         <link rel="stylesheet" href="/css/style.css?v=1.1" />
         <link rel="stylesheet" href="/css/style_custom.css?v10" />
         <link rel="stylesheet" href="/css/additional.css?v=1" />

@@ -1,12 +1,21 @@
+import Link from "next/link";
+
 // Ported from the legacy layout at http/views/layouts/new.html (English branch only).
-export function Footer() {
+export async function Footer() {
+  // `new Date()` is non-deterministic and Cache Components rejects it at prerender without
+  // an explicit request-data source or 'use cache' — the copyright year only needs to be
+  // right to within a cache revalidation, not per-request, so cache it rather than making
+  // the whole footer dynamic. See docs/decisions/0005-cache-components.md.
+  "use cache";
+  const year = new Date().getFullYear();
+
   return (
     <footer className="footer">
       <div className="container">
         <div className="footer-l">
           <div className="footer-lt">
             <div className="logo">
-              <a href="/">Gzavnili</a>
+              <Link href="/">Gzavnili</Link>
             </div>
             <ul className="social">
               <li className="icon-social icon-fb-footer">
@@ -28,7 +37,7 @@ export function Footer() {
             </div>
           </div>
           <div className="footer-copy">
-            &copy; {new Date().getFullYear()} gzavnili.com. All rights reserved
+            &copy; {year} gzavnili.com. All rights reserved
           </div>
         </div>
 
@@ -37,7 +46,7 @@ export function Footer() {
             <div className="title">Navigation</div>
             <ul>
               <li>
-                <a href="/">Home</a>
+                <Link href="/">Home</Link>
               </li>
               <li>
                 <a href="/parcel-service.html">Regular services</a>

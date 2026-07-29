@@ -1,8 +1,9 @@
 # Progress Log
 
 Running record of what's been done in this project, checked off against the phases in
-`../docs/06-phased-rollout-plan.md` (the parent legacy repo's migration plan). Newest entries
-at the top. This is a changelog, not a plan — see that file for scope/sequencing.
+`docs/migrations/06-phased-rollout-plan.md` (moved here from the parent legacy repo's `../docs/`
+— see `docs/README.md`). Newest entries at the top. This is a changelog, not a plan — see that
+file for scope/sequencing.
 
 ## Phase 2 — Public static site (SSG) — in progress
 
@@ -31,10 +32,53 @@ at the top. This is a changelog, not a plan — see that file for scope/sequenci
       `views/layouts/new - Copy.html`, or `views/layouts/newhome.html` as a source again — treat
       any `views/*.html` as suspect until cross-checked against a `include/pages/*.json` cache
       file or the live site.
-- [ ] Rebuild hero section from real content (`.main-parallax`/`#animated-strings`) — in progress
-- [ ] Rebuild trustus/specialoffer/whychooseus/faq+video/mobile-app/news sections from real content
-- [ ] Wire homepage calculator: pricing/ETA logic currently lives server-side in
-      `../http/views/homecals.cfm` (GET-param driven, re-rendered on submit) — needs porting
+- [x] Rebuilt the homepage from the real cached content (see finding above), replacing
+      everything sourced from the dead `home.html`: `HomeHero.tsx` (parallax hero +
+      animated-strings rotator, mouse-parallax approximates `jquery.parallax.min.js`),
+      `OfferParallax.tsx` (scroll background-position, replaces `jquery.parallax-bg.js`),
+      real trustus/whychooseus copy, `VideoTutorials.tsx` (video-tutorials block that replaced
+      the placeholder contact-form section — lightbox reuses `Modal.tsx`'s featherlight
+      styling, not a real fancybox visual match), real FAQ items, real news items (image URLs
+      still point at the legacy `gzavnili.com` domain, unchanged). Deleted `HomeSlider.tsx`/
+      `.css`. Verified via `bun run build` + HTML-content smoke check against the dev server
+      (no headless browser available in this environment to screenshot — flagged, not silently
+      skipped).
+- [x] Wired the homepage calculator (`Calculator.tsx`): ported the pricing/ETA formulas from
+      `../http/views/homecals.cfm` (English branch) client-side — no server round-trip needed
+      since the legacy logic was pure arithmetic on the GET params. Still plain native
+      `<select>`s, matching the legacy markup (no select2 was applied to this particular form)
+      — see `docs/decisions/0002-select-library.md` for the select2/react-select scope.
+- [x] `docs/` restructured: moved the pre-implementation scoping package from the parent
+      repo's gitignored `../docs/` into `docs/migrations/` (tracked here now), added
+      `docs/decisions/` (see `docs/README.md`'s decisions log for the full list: no-monorepo,
+      select2 replacement, mobile API, scheduled jobs, Cache Components, no vendored legacy JS),
+      and a `docs/README.md` indexing everything plus the live-site reference
+      (https://usa.gzavnili.com/). Removed `docs/migrations/08-cost-estimate.md` per client
+      request.
+- [x] Fixed the header's "Open Now"/"Closed Now" flash: enabled Next 16's Cache Components
+      (`cacheComponents: true` in `next.config.ts`) so `Header` can read the visitor's saved
+      office from a cookie and compute the real open/closed status **server-side, before first
+      paint**, while the rest of every public page stays statically generated (build output:
+      `◐ Partial Prerender`). Split `Header.tsx` (static Suspense wrapper) /
+      `HeaderPersonalized.tsx` (async Server Component, reads the cookie) / `HeaderClient.tsx`
+      (the interactive half, now driven by initial props instead of a post-mount
+      `useEffect`+flash). Office selection now actually persists (it didn't before — reset to
+      Tbilisi/English on every load) via a plain, non-httpOnly cookie
+      (`src/lib/preferences.ts`, `src/lib/offices.ts`) — deliberately not `localStorage`, which
+      can't be read server-side. Full writeup + gotchas hit (non-deterministic `Date()` during
+      prerendering, `next/headers` leaking into client bundles):
+      `docs/decisions/0005-cache-components.md`.
+- [x] Deleted `public/bower_components/` and legacy `public/js/` (9.2 MB, nothing in `src/`
+      loaded any of it) — `normalize.css` and the featherlight CSS classes `Modal.tsx` reuses
+      are now a real npm package and an owned `Modal.css` respectively, not vendored copies.
+      Also deleted two dead CSS files (`style.min.css`, a stale unloaded duplicate;
+      `style_custom.20190912.css`, a dated backup). `eslint.config.mjs`'s stopgap
+      `public/bower_components/**` ignore was removed again since the folder is gone. See
+      `docs/decisions/0006-no-vendored-legacy-js.md` for what's intentionally still in
+      `public/css/` (CSS for not-yet-ported pages) and why that's a different case. Fixed the
+      two real lint errors this work surfaced along the way (`react-hooks/immutability` on a
+      `document.cookie` write; `<a href="/">` → `next/link` in `Header`/`Footer`) — everything
+      in `src/` now lints clean (0 errors).
 - [ ] Georgian-language branch of Header/Footer/homepage (currently English-only)
 - [ ] Remaining public/marketing pages (services, cargo, courier, pricing, FAQ, legal/customs, news)
 - [ ] Public unauthenticated tracking page wired to real Postgres data (Phase 1 schema/backend
