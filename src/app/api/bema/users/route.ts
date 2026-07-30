@@ -5,6 +5,7 @@ import { requireBemaSession } from '@/lib/auth/session';
 import { hashPassword } from '@/lib/auth/password';
 import { publicUser } from '@/lib/auth/publicUser';
 import { createUserSchema, listUsersQuerySchema } from '@/lib/validation/userSchema';
+import { USER_DETAIL_INCLUDE, upsertAddress } from '@/lib/services/userAddress';
 
 // List screen access, matching the legacy `users.cfm`'s
 // `groups="WEBSITE_ADMINISTRATOR,ADMINISTRATOR"` — narrower than the edit screen's
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
-  const { password, ...data } = parsed.data;
+  const { password, billingAddress, shippingAddress, notificationMessageTypeKeys, ...data } = parsed.data;
 
   const existing = await db.user.findFirst({ where: { OR: [{ username: data.username }, { email: data.email }] } });
   if (existing) {
@@ -72,8 +73,23 @@ export async function POST(request: NextRequest) {
   }
 
   const { hash, algo } = await hashPassword(password);
-  const user = await db.user.create({
-    data: { ...data, passwordHash: hash, passwordAlgo: algo },
+
+  const user = await db.$transaction(async (tx) => {
+    const billingAddressId = await upsertAddress(tx, null, billingAddress);
+    const shippingAddressId = await upsertAddress(tx, null, shippingAddress);
+    return tx.user.create({
+      data: {
+        ...data,
+        passwordHash: hash,
+        passwordAlgo: algo,
+        billingAddressId,
+        shippingAddressId,
+        ...(notificationMessageTypeKeys
+          ? { notificationMessageTypes: { connect: notificationMessageTypeKeys.map((key) => ({ key })) } }
+          : {}),
+      },
+      include: USER_DETAIL_INCLUDE,
+    });
   });
 
   return NextResponse.json({ user: publicUser(user) }, { status: 201 });

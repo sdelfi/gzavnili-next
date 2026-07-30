@@ -1,0 +1,19 @@
+.bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: #4c6a8f;
+  color: #fff;
+  font-size: 14px;
+}
+
+.label {
+  font-weight: 600;
+}
+
+.value {
+  font-weight: 700;
+  cursor: help;
+}

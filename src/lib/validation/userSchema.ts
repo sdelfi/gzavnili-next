@@ -71,7 +71,10 @@ export const updateUserSchema = z
   })
   .partial()
   .refine(
-    (data) => !data.password || !data.username || passwordDoesNotContainUsername({ username: data.username, password: data.password }),
+    (data) =>
+      !data.password ||
+      !data.username ||
+      passwordDoesNotContainUsername({ username: data.username, password: data.password }),
     { message: 'Password must not contain the username.', path: ['password'] },
   )
   .refine((data) => data.accountType !== 'BemaUser' || data.adminRole !== null, {

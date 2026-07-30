@@ -4,6 +4,7 @@ import { Suspense, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useBemaAuth } from '@/components/admin/AuthProvider';
 import { Sidebar } from '@/components/admin/Sidebar';
+import { TopBar } from '@/components/admin/TopBar';
 import { routes } from '@/lib/routes';
 import s from './protected.module.css';
 
@@ -39,7 +40,10 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
           }}
         />
       </Suspense>
-      <main className={s.content}>{children}</main>
+      <div className={s.main}>
+        <TopBar />
+        <main className={s.content}>{children}</main>
+      </div>
     </div>
   );
 }

@@ -8,7 +8,7 @@
 .rselect__control {
   border: 1px solid #bfbfbf;
   border-radius: 2px;
-  min-height: 42px;
+  min-height: 32px;
   background: #fff;
   cursor: pointer;
 }
@@ -42,7 +42,7 @@
 
 .rselect__dropdown-indicator {
   width: 25px;
-  height: 40px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;

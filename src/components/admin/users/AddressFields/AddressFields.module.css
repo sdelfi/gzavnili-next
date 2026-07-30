@@ -1,0 +1,26 @@
+.block {
+  margin-bottom: 20px;
+}
+
+.heading {
+  font-size: 16px;
+  margin: 0 0 12px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 24px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.secondLine {
+  margin-top: 6px;
+}

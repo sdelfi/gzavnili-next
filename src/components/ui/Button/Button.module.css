@@ -40,3 +40,12 @@
     background: #c73f3a;
   }
 }
+
+.warning {
+  background: #e8a33d;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: #d6922e;
+  }
+}

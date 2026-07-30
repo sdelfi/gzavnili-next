@@ -9,8 +9,14 @@
   display: flex;
 }
 
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .content {
   flex: 1;
   padding: 24px;
-  min-width: 0;
 }

@@ -14,7 +14,7 @@ Phase 4 in [docs/migrations/06-phased-rollout-plan.md](../migrations/06-phased-r
 
 - **`AccountType` enum** (`Customer`/`BemaUser`) replaces `TypeId`. **`AdminRole` enum** (`BemaStandard`/`BemaAdministrator`/`BemaAgent`) replaces the `users_groups`/`groups` junction *for the admin-role case only* — every legacy account only ever had one effectively-active admin role despite the junction-table modeling (and the junction's `FrontEnd` bit distinguishing admin-role rows from discount-tier rows was already inconsistently honored in the legacy code), so collapsing to a single enum column loses no real behavior.
 - **Customer discount/wholesale tiers** (the `groups` table's other purpose) are explicitly **out of scope** for this pass — `customer_pricing_rules` already exists in the legacy DB as a separate, more modern mechanism for that (see [docs/migrations/02-parcels-domain-analysis.md](../migrations/02-parcels-domain-analysis.md) §4's "unrelated to parcels" note).
-- **Billing/shipping address editing** (two full `addressbook` sub-forms in the legacy `user_edit.cfm`) is deferred — not implemented in this pass. See PROGRESS.md.
+- **Billing/shipping address editing** (two full `addressbook` sub-forms in the legacy `user_edit.cfm`) was initially deferred, then added in a follow-up pass within the same session after the client cross-checked the live production screen (`usa.gzavnili.com/bema/users/user_edit.cfm?...`) against this implementation and found the gap — see "Full-parity update" below.
 - **Password hashing**: new accounts hash with **argon2id via `Bun.password`** (no external KDF dependency — Bun has this built in), not SHA-1. `User.passwordAlgo` distinguishes this from a future `legacy-sha1` value an MSSQL import would set — see [docs/migrations/07-risks-and-open-questions.md](../migrations/07-risks-and-open-questions.md)'s "Password hash migration" risk. No legacy-hash verification path exists yet since no legacy accounts have been imported into this schema.
 - **Role checks are still flat allow-lists per route**, matching the legacy `require.cfm groups="A,B,C"` pattern exactly (`src/lib/auth/session.ts`'s `requireBemaSession`) — not a granular per-permission RBAC system, since the legacy system never had one either.
 
@@ -41,8 +41,68 @@ New, self-contained (CSS Modules, no dependency on `public/css/style.css` — be
 - **`Table`** — generic sortable/zebra-striped data table (presentation-only; sort/pagination state is owned by the page, URL-driven, so lists stay bookmarkable — matching the legacy pattern of keeping all list state in the query string).
 - **`Pagination`** — windowed page-number strip, mirroring the legacy `pagination_admin.cfm` custom tag's behavior.
 - **`Alert`**/`ErrorList` — success/error banners, replacing the legacy `Udf.displayErrors()` flash-message pattern (there it was a one-shot server-rendered banner via the CF session; here it's just a plain presentational component, since bema is CSR and owns its own request/response cycle per API call).
+- **`CollapsibleSection`** — added in the full-parity follow-up pass (see below), matching the legacy edit-form's collapsible section-header pattern.
 
 `src/components/admin/` holds bema-specific composition (not generic-reusable-enough for `ui/`): `AuthProvider`/`useBemaAuth`, and `users/UserListPage` + `users/UserForm` — the shared list/form pair parameterized by `accountType`, mirroring the legacy single-screen-for-both-tid-values design described above.
+
+## Full-parity update (same session, follow-up pass)
+
+The client screenshotted the real, live "Edit Customer" screen and the legacy bema sidebar
+and pointed out the initial implementation was missing most of the field set. Cross-checked
+against `https://usa.gzavnili.com/bema/users/user_edit.cfm?...` directly (this environment
+has no access to the legacy MSSQL schema itself, so the live rendered screen is the source
+of truth here, not a fresh code read) and rebuilt to match:
+
+- **Schema additions** (`add_bema_auth` → `user_edit_parity` migration): `Address` gained
+  `title`, `email` (shipping-only field, kept as a generic nullable column rather than
+  splitting Address into two models), and five distinct phone fields — `privateNumber`,
+  `cellPhone`, `workPhone`, `homePhone`, `fax` — **replacing** the earlier, less faithful
+  `phone1`/`phone2`/`phone3` naming from before this screen's full field set was
+  cross-checked. `User` gained `shippingAddressId` (separate from `billingAddressId`),
+  `importId`, `notifyViaMail`/`notifyViaSms` (the mail/SMS channel toggles, separate from
+  *which* events notify). New `MessageType` reference table (seeded via
+  `bun run db:seed` → `scripts/seed-message-types.ts`, 14 rows transcribed directly off the
+  screenshot's checkbox grid) plus an implicit many-to-many to `User` for the per-event
+  notification preferences. New `CustomerPricingRule` model for the "Pricing Rules (Custom
+  Rates & Discounts)" sub-section — this is presumed to correspond to the legacy
+  `customer_pricing_rules` table [02-parcels-domain-analysis.md](../migrations/02-parcels-domain-analysis.md) §4
+  already flagged as a pre-existing ad hoc addition to the legacy DB, not a new invention,
+  though its exact legacy column set wasn't independently verified (no MSSQL access) — the
+  fields modeled are what's visibly rendered on the live screen (Service Type, Mode,
+  Value, Valid Period, Notes, Created/Modified + by-whom).
+- **Known, documented simplifications** (not silently dropped — flagged so they can be
+  corrected if wrong): address-field requiredness (e.g. the legacy country-conditional
+  State/PostalCode rule) isn't replicated — every address field is lenient/optional here.
+  `CustomerPricingRule.mode`'s exact semantics (`FixedPrice` = USD/kg, `Discount` =
+  percentage) is inferred from the "USD per KG" hint text under the value field, not
+  independently confirmed. "Active"/"Expired" status is computed client-side from
+  `validFrom`/`validTo` vs. now(), not a stored column.
+- **UI**: `UserForm` rebuilt with `CollapsibleSection` (new shared `ui/` primitive, matching
+  the legacy's collapsible "Account Information"/"Contact Information" headers), a
+  `AddressFields` sub-component reused for both Billing and Shipping blocks
+  (`src/components/admin/users/AddressFields.tsx`), a country list
+  (`src/lib/countries.ts` — a curated common-country set, not a claim of exhaustive
+  ISO-3166 coverage), the full notification-channel + per-event checkbox grid, and a
+  `PricingRulesSection` sub-component (only rendered for existing `Customer` records — a
+  new, unsaved record has no `userId` yet to attach rules to).
+- **Sidebar**: rebuilt from a flat two-item list into the full grouped structure
+  transcribed off the client's screenshot of the live legacy nav (CUSTOMERS / MESSAGES /
+  COUPONS / CONTENT / CONFIGURATION / BEMA) — recorded as real information architecture,
+  not invented. Only "Customers" and "BEMA Users" are wired to actual pages (this pass's
+  scope); every other item renders inert (no link, no click handler, `title="Not
+  implemented yet"`) rather than being silently omitted, so the structure doesn't need to
+  be rediscovered when those modules get built. Coupons is kept in the recorded structure
+  (it's in the legacy nav) but will never get a working link — excluded from migration
+  scope entirely per [docs/migrations/00-overview.md](../migrations/00-overview.md)'s
+  Non-goals.
+- **"You today collect"**: recorded as a real, present UI element (`TopBar` component,
+  shown above the content area) per client request, but explicitly **not** wired to real
+  data — there's no "collected by this staff member today" concept anywhere in the current
+  schema (`Payment` rows are attributed to the customer, not a collecting agent), so it
+  shows "—" rather than a fabricated number. Wiring it for real is follow-up work, gated on
+  deciding what "collect" means precisely (cash collected on COD deliveries? by which
+  timestamp — payment date or delivery date?) — a business-logic question, not a schema
+  question.
 
 ## Migration workflow note
 

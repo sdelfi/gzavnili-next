@@ -19,6 +19,29 @@ needs them first. Before writing a new `<input>`/`<select>`/etc., check
 duplicating markup. If a pattern shows up in a second place, promote it to
 `src/components/ui/` as part of that change.
 
+# One component, one folder
+
+Every component gets its own folder: `ComponentName/ComponentName.tsx` +
+`ComponentName.module.css` (if it has one) + `index.ts` (a one-line barrel:
+`export { ComponentName } from './ComponentName';`, plus any other named
+exports/types the component file has). No exceptions, no "just this once flat
+file next to three others in a shared folder" — that's exactly the pattern
+that becomes an unnavigable pile of same-named files
+(`UserForm.tsx`/`UserForm.module.css`/`UserForm.module.css.d.ts` sitting flat
+alongside `AddressFields.tsx`/`PricingRulesSection.tsx`/... in one folder) that
+this rule exists to prevent. This applies everywhere — `src/components/`,
+`src/components/ui/`, `src/components/admin/`, and any nested feature folder
+like `src/components/admin/users/` — not just top-level page sections.
+`index.ts`-based re-exports mean callers still import from the logical path
+(`@/components/ui/Button`, `@/components/admin/users/UserForm`) with no
+changes needed elsewhere.
+
+The one deliberate exception: `src/components/ui/Input.tsx`/`Select.tsx` stay
+flat with a plain (non-Module) companion `.css` file, because they
+intentionally style via global classnames rather than CSS Modules (see
+`docs/decisions/0002-select-library.md`) — that's a different, already-decided
+pattern, not a license to leave other components flat too.
+
 # Routing
 
 Every internal `href`/`action` goes through `src/lib/routes.ts`'s `routes`

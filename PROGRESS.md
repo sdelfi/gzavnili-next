@@ -317,15 +317,42 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       API routes use) — no dev server was available to test over real HTTP in this
       session (see the decision doc), so this exercised the underlying logic directly
       instead of skipping verification.
-- [ ] **Not done yet**: billing/shipping address editing on the user form (two full
-      `addressbook` sub-forms in the legacy screen) — deferred, not silently dropped, see
-      the decision doc. Real HTTP/browser-level verification of the bema UI (login form,
-      list screen, create/edit forms) — only logic-level verification was possible this
-      session.
+- [x] **Full-parity follow-up pass**, same session: client screenshotted the real live
+      "Edit Customer" screen (`usa.gzavnili.com/bema/users/user_edit.cfm`) and the legacy
+      sidebar and flagged that the initial user-edit form was missing most fields and the
+      nav was missing most of the menu. Rebuilt to match — see
+      `docs/decisions/0011-bema-admin.md`'s "Full-parity update" section for the full
+      writeup. Summary: added `Address.title`/`email`/five distinct phone fields
+      (replacing the earlier `phone1`/`2`/`3`), `User.shippingAddressId`/`importId`/
+      `notifyViaMail`/`notifyViaSms`, a seeded `MessageType` reference table (14 rows,
+      `bun run db:seed`) + per-user many-to-many notification preferences, and a new
+      `CustomerPricingRule` model for the "Pricing Rules (Custom Rates & Discounts)"
+      sub-section. `UserForm` rebuilt with a new `CollapsibleSection` ui primitive, a
+      shared `AddressFields` component (billing + shipping blocks), the full
+      notification-channel + per-event checkbox grid, and a `PricingRulesSection`
+      (Customer accounts only). Sidebar rebuilt from a flat 2-item list into the full
+      grouped structure transcribed off the legacy screenshot (CUSTOMERS/MESSAGES/
+      COUPONS/CONTENT/CONFIGURATION/BEMA) — only Customers/BEMA Users are wired to real
+      pages, everything else renders as a recorded-but-inert placeholder rather than being
+      silently omitted. Added a `TopBar` showing "You today collect: —" (structurally
+      present per client request, explicitly not wired to fabricated data — no
+      collected-by-staff concept exists in the schema yet). Verified end-to-end via a
+      direct Prisma smoke script (address create/update, notification-preference
+      connect/set, pricing-rule create/delete) against the local Postgres — still no dev
+      server available for real-HTTP/browser verification this session.
+- [ ] Real HTTP/browser-level verification of the bema UI (login form, list screen,
+      create/edit forms, pricing rules) — only logic-level verification was possible this
+      session; do this the next time a dev server is reachable.
+- [ ] Address-field requiredness (e.g. legacy's country-conditional State/PostalCode rule),
+      and independent confirmation of `CustomerPricingRule`'s exact legacy semantics/column
+      set (inferred from the live screen, not cross-checked against the legacy MSSQL
+      schema directly) — both explicitly documented as simplifications/assumptions in
+      `docs/decisions/0011-bema-admin.md`, not silently decided.
 - [ ] Remaining bema modules per the rollout plan: parcels (the actual client pain point —
       see `docs/migrations/02-parcels-domain-analysis.md`/`04-postgres-schema-design.md`),
-      products, orders, statements, content, reports, messages, config. Coupons excluded
-      per client instruction.
+      products, orders, statements, content, reports, messages, config, coupons-adjacent
+      Stores (structurally placeholder-recorded in the sidebar already). Coupons itself
+      excluded per client instruction — never gets a working link.
 
 ## Not started
 
