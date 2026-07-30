@@ -540,6 +540,13 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       that's used directly in JSX by many forms, not owned by `Input.tsx` itself). Page-
       specific modifiers still using these selectors (`.form-smaller`, `.tracking-page`,
       `search-parcels`, ...) left untouched in `style.css` — not this component's concern.
+- [x] **`.faq h3`/`.faq .ralign` promoted to globals.css**: this styling had already been
+      extracted into `Faq.module.css` for the home page's `Faq` component, scoping it away
+      from the plain `className="faq"` string `RegisterFaq` uses — so the register page's
+      FAQ headings/see-more-link rendered unstyled. Since the rule is now needed by two
+      independent components, moved it to `globals.css` (per AGENTS.md's "Global CSS
+      cleanup") instead of duplicating it a second time; `Faq.module.css` deleted (nothing
+      left in it), `Faq.tsx` simplified to a plain `"faq"` classname.
 - [ ] Remaining bema modules per the rollout plan: parcels (the actual client pain point —
       see `docs/migrations/02-parcels-domain-analysis.md`/`04-postgres-schema-design.md`),
       products, orders, statements, content, reports, messages, config, coupons-adjacent

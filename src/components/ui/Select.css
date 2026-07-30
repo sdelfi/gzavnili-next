@@ -8,7 +8,7 @@
 html .rselect__control {
   border: 1px solid #bfbfbf;
   border-radius: 2px;
-  min-height: 32px;
+  min-height: 42px;
   background: #fff;
   cursor: pointer;
 }

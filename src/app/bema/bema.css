@@ -25,6 +25,10 @@ textarea {
   font: inherit;
 }
 
+html body .rselect__control {
+  min-height: 32px;
+}
+
 /* Plain text-ish inputs have no styling of their own (`ui/Input.tsx` relies on the public
    site's global `public/css/style.css`, which bema doesn't load — see that component's own
    comment) — matched here to `ui/Select.css`'s look/height so a filter bar mixing selects

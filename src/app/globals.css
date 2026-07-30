@@ -923,3 +923,24 @@ input:focus:-ms-input-placeholder {
   width: 100%;
   font-weight: 400;
 }
+
+/* Moved from Faq.module.css — needed by both Faq (home page) and RegisterFaq
+   (/authenticate/register), so per AGENTS.md's "Global CSS cleanup" rule this graduated
+   from one component's concern to a shared global rule instead of being duplicated a
+   second time. Originally public/css/style.css's `.faq h3`/`.faq .ralign` rules. */
+.faq h3 {
+  text-transform: uppercase;
+  margin: 10px 0 15px;
+}
+
+@media (max-width: 479px) {
+  .faq h3 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 599px) {
+  .faq .ralign {
+    text-align: center;
+  }
+}
