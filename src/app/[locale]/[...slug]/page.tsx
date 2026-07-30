@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { db } from '@/lib/db';
+import { PageContent } from '@/components/PageContent';
 
 // Generic "Site Pages" CMS renderer — legacy's `Static.doGet()` + `views/static.html`
 // (`#page.getContent()#`, nothing else). Any URL not matched by a more specific route
@@ -49,9 +50,15 @@ export default async function CmsPage({ params }: { params: Promise<{ locale: st
   const page = await getPage(locale, slug);
   if (!page) notFound();
 
-  // Raw HTML by design — this is admin-authored content (bema Site Pages), the same trust
-  // boundary as the legacy CMS's own WYSIWYG-produced markup, not user input.
-  return <div dangerouslySetInnerHTML={{ __html: page.content }} />;
+  return (
+    <>
+      {/* Only loaded for CMS pages, not site-wide (see AGENTS.md's "Global CSS cleanup"
+          exception note) — React hoists a <link> rendered anywhere in the tree into <head>,
+          deduped by href, so this only ships on routes that actually render this component. */}
+      <link rel="stylesheet" href="/css/static.css" />
+      <PageContent content={page.content} />
+    </>
+  );
 }
 
 // Pages not yet in generateStaticParams (created after the last build) still render and

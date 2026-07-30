@@ -60,6 +60,14 @@ file. The end goal is to empty `style.css` out entirely, component by component,
 page gets touched — not a one-shot rewrite, but also not something to skip just because a
 page "already works" with the old global rule still in place.
 
+**Exception: `public/css/static.css`.** This one backs the Site Pages CMS
+(`docs/decisions/0013-site-pages-cms.md`) — arbitrary admin-authored HTML that can reference
+any legacy classname across dozens of page-specific designs, not a fixed set this project
+controls. It is a deliberately uncurated, wholesale copy of prod's stylesheet, not something
+to migrate piecemeal into components like `style.css`. Re-sync it by re-fetching
+`usa.gzavnili.com/css/style.css` outright when it's next known to be stale; don't hand-edit
+or selectively trim it.
+
 # Public pages are server-rendered
 
 Every page under `src/app/[locale]/` (the public, customer-facing site — marketing pages,

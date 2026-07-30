@@ -44,6 +44,67 @@ CMS-editable; only the form widget itself is code. Not modeled/ported in this pa
 `/parcel-service.html` specifically (the client's example) has no hardcoded case in the
 router — confirmed served via the fully generic path.
 
+## `public/css/static.css` — a second global stylesheet for CMS content
+
+Rendering real imported content (e.g. `/parcel-service.html`) surfaced two more things:
+
+1. **The `.whychooseus`/`.calc-block`/`.whyus-item` etc. rules were missing from
+   `public/css/style.css` entirely** — not present at all, not just visually different.
+   Client confirmed the local `http/include/pages/*.json` content dump is current/fresh, so
+   this was a genuine style.css gap, not stale content. Diffing the full local `style.css`
+   against a fresh pull of `https://usa.gzavnili.com/css/style.css?v=1.1` found ~300
+   selector-level differences; most are **not** real gaps — they're rules already
+   intentionally migrated into ported components' own CSS Modules (Header, Footer,
+   HomeHero's slider, TrustUs, WhyChooseUs, the `ui/Icon` sprite rules, ...) per AGENTS.md's
+   "Global CSS cleanup" rule, so a raw text diff flags them as "missing" when they're
+   actually just relocated.
+2. Cherry-picking only the "really missing, actually used by CMS content" subset via a
+   selector/brace parser turned out fragile — nested `@media` blocks broke the naive
+   parser's brace-matching, risking silently-corrupted CSS if trusted blindly.
+
+Given both, and that Site Pages content can reference **any** of the site's dozens of
+legacy page-specific classes (courier/cargo/prices/licenses/documents/faq/news/... — not a
+small fixed set), the safer choice: `public/css/static.css` is a **complete, unedited copy**
+of the current production `style.css`, loaded globally (`[locale]/layout.tsx`) *before*
+`style.css` so `style.css`'s intentionally-curated/cleaned-up versions of shared classnames
+(`.container`, `.btn`, ...) still win on ties. `static.css` itself is **not** curated or
+deduplicated — it's a safety net for arbitrary CMS content, refreshed wholesale from prod
+when needed, not migrated piecemeal like `style.css`. Re-sync by re-fetching
+`https://usa.gzavnili.com/css/style.css?v=1.1` and overwriting the file outright.
+
+## Layout-level placeholder substitution — a second mechanism, broader than the 5 form pages
+
+`views/layouts/new.html` (the shared legacy page layout wrapping *every* rendered view, not
+just specific controllers) does its own `{TOKEN}` substitution on `request.pageContent`
+*after* the view renders — separate from, and broader than, the `{form}`/`{form_quotation}`
+substitution inside the 5 hardcoded controllers (contact/pick-up-service/help-to-shop/
+quotation/mailing-list) documented above. Confirmed tokens: `{CALCULATOR}` →
+`homecals.cfm`, `{COURIERCALC_FORM}` → `couriercalc_form.cfm`, `{QUESTIONFORM}`/
+`{QUOTEFORM}` → `question_form.cfm`/`quote_form.cfm`, `{HELPTOSHOP}` → `helpshop.cfm`,
+`{VOLUMECAL}` → `volumecals.cfm`, plus two plain date tokens `{NEXTSEND}`/`{NEXTDEL}` (next
+available ship/pickup dates, from `dayofweek(now())`) with no sub-template at all. Because
+this runs at the layout level, **any** Site Pages content can contain these tokens, not just
+the 5 special-routed pages — confirmed in real content: `/parcel-service.html` embeds
+`{CALCULATOR}`.
+
+**Implementation** (`src/components/PageContent/`): splitting the HTML string at the
+placeholder and rendering each half through its own `dangerouslySetInnerHTML` was tried
+first and rejected — real content has `{CALCULATOR}` sitting inside a still-open parent
+(`<div class="calc-block-inner">...{CALCULATOR}</div>`), so each half is unbalanced HTML on
+its own, and the browser auto-closes the dangling parent at each fragment's own boundary,
+breaking the `.calc-block` box styling around the calculator. Instead: the whole content
+renders as **one** `dangerouslySetInnerHTML` (keeping the original nesting intact), with
+`{CALCULATOR}` swapped for an inert marker div (`data-calculator-slot`); a client component
+(`CalculatorPortal.tsx`) then finds that marker after mount and `createPortal`s the real,
+already-ported `Calculator` component into it. `{NEXTSEND}`/`{NEXTDEL}` are plain
+server-computed text substitutions (no component needed).
+
+**Only `{CALCULATOR}` is wired up** — it's the one confirmed in real content and the only
+token with an existing React port. `{COURIERCALC_FORM}`/`{QUESTIONFORM}`/`{QUOTEFORM}`/
+`{HELPTOSHOP}`/`{VOLUMECAL}` are left as literal, visible placeholder text if a page ever
+contains them — a known, flagged gap, not a silent failure — until each of their source
+sub-templates gets its own React port.
+
 ## Architecture
 
 - **Prisma `Page` model** (`prisma/schema.prisma`) replaces the legacy DB-metadata +
@@ -104,3 +165,10 @@ router — confirmed served via the fully generic path.
   literal `ge/` *prefix*) — imported as ordinary `en`-locale pages with slugs
   `questions/ge`/`shop/learn/ge` rather than being mis-detected as Georgian. Flagged in case
   they turn out to need different handling once actually visited/verified live.
+- **`{COURIERCALC_FORM}`/`{QUESTIONFORM}`/`{QUOTEFORM}`/`{HELPTOSHOP}`/`{VOLUMECAL}`** —
+  the other layout-level placeholder tokens (see the section above) render as literal text
+  until each gets its own React port and a `PageContent` case, same pattern as
+  `{CALCULATOR}`/`CalculatorPortal.tsx`.
+- **`public/css/static.css`** is a wholesale, uncurated copy of prod's stylesheet (see the
+  section above) — re-sync it by re-fetching `usa.gzavnili.com/css/style.css` outright when
+  it's next known to be stale, don't hand-edit it piecemeal.
