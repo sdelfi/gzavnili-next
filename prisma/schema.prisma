@@ -507,3 +507,40 @@ model Parcel {
   @@index([created])
   @@index([trackingNum])
 }
+
+// --- Site Pages CMS (bema "Site Pages" — see docs/decisions/0013-site-pages-cms.md) --------
+// Legacy (MSSQLPageDAO.cfc) keeps only metadata in its `pages` table (Url/Type/Name/dates) —
+// the actual editable content is serialized to a JSON file on disk keyed by SHA-1(url), read
+// on every request instead of hitting the DB, specifically to avoid a per-request DB read.
+// This redesign keeps content in Postgres like everything else (no reason to hand-roll a
+// file cache when Next.js's own ISR/on-demand revalidation gives the same "don't regenerate
+// unless something changed" property — see the site pages catch-all route) — `slug`+`locale`
+// (not the full legacy `url`, which had `/ge/`-prefixed duplicates for the Georgian version)
+// is the natural key once next-intl's `[locale]` segment already owns the locale prefix.
+//
+// Deliberately not modeled (legacy fields confirmed always empty/constant across all 77
+// pages in the actual production content dump, see docs/decisions/0013 — not a guess):
+// `Type` (always 1), `Mobile` (mobile-specific content override, always empty), `Groups`
+// (front-end customer-group visibility ACL, always empty — same "out of scope" call as
+// customer discount tiers in docs/decisions/0011-bema-admin.md).
+model Page {
+  id     String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug   String
+  locale String  @default("en")
+  name   String
+  // Legacy `Header` field — present on ~half of real pages but not referenced by the
+  // generic `views/static.html` template that renders most of them; its actual display
+  // purpose wasn't established from the legacy code (see docs/decisions/0013). Kept for
+  // field-parity/import fidelity, not yet rendered anywhere on the public page.
+  header          String?
+  content         String
+  metaTitle       String? @map("meta_title")
+  metaDescription String? @map("meta_description")
+  metaKeywords    String? @map("meta_keywords")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([locale, slug])
+  @@map("pages")
+}

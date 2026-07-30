@@ -445,6 +445,26 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       set (inferred from the live screen, not cross-checked against the legacy MSSQL
       schema directly) — both explicitly documented as simplifications/assumptions in
       `docs/decisions/0011-bema-admin.md`, not silently decided.
+- [x] **Site Pages CMS** (2026-07-31, client-driven investigation first): verified which
+      public URLs are genuinely CMS-backed vs. hardcoded before building anything — see
+      `docs/decisions/0013-site-pages-cms.md` for the full investigation (corrected an
+      initial "homepage is dead" hypothesis: it's actually still CMS-sourced, just via its
+      own view wrapper). Built: Prisma `Page` model (`slug`+`locale` key, deliberately not
+      modeling legacy's always-constant/always-empty `Type`/`Mobile`/`Groups` fields),
+      public catch-all renderer (`src/app/[locale]/[...slug]/page.tsx`) with
+      `generateStaticParams` + on-demand ISR (`revalidatePagePath()` called from the bema
+      Page API routes on every create/update/delete — the direct equivalent of legacy's
+      "write a fresh `{sha1(url)}.json` cache file on save," via Next's built-in
+      revalidation instead of a hand-rolled file cache), bema CRUD
+      (`src/components/admin/pages/`, `/bema/pages`) with a plain-HTML-textarea content
+      field (no WYSIWYG — legacy uses TinyMCE, not pulled in), and a one-time import script
+      (`bun run import:legacy-pages`) that's already been run against local dev — all 76
+      real legacy pages imported and building as static pages (`bun run build` now
+      pre-renders 101 pages, up from 24).
+      **Not yet done**: the 5 pages whose legacy view substitutes a `{form...}` placeholder
+      into the CMS content (contact/pick-up-service/help-to-shop/quotation/mailing-list)
+      aren't rendered by the generic catch-all yet — each needs its own page + real form
+      component, not just raw HTML injection.
 - [ ] Remaining bema modules per the rollout plan: parcels (the actual client pain point —
       see `docs/migrations/02-parcels-domain-analysis.md`/`04-postgres-schema-design.md`),
       products, orders, statements, content, reports, messages, config, coupons-adjacent

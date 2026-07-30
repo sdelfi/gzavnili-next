@@ -43,5 +43,9 @@ export const routes = {
     // Legacy "View Statement" icon-link (`../statements/statement.cfm?userid=...`) —
     // stubbed until the statements module is built, see PROGRESS.md.
     userStatement: (id: string) => `/bema/statements/${id}`,
+    // Site Pages CMS (docs/decisions/0013-site-pages-cms.md) — legacy `bema/content/pages.cfm`.
+    pages: () => '/bema/pages',
+    pageNew: () => '/bema/pages/new',
+    pageEdit: (id: string) => `/bema/pages/${id}`,
   },
 };

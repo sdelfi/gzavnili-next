@@ -1,0 +1,48 @@
+.form {
+  max-width: 900px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 24px;
+  margin-bottom: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.hint {
+  font-weight: 400;
+  color: #888;
+  font-size: 12px;
+}
+
+.contentArea {
+  width: 100%;
+  font-family: monospace;
+  font-size: 13px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  background: #fff;
+  padding: 16px;
+  border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

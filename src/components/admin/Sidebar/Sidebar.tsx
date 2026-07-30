@@ -70,7 +70,14 @@ const NAV_GROUPS: NavGroup[] = [
   },
   {
     title: 'CONTENT',
-    items: [{ label: 'Site Pages' }, { label: 'Files' }],
+    items: [
+      {
+        label: 'Site Pages',
+        href: routes.bema.pages(),
+        isActive: (pathname) => pathname.startsWith('/bema/pages'),
+      },
+      { label: 'Files' },
+    ],
   },
   {
     title: 'CONFIGURATION',

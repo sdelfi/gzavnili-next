@@ -1,0 +1,29 @@
+.heading {
+  margin: 0 0 16px;
+  font-size: 22px;
+}
+
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  background: #fff;
+  padding: 12px 16px;
+  border-radius: 6px;
+}
+
+.filterControl {
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.actions {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+}

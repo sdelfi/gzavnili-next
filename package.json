@@ -17,7 +17,8 @@
     "db:migrate": "bun scripts/guard-local-db.mjs && prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:studio": "bun scripts/guard-local-db.mjs && prisma studio",
-    "db:seed": "bun scripts/seed-admin.ts && bun scripts/seed-message-types.ts"
+    "db:seed": "bun scripts/seed-admin.ts && bun scripts/seed-message-types.ts",
+    "import:legacy-pages": "bun scripts/guard-local-db.mjs && bun scripts/import-legacy-pages.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.1",
