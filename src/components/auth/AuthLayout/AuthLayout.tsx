@@ -34,12 +34,12 @@ export function AuthLayout({
       </div>
 
       <div className={cn('container', s.loginpage)}>
-        <div className="row">
-          <div className={cn('col-md-5 col-sm-6 col-xs-12', s.loginform)}>
+        <div className={s.row}>
+          <div className={cn(s.colLoginform, s.loginform)}>
             <div className={s.inner}>{children}</div>
           </div>
           {aside && (
-            <div className="col-md-7 col-sm-6 col-xs-12">
+            <div className={s.colQuestion}>
               <div className={s.inner}>{aside}</div>
             </div>
           )}

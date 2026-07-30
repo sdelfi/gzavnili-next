@@ -58,8 +58,8 @@ export function LoginForm({ locale, ret }: { locale: string; ret?: string }) {
         <input type="checkbox" name="remember_me" value="true" /> {t('rememberMe')}
       </label>
 
-      <div className={cn('row', authLayout.clearfix, authLayout.bottom, authLayout.verticalAlignMiddle)}>
-        <div className="col-sm-5 col-xs-12">
+      <div className={cn(authLayout.row, authLayout.clearfix, authLayout.bottom, authLayout.verticalAlignMiddle)}>
+        <div className={authLayout.colButton}>
           <button
             type="submit"
             className={cn(authLayout.btn, authLayout.btnPrimary, authLayout.btnBlock)}
@@ -68,8 +68,8 @@ export function LoginForm({ locale, ret }: { locale: string; ret?: string }) {
             {t('logIn')} &rarr;
           </button>
         </div>
-        <div className={cn('col-sm-1 col-xs-12', authLayout.or)}>{t('or')}</div>
-        <div className="col-sm-6 col-xs-12">
+        <div className={cn(authLayout.colOr, authLayout.or)}>{t('or')}</div>
+        <div className={authLayout.colCreateAccount}>
           <a href={routes.register()}>{t('createAccount')}</a>
         </div>
       </div>

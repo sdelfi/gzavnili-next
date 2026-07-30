@@ -1,9 +1,91 @@
 /* Ported from public/css/loginpage.css (originally scoped `.container.loginpage .foo`,
    loaded as a global stylesheet) — moved here since it's specific to this one page family
    (login/register/forgot/reset), not shared site-wide the way `.page-heading`/`.breadcrumbs`
-   (style.css) or the `.row`/`.col-*` grid (grid.css) are. See AGENTS.md's "Global CSS
-   cleanup" rule. `loginpage.css` itself has been trimmed to just the grid/page-heading-
-   adjacent rules that are still global; this module owns everything under `.inner`. */
+   (style.css) is. See AGENTS.md's "Global CSS cleanup" rule. `loginpage.css` itself has been
+   trimmed to just the page-heading-adjacent rules that are still global; this module owns
+   everything under `.inner`. */
+
+/* The handful of Bootstrap-grid classes this page family actually uses
+   (`.row`/`.col-md-5`/`.col-md-7`/`.col-sm-5`/`.col-sm-6`/`.col-sm-1`/`.col-xs-12`), ported
+   directly instead of loading all 1045 lines of `public/css/grid.css` for six classes —
+   that file was also briefly (wrongly) loaded site-wide, overriding unrelated style.css
+   rules on every other page; legacy only ever loads it on this page family via its own
+   `<cfhtmlhead>` link. Values match Bootstrap 3's actual 12-column percentages/breakpoints
+   (sm: ≥768px, md: ≥992px) from grid.css, not re-derived. */
+.row {
+  margin-left: -15px;
+  margin-right: -15px;
+}
+
+.row::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.col {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+  float: left;
+  width: 100%;
+}
+
+.colLoginform {
+  composes: col;
+}
+@media (min-width: 768px) {
+  .colLoginform {
+    width: 50%;
+  }
+}
+@media (min-width: 992px) {
+  .colLoginform {
+    width: 41.66666667%;
+  }
+}
+
+.colQuestion {
+  composes: col;
+}
+@media (min-width: 768px) {
+  .colQuestion {
+    width: 50%;
+  }
+}
+@media (min-width: 992px) {
+  .colQuestion {
+    width: 58.33333333%;
+  }
+}
+
+.colButton {
+  composes: col;
+}
+@media (min-width: 768px) {
+  .colButton {
+    width: 41.66666667%;
+  }
+}
+
+.colOr {
+  composes: col;
+}
+@media (min-width: 768px) {
+  .colOr {
+    width: 8.33333333%;
+  }
+}
+
+.colCreateAccount {
+  composes: col;
+}
+@media (min-width: 768px) {
+  .colCreateAccount {
+    width: 50%;
+  }
+}
 
 /* `:global(.container)` + the local `.loginpage` class reproduces the original
    `.container.loginpage` *compound* selector's specificity (two classes), not just its

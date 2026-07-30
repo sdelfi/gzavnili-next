@@ -40,13 +40,6 @@ export default async function LocaleLayout({
         <link rel="stylesheet" href="/css/tooltipster.bundle.min.css" />
         <link rel="stylesheet" href="/css/tooltipster-sideTip-light.min.css" />
         <link rel="stylesheet" href="/css/style.css?v=1.1" />
-        {/* Bootstrap-like grid (.row/.col-md-N/.col-sm-N/.col-xs-N) — genuinely shared
-            across many future pages, so it stays a global stylesheet rather than a
-            component's CSS Module (see AGENTS.md's "Global CSS cleanup" rule). The
-            login/register/forgot/reset pages' own scoped styling lives in
-            src/components/auth/AuthLayout/AuthLayout.module.css instead — see
-            docs/decisions/0012-customer-auth.md. */}
-        <link rel="stylesheet" href="/css/grid.css" />
       </head>
       <body>
         <NextIntlClientProvider>

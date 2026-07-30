@@ -28,14 +28,21 @@ never as a copy-pasted vendor bundle sitting in `public/`.
 
 ## What's still there, deliberately, and why it's not "the same problem"
 
-`public/css/{bootstrap.min.css, loginpage.css, loginpage.src.css, paymentsteps.css,
-tooltipster*.css, jquery.dataTables.min.css, geo.css, grid.css}` are still present. These are
-**not loaded by any ported page today** — they're legacy CSS for pages/features not yet built
-(payment steps, account dataTables, the Georgian-language branch). They're kept as porting
-reference material, the same way `../http/views/*.html` is (with the same caveat: verify against
-`include/pages/*.json`/the live site before trusting one, per `PROGRESS.md`). Delete each one
-only once the page it belongs to is actually ported and confirmed not to need it — not
-speculatively now, and not left behind once that porting happens either.
+`public/css/{bootstrap.min.css, paymentsteps.css, tooltipster*.css, jquery.dataTables.min.css,
+geo.css}` are still present. These are **not loaded by any ported page today** — they're
+legacy CSS for pages/features not yet built (payment steps, account dataTables, the
+Georgian-language branch). They're kept as porting reference material, the same way
+`../http/views/*.html` is (with the same caveat: verify against `include/pages/*.json`/the
+live site before trusting one, per `PROGRESS.md`). Delete each one only once the page it
+belongs to is actually ported and confirmed not to need it — not speculatively now, and not
+left behind once that porting happens either.
+
+(`loginpage.css`/`loginpage.src.css`/`grid.css` used to be on this list — all three have
+since been retired: their few actually-needed rules were ported into
+`src/components/auth/AuthLayout/AuthLayout.module.css` once the login page's pixel-parity
+pass needed them, see `docs/decisions/0012-customer-auth.md`. `public/css/static.css` is a
+different thing entirely — not legacy cruft, a deliberately-uncurated live copy of prod's
+stylesheet backing the Site Pages CMS, see `docs/decisions/0013-site-pages-cms.md`.)
 
 ## How to apply
 

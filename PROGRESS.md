@@ -465,6 +465,29 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       into the CMS content (contact/pick-up-service/help-to-shop/quotation/mailing-list)
       aren't rendered by the generic catch-all yet — each needs its own page + real form
       component, not just raw HTML injection.
+- [x] **Site Pages follow-up fixes** (same day): `/parcel-service.html` 404'd — `proxy.ts`'s
+      middleware matcher excluded *any* path with a dot (meant for static assets like
+      `.css`/`.js`) which also excluded every `.html` CMS page; fixed to exclude by specific
+      extension instead. `{CALCULATOR}` wasn't substituting — found a *second*,
+      broader placeholder mechanism in legacy's shared layout (`views/layouts/new.html`,
+      substitutes `{CALCULATOR}`/`{COURIERCALC_FORM}`/`{QUESTIONFORM}`/`{QUOTEFORM}`/
+      `{HELPTOSHOP}`/`{VOLUMECAL}`/`{NEXTSEND}`/`{NEXTDEL}` into *any* page's content, not
+      just the 5 hardcoded-controller pages) — wired up `{CALCULATOR}` via a `createPortal`
+      (`src/components/PageContent/`, splitting the HTML string at the placeholder was
+      rejected: real content has it inside a still-open parent div, so each half is
+      unbalanced HTML and the browser mangles the surrounding box styling). Visual mismatch
+      on `.whychooseus`/`.calc-block` traced to genuinely missing rules in
+      `public/css/style.css` (confirmed via diffing a fresh pull of prod's stylesheet, not
+      stale local content) — added `public/css/static.css`, a deliberately uncurated full
+      copy of prod's CSS backing arbitrary CMS content, loaded only on the CMS catch-all
+      route (not site-wide — was briefly wrong). Also cleaned ~180 pure `.header`/`.footer`
+      rules out of `static.css` (already covered by ported components) and removed
+      `public/css/grid.css` entirely — it was also briefly loaded site-wide by mistake
+      (legacy only loads it on the login/register/forgot/reset pages); the ~6 actual classes
+      needed (`.row`/`.col-md-5`/`.col-md-7`/`.col-sm-5`/`.col-sm-6`/`.col-sm-1`) are now
+      plain local styles in `AuthLayout.module.css` instead of the full 1045-line file. See
+      `docs/decisions/0013-site-pages-cms.md` for the full writeup and AGENTS.md's "Global
+      CSS cleanup" section for the `static.css` exception.
 - [ ] Remaining bema modules per the rollout plan: parcels (the actual client pain point —
       see `docs/migrations/02-parcels-domain-analysis.md`/`04-postgres-schema-design.md`),
       products, orders, statements, content, reports, messages, config, coupons-adjacent
