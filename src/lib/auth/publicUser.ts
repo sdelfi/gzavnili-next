@@ -1,8 +1,11 @@
 import type { User, Address } from '@/generated/prisma/client';
 
 type UserWithRelations = User & {
-  billingAddress?: Address | null;
-  shippingAddress?: Address | null;
+  // `Partial` rather than the full `Address` — the users-list query only selects
+  // `{ country: true }` for the legacy "Country" column, while the detail/edit routes
+  // include the full address; both shapes need to type-check here.
+  billingAddress?: Partial<Address> | null;
+  shippingAddress?: Partial<Address> | null;
   notificationMessageTypes?: { key: string }[];
 };
 
