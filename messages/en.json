@@ -58,6 +58,56 @@
     "testAccountQuestion": "Would you like to see test account?",
     "logInToTestAccount": "Log in to test account"
   },
+  "Register": {
+    "heading": "Register",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "cellPhone": "Cell Phone",
+    "country": "Country",
+    "chooseCountry": "Choose Country",
+    "city": "City",
+    "stateProvince": "State/Province",
+    "zipCode": "Zip Code",
+    "address": "Address",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "privateNumber": "Private Number",
+    "chooseNotificationLanguage": "Choose notification language",
+    "languageEnglish": "English",
+    "languageGeorgian": "ქართული",
+    "agreeTermsPrefix": "I agree to the",
+    "termsAndConditions": "Terms & Conditions",
+    "agreeTermsMiddle": "and",
+    "privacyPolicy": "Privacy Policy",
+    "submit": "Register",
+    "notSureYetTitle": "Not sure yet?",
+    "notSureYetText": "Use <link>Temporary account</link> to find all benefits of Gzavnili member",
+    "faqHeading": "Frequently Asked Questions",
+    "faqItems": [
+      {
+        "question": "Why register?",
+        "answer": "Registration is necessary for three reasons: 1. Registration is necessary for us, company staff and management, to do better service. Also, we can contact you in case of emergency situation. 2. To be able to obtain complete information about your parcel. You will be able to track the transit of the package and also pay for the cost of the service. 3. Needed to successfully pass customs procedures. In case of incomplete and/or incorrect parcel information, customs officer can stop parcel for research."
+      },
+      {
+        "question": "Do I have to registered with my name or with name of receiver?",
+        "answer": "Please, during registration please, use your personal information. You will have a chance to enter receivers information later."
+      },
+      {
+        "question": "Why do you have to use correct email address?",
+        "answer": "We promise, that we do not do Spam. If you ever get letter from us it will be about problem to related to your parcel."
+      },
+      {
+        "question": "Which address do I have to use here?",
+        "answer": "Please use your real leaving address."
+      },
+      {
+        "question": "How to locate Georgian zip codes?",
+        "answer": "For Tbilisi zip codes please click here, and for other cities click here."
+      }
+    ],
+    "seeMore": "See More"
+  },
   "Footer": {
     "tagline": "Everyday is a new day for us and we work really hard to satisfy our customer everywhere.",
     "newsletterLabel": "Newsletter Setup",

@@ -4,6 +4,7 @@ import { Suspense, use, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Alert } from '@/components/ui/Alert';
 import { PageForm, type PageFormValues } from '@/components/admin/pages/PageForm';
+import { getPage } from '@/lib/api/bema/pages';
 
 type RawPage = Partial<PageFormValues> & { id: string };
 
@@ -15,14 +16,7 @@ function EditPageInner({ params }: { params: Promise<{ id: string }> }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`/api/bema/pages/${id}`, { credentials: 'same-origin' })
-      .then(async (res) => {
-        if (!res.ok) {
-          const body = await res.json().catch(() => null);
-          throw new Error(body?.error ?? 'Failed to load page.');
-        }
-        return res.json();
-      })
+    getPage<RawPage>(id)
       .then((data) => setPage(data.page))
       .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load page.'));
   }, [id]);

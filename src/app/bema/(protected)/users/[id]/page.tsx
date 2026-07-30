@@ -6,6 +6,7 @@ import { Alert } from '@/components/ui/Alert';
 import { UserForm, type UserFormValues } from '@/components/admin/users/UserForm';
 import { EMPTY_ADDRESS, type AddressFormValues } from '@/components/admin/users/AddressFields';
 import type { AdminRole } from '@/generated/prisma/client';
+import { getUser } from '@/lib/api/bema/users';
 
 type RawAddress = Partial<Record<keyof AddressFormValues, string | null>> | null | undefined;
 
@@ -35,14 +36,7 @@ function EditUserPageInner({ params }: { params: Promise<{ id: string }> }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`/api/bema/users/${id}`, { credentials: 'same-origin' })
-      .then(async (res) => {
-        if (!res.ok) {
-          const body = await res.json().catch(() => null);
-          throw new Error(body?.error ?? 'Failed to load user.');
-        }
-        return res.json();
-      })
+    getUser<RawUser>(id)
       .then((data) => setUser(data.user))
       .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load user.'));
   }, [id]);

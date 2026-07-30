@@ -6,6 +6,8 @@ import { Select } from '@/components/ui/Select';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
+import { createPricingRule, deletePricingRule, listPricingRules } from '@/lib/api/bema/pricingRules';
+import { ApiError } from '@/lib/api/http';
 import s from './PricingRulesSection.module.css';
 
 type PricingRule = {
@@ -50,13 +52,7 @@ export function PricingRulesSection({ userId }: { userId: string }) {
   const [submitting, setSubmitting] = useState(false);
 
   const load = useCallback(() => {
-    const params = new URLSearchParams(activeOnly ? { activeOnly: 'true' } : {});
-    return fetch(`/api/bema/users/${userId}/pricing-rules?${params.toString()}`, { credentials: 'same-origin' })
-      .then(async (res) => {
-        if (!res.ok) throw new Error('Failed to load pricing rules.');
-        return res.json();
-      })
-      .then((data) => setRules(data.rules));
+    return listPricingRules<PricingRule>(userId, activeOnly).then((data) => setRules(data.rules));
   }, [userId, activeOnly]);
 
   useEffect(() => {
@@ -68,27 +64,25 @@ export function PricingRulesSection({ userId }: { userId: string }) {
     setSubmitting(true);
     setError(null);
     try {
-      const res = await fetch(`/api/bema/users/${userId}/pricing-rules`, {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, value: Number(form.value), validTo: form.validTo || null }),
-      });
-      if (!res.ok) {
-        const body = await res.json().catch(() => null);
-        throw new Error(body?.error?.formErrors?.[0] ?? body?.error ?? 'Failed to add rule.');
-      }
+      await createPricingRule(userId, { ...form, value: Number(form.value), validTo: form.validTo || null });
       setForm(EMPTY_RULE);
       await load();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add rule.');
+      const fallback = 'Failed to add rule.';
+      if (err instanceof ApiError) {
+        const body = err.body as { error?: { formErrors?: string[] } | string } | null;
+        const formError = typeof body?.error === 'object' ? body.error.formErrors?.[0] : body?.error;
+        setError(formError ?? fallback);
+      } else {
+        setError(fallback);
+      }
     } finally {
       setSubmitting(false);
     }
   }
 
   async function handleDelete(ruleId: string) {
-    await fetch(`/api/bema/users/${userId}/pricing-rules/${ruleId}`, { method: 'DELETE', credentials: 'same-origin' });
+    await deletePricingRule(userId, ruleId);
     await load();
   }
 

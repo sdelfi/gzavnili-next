@@ -501,6 +501,28 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       plain local styles in `AuthLayout.module.css` instead of the full 1045-line file. See
       `docs/decisions/0013-site-pages-cms.md` for the full writeup and AGENTS.md's "Global
       CSS cleanup" section for the `static.css` exception.
+- [x] **API service layer** (client-driven refactor): every component/page calling `fetch()`
+      directly against `/api/bema/*` (10 files — `AuthProvider`, `IdleModal`, bema login
+      page, `UserForm`/`UserListPage`/`PricingRulesSection` + their edit pages,
+      `PageForm`/`PageListPage` + its edit page) now goes through
+      `src/lib/api/http.ts` (shared `apiGet`/`apiPost`/`apiPatch`/`apiDelete` +
+      `ApiError` + `extractErrorMessages()`) and one typed module per domain under
+      `src/lib/api/bema/` (`auth.ts`/`users.ts`/`pricingRules.ts`/`pages.ts`). New
+      AGENTS.md rule: "API calls go through a service layer."
+- [x] **`/authenticate/register` pixel-parity pass** (client-driven — flagged as not
+      matching legacy): rebuilt to match `views/authenticate/register.html` 1:1. The custom
+      `.row`/`.col`/`.col-6` 12-unit grid and `.input-group`/`.accreg-btn-block`/`.agree`
+      classes turned out to already be global (style.css), unlike the login page — no new
+      CSS needed. Two real gaps found and fixed: the "I agree to Terms & Conditions and
+      Privacy Policy" checkbox (`register_terms`, required — legacy has it, ours was
+      missing entirely, now enforced in `registerSchema` as `z.literal('1')` since an
+      unchecked checkbox is simply absent from FormData) and the notification-language
+      radio buttons (English/ქართული — `language` was already accepted by the schema/
+      action but had no form field to set it). Two-column layout restored: form column
+      (`col-regform`) + a real FAQ sidebar column (`col-6.faq`, locale-dependent, 5 Q&A
+      items transcribed from the legacy source, not invented) — added a `Register`
+      messages namespace (en/ge) for all of this rather than hardcoding strings, matching
+      the login page's i18n pattern.
 - [ ] Remaining bema modules per the rollout plan: parcels (the actual client pain point —
       see `docs/migrations/02-parcels-domain-analysis.md`/`04-postgres-schema-design.md`),
       products, orders, statements, content, reports, messages, config, coupons-adjacent

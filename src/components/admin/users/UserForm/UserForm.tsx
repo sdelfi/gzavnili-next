@@ -9,6 +9,8 @@ import { ErrorList } from '@/components/ui/Alert';
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection';
 import { routes } from '@/lib/routes';
 import type { AdminRole } from '@/generated/prisma/client';
+import { createUser, listMessageTypes, updateUser } from '@/lib/api/bema/users';
+import { ApiError, extractErrorMessages } from '@/lib/api/http';
 import { AddressFields, EMPTY_ADDRESS, type AddressFormValues } from '../AddressFields';
 import { PricingRulesSection } from '../PricingRulesSection';
 import s from './UserForm.module.css';
@@ -128,9 +130,9 @@ export function UserForm({
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    fetch('/api/bema/message-types', { credentials: 'same-origin' })
-      .then((res) => (res.ok ? res.json() : { messageTypes: [] }))
-      .then((data) => setMessageTypes(data.messageTypes));
+    listMessageTypes()
+      .then((data) => setMessageTypes(data.messageTypes))
+      .catch(() => setMessageTypes([]));
   }, []);
 
   function set<K extends keyof UserFormValues>(key: K, value: UserFormValues[K]) {
@@ -167,25 +169,15 @@ export function UserForm({
     };
 
     try {
-      const res = await fetch(userId ? `/api/bema/users/${userId}` : '/api/bema/users', {
-        method: userId ? 'PATCH' : 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        const body = await res.json().catch(() => null);
-        const flat: string[] = body?.error?.formErrors ?? [];
-        const fieldErrors: string[] = body?.error?.fieldErrors
-          ? Object.entries(body.error.fieldErrors as Record<string, string[]>).flatMap(([field, messages]) =>
-              messages.map((message) => `${FIELD_LABELS[field] ?? field}: ${message}`),
-            )
-          : [];
-        setErrors(flat.concat(fieldErrors).length ? flat.concat(fieldErrors) : [body?.error ?? 'Save failed.']);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
+      if (userId) {
+        await updateUser(userId, payload);
+      } else {
+        await createUser(payload);
       }
       router.push(returnTo || routes.bema.users({ accountType }));
+    } catch (err) {
+      setErrors(err instanceof ApiError ? extractErrorMessages(err.body, FIELD_LABELS) : ['Save failed.']);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setSubmitting(false);
     }

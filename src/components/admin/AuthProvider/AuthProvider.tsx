@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import type { AdminRole } from '@/generated/prisma/client';
+import { fetchMe, logout as logoutRequest, refreshSession } from '@/lib/api/bema/auth';
 
 // bema is CSR-only (docs/migrations/03-target-architecture.md §3) — session state is
 // resolved client-side via /api/bema/auth/me, not read server-side from a cookie during
@@ -25,11 +26,6 @@ type AuthState = {
 
 const AuthContext = createContext<AuthState | null>(null);
 
-async function fetchMe(): Promise<BemaUser | null> {
-  const res = await fetch('/api/bema/auth/me', { credentials: 'same-origin' });
-  return res.ok ? (await res.json()).user : null;
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<BemaUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -42,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
-    await fetch('/api/bema/auth/logout', { method: 'POST', credentials: 'same-origin' });
+    await logoutRequest();
     setUser(null);
   }, []);
 
@@ -67,12 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isLoggedIn = user !== null;
   useEffect(() => {
     if (!isLoggedIn) return;
-    const interval = setInterval(
-      () => {
-        fetch('/api/bema/auth/refresh', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
-      },
-      10 * 60 * 1000,
-    );
+    const interval = setInterval(() => refreshSession().catch(() => {}), 10 * 60 * 1000);
     return () => clearInterval(interval);
   }, [isLoggedIn]);
 

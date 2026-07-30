@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/Button';
 import { ErrorList } from '@/components/ui/Alert';
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection';
 import { routes } from '@/lib/routes';
+import { createPage, updatePage } from '@/lib/api/bema/pages';
+import { ApiError, extractErrorMessages } from '@/lib/api/http';
 import s from './PageForm.module.css';
 
 const LOCALE_OPTIONS = [
@@ -74,25 +76,15 @@ export function PageForm({
     setErrors([]);
     setSubmitting(true);
     try {
-      const res = await fetch(pageId ? `/api/bema/pages/${pageId}` : '/api/bema/pages', {
-        method: pageId ? 'PATCH' : 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
-      });
-      if (!res.ok) {
-        const body = await res.json().catch(() => null);
-        const flat: string[] = body?.error?.formErrors ?? [];
-        const fieldErrors: string[] = body?.error?.fieldErrors
-          ? Object.entries(body.error.fieldErrors as Record<string, string[]>).flatMap(([field, messages]) =>
-              messages.map((message) => `${FIELD_LABELS[field] ?? field}: ${message}`),
-            )
-          : [];
-        setErrors(flat.concat(fieldErrors).length ? flat.concat(fieldErrors) : [body?.error ?? 'Save failed.']);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
+      if (pageId) {
+        await updatePage(pageId, values);
+      } else {
+        await createPage(values);
       }
       router.push(returnTo || routes.bema.pages());
+    } catch (err) {
+      setErrors(err instanceof ApiError ? extractErrorMessages(err.body, FIELD_LABELS) : ['Save failed.']);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setSubmitting(false);
     }

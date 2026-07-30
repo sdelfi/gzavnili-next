@@ -12,6 +12,7 @@ import { Alert } from '@/components/ui/Alert';
 import { IconButton } from '@/components/ui/IconButton';
 import { routes } from '@/lib/routes';
 import type { BemaUser } from '@/components/admin/AuthProvider';
+import { listUsers } from '@/lib/api/bema/users';
 import s from './UserListPage.module.css';
 
 type ListRow = BemaUser & {
@@ -64,23 +65,7 @@ export function UserListPage({ accountType }: { accountType: 'BemaUser' | 'Custo
 
   useEffect(() => {
     let cancelled = false;
-    const params = new URLSearchParams({
-      accountType,
-      page: String(page),
-      perPage: String(perPage),
-      sort,
-      dir,
-      ...(search ? { search } : {}),
-      ...(active ? { active } : {}),
-    });
-    fetch(`/api/bema/users?${params.toString()}`, { credentials: 'same-origin' })
-      .then(async (res) => {
-        if (!res.ok) {
-          const body = await res.json().catch(() => null);
-          throw new Error(body?.error ?? 'Failed to load users.');
-        }
-        return res.json();
-      })
+    listUsers<ListRow>({ accountType, page, perPage, sort, dir, search, active })
       .then((data) => {
         if (cancelled) return;
         setRows(data.items);

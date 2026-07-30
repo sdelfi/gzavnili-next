@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
 import { IconButton } from '@/components/ui/IconButton';
 import { routes } from '@/lib/routes';
+import { deletePage, listPages } from '@/lib/api/bema/pages';
 import s from './PageListPage.module.css';
 
 type ListRow = { id: string; slug: string; locale: string; name: string; updatedAt: string };
@@ -56,22 +57,7 @@ export function PageListPage() {
 
   useEffect(() => {
     let cancelled = false;
-    const params = new URLSearchParams({
-      page: String(page),
-      perPage: String(perPage),
-      sort,
-      dir,
-      ...(search ? { search } : {}),
-      ...(locale ? { locale } : {}),
-    });
-    fetch(`/api/bema/pages?${params.toString()}`, { credentials: 'same-origin' })
-      .then(async (res) => {
-        if (!res.ok) {
-          const body = await res.json().catch(() => null);
-          throw new Error(body?.error ?? 'Failed to load pages.');
-        }
-        return res.json();
-      })
+    listPages<ListRow>({ page, perPage, sort, dir, search, locale })
       .then((data) => {
         if (cancelled) return;
         setRows(data.items);
@@ -91,14 +77,13 @@ export function PageListPage() {
 
   async function handleDelete(id: string) {
     if (!confirm('Delete this page? This cannot be undone.')) return;
-    const res = await fetch(`/api/bema/pages/${id}`, { method: 'DELETE', credentials: 'same-origin' });
-    if (!res.ok) {
-      const body = await res.json().catch(() => null);
-      setError(body?.error ?? 'Failed to delete page.');
-      return;
+    try {
+      await deletePage(id);
+      setRows((prev) => prev.filter((r) => r.id !== id));
+      setTotal((prev) => prev - 1);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete page.');
     }
-    setRows((prev) => prev.filter((r) => r.id !== id));
-    setTotal((prev) => prev - 1);
   }
 
   const returnTo = `${routes.bema.pages()}?${searchParams.toString()}`;

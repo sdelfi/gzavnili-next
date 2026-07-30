@@ -25,6 +25,10 @@ export const registerSchema = z
     register_password: z.string().min(8, 'Password must be at least 8 characters.'),
     register_passwordverify: z.string(),
     language: z.enum(['en', 'ge']).optional(),
+    // Legacy: `<input type="checkbox" name="register_terms" value="1" required>` — a native
+    // unchecked checkbox is simply absent from FormData, not `false`, so this is a literal
+    // match on the checked value rather than `z.boolean()`.
+    register_terms: z.literal('1', { error: 'You must agree to the Terms & Conditions and Privacy Policy.' }),
   })
   .refine((data) => data.register_password === data.register_passwordverify, {
     message: 'Passwords do not match.',

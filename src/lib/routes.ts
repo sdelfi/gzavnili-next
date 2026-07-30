@@ -10,6 +10,7 @@ export type StaticPageSlug =
   | 'prices'
   | 'contact'
   | 'faq'
+  | 'faqregistration'
   | 'terms-and-conditions'
   | 'privacy-policy'
   | 'forbidden-items'

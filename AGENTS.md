@@ -91,6 +91,26 @@ helper (`routes.home()`, `routes.login()`, `routes.page("slug")` for a
 static marketing page, etc.) instead of a literal path string. Add a new
 named helper there when a route doesn't have one yet.
 
+# API calls go through a service layer
+
+Components/pages never call `fetch()` directly against `/api/bema/*` (or any
+other internal API) — that belongs in a typed function under
+`src/lib/api/`, which the component imports and calls instead. Layout:
+`src/lib/api/http.ts` holds the shared low-level plumbing (`apiGet`/
+`apiPost`/`apiPatch`/`apiDelete`, the `ApiError` class carrying `status`/
+`body`, and `extractErrorMessages()` for the common
+zod-`{formErrors,fieldErrors}` response shape); one file per domain sits
+under `src/lib/api/bema/` (`auth.ts`, `users.ts`, `pricingRules.ts`,
+`pages.ts`, ...) and exports the actual typed request functions
+(`login()`, `listUsers()`, `createPage()`, ...). A component's job is to
+call `listUsers(params)` and handle the typed result/`ApiError`, not to
+know the URL, method, `credentials: 'same-origin'`, or JSON
+stringify/parse boilerplate — that's exactly the duplication this rule
+exists to kill (ten components had it copy-pasted before this was
+written). Add a new function to the relevant domain file (or a new
+domain file) when a route doesn't have one yet, the same way
+`routes.ts` works for hrefs.
+
 # Database schema/migrations
 
 Never hand-write SQL that a proper tool should generate. Schema changes go through Prisma

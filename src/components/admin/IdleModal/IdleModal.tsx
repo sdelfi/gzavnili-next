@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { useBemaAuth } from '@/components/admin/AuthProvider';
+import { checkPassword, refreshSession } from '@/lib/api/bema/auth';
+import { ApiError } from '@/lib/api/http';
 import { routes } from '@/lib/routes';
 import s from './IdleModal.module.css';
 
@@ -56,14 +58,16 @@ export function IdleModal() {
 
   if (!locked || !user) return null;
 
-  async function submitCheckPassword() {
-    const res = await fetch('/api/bema/auth/check-password', {
-      method: 'POST',
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password }),
-    });
-    return { res, body: await res.json().catch(() => ({ result: 0 })) };
+  function unlock(result: 1 | 2) {
+    window.localStorage.setItem(LOCKED_KEY, '0');
+    window.localStorage.setItem(LAST_ACTIVITY_KEY, String(Date.now()));
+    setPassword('');
+    setLocked(false);
+    if (result === 2) {
+      // Session was switched to a different BemaUser (short-password handoff) — reload so
+      // every client-side auth-derived view picks up the new identity.
+      window.location.reload();
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -71,36 +75,30 @@ export function IdleModal() {
     setSubmitting(true);
     setError(null);
     try {
-      let { res, body } = await submitCheckPassword();
-
-      // The access-token cookie (15min TTL) can easily have expired while this modal sat
-      // idle-locked, well before it appeared: it shows up after 5 minutes of inactivity, but
-      // a user might not come back to type their password for another 10+ minutes after
-      // that. A 401 here isn't "wrong password" (the real message the old code showed,
-      // confusingly) — it's "your session needs a refresh." Try that once, silently, and
-      // resubmit before giving up.
-      if (res.status === 401) {
-        const refreshed = await fetch('/api/bema/auth/refresh', { method: 'POST', credentials: 'same-origin' });
-        if (!refreshed.ok) {
+      let body: { result: 0 | 1 | 2 };
+      try {
+        body = await checkPassword(password);
+      } catch (err) {
+        // The access-token cookie (15min TTL) can easily have expired while this modal sat
+        // idle-locked, well before it appeared: it shows up after 5 minutes of inactivity,
+        // but a user might not come back to type their password for another 10+ minutes
+        // after that. A 401 here isn't "wrong password" — it's "your session needs a
+        // refresh." Try that once, silently, and resubmit before giving up.
+        if (!(err instanceof ApiError) || err.status !== 401) throw err;
+        try {
+          await refreshSession();
+          body = await checkPassword(password);
+        } catch {
           // Refresh token's gone too (7-day TTL lapsed, or revoked) — nothing left to
           // salvage client-side, send them through the real login flow.
           await logout();
           router.push(routes.bema.login());
           return;
         }
-        ({ res, body } = await submitCheckPassword());
       }
 
       if (body.result === 1 || body.result === 2) {
-        window.localStorage.setItem(LOCKED_KEY, '0');
-        window.localStorage.setItem(LAST_ACTIVITY_KEY, String(Date.now()));
-        setPassword('');
-        setLocked(false);
-        if (body.result === 2) {
-          // Session was switched to a different BemaUser (short-password handoff) —
-          // reload so every client-side auth-derived view picks up the new identity.
-          window.location.reload();
-        }
+        unlock(body.result);
       } else {
         setError('Wrong password');
       }
