@@ -1,0 +1,1 @@
+export { RegisterFaq } from './RegisterFaq';

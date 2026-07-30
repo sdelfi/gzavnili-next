@@ -101,6 +101,9 @@ export function PageListPage() {
           <Link href={`${routes.bema.pageEdit(r.id)}?returnTo=${encodeURIComponent(returnTo)}`}>
             <IconButton icon="edit" title="Edit" />
           </Link>
+          <a href={r.locale === 'ge' ? `/ge/${r.slug}` : `/${r.slug}`} target="_blank" rel="noreferrer">
+            <IconButton icon="view" title="View page" />
+          </a>
           <button type="button" className={s.iconButtonReset} onClick={() => handleDelete(r.id)}>
             <IconButton icon="delete" title="Delete" />
           </button>

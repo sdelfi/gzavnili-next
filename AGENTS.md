@@ -68,6 +68,21 @@ to migrate piecemeal into components like `style.css`. Re-sync it by re-fetching
 `usa.gzavnili.com/css/style.css` outright when it's next known to be stale; don't hand-edit
 or selectively trim it.
 
+# Pages are thin
+
+A `page.tsx` (or `layout.tsx`) file is composition only: which components go
+where, plus genuinely one-off glue (reading `params`/`searchParams`,
+`generateMetadata`, a `redirect()`/`notFound()`). It is not where markup,
+copy, or layout structure actually lives — if a page file has a paragraph
+of JSX detail (a two-column `row`/`col` wrapper, an FAQ list, a form's
+fields), that detail belongs in a component under `src/components/`, named
+for what it is, with its own folder per "One component, one folder" above.
+A reader should be able to tell what a page renders by skimming its
+`return` without wading through implementation. This isn't just tidiness —
+it's what makes a piece of structure (a shared layout, an FAQ block)
+reusable the next time another page needs the same thing, instead of
+copy-pasted between page files.
+
 # Public pages are server-rendered
 
 Every page under `src/app/[locale]/` (the public, customer-facing site — marketing pages,

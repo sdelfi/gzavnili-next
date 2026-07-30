@@ -523,6 +523,15 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       items transcribed from the legacy source, not invented) — added a `Register`
       messages namespace (en/ge) for all of this rather than hardcoding strings, matching
       the login page's i18n pattern.
+      **Follow-up** (client-flagged): the page had turned into a pile of JSX detail instead
+      of composition — extracted `RegisterLayout` (the `.container`/`.row`/`.col-regform`
+      shell) and `RegisterFaq` (the right-column FAQ block) into their own components,
+      leaving `register/page.tsx` as a 3-line `return`. Also fixed real missing styling
+      found in the process: `.faq .faq-list .faq-item` (the accordion) only existed in
+      `static.css` (CMS-only, not loaded on this page) — reused the homepage's existing
+      `FaqAccordion` component instead (it already has this exact CSS properly extracted
+      into its own module) rather than porting the rule a second time. New AGENTS.md rule:
+      "Pages are thin."
 - [ ] Remaining bema modules per the rollout plan: parcels (the actual client pain point —
       see `docs/migrations/02-parcels-domain-analysis.md`/`04-postgres-schema-design.md`),
       products, orders, statements, content, reports, messages, config, coupons-adjacent

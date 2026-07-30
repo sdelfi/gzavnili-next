@@ -12,6 +12,9 @@ const ICONS = {
   delete: (
     <path d="M6 7h12l-1 14H7L6 7zm3-3h6l1 2H8l1-2zM9.5 9.5v9m2.5-9v9m2.5-9v9" stroke="currentColor" strokeWidth="1.5" fill="none" />
   ),
+  view: (
+    <path d="M12 5c-5.5 0-9.5 4.5-10.5 7 1 2.5 5 7 10.5 7s9.5-4.5 10.5-7c-1-2.5-5-7-10.5-7zm0 11.5a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9zm0-2a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z" />
+  ),
 } as const;
 
 // Table-row action icon — every bema list screen's "Edit"/"Login as user"/"View Statement"
