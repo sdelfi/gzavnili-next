@@ -5,7 +5,7 @@
  * verbatim. Reuses the same arrow glyph from the existing icons.png sprite so the dropdown
  * arrow matches pixel-for-pixel. See docs/decisions/0002-select-library.md.
  */
-.rselect__control {
+html .rselect__control {
   border: 1px solid #bfbfbf;
   border-radius: 2px;
   min-height: 32px;
@@ -25,15 +25,15 @@
 .rselect__single-value {
   color: #4c4c4c;
   font-family: 'Open Sans', arial;
-  font-weight: 600;
-  font-size: 15px;
+  font-weight: 400;
+  font-size: 14px;
 }
 
 .rselect__input-container {
   color: #4c4c4c;
   font-family: 'Open Sans', arial;
-  font-weight: 600;
-  font-size: 15px;
+  font-weight: 400;
+  font-size: 14px;
 }
 
 .rselect__indicator-separator {

@@ -32,7 +32,8 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
-  const { password, billingAddress, shippingAddress, notificationMessageTypeKeys, ...data } = parsed.data;
+  const { password, passwordShort, billingAddress, shippingAddress, notificationMessageTypeKeys, ...data } =
+    parsed.data;
 
   const existing = await db.user.findUnique({ where: { id } });
   if (!existing) return NextResponse.json({ error: 'Not found.' }, { status: 404 });
@@ -50,6 +51,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   }
 
   const passwordFields = password ? await hashPassword(password) : null;
+  const passwordShortHash = passwordShort ? (await hashPassword(passwordShort)).hash : undefined;
 
   const user = await db.$transaction(async (tx) => {
     const billingAddressId = await upsertAddress(tx, existing.billingAddressId, billingAddress);
@@ -59,6 +61,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       data: {
         ...data,
         ...(passwordFields ? { passwordHash: passwordFields.hash, passwordAlgo: passwordFields.algo } : {}),
+        ...(passwordShortHash !== undefined ? { passwordShortHash } : {}),
         billingAddressId,
         shippingAddressId,
         ...(notificationMessageTypeKeys

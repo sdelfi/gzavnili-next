@@ -28,42 +28,46 @@ export function Table<T>({
   emptyMessage?: string;
 }) {
   return (
-    <table className={s.table}>
-      <thead>
-        <tr>
-          {columns.map((col) => (
-            <th key={col.key}>
-              {col.sortable && onSort ? (
-                <button type="button" className={s.sortButton} onClick={() => onSort(col.key)}>
-                  {col.label}
-                  {sort?.key === col.key && <span className={s.sortIndicator}>{sort.dir === 'asc' ? '▲' : '▼'}</span>}
-                </button>
-              ) : (
-                col.label
-              )}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {rows.length === 0 ? (
+    <div className={s.wrapper}>
+      <table className={s.table}>
+        <thead>
           <tr>
-            <td colSpan={columns.length} className={s.empty}>
-              {emptyMessage}
-            </td>
+            {columns.map((col) => (
+              <th key={col.key}>
+                {col.sortable && onSort ? (
+                  <button type="button" className={s.sortButton} onClick={() => onSort(col.key)}>
+                    {col.label}
+                    {sort?.key === col.key && (
+                      <span className={s.sortIndicator}>{sort.dir === 'asc' ? '▲' : '▼'}</span>
+                    )}
+                  </button>
+                ) : (
+                  col.label
+                )}
+              </th>
+            ))}
           </tr>
-        ) : (
-          rows.map((row, i) => (
-            <tr key={getRowKey(row)} className={cn(i % 2 === 0 ? s.rowEven : s.rowOdd)}>
-              {columns.map((col) => (
-                <td key={col.key}>
-                  {col.render ? col.render(row) : String((row as Record<string, unknown>)[col.key] ?? '')}
-                </td>
-              ))}
+        </thead>
+        <tbody>
+          {rows.length === 0 ? (
+            <tr>
+              <td colSpan={columns.length} className={s.empty}>
+                {emptyMessage}
+              </td>
             </tr>
-          ))
-        )}
-      </tbody>
-    </table>
+          ) : (
+            rows.map((row, i) => (
+              <tr key={getRowKey(row)} className={cn(i % 2 === 0 ? s.rowEven : s.rowOdd)}>
+                {columns.map((col) => (
+                  <td key={col.key}>
+                    {col.render ? col.render(row) : String((row as Record<string, unknown>)[col.key] ?? '')}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 }

@@ -24,6 +24,38 @@ const LANGUAGE_OPTIONS = [
   { value: 'ge', label: 'Georgian' },
 ];
 
+// Maps zod field-error keys (including dotted paths like `billingAddress.firstName`)
+// to human-readable labels for the top-of-form error list.
+const FIELD_LABELS: Record<string, string> = {
+  username: 'Username',
+  email: 'Email',
+  firstName: 'First Name',
+  lastName: 'Last Name',
+  password: 'Password',
+  adminRole: 'User Type',
+  suffix: 'Suffix',
+  passwordShort: 'Short Password',
+  importId: 'Import Id',
+  balanceAdjust: 'Balance Adjust',
+  language: 'Email Language',
+  'billingAddress.firstName': 'Billing Address: First Name',
+  'billingAddress.lastName': 'Billing Address: Last Name',
+  'billingAddress.email': 'Billing Address: Email',
+  'billingAddress.country': 'Billing Address: Country',
+  'billingAddress.street1': 'Billing Address: Street',
+  'billingAddress.city': 'Billing Address: City',
+  'billingAddress.state': 'Billing Address: State',
+  'billingAddress.postalCode': 'Billing Address: Postal Code',
+  'shippingAddress.firstName': 'Shipping Address: First Name',
+  'shippingAddress.lastName': 'Shipping Address: Last Name',
+  'shippingAddress.email': 'Shipping Address: Email',
+  'shippingAddress.country': 'Shipping Address: Country',
+  'shippingAddress.street1': 'Shipping Address: Street',
+  'shippingAddress.city': 'Shipping Address: City',
+  'shippingAddress.state': 'Shipping Address: State',
+  'shippingAddress.postalCode': 'Shipping Address: Postal Code',
+};
+
 export type UserFormValues = {
   username: string;
   email: string;
@@ -34,6 +66,7 @@ export type UserFormValues = {
   confirmed: boolean;
   adminRole: AdminRole | null;
   suffix: string;
+  passwordShort: string;
   importId: string;
   balanceAdjust: string;
   notifyViaMail: boolean;
@@ -74,6 +107,7 @@ export function UserForm({
     confirmed: initialValues?.confirmed ?? false,
     adminRole: initialValues?.adminRole ?? (accountType === 'BemaUser' ? 'BemaStandard' : null),
     suffix: initialValues?.suffix ?? '',
+    passwordShort: '',
     importId: initialValues?.importId ?? '',
     balanceAdjust: initialValues?.balanceAdjust ?? '0',
     notifyViaMail: initialValues?.notifyViaMail ?? true,
@@ -113,16 +147,18 @@ export function UserForm({
 
     if (values.password && values.password !== passwordVerify) {
       setErrors(['Password and Verify Password must match.']);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
     setSubmitting(true);
-    const { password, balanceAdjust, ...rest } = values;
+    const { password, passwordShort, balanceAdjust, ...rest } = values;
     const payload = {
       ...rest,
       accountType,
       balanceAdjust: Number(balanceAdjust) || 0,
       ...(password ? { password } : {}),
+      ...(passwordShort ? { passwordShort } : {}),
     };
 
     try {
@@ -134,11 +170,14 @@ export function UserForm({
       });
       if (!res.ok) {
         const body = await res.json().catch(() => null);
-        const flat = body?.error?.formErrors ?? [];
-        const fieldErrors = body?.error?.fieldErrors
-          ? Object.values(body.error.fieldErrors as Record<string, string[]>).flat()
+        const flat: string[] = body?.error?.formErrors ?? [];
+        const fieldErrors: string[] = body?.error?.fieldErrors
+          ? Object.entries(body.error.fieldErrors as Record<string, string[]>).flatMap(([field, messages]) =>
+              messages.map((message) => `${FIELD_LABELS[field] ?? field}: ${message}`),
+            )
           : [];
         setErrors(flat.concat(fieldErrors).length ? flat.concat(fieldErrors) : [body?.error ?? 'Save failed.']);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
       router.push(routes.bema.users({ accountType }));
@@ -160,6 +199,15 @@ export function UserForm({
           <label className={s.field}>
             Import Id
             <Input value={values.importId} onChange={(e) => set('importId', e.target.value)} />
+          </label>
+
+          <label className={s.field}>
+            First Name
+            <Input value={values.firstName} onChange={(e) => set('firstName', e.target.value)} required />
+          </label>
+          <label className={s.field}>
+            Last Name
+            <Input value={values.lastName} onChange={(e) => set('lastName', e.target.value)} required />
           </label>
 
           <label className={s.field}>
@@ -265,6 +313,21 @@ export function UserForm({
                 onChange={(value) => set('adminRole', value)}
               />
             </div>
+
+            <label className={s.field}>
+              Short Password
+              <Input
+                type="password"
+                value={values.passwordShort}
+                onChange={(e) => set('passwordShort', e.target.value)}
+                minLength={3}
+                maxLength={15}
+              />
+              <span className={s.hint}>
+                {userId ? 'Leave blank to keep current short password. ' : ''}
+                Used for the idle-lock quick-unlock prompt (3–15 characters).
+              </span>
+            </label>
           </div>
         )}
       </CollapsibleSection>

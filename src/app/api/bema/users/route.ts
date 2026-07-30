@@ -65,7 +65,8 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
-  const { password, billingAddress, shippingAddress, notificationMessageTypeKeys, ...data } = parsed.data;
+  const { password, passwordShort, billingAddress, shippingAddress, notificationMessageTypeKeys, ...data } =
+    parsed.data;
 
   const existing = await db.user.findFirst({ where: { OR: [{ username: data.username }, { email: data.email }] } });
   if (existing) {
@@ -73,6 +74,7 @@ export async function POST(request: NextRequest) {
   }
 
   const { hash, algo } = await hashPassword(password);
+  const passwordShortHash = passwordShort ? (await hashPassword(passwordShort)).hash : null;
 
   const user = await db.$transaction(async (tx) => {
     const billingAddressId = await upsertAddress(tx, null, billingAddress);
@@ -82,6 +84,7 @@ export async function POST(request: NextRequest) {
         ...data,
         passwordHash: hash,
         passwordAlgo: algo,
+        passwordShortHash,
         billingAddressId,
         shippingAddressId,
         ...(notificationMessageTypeKeys

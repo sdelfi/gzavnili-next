@@ -12,7 +12,8 @@ type UserWithRelations = User & {
 // bind checkboxes to directly.
 export function publicUser(user: UserWithRelations) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- destructure-to-omit
-  const { passwordHash, passwordAlgo, passwordResetToken, notificationMessageTypes, ...rest } = user;
+  const { passwordHash, passwordAlgo, passwordShortHash, passwordResetToken, notificationMessageTypes, ...rest } =
+    user;
   return {
     ...rest,
     ...(notificationMessageTypes ? { notificationMessageTypeKeys: notificationMessageTypes.map((m) => m.key) } : {}),

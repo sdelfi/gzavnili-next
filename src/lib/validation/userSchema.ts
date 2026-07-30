@@ -57,6 +57,9 @@ export const createUserSchema = z
   .object({
     ...baseFields,
     password: z.string().min(8),
+    // Legacy "short password"/PIN — optional, but if set must be >2 chars, matching the
+    // legacy `validatePasswordShort`'s `len(PasswordShort) > 2` lookup guard.
+    passwordShort: z.string().min(3).max(15).nullable().optional().or(z.literal('')),
   })
   .refine(passwordDoesNotContainUsername, { message: 'Password must not contain the username.', path: ['password'] })
   .refine((data) => data.accountType !== 'BemaUser' || !!data.adminRole, {
@@ -68,6 +71,7 @@ export const updateUserSchema = z
   .object({
     ...baseFields,
     password: z.string().min(8).optional(),
+    passwordShort: z.string().min(3).max(15).nullable().optional().or(z.literal('')),
   })
   .partial()
   .refine(

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useBemaAuth } from '@/components/admin/AuthProvider';
 import { Sidebar } from '@/components/admin/Sidebar';
 import { TopBar } from '@/components/admin/TopBar';
+import { IdleModal } from '@/components/admin/IdleModal';
 import { routes } from '@/lib/routes';
 import s from './protected.module.css';
 
@@ -29,6 +30,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
   return (
     <div className={s.shell}>
+      <IdleModal />
       {/* useSearchParams (used to highlight the active nav item) needs a Suspense
           boundary — see the other bema pages that read search params for the same reason. */}
       <Suspense fallback={null}>

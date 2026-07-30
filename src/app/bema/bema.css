@@ -29,6 +29,7 @@ textarea {
    site's global `public/css/style.css`, which bema doesn't load — see that component's own
    comment) — matched here to `ui/Select.css`'s look/height so a filter bar mixing selects
    and a search input is visually consistent, not "same component, different chrome". */
+input[type='date'],
 input[type='number'],
 input[type='text'],
 input[type='email'],
@@ -43,7 +44,7 @@ input[type='search'] {
   padding: 0 12px;
   border: 1px solid #bfbfbf;
   border-radius: 2px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: #4c4c4c;
 
