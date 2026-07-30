@@ -58,6 +58,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  // The access-token cookie is short-lived (15min, ACCESS_TOKEN_TTL_SECONDS) by design —
+  // `/api/bema/auth/refresh` rotates it (sliding session), but until now nothing ever
+  // called it. Every API call — not just the idle-lock modal's re-auth — silently started
+  // 401ing after 15 minutes in any tab left open that long. Refreshing on a timer well
+  // inside that window (10min) keeps the session alive for as long as the tab is open,
+  // matching the sliding-session design this endpoint already existed for.
+  const isLoggedIn = user !== null;
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    const interval = setInterval(
+      () => {
+        fetch('/api/bema/auth/refresh', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
+      },
+      10 * 60 * 1000,
+    );
+    return () => clearInterval(interval);
+  }, [isLoggedIn]);
+
   return <AuthContext.Provider value={{ user, loading, refresh, logout }}>{children}</AuthContext.Provider>;
 }
 

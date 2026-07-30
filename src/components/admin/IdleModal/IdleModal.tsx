@@ -56,18 +56,40 @@ export function IdleModal() {
 
   if (!locked || !user) return null;
 
+  async function submitCheckPassword() {
+    const res = await fetch('/api/bema/auth/check-password', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    });
+    return { res, body: await res.json().catch(() => ({ result: 0 })) };
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
     try {
-      const res = await fetch('/api/bema/auth/check-password', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      });
-      const body = await res.json().catch(() => ({ result: 0 }));
+      let { res, body } = await submitCheckPassword();
+
+      // The access-token cookie (15min TTL) can easily have expired while this modal sat
+      // idle-locked, well before it appeared: it shows up after 5 minutes of inactivity, but
+      // a user might not come back to type their password for another 10+ minutes after
+      // that. A 401 here isn't "wrong password" (the real message the old code showed,
+      // confusingly) — it's "your session needs a refresh." Try that once, silently, and
+      // resubmit before giving up.
+      if (res.status === 401) {
+        const refreshed = await fetch('/api/bema/auth/refresh', { method: 'POST', credentials: 'same-origin' });
+        if (!refreshed.ok) {
+          // Refresh token's gone too (7-day TTL lapsed, or revoked) — nothing left to
+          // salvage client-side, send them through the real login flow.
+          await logout();
+          router.push(routes.bema.login());
+          return;
+        }
+        ({ res, body } = await submitCheckPassword());
+      }
 
       if (body.result === 1 || body.result === 2) {
         window.localStorage.setItem(LOCKED_KEY, '0');

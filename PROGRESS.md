@@ -351,6 +351,19 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       plaintext `PasswordShort` column, a deliberate security improvement with
       identical external behavior. See `docs/decisions/0011-bema-admin.md`'s
       "Idle-lock modal" section for the full writeup.
+- [x] **Fixed: bema sessions silently died after 15 minutes** — `/api/bema/auth/refresh`
+      (rotates the access/refresh token pair, sliding session) existed since the auth
+      realm was first built but nothing ever called it, so the 15-minute access-token
+      cookie just expired in any tab left open that long, 401ing every subsequent API
+      call. Found via the idle-lock modal specifically (`check-password` returning "Not
+      authenticated." — misreported as "Wrong password" by the old code) since a user is
+      most likely to hit the expiry right after being idle-locked, but the bug affected
+      the whole panel, not just that modal. Fixed at the root: `AuthProvider` now calls
+      `/api/bema/auth/refresh` on a 10-minute timer for as long as a session is active.
+      `IdleModal` additionally retries once through an explicit refresh+resubmit on a 401
+      (defense in depth for a backgrounded/throttled tab that missed a timer tick) before
+      falling back to a real logout, and no longer mislabels an expired-session 401 as a
+      wrong password.
 - [x] **UI polish pass**: sidebar was scrolling away with the page instead of staying
       pinned — made `position: sticky; top: 0; height: 100vh` with its own internal
       `.scrollArea` scroll instead of `max-height` on a normal in-flow block. Added a basic
