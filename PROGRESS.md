@@ -402,12 +402,17 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       `AuthLayout.module.css` (component-owned, per AGENTS.md's "Global CSS cleanup" rule),
       the two unrelated leftover rules (`.selected-item-lang`/`.select2-dropdown`, used by
       the not-yet-ported `account/parcel-share` page) moved to `style.css`.
-      **Greeting logic fix**: first version guessed the visitor's timezone from the site's
+      **Greeting logic, corrected twice**: v1 guessed the visitor's timezone from the site's
       locale switcher (en→America/New_York, ge→Asia/Tbilisi) — wrong whenever someone
-      browses a locale that doesn't match where they actually are. Legacy uses real
-      IP-geolocation (no equivalent infra here); switched to reading the visitor's own
-      browser clock client-side instead (`Greeting` is now a small client component), which
-      is simply always correct for "what time is it for this person" — see `Greeting.tsx`.
+      browses a locale that doesn't match where they actually are. v2 switched to reading the
+      visitor's own browser clock client-side (`Greeting` as a `'use client'` component) —
+      more accurate per-visitor, but renders blank in the initial HTML and pops in after
+      hydration, which the client flagged against a now-explicit AGENTS.md rule ("Public
+      pages are server-rendered" — added this session specifically because of this bug).
+      Final version (v3): server-rendered again, using the **server's own clock** — less
+      accurate for a visitor far from the server's timezone (legacy's real IP-geolocation has
+      no equivalent here), but real content in the first response, no flash, good for SEO.
+      See `Greeting.tsx`'s comment and the new AGENTS.md rule.
       **Not yet done**: `register`/`forgot`/`reset` pages still use the earlier, simpler
       generic markup (not this pixel-matched chrome) — `AuthLayout`/`QuestionPanel` are
       ready to be reused for them when they get the same pass, not yet applied.

@@ -60,6 +60,22 @@ file. The end goal is to empty `style.css` out entirely, component by component,
 page gets touched — not a one-shot rewrite, but also not something to skip just because a
 page "already works" with the old global rule still in place.
 
+# Public pages are server-rendered
+
+Every page under `src/app/[locale]/` (the public, customer-facing site — marketing pages,
+login/register/forgot/reset, anything SEO matters for) must render its real content
+server-side, not as a client-only fill-in after hydration. A visitor (and a crawler) should
+see the actual content in the initial HTML, not a blank/placeholder that gets replaced by a
+`useEffect` a moment later. This is why `Greeting` (`src/components/auth/Greeting/`) computes
+its time-of-day bucket from the server's own clock rather than the visitor's browser clock —
+reading `Date` client-side after mount would be more accurate per-visitor, but violates this
+rule (SEO + no flash of missing content wins over per-visitor precision here). Client
+components are fine for genuinely interactive behavior (dropdowns, modals, form submission)
+that has no server-renderable initial state to begin with — the bar is "does real content
+depend on this," not "is this a client component at all." The bema admin panel
+(`src/app/bema/`) is the deliberate exception — it's CSR-only by design (see
+docs/migrations/03-target-architecture.md §3), not a public/SEO surface.
+
 # Routing
 
 Every internal `href`/`action` goes through `src/lib/routes.ts`'s `routes`
