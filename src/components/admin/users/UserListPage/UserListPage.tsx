@@ -9,11 +9,17 @@ import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
+import { IconButton } from '@/components/ui/IconButton';
 import { routes } from '@/lib/routes';
 import type { BemaUser } from '@/components/admin/AuthProvider';
 import s from './UserListPage.module.css';
 
-type ListRow = BemaUser & { active: boolean; organization: string | null; createdAt: string };
+type ListRow = BemaUser & {
+  active: boolean;
+  organization: string | null;
+  createdAt: string;
+  billingAddress?: { country: string | null } | null;
+};
 type SortKey = 'lastName' | 'username' | 'email' | 'createdAt';
 
 const ACTIVE_OPTIONS = [
@@ -92,15 +98,42 @@ export function UserListPage({ accountType }: { accountType: 'BemaUser' | 'Custo
     };
   }, [accountType, page, perPage, search, active, sort, dir]);
 
+  // Preserves the current filter/sort/page state across the edit round-trip, matching the
+  // legacy `user_edit.cfm`'s `location(form.rs)` redirect-back-to-where-you-came-from
+  // behavior (legacy passes it as an explicit `rs` querystring param on every list row/Add
+  // link) rather than always landing back on a reset, unfiltered list.
+  const returnTo = `${routes.bema.users()}?${searchParams.toString()}`;
+
   const columns: Column<ListRow>[] = [
     { key: 'lastName', label: 'Name', sortable: true, render: (r) => `${r.lastName ?? ''}, ${r.firstName ?? ''}` },
     { key: 'username', label: 'Username', sortable: true },
     { key: 'email', label: 'Email', sortable: true },
+    ...(accountType === 'BemaUser'
+      ? [{ key: 'country', label: 'Country', render: (r: ListRow) => r.billingAddress?.country ?? '' }]
+      : []),
     { key: 'active', label: 'Status', render: (r) => (r.active ? 'Active' : 'Inactive') },
     {
       key: 'actions',
       label: '',
-      render: (r) => <Link href={routes.bema.userEdit(r.id)}>Edit</Link>,
+      render: (r) => (
+        <div className={s.actions}>
+          <Link href={`${routes.bema.userEdit(r.id)}?returnTo=${encodeURIComponent(returnTo)}`}>
+            <IconButton icon="edit" title="Edit" />
+          </Link>
+          {accountType === 'Customer' && (
+            <>
+              {/* "Login as user" needs a design decision (which auth realm, since there's
+                  no customer-facing session system yet) before it can be wired for real —
+                  see the open question in docs/decisions/0011-bema-admin.md. Disabled
+                  placeholder for now, not a dead/fake link. */}
+              <IconButton icon="loginAs" title="Login as user (not implemented yet)" disabled />
+              <Link href={routes.bema.userStatement(r.id)}>
+                <IconButton icon="statement" title="View Statement" />
+              </Link>
+            </>
+          )}
+        </div>
+      ),
     },
   ];
 
@@ -138,7 +171,9 @@ export function UserListPage({ accountType }: { accountType: 'BemaUser' | 'Custo
           />
         </div>
         <div className={s.spacer} />
-        <Link href={`${routes.bema.userNew()}?accountType=${accountType}`}>
+        <Link
+          href={`${routes.bema.userNew()}?accountType=${accountType}&returnTo=${encodeURIComponent(returnTo)}`}
+        >
           <Button type="button">Add {accountType === 'BemaUser' ? 'BEMA User' : 'Customer'}</Button>
         </Link>
       </div>

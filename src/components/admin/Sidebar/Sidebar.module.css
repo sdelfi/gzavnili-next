@@ -6,7 +6,13 @@
   background: #20599d;
   color: #fff;
   transition: width 0.15s ease;
-  max-height: 100vh;
+
+  /* Pinned to the viewport rather than scrolling away with the page — `.scrollArea` below
+     handles its own internal scroll for a nav list taller than the viewport. */
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  align-self: flex-start;
 
   &.collapsed {
     width: 56px;
@@ -15,6 +21,22 @@
       justify-content: center;
       padding: 10px 0;
     }
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: static;
+    height: auto;
+    width: 100%;
+
+    &.collapsed {
+      width: 100%;
+    }
+  }
+
+  .scrollArea {
+    max-height: 40vh;
   }
 }
 

@@ -21,3 +21,9 @@
 .spacer {
   flex: 1;
 }
+
+.actions {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+}

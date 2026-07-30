@@ -90,11 +90,16 @@ export function UserForm({
   accountType,
   initialValues,
   userId,
+  returnTo,
 }: {
   accountType: 'BemaUser' | 'Customer';
   initialValues?: Partial<UserFormValues>;
   /** Present when editing an existing user; absent when creating one. */
   userId?: string;
+  /** Where to navigate back to on save/cancel — the list URL (with its filter/sort/page
+      state) the user came from, matching the legacy `user_edit.cfm`'s `location(form.rs)`
+      redirect-back-to-where-you-came-from behavior. Falls back to a reset list. */
+  returnTo?: string;
 }) {
   const router = useRouter();
   const [values, setValues] = useState<UserFormValues>({
@@ -180,7 +185,7 @@ export function UserForm({
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
-      router.push(routes.bema.users({ accountType }));
+      router.push(returnTo || routes.bema.users({ accountType }));
     } finally {
       setSubmitting(false);
     }
@@ -352,7 +357,11 @@ export function UserForm({
         <Button type="submit" disabled={submitting}>
           {submitting ? 'Saving…' : 'Save'}
         </Button>
-        <Button type="button" variant="warning" onClick={() => router.push(routes.bema.users({ accountType }))}>
+        <Button
+          type="button"
+          variant="warning"
+          onClick={() => router.push(returnTo || routes.bema.users({ accountType }))}
+        >
           Cancel
         </Button>
       </div>

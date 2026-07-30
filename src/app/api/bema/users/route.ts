@@ -50,6 +50,10 @@ export async function GET(request: NextRequest) {
       orderBy: { [sort]: dir },
       skip: (page - 1) * perPage,
       take: perPage,
+      // Legacy `vwUsers.cfm` only shows the Country column for BEMA Users (`tid eq 1`) —
+      // fetched for every row regardless of accountType since it's cheap and simpler than
+      // conditionally shaping the include.
+      include: { billingAddress: { select: { country: true } } },
     }),
   ]);
 

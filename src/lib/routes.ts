@@ -39,5 +39,8 @@ export const routes = {
       params?.accountType ? `/bema/users?accountType=${params.accountType}` : '/bema/users',
     userNew: () => '/bema/users/new',
     userEdit: (id: string) => `/bema/users/${id}`,
+    // Legacy "View Statement" icon-link (`../statements/statement.cfm?userid=...`) —
+    // stubbed until the statements module is built, see PROGRESS.md.
+    userStatement: (id: string) => `/bema/statements/${id}`,
   },
 };

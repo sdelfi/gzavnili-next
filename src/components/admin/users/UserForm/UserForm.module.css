@@ -58,3 +58,10 @@
   padding: 16px;
   border-radius: 6px;
 }
+
+@media (max-width: 768px) {
+  .grid,
+  .messageTypeGrid {
+    grid-template-columns: 1fr;
+  }
+}

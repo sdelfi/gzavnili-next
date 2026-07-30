@@ -20,3 +20,13 @@
   flex: 1;
   padding: 24px;
 }
+
+@media (max-width: 768px) {
+  .shell {
+    flex-direction: column;
+  }
+
+  .content {
+    padding: 16px;
+  }
+}

@@ -1,6 +1,7 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import { Suspense, use, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Alert } from '@/components/ui/Alert';
 import { UserForm, type UserFormValues } from '@/components/admin/users/UserForm';
 import { EMPTY_ADDRESS, type AddressFormValues } from '@/components/admin/users/AddressFields';
@@ -26,8 +27,10 @@ function toAddressFormValues(address: RawAddress): AddressFormValues {
   return result;
 }
 
-export default function EditUserPage({ params }: { params: Promise<{ id: string }> }) {
+function EditUserPageInner({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get('returnTo') ?? undefined;
   const [user, setUser] = useState<RawUser | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,7 +60,15 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
   return (
     <div>
       <h1>Edit {user.accountType === 'BemaUser' ? 'BEMA User' : 'Customer'}</h1>
-      <UserForm accountType={user.accountType} initialValues={initialValues} userId={user.id} />
+      <UserForm accountType={user.accountType} initialValues={initialValues} userId={user.id} returnTo={returnTo} />
     </div>
+  );
+}
+
+export default function EditUserPage(props: { params: Promise<{ id: string }> }) {
+  return (
+    <Suspense fallback={<div>Loading…</div>}>
+      <EditUserPageInner {...props} />
+    </Suspense>
   );
 }

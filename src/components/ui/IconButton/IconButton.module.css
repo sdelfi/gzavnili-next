@@ -1,0 +1,24 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  color: #555;
+
+  &:hover {
+    background: #f0f0f0;
+    color: #222;
+  }
+}
+
+.disabled {
+  color: #bbb;
+  cursor: not-allowed;
+
+  &:hover {
+    background: none;
+    color: #bbb;
+  }
+}
