@@ -557,6 +557,18 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       `appearance: none` checkbox + hand-drawn `:checked` checkmark — no JS, matches the
       legacy look. Clicking the label already toggles the checkbox natively (real
       `<input>` wrapped in a real `<label>`); the only actual problem was the visual style.
+- [x] **Site-wide announcement popup ported** (`docs/decisions/0014-site-popup.md`): legacy
+      `views/layouts/new.html`'s `.message-popup`, driven by the `config` table's `ePopup`/
+      `PopupMessageen`/`PopupMessagege` — client-reported bug confirmed and fixed: legacy shows
+      the popup on `ePopup = 1` alone, even with a blank message; this port additionally
+      requires a non-empty trimmed message for the visitor's locale
+      (`src/components/SitePopup/`, wired into `src/app/[locale]/layout.tsx`). Reuses the
+      existing `Modal` component instead of porting fancybox; `showpopup` dismissal cookie
+      matches legacy's name/2h expiry. bema side: `/bema/settings` (`SiteSettingsForm`) +
+      `GET`/`PATCH /api/bema/config`, scoped to only the popup fields — the rest of legacy's
+      Site Settings mega-form (shipping dates/AWB/pricing) deferred to the parcels domain.
+      `Config` Prisma model (previously unused) extended with `popupEnabled`/
+      `popupMessageEn`/`popupMessageGe` (migration `20260731180000_add_site_popup`).
 - [ ] Remaining bema modules per the rollout plan: parcels (the actual client pain point —
       see `docs/migrations/02-parcels-domain-analysis.md`/`04-postgres-schema-design.md`),
       products, orders, statements, content, reports, messages, config, coupons-adjacent

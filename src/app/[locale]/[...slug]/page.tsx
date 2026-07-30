@@ -56,7 +56,7 @@ export default async function CmsPage({ params }: { params: Promise<{ locale: st
           exception note) — React hoists a <link> rendered anywhere in the tree into <head>,
           deduped by href, so this only ships on routes that actually render this component. */}
       <link rel="stylesheet" href="/css/static.css" />
-      <PageContent content={page.content} />
+      <PageContent content={page.content} locale={locale} />
     </>
   );
 }

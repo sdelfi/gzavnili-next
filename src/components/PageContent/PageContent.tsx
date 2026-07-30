@@ -1,5 +1,8 @@
-import { CalculatorPortal } from './CalculatorPortal';
-import { CALCULATOR_SLOT_ATTR } from './constants';
+import { Calculator } from '@/components/Calculator';
+import { QuoteForm } from '@/components/QuoteForm';
+import { QuestionForm } from '@/components/QuestionForm';
+import { SlotPortal } from './SlotPortal';
+import { CALCULATOR_SLOT_ATTR, QUOTE_FORM_SLOT_ATTR, QUESTION_FORM_SLOT_ATTR } from './constants';
 
 // Legacy Site Pages content isn't always plain HTML — `views/layouts/new.html` (the shared
 // page layout, wrapping every rendered view, not just specific controllers) substitutes a
@@ -13,11 +16,12 @@ import { CALCULATOR_SLOT_ATTR } from './constants';
 // (contact/pick-up-service/help-to-shop/quotation/mailing-list, see
 // docs/decisions/0013-site-pages-cms.md) — this one runs on *any* CMS page's content.
 //
-// Only `{CALCULATOR}` is wired up (to the already-ported `Calculator` component) since it's
-// the one confirmed in real content (`/parcel-service.html`) and the only one with an
-// existing React port. The rest are left as literal, visible placeholder text rather than
-// silently stripped — flagged in docs/decisions/0013-site-pages-cms.md as a known gap —
-// until each of their source sub-templates gets its own React port.
+// `{CALCULATOR}`/`{QUOTEFORM}`/`{QUESTIONFORM}` are wired up (to Calculator/QuoteForm/
+// QuestionForm) since they're the ones confirmed in real content and have an existing React
+// port. `{COURIERCALC_FORM}`/`{HELPTOSHOP}`/`{VOLUMECAL}` are left as literal, visible
+// placeholder text rather than silently stripped — flagged in
+// docs/decisions/0013-site-pages-cms.md as a known gap — until each of their source
+// sub-templates gets its own React port.
 const NEXT_SHIP_OFFSETS: Record<number, [send: number, del: number]> = {
   0: [1, 3], // Sunday
   1: [0, 2], // Monday
@@ -38,23 +42,41 @@ function addDays(date: Date, days: number) {
   return next;
 }
 
-export function PageContent({ content }: { content: string }) {
+export function PageContent({ content, locale }: { content: string; locale: string }) {
   const now = new Date();
   const [sendOffset, delOffset] = NEXT_SHIP_OFFSETS[now.getDay()];
   const hasCalculator = content.includes('{CALCULATOR}');
+  const hasQuoteForm = content.includes('{QUOTEFORM}');
+  const hasQuestionForm = content.includes('{QUESTIONFORM}');
 
   const html = content
     .replaceAll('{NEXTSEND}', formatMonthDay(addDays(now, sendOffset)))
     .replaceAll('{NEXTDEL}', formatMonthDay(addDays(now, delOffset)))
-    // An inert marker element, not a JSX split point — keeps the surrounding (possibly
-    // still-open) parent tags intact across a single HTML parse. See CalculatorPortal.tsx.
-    .replaceAll('{CALCULATOR}', `<div ${CALCULATOR_SLOT_ATTR}></div>`);
+    // Inert marker elements, not JSX split points — keeps the surrounding (possibly still-
+    // open) parent tags intact across a single HTML parse. See SlotPortal.tsx.
+    .replaceAll('{CALCULATOR}', `<div ${CALCULATOR_SLOT_ATTR}></div>`)
+    .replaceAll('{QUOTEFORM}', `<div ${QUOTE_FORM_SLOT_ATTR}></div>`)
+    .replaceAll('{QUESTIONFORM}', `<div ${QUESTION_FORM_SLOT_ATTR}></div>`);
 
   return (
     <>
       {/* Admin-authored CMS content — same trust boundary as the legacy WYSIWYG output, not user input. */}
       <div dangerouslySetInnerHTML={{ __html: html }} />
-      {hasCalculator && <CalculatorPortal />}
+      {hasCalculator && (
+        <SlotPortal slotAttr={CALCULATOR_SLOT_ATTR}>
+          <Calculator />
+        </SlotPortal>
+      )}
+      {hasQuoteForm && (
+        <SlotPortal slotAttr={QUOTE_FORM_SLOT_ATTR}>
+          <QuoteForm locale={locale} />
+        </SlotPortal>
+      )}
+      {hasQuestionForm && (
+        <SlotPortal slotAttr={QUESTION_FORM_SLOT_ATTR}>
+          <QuestionForm locale={locale} />
+        </SlotPortal>
+      )}
     </>
   );
 }
