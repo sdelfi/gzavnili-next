@@ -6756,3 +6756,30 @@ a.btn-mail.mail-prev {
         width: 100% !important
     }
 }
+
+/* Moved from public/css/loginpage.css (now retired — its `.container.loginpage`-scoped
+   rules moved into src/components/auth/AuthLayout/AuthLayout.module.css, see
+   docs/decisions/0012-customer-auth.md). These two are unrelated to that page family — used
+   by the not-yet-ported account/parcel-share page's language selector. */
+.selected-item-lang {
+    white-space: nowrap;
+    color: #222222;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 18px;
+    font-family: 'Montserrat'
+}
+
+.selected-item-lang img {
+    margin-right: 5px
+}
+
+.selected-item-lang .lang-text {
+    width: 39px;
+    text-align: center;
+    display: inline-block
+}
+
+.select2-dropdown {
+    width: auto !important
+}

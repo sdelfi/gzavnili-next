@@ -34,6 +34,30 @@
       "restoreAccess": "Restore Access!"
     }
   },
+  "Authenticate": {
+    "breadcrumbHome": "Home",
+    "signIn": "Sign in",
+    "greeting": {
+      "night": { "heading": "Good night!", "text": "Rest deeply and Dream Sweetly." },
+      "morning": { "heading": "Good morning!", "text": "This day will be great." },
+      "afternoon": { "heading": "Good afternoon!", "text": "Have a pleasant day." },
+      "evening": { "heading": "Good evening!", "text": "Have wonderful day." }
+    },
+    "emailOrUserId": "Email or User ID",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "cantAccessAccount": "Can't Access your Account?",
+    "logIn": "Log in",
+    "or": "or",
+    "createAccount": "Create an account",
+    "haveQuestion": "Have a question?",
+    "videoHelper": "Learn more with our videohelper",
+    "howToRegister": "How to Register?",
+    "howToRestorePassword": "How to Restore Password?",
+    "howToRestoreUserId": "How to Restore User ID?",
+    "testAccountQuestion": "Would you like to see test account?",
+    "logInToTestAccount": "Log in to test account"
+  },
   "Footer": {
     "tagline": "Everyday is a new day for us and we work really hard to satisfy our customer everywhere.",
     "newsletterLabel": "Newsletter Setup",

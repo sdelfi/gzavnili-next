@@ -1,18 +1,11 @@
-.form {
-  max-width: 360px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.checkbox {
+/* "Remember me" isn't part of the legacy login form's visible layout (see
+   docs/decisions/0012-customer-auth.md) — kept visually unobtrusive rather than redesigning
+   the ported layout to make room for it. */
+.rememberMe {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 14px;
-}
-
-.links {
-  font-size: 14px;
-  margin: 4px 0 0;
+  color: #818181;
+  margin-bottom: 20px;
 }

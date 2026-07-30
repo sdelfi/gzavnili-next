@@ -387,10 +387,35 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       to it as the first usage. Doesn't move the underlying CSS out of `style.css` yet (see
       the new AGENTS.md "Global CSS cleanup" rule — that's a page-by-page migration as more
       public pages get ported, not a one-shot rewrite).
+- [x] **`/authenticate/login` pixel-parity pass** (2026-07-30, client-driven — flagged the
+      page as not matching the live legacy layout at `usa.gzavnili.com/authenticate/login`):
+      rebuilt to match 1:1 — page-heading banner + breadcrumbs (`.page-heading`/
+      `.breadcrumbs`, already-global style.css rules), the `.container.loginpage` two-column
+      body (`loginform`/`question`), the exact `.form-group` `a`-before-`label`-before-
+      `input` markup order (load-bearing for the float-based layout), grid.css's `.row`/
+      `.col-md-N` actually linked for the first time. Extracted into reusable components:
+      `AuthLayout` (banner + two-column chrome), `QuestionPanel` (the "Have a question?"
+      column, shared with the forgot-password page's identical block), `Greeting`
+      (time-of-day heading/text). `public/css/loginpage.css` — previously an empty file in
+      this checkout, with the real rules sitting unused in `loginpage.src.css` — retired
+      entirely: its `.container.loginpage`-scoped rules moved into
+      `AuthLayout.module.css` (component-owned, per AGENTS.md's "Global CSS cleanup" rule),
+      the two unrelated leftover rules (`.selected-item-lang`/`.select2-dropdown`, used by
+      the not-yet-ported `account/parcel-share` page) moved to `style.css`.
+      **Greeting logic fix**: first version guessed the visitor's timezone from the site's
+      locale switcher (en→America/New_York, ge→Asia/Tbilisi) — wrong whenever someone
+      browses a locale that doesn't match where they actually are. Legacy uses real
+      IP-geolocation (no equivalent infra here); switched to reading the visitor's own
+      browser clock client-side instead (`Greeting` is now a small client component), which
+      is simply always correct for "what time is it for this person" — see `Greeting.tsx`.
+      **Not yet done**: `register`/`forgot`/`reset` pages still use the earlier, simpler
+      generic markup (not this pixel-matched chrome) — `AuthLayout`/`QuestionPanel` are
+      ready to be reused for them when they get the same pass, not yet applied.
 - [ ] **"Login as user"** (Customers list icon) is still a disabled placeholder — the
       customer auth realm above is the prerequisite and now exists, but the actual bema
       endpoint that mints a session for a given customer id isn't built yet. Scope as its own
-      small follow-up now that the realm exists.
+      small follow-up now that the realm exists. (Asked the client 2026-07-30 whether to
+      build it now; awaiting confirmation before starting.)
 - [ ] Customer-auth follow-ups (see `docs/decisions/0012-customer-auth.md`): no `/account`
       dashboard yet (login/register redirect to home instead); no email-verification-on-
       register step (accounts auto-confirm); no SMS password recovery or Facebook OAuth

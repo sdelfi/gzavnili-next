@@ -1,0 +1,292 @@
+/* Ported from public/css/loginpage.css (originally scoped `.container.loginpage .foo`,
+   loaded as a global stylesheet) — moved here since it's specific to this one page family
+   (login/register/forgot/reset), not shared site-wide the way `.page-heading`/`.breadcrumbs`
+   (style.css) or the `.row`/`.col-*` grid (grid.css) are. See AGENTS.md's "Global CSS
+   cleanup" rule. `loginpage.css` itself has been trimmed to just the grid/page-heading-
+   adjacent rules that are still global; this module owns everything under `.inner`. */
+
+/* `:global(.container)` + the local `.loginpage` class reproduces the original
+   `.container.loginpage` *compound* selector's specificity (two classes), not just its
+   properties — style.css's plain `.container { margin: 0 auto }` is also a single-class
+   selector, so without this the two rules tie on specificity and whichever stylesheet
+   happens to be injected later wins (fragile, load-order-dependent). Compound specificity
+   guarantees this always wins, matching what the original selector actually guaranteed. */
+:global(.container).loginpage {
+  font-family: 'Open Sans', arial, sans-serif;
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 0 20px;
+}
+
+.loginform h3 {
+  margin-bottom: 25px;
+}
+
+.loginform .inner {
+  background-color: #f9f9f9;
+}
+
+.inner {
+  padding: 40px 70px;
+}
+
+.inner p {
+  color: #222222;
+  font-family: 'Open Sans';
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.4;
+  margin-bottom: 25px;
+}
+
+.inner h3 {
+  margin-top: 0;
+  color: #20599d;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.2;
+  margin-bottom: 15px;
+}
+
+.inner h4 {
+  font-weight: 500;
+  color: #b7b7b7;
+  font-family: Montserrat;
+  font-size: 18px;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  margin-top: 15px;
+}
+
+.inner ul {
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 35px;
+}
+
+.inner ul li {
+  list-style: none;
+  margin-bottom: 10px;
+}
+
+.inner ul li a {
+  color: #3fa3f0;
+  font-family: Montserrat;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.2;
+  text-decoration: underline;
+}
+
+.inner ul li a:hover {
+  text-decoration: none;
+}
+
+.formGroup {
+  margin-bottom: 25px;
+}
+
+.formGroup a {
+  float: right;
+  color: #3fa3f0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-decoration: none;
+}
+
+.formGroup a:hover {
+  text-decoration: underline;
+}
+
+.formGroup label {
+  display: block;
+  color: #818181;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.formGroup :global(.form-control) {
+  display: block;
+  width: 100%;
+  height: 45px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555555;
+  background-color: #ffffff;
+  background-image: none;
+  border: 1px solid #cccccc;
+  border-radius: 0;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.5);
+  transition:
+    border-color ease-in-out 0.15s,
+    box-shadow ease-in-out 0.15s;
+}
+
+.formGroup :global(.form-control):focus {
+  border-color: #66afe9;
+  outline: 0;
+}
+
+.formGroup :global(.form-control)::placeholder {
+  color: #999999;
+  opacity: 1;
+}
+
+.btn {
+  cursor: pointer;
+  border: none;
+  color: #ffffff;
+  font-size: 18px !important;
+  font-weight: 400 !important;
+  font-family: 'Montserrat';
+  padding: 11px 15px !important;
+}
+
+.btnBlock {
+  display: block;
+  width: 100%;
+}
+
+.btnPrimary {
+  background-color: #20599d;
+}
+
+.btnPrimary:hover {
+  background-color: #3fa3f0;
+}
+
+.btnLight {
+  padding: 6px 15px !important;
+  color: #b7b7b7;
+  height: auto !important;
+  background: transparent;
+  font-family: Montserrat;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  line-height: 18px !important;
+}
+
+.btnLight:hover {
+  color: #3fa3f0;
+}
+
+.btnLight.active {
+  color: #fff;
+  background-color: #3fa3f0;
+}
+
+.top {
+  margin-bottom: 8px;
+}
+
+.top .btn {
+  color: #b7b7b7;
+  font-family: 'Montserrat';
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.top .or,
+.bottom .or {
+  color: #b7b7b7;
+  font-family: 'Montserrat';
+  font-weight: 700;
+}
+
+.top .or {
+  margin-right: 15px;
+  margin-left: 15px;
+  font-size: 16px;
+  line-height: 18px;
+}
+
+.blocks .block {
+  display: none;
+}
+
+.blocks .block.active {
+  display: block;
+}
+
+.blocks + .bottom {
+  margin-top: 25px;
+}
+
+.bottom {
+  margin-top: 35px;
+}
+
+.bottom .or {
+  padding: 0;
+  text-align: right;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 18px;
+}
+
+.bottom a {
+  display: block;
+  text-align: right;
+  color: #3fa3f0;
+  font-family: 'Montserrat';
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 400;
+  text-decoration: underline;
+}
+
+.bottom a:hover {
+  text-decoration: none;
+}
+
+.clearfix::before,
+.clearfix::after {
+  content: ' ';
+  display: table;
+}
+
+.clearfix::after {
+  clear: both;
+}
+
+.verticalAlignMiddle {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 991px) {
+  .inner {
+    padding: 20px 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .inner {
+    padding: 15px;
+  }
+
+  .bottom {
+    display: block;
+    text-align: center;
+  }
+
+  .bottom > * {
+    padding: 0 5px;
+  }
+
+  .bottom .or {
+    margin-top: 10px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .bottom a {
+    text-align: center;
+  }
+}
