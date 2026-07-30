@@ -248,12 +248,78 @@ file for scope/sequencing.
 - [ ] Phase 1 NOT complete: the MSSQL→Postgres ETL/backfill scripts and reconciliation
       checks from `docs/migrations/05-data-migration-strategy.md` still need to be built —
       no MSSQL source was reachable from this environment to build/test them against.
+- [x] Added `deploy.sh`: single-command production deploy (pull → `bun install` →
+      `bun run db:migrate:deploy` → `bun run build` → PM2 restart), adapted from a
+      reference script the client provided from another project (pnpm/backend-frontend
+      split there; this app is a bun/Next.js monolith, so that split and its seed step
+      don't apply here). This is the intended entrypoint for a future GitHub-webhook
+      auto-deploy. Added a matching AGENTS.md rule: schema/migration DDL must come from
+      Prisma's generator, not be hand-written, except for the specific triggers/constraints/
+      operator-class indexes Prisma's schema language can't express (see
+      `docs/decisions/0010-prisma-migrations.md`).
 - [ ] Remaining public/marketing pages (services, cargo, courier, pricing, FAQ, legal/customs, news)
 - [ ] Public unauthenticated tracking page wired to real Postgres data (schema now exists,
       per above — this page is still currently just a UI shell/modal, not wired up)
 
+## Phase 4 — bema admin (CSR) — in progress
+
+Started ahead of the rollout plan's own sequencing (Phase 4 normally follows Phases 1-3),
+per explicit client request: auth + user management first, as the foundation the rest of
+bema builds on. See `docs/decisions/0011-bema-admin.md` for the full research/design
+writeup (legacy `edit_users.cfm`/`users.cfm` behavior, what was deliberately simplified,
+why).
+
+- [x] **Auth**: two-realm JWT design (`bema_access_token`/`bema_refresh_token` httpOnly
+      cookies, `jose`/HS256, 15min/7day TTLs, `BEMA_AUTH_SECRET`) — `src/lib/auth/{jwt,
+    cookies,session,login,password}.ts`. Password hashing via `Bun.password`
+      (argon2id) — no external KDF dependency. Lockout logic (15 failed attempts → 15min
+      lock, `SecurityLog` audit trail) ports the legacy thresholds exactly. `/api/bema/auth/
+    {login,logout,me,refresh}` route handlers. CSR-only client-side guard
+      (`src/app/bema/(protected)/layout.tsx`) redirects unauthenticated visitors; real
+      authorization is always enforced server-side per-route via `requireBemaSession`
+      regardless of the client guard.
+- [x] **User management** (`edit_users.cfm`/`users.cfm` equivalent): one shared list/form
+      pair (`src/components/admin/users/{UserListPage,UserForm}.tsx`) parameterized by
+      `accountType` (`BemaUser`/`Customer`), matching the legacy single-screen-for-both-
+      `tid`-values design — not two separately-built features. `/api/bema/users` (list with
+      search/filter/sort/pagination, create) + `/api/bema/users/[id]` (read/update, no
+      delete — matches the legacy DAO's no-op `delete()` stub; deactivation is `active:
+    false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
+      legacy `UserEdit.cfc` rules (username/email/password constraints, password-can't-
+      contain-username, role-required-for-BEMA-accounts).
+- [x] **Schema**: `AccountType`/`AdminRole` enums + auth/role columns on `User`, new
+      `SecurityLog` table (`prisma/migrations/*_add_bema_auth/`) — collapses the legacy
+      `TypeId` + `users_groups`/`groups` junction into two plain enum columns (documented
+      simplification, see the decision doc — no real behavior lost, since every legacy
+      account only ever had one effectively-active admin role despite the junction-table
+      modeling). Customer discount/wholesale tiers (the `groups` table's other purpose) are
+      explicitly out of scope.
+- [x] Shared UI primitives added to `src/components/ui/` per the client's explicit ask:
+      `Button` (primary/secondary/danger), `Table` (generic sortable/zebra data table),
+      `Pagination` (windowed page-number strip, mirrors the legacy `pagination_admin.cfm`),
+      `Alert`/`ErrorList` (replaces the legacy `Udf.displayErrors()` flash-banner pattern).
+      Self-contained CSS Modules — bema doesn't load `public/css/style.css`.
+- [x] `scripts/seed-admin.ts` (`bun run db:seed`) bootstraps the very first admin account
+      (the panel is itself login-gated, so there's no other way in) — idempotent, a no-op
+      once any `BemaUser` account exists.
+- [x] Verified: real end-to-end smoke test against the local Postgres (wrong password
+      rejected, correct password accepted, JWT sign/verify roundtrip, unknown user
+      rejected, user create/search/cleanup via the actual Zod schema + Prisma queries the
+      API routes use) — no dev server was available to test over real HTTP in this
+      session (see the decision doc), so this exercised the underlying logic directly
+      instead of skipping verification.
+- [ ] **Not done yet**: billing/shipping address editing on the user form (two full
+      `addressbook` sub-forms in the legacy screen) — deferred, not silently dropped, see
+      the decision doc. Real HTTP/browser-level verification of the bema UI (login form,
+      list screen, create/edit forms) — only logic-level verification was possible this
+      session.
+- [ ] Remaining bema modules per the rollout plan: parcels (the actual client pain point —
+      see `docs/migrations/02-parcels-domain-analysis.md`/`04-postgres-schema-design.md`),
+      products, orders, statements, content, reports, messages, config. Coupons excluded
+      per client instruction.
+
 ## Not started
 
-- Phase 0 (audit), Phase 3 (authorized zone), Phase 4 (bema admin), Phase 5 (mobile API),
-  Phase 6 (cron), Phase 7 (cutover) — see the rollout plan. Phase 1 is in progress (schema/
-  triggers done, ETL/backfill not started — see above).
+- Phase 0 (audit), Phase 3 (authorized zone), Phase 5 (mobile API), Phase 6 (cron), Phase 7
+  (cutover) — see the rollout plan. Phase 1 is in progress (schema/triggers done, ETL/
+  backfill not started). Phase 4 (bema admin) is in progress — see above.

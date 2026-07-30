@@ -29,4 +29,15 @@ export const routes = {
   testAccountLogin: () => '/authenticate/login/?testaccount=1',
   /** Any other static `<slug>.html` marketing page. */
   page: (slug: StaticPageSlug) => `/${slug}.html`,
+
+  // bema admin panel (docs/decisions/0011-bema-admin.md) — a separate auth realm from the
+  // customer-facing `routes.login()`/`routes.logout()` above, hence its own nested object
+  // rather than reusing those names.
+  bema: {
+    login: () => '/bema/login',
+    users: (params?: { accountType?: 'BemaUser' | 'Customer' }) =>
+      params?.accountType ? `/bema/users?accountType=${params.accountType}` : '/bema/users',
+    userNew: () => '/bema/users/new',
+    userEdit: (id: string) => `/bema/users/${id}`,
+  },
 };

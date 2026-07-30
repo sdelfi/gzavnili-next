@@ -34,3 +34,5 @@ file or the live site.
 | 0007 | Move large CSS `background: url()` images to `next/image` | [decisions/0007-next-image-for-css-backgrounds.md](decisions/0007-next-image-for-css-backgrounds.md) |
 | 0008 | i18n via next-intl, locale ids `en`/`ge` matching the legacy site | [decisions/0008-i18n-next-intl.md](decisions/0008-i18n-next-intl.md) |
 | 0009 | Catch CSS Modules typos via generated TS types, not an ESLint plugin | [decisions/0009-css-modules-type-checking.md](decisions/0009-css-modules-type-checking.md) |
+| 0010 | Prisma 7 for schema/migrations; Postgres reconfirmed over MySQL; migration safety policy | [decisions/0010-prisma-migrations.md](decisions/0010-prisma-migrations.md) |
+| 0011 | bema admin panel: auth + user management (first slice) | [decisions/0011-bema-admin.md](decisions/0011-bema-admin.md) |

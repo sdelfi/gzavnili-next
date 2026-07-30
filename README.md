@@ -35,12 +35,16 @@ hand-written SQL) and the migration safety policy. Summary:
 
 ## Production
 
-- App runtime: managed via HestiaCP's Node.js app proxy (reverse-proxied), not Docker.
+- App runtime: managed via HestiaCP's Node.js app proxy (reverse-proxied) + PM2, not Docker.
 - Database: intended to run directly on the host (not containerized) — see `.env` on the
   server for the actual `DATABASE_URL`. Migrations are applied with
   `bun run db:migrate:deploy` only — see "Database" above.
 - Any additional infra (Redis, queues, etc.) — containerized on the host if/when introduced,
   same as local dev.
+- **Deploy is one command**: `./deploy.sh` — pulls, installs (which also runs
+  `prisma generate`), runs `bun run db:migrate:deploy`, builds, and restarts the PM2
+  process. This is the single entrypoint a future GitHub webhook/CI job should call on the
+  server; nothing about the deploy flow needs to grow beyond calling this one script.
 
 ## Stack
 

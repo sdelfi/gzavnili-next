@@ -47,23 +47,80 @@ enum ParcelStatus {
   @@map("parcel_status")
 }
 
+// --- Auth / bema admin (docs/migrations/06-phased-rollout-plan.md Phase 4, implemented
+// early as the first bema slice: auth + user management) -----------------------------
+//
+// The legacy system has exactly one `users` table for both bema admin accounts and
+// customer accounts, distinguished by `TypeId` (1=BEMA/2=Customer) plus a `users_groups`
+// junction table that dual-purposes as "admin role" for bema accounts and "discount tier"
+// for customer accounts (see the legacy-research notes this schema is based on). This
+// pass deliberately simplifies that: `accountType` replaces `TypeId`, and `adminRole`
+// replaces the `users_groups`/`groups` join for the bema-admin-role case only — every
+// legacy account only ever effectively had one active admin role at a time despite the
+// junction-table modeling, so collapsing it to a single enum column loses no real
+// behavior. Customer discount/wholesale tiers are explicitly OUT of scope for this pass
+// (the legacy `groups` table's other purpose) — `customer_pricing_rules` already exists
+// as a separate, more modern mechanism per docs/migrations/02-parcels-domain-analysis.md
+// §4's "unrelated to parcels" note.
+enum AccountType {
+  Customer @map("customer")
+  BemaUser @map("bema_user")
+
+  @@map("account_type")
+}
+
+// WEBSITE_ADMINISTRATOR / ADMINISTRATOR / AGENT_ADMINISTRATOR in the legacy `User.cfc`
+// GROUPS constant. `STANDARD`/`CONTENT_ONLY`/`SALES_MANAGER` legacy roles were never
+// observed actually gating any bema screen in the current codebase and are not carried
+// forward — add them back explicitly if a real use is found.
+enum AdminRole {
+  BemaStandard      @map("bema_standard")
+  BemaAdministrator @map("bema_administrator")
+  BemaAgent         @map("bema_agent")
+
+  @@map("admin_role")
+}
+
 model User {
-  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  username         String    @unique
-  firstName        String?   @map("first_name")
-  lastName         String?   @map("last_name")
+  id               String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username         String       @unique
+  email            String       @unique
+  firstName        String?      @map("first_name")
+  lastName         String?      @map("last_name")
   organization     String?
-  billingAddressId String?   @map("billing_address_id") @db.Uuid
-  billingAddress   Address?  @relation("UserBillingAddress", fields: [billingAddressId], references: [id])
-  balanceAdjust    Decimal   @default(0) @map("balance_adjust") @db.Decimal(12, 2)
-  // Legacy CF password hashes likely can't be verified by a new KDF (bcrypt/argon2) without
-  // knowing the exact legacy scheme — see docs/migrations/07-risks-and-open-questions.md
-  // ("Password hash migration"). `passwordAlgo` distinguishes "legacy" rows (re-hash on
-  // next successful login) from rows already migrated to the new KDF.
-  passwordHash     String?   @map("password_hash")
-  passwordAlgo     String?   @map("password_algo")
-  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  billingAddressId String?      @map("billing_address_id") @db.Uuid
+  billingAddress   Address?     @relation("UserBillingAddress", fields: [billingAddressId], references: [id])
+  balanceAdjust    Decimal      @default(0) @map("balance_adjust") @db.Decimal(12, 2)
+  // Legacy CF password hashes (SHA-1(password + salt), the same scheme for both bema and
+  // customer accounts) likely can't be verified by a new KDF without knowing the exact
+  // legacy scheme — see docs/migrations/07-risks-and-open-questions.md ("Password hash
+  // migration"). New accounts created directly in this schema use `passwordAlgo =
+  // "argon2id"` (via Bun.password, see src/lib/auth/password.ts) from the start; a future
+  // ETL import of legacy accounts would set `passwordAlgo = "legacy-sha1"` and re-hash on
+  // next successful login instead of attempting to migrate the hash itself.
+  passwordHash     String?      @map("password_hash")
+  passwordAlgo     String?      @map("password_algo")
+
+  accountType AccountType @default(Customer) @map("account_type")
+  adminRole   AdminRole?  @map("admin_role")
+
+  active                  Boolean   @default(true)
+  confirmed               Boolean   @default(false)
+  lockoutEnabled          Boolean   @default(false) @map("lockout_enabled")
+  lockoutExpiresAt        DateTime? @map("lockout_expires_at") @db.Timestamptz(6)
+  lastLoginAt             DateTime? @map("last_login_at") @db.Timestamptz(6)
+  passwordResetToken      String?   @map("password_reset_token")
+  passwordResetExpiresAt  DateTime? @map("password_reset_expires_at") @db.Timestamptz(6)
+
+  // 'en'/'ge' — matches the locale ids already used by next-intl (docs/decisions/0008).
+  language String? @default("en")
+
+  // BEMA-only fields (legacy: only shown/editable when accountType = BemaUser).
+  suffix     String?
+  agentPrice Boolean? @map("agent_price")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   parcels   Parcel[]     @relation("ParcelUser")
   receivers Receiver[]
@@ -72,6 +129,23 @@ model User {
   balance   UserBalance?
 
   @@map("users")
+  @@index([accountType])
+}
+
+// Login attempt audit trail — also drives the lockout logic (N failures since
+// lastLoginAt within a window locks the account), mirroring the legacy `securitylog`
+// table's role in `MSSQLUserDAO.validateLogin`.
+model SecurityLog {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type      String
+  event     String
+  username  String
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("security_log")
+  @@index([username, createdAt])
 }
 
 model Address {

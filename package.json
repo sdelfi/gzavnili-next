@@ -16,12 +16,14 @@
     "db:generate": "prisma generate",
     "db:migrate": "bun scripts/guard-local-db.mjs && prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
-    "db:studio": "bun scripts/guard-local-db.mjs && prisma studio"
+    "db:studio": "bun scripts/guard-local-db.mjs && prisma studio",
+    "db:seed": "bun scripts/seed-admin.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
     "classnames": "^2.5.1",
+    "jose": "^6.2.5",
     "next": "16.2.12",
     "next-intl": "^4.13.4",
     "normalize.css": "^8.0.1",
@@ -29,9 +31,11 @@
     "prisma": "^7.9.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-select": "^5.10.2"
+    "react-select": "^5.10.2",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@types/bun": "^1.3.14",
     "@types/node": "^20",
     "@types/pg": "^8.20.0",
     "@types/react": "^19",

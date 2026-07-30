@@ -12,5 +12,11 @@ export default defineConfig({
   },
   datasource: {
     url: process.env.DATABASE_URL,
+    // Only needed for `prisma migrate diff --from-migrations` (used to non-interactively
+    // regenerate a migration in environments without a real TTY — `prisma migrate dev`
+    // normally creates/drops its own throwaway shadow DB automatically and doesn't need
+    // this set). Local dev only; not used in production (`migrate deploy` never needs a
+    // shadow database).
+    shadowDatabaseUrl: process.env.SHADOW_DATABASE_URL,
   },
 });
