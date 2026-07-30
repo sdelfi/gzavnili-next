@@ -106,6 +106,15 @@ model User {
   // next successful login instead of attempting to migrate the hash itself.
   passwordHash     String?      @map("password_hash")
   passwordAlgo     String?      @map("password_algo")
+  // Legacy "short password"/PIN (`PasswordShort` in MSSQL) used by the bema idle-lock modal
+  // and money-collect screens to re-authenticate — and, if it matches a *different* active
+  // BemaUser's short password, to switch the session to that user (see
+  // extensions/components/DAO/MSSQL/MSSQLUserDAO.cfc's `validatePasswordShort`). Legacy
+  // stores this in plaintext with a bare SQL equality lookup across all users; we
+  // deliberately store it hashed (Bun.password, same as passwordHash) and verify by
+  // iterating active BemaUser candidates instead — see docs/decisions/0011-bema-admin.md's
+  // idle-lock section for why this is a safety improvement, not a behavior change.
+  passwordShortHash String? @map("password_short_hash")
 
   accountType AccountType @default(Customer) @map("account_type")
   adminRole   AdminRole?  @map("admin_role")

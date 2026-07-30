@@ -104,6 +104,45 @@ of truth here, not a fresh code read) and rebuilt to match:
   timestamp — payment date or delivery date?) — a business-logic question, not a schema
   question.
 
+## Idle-lock modal (short-password re-auth)
+
+Ported from the legacy `bema.js`/`http/bema/ajax/checkPassword.cfm` idle-timeout behavior,
+found by reading the legacy source directly (`http/bema/include/js/bema.js`,
+`extensions/components/DAO/MSSQL/MSSQLUserDAO.cfc`'s `validatePasswordShort`) rather than
+guessing from the screenshot alone, per client request to replicate it exactly:
+
+- **Trigger**: 5 minutes (`timeLimit = 5` in legacy) of no `mousemove`/`keypress` anywhere on
+  the page, checked every 20s (`60000/3`, the legacy poll interval) —
+  `src/components/admin/IdleModal/IdleModal.tsx`'s `IDLE_TIMEOUT_MS`/`CHECK_INTERVAL_MS`.
+  Lock state and last-activity timestamp are persisted to `localStorage` (legacy used
+  cookies) so a reload while locked re-shows the modal instead of silently unlocking.
+- **Modal is non-dismissible**: no backdrop-click or Escape close, matching the legacy
+  Bootstrap `{backdrop: 'static', keyboard: false}` — the only way out is the correct
+  password or the "login with your account" link (which logs out and redirects to
+  `/bema/login`, mirroring the legacy `logout.cfm` link).
+- **"Short password" (`PasswordShort` in legacy)**: a separate, shorter secondary
+  credential bema staff can set (3–15 chars, matching the legacy `len(PasswordShort) > 2`
+  guard), used for exactly this idle-unlock prompt and the legacy money-collect screen
+  (`http/bema/ajax/moneyCollect.cfm` — not ported yet, out of scope here). Editable via the
+  new "Short Password" field in `UserForm`, `BemaUser` accounts only.
+  - **Deliberate deviation from legacy**: legacy stores `PasswordShort` in **plaintext** and
+    matches it with a bare SQL equality scan across *all* active users' short passwords
+    (`MSSQLUserDAO.validatePasswordShort`). We store `User.passwordShortHash` (argon2id via
+    `Bun.password`, same as the main password) instead, and the equivalent lookup
+    (`/api/bema/auth/check-password`) iterates active `BemaUser` candidates verifying each
+    hash in turn. This is a straight security improvement (no plaintext secondary password
+    at rest) with identical externally-observable behavior — not a functional simplification.
+- **Response semantics (exact legacy parity)**: submitting the modal posts `{ password }` to
+  `/api/bema/auth/check-password`, which mirrors `checkPassword.cfm`'s three outcomes:
+  1. The value matches *another* active `BemaUser`'s short password → the session is
+     switched to that user (new access/refresh cookies issued) and the page does a full
+     reload — the legacy "shared terminal" handoff, so one agent can unlock a session left
+     open by another without a full logout/login.
+  2. No short-password match, but it's correct as the *current* session user's full
+     password → modal just closes, no reload.
+  3. Otherwise → "Wrong password", modal stays open, no lockout/attempt-limit (legacy has
+     none on this endpoint either — only the main login screen enforces lockouts).
+
 ## Migration workflow note
 
 The `add_bema_auth` migration (adding `AccountType`/`AdminRole`/the new `User` columns/`SecurityLog`) is where the [0010-prisma-migrations.md](0010-prisma-migrations.md) policy got its first real correction: hand-added trigram indexes from the initial migration showed up as `DROP INDEX` in the generated diff (indexes *are* something Prisma's introspection manages, unlike trigger functions) — see that doc's updated policy section for the fix (trim the generated migration by hand before applying, don't regenerate the indexes from scratch) and the non-interactive `prisma migrate diff --from-migrations` workaround needed to generate a migration at all without a real TTY.

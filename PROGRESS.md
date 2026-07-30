@@ -340,6 +340,17 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       direct Prisma smoke script (address create/update, notification-preference
       connect/set, pricing-rule create/delete) against the local Postgres — still no dev
       server available for real-HTTP/browser verification this session.
+- [x] **Idle-lock modal** (short-password re-auth), ported from the legacy `bema.js`/
+      `checkPassword.cfm` after reading that source directly: 5-minute idle timeout
+      (mousemove/keypress reset, 20s poll, matching legacy exactly), non-dismissible
+      modal, `/api/bema/auth/check-password` replicating the legacy's three-way
+      result (own password unlocks; another active `BemaUser`'s short password
+      switches the session to them + reloads; anything else is "Wrong password").
+      Added `User.passwordShortHash` + a "Short Password" field in `UserForm`
+      (BemaUser accounts only) — stored hashed (argon2id) rather than the legacy
+      plaintext `PasswordShort` column, a deliberate security improvement with
+      identical external behavior. See `docs/decisions/0011-bema-admin.md`'s
+      "Idle-lock modal" section for the full writeup.
 - [ ] Real HTTP/browser-level verification of the bema UI (login form, list screen,
       create/edit forms, pricing rules) — only logic-level verification was possible this
       session; do this the next time a dev server is reachable.
