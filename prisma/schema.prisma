@@ -369,7 +369,20 @@ model Config {
   dtRegularShip DateTime? @map("dt_regular_ship") @db.Timestamptz(6)
   dtRegularEst  DateTime? @map("dt_regular_est") @db.Timestamptz(6)
   expAwb        String?   @map("exp_awb")
-  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Site-wide announcement popup (bema "Site Settings" → "Popup" section; legacy `config`
+  // table's `ePopup`/`PopupMessageen`/`PopupMessagege` columns, shown via
+  // `views/layouts/new.html`'s `.message-popup` on every page unless a `showpopup` cookie is
+  // already set). Legacy shows the popup whenever `ePopup = 1`, **even if the message text
+  // is blank** — a real bug (an admin can enable the flag with no message and every visitor
+  // gets an empty popup) — fixed in `SitePopup.tsx`, which additionally requires non-empty
+  // `popupMessageEn`/`popupMessageGe` before rendering, not modeled here since it's
+  // display-logic, not a schema concern.
+  popupEnabled   Boolean @default(false) @map("popup_enabled")
+  popupMessageEn String? @map("popup_message_en")
+  popupMessageGe String? @map("popup_message_ge")
+
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@map("config")
 }

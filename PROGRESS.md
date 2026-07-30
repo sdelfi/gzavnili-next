@@ -547,6 +547,16 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       independent components, moved it to `globals.css` (per AGENTS.md's "Global CSS
       cleanup") instead of duplicating it a second time; `Faq.module.css` deleted (nothing
       left in it), `Faq.tsx` simplified to a plain `"faq"` classname.
+- [x] **Register page "I agree to Terms" checkbox fixed**: legacy styles this via the iCheck
+      jQuery plugin (`.icheckbox_minimal`, a sprite-image checkbox replacing a visually-
+      hidden native one) — that plugin was never ported (no vendored legacy JS, see
+      docs/decisions/0006), so the existing `style.css` rule referencing it was dead, and
+      the real native checkbox rendered unstyled/misaligned (no `float:left` element to
+      float, `span`'s leftover `margin-left: 25px` pushing the text out from under it).
+      Replaced with a `label { display: flex }` layout plus a native
+      `appearance: none` checkbox + hand-drawn `:checked` checkmark — no JS, matches the
+      legacy look. Clicking the label already toggles the checkbox natively (real
+      `<input>` wrapped in a real `<label>`); the only actual problem was the visual style.
 - [ ] Remaining bema modules per the rollout plan: parcels (the actual client pain point —
       see `docs/migrations/02-parcels-domain-analysis.md`/`04-postgres-schema-design.md`),
       products, orders, statements, content, reports, messages, config, coupons-adjacent

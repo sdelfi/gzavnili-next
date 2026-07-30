@@ -48,5 +48,8 @@ export const routes = {
     pages: () => '/bema/pages',
     pageNew: () => '/bema/pages/new',
     pageEdit: (id: string) => `/bema/pages/${id}`,
+    // Site Settings (docs/decisions/0014-site-popup.md) — legacy `bema/config/settings.cfm`.
+    // Only the "Popup" section is built so far; scoped narrower than the legacy mega-form.
+    settings: () => '/bema/settings',
   },
 };

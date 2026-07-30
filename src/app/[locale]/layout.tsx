@@ -3,6 +3,7 @@ import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { SitePopup } from '@/components/SitePopup';
 import { routing } from '@/i18n/routing';
 import 'normalize.css';
 import '../globals.css';
@@ -46,6 +47,7 @@ export default async function LocaleLayout({
           <Header />
           {children}
           <Footer />
+          <SitePopup locale={locale} />
         </NextIntlClientProvider>
       </body>
     </html>

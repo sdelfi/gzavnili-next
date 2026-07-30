@@ -4266,12 +4266,54 @@ fieldset legend {
     margin-top: 7px
 }
 
-.accreg-btn-block .agree .icheckbox_minimal {
-    float: left
+/* Legacy styled this checkbox via the iCheck jQuery plugin (`.icheckbox_minimal`, a sprite
+   image swapped in over a visually-hidden native checkbox — see the now-unused
+   `.icheckbox_minimal` rules above). No JS checkbox-replacement library here (see
+   docs/decisions/0006-no-vendored-legacy-js.md) — same look, built natively on the real
+   `<input type=checkbox>` via `appearance: none` + a hand-drawn checkmark instead. */
+.accreg-btn-block .agree label {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    cursor: pointer
+}
+
+.accreg-btn-block .agree input[type=checkbox] {
+    -webkit-appearance: none;
+    appearance: none;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    border: 1px solid #bfbfbf;
+    border-radius: 3px;
+    background: #fff;
+    cursor: pointer;
+    position: relative
+}
+
+.accreg-btn-block .agree input[type=checkbox]:hover {
+    border-color: #3fa3f0
+}
+
+.accreg-btn-block .agree input[type=checkbox]:checked {
+    background: #3fa3f0;
+    border-color: #3fa3f0
+}
+
+.accreg-btn-block .agree input[type=checkbox]:checked:after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg)
 }
 
 .accreg-btn-block .agree span {
-    margin-left: 25px;
     display: block
 }
 

@@ -1,0 +1,45 @@
+.form {
+  max-width: 700px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.saved {
+  color: #1a7f37;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  background: #fff;
+  padding: 16px;
+  border-radius: 6px;
+}

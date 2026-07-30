@@ -85,7 +85,11 @@ const NAV_GROUPS: NavGroup[] = [
       { label: 'Georgian Offices' },
       { label: 'System Emails' },
       { label: 'Payment Setup' },
-      { label: 'Site Settings' },
+      {
+        label: 'Site Settings',
+        href: routes.bema.settings(),
+        isActive: (pathname) => pathname.startsWith('/bema/settings'),
+      },
     ],
   },
   {
