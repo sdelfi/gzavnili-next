@@ -2,7 +2,8 @@ import { Calculator } from '@/components/Calculator';
 import { QuoteForm } from '@/components/QuoteForm';
 import { QuestionForm } from '@/components/QuestionForm';
 import { SlotPortal } from './SlotPortal';
-import { CALCULATOR_SLOT_ATTR, QUOTE_FORM_SLOT_ATTR, QUESTION_FORM_SLOT_ATTR } from './constants';
+import { CmsFaqAccordion } from './CmsFaqAccordion';
+import { CALCULATOR_SLOT_ATTR, QUOTE_FORM_SLOT_ATTR, QUESTION_FORM_SLOT_ATTR, CMS_CONTENT_ATTR } from './constants';
 
 // Legacy Site Pages content isn't always plain HTML — `views/layouts/new.html` (the shared
 // page layout, wrapping every rendered view, not just specific controllers) substitutes a
@@ -48,8 +49,18 @@ export function PageContent({ content, locale }: { content: string; locale: stri
   const hasCalculator = content.includes('{CALCULATOR}');
   const hasQuoteForm = content.includes('{QUOTEFORM}');
   const hasQuestionForm = content.includes('{QUESTIONFORM}');
+  const hasFaqAccordion = content.includes('faq-item');
 
   const html = content
+    // The browser's HTML parser normalizes `\r\n`/`\r` to `\n` while parsing the initial
+    // server-rendered document (an HTML5 spec step, not a React thing) — invisible as long as
+    // nothing on the page ever hydrates this content against the original string. Once *any*
+    // client component shares this tree (e.g. CmsFaqAccordion below, or a SlotPortal), React
+    // starts comparing this node's markup for hydration and sees a mismatch, since the raw DB
+    // content (imported verbatim, CRLF and all — see docs/decisions/0013-site-pages-cms.md)
+    // still has `\r\n`. Normalizing here keeps the string identical to what the browser will
+    // have already normalized it to.
+    .replace(/\r\n?/g, '\n')
     .replaceAll('{NEXTSEND}', formatMonthDay(addDays(now, sendOffset)))
     .replaceAll('{NEXTDEL}', formatMonthDay(addDays(now, delOffset)))
     // Inert marker elements, not JSX split points — keeps the surrounding (possibly still-
@@ -61,7 +72,8 @@ export function PageContent({ content, locale }: { content: string; locale: stri
   return (
     <>
       {/* Admin-authored CMS content — same trust boundary as the legacy WYSIWYG output, not user input. */}
-      <div dangerouslySetInnerHTML={{ __html: html }} />
+      <div {...{ [CMS_CONTENT_ATTR]: '' }} dangerouslySetInnerHTML={{ __html: html }} />
+      {hasFaqAccordion && <CmsFaqAccordion />}
       {hasCalculator && (
         <SlotPortal slotAttr={CALCULATOR_SLOT_ATTR}>
           <Calculator />
