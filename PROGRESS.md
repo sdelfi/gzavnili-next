@@ -271,10 +271,10 @@ why).
 
 - [x] **Auth**: two-realm JWT design (`bema_access_token`/`bema_refresh_token` httpOnly
       cookies, `jose`/HS256, 15min/7day TTLs, `BEMA_AUTH_SECRET`) — `src/lib/auth/{jwt,
-    cookies,session,login,password}.ts`. Password hashing via `Bun.password`
+cookies,session,login,password}.ts`. Password hashing via `Bun.password`
       (argon2id) — no external KDF dependency. Lockout logic (15 failed attempts → 15min
       lock, `SecurityLog` audit trail) ports the legacy thresholds exactly. `/api/bema/auth/
-    {login,logout,me,refresh}` route handlers. CSR-only client-side guard
+{login,logout,me,refresh}` route handlers. CSR-only client-side guard
       (`src/app/bema/(protected)/layout.tsx`) redirects unauthenticated visitors; real
       authorization is always enforced server-side per-route via `requireBemaSession`
       regardless of the client guard.
@@ -284,7 +284,7 @@ why).
       `tid`-values design — not two separately-built features. `/api/bema/users` (list with
       search/filter/sort/pagination, create) + `/api/bema/users/[id]` (read/update, no
       delete — matches the legacy DAO's no-op `delete()` stub; deactivation is `active:
-    false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
+false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       legacy `UserEdit.cfc` rules (username/email/password constraints, password-can't-
       contain-username, role-required-for-BEMA-accounts).
 - [x] **Schema**: `AccountType`/`AdminRole` enums + auth/role columns on `User`, new
@@ -299,6 +299,15 @@ why).
       `Pagination` (windowed page-number strip, mirrors the legacy `pagination_admin.cfm`),
       `Alert`/`ErrorList` (replaces the legacy `Udf.displayErrors()` flash-banner pattern).
       Self-contained CSS Modules — bema doesn't load `public/css/style.css`.
+- [x] Replaced the initial top-nav shell with a collapsible left sidebar
+      (`src/components/admin/Sidebar.tsx`) per client request, ahead of the many more
+      modules Phase 4 will add (parcels, products, orders, ...) — collapsed/expanded state
+      persists in `localStorage`. Nav item list is data-driven (`NAV_ITEMS`), so adding a
+      future module's link is a one-line addition, not a layout rework.
+- [x] Fixed a routing bug found while testing: next-intl's `proxy.ts` middleware was
+      rewriting `/bema/*` to `/en/bema/*` (nonexistent), 404ing every bema route — `/bema`
+      is a separate, non-locale-prefixed route tree and needed an explicit matcher
+      exclusion (`src/proxy.ts`).
 - [x] `scripts/seed-admin.ts` (`bun run db:seed`) bootstraps the very first admin account
       (the panel is itself login-gated, so there's no other way in) — idempotent, a no-op
       once any `BemaUser` account exists.

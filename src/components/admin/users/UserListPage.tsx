@@ -111,25 +111,32 @@ export function UserListPage({ accountType }: { accountType: 'BemaUser' | 'Custo
       {error && <Alert variant="error">{error}</Alert>}
 
       <div className={s.filterBar}>
-        <Select
-          instanceId="user-list-active"
-          options={ACTIVE_OPTIONS}
-          value={active}
-          onChange={(value) => updateParams({ active: value, page: '1' })}
-        />
-        <Select
-          instanceId="user-list-perpage"
-          options={PER_PAGE_OPTIONS}
-          value={String(perPage)}
-          onChange={(value) => updateParams({ perPage: value || '25', page: '1' })}
-        />
-        <Input
-          placeholder="Search…"
-          defaultValue={search}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') updateParams({ search: (e.target as HTMLInputElement).value, page: '1' });
-          }}
-        />
+        <div className={s.filterControl}>
+          <Select
+            instanceId="user-list-active"
+            options={ACTIVE_OPTIONS}
+            value={active}
+            onChange={(value) => updateParams({ active: value, page: '1' })}
+          />
+        </div>
+        <div className={s.filterControl}>
+          <Select
+            instanceId="user-list-perpage"
+            options={PER_PAGE_OPTIONS}
+            value={String(perPage)}
+            onChange={(value) => updateParams({ perPage: value || '25', page: '1' })}
+          />
+        </div>
+        <div className={s.filterControl}>
+          <Input
+            type="text"
+            placeholder="Search…"
+            defaultValue={search}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') updateParams({ search: (e.target as HTMLInputElement).value, page: '1' });
+            }}
+          />
+        </div>
         <div className={s.spacer} />
         <Link href={`${routes.bema.userNew()}?accountType=${accountType}`}>
           <Button type="button">Add {accountType === 'BemaUser' ? 'BEMA User' : 'Customer'}</Button>

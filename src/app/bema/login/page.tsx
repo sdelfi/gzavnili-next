@@ -43,7 +43,7 @@ export default function BemaLoginPage() {
   return (
     <div className={s.wrap}>
       <form className={s.form} onSubmit={handleSubmit}>
-        <h1 className={s.heading}>bema admin login</h1>
+        <h1 className={s.heading}>bema</h1>
         {error && <Alert variant="error">{error}</Alert>}
         <label className={s.field}>
           Username or email

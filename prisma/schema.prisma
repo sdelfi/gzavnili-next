@@ -82,15 +82,21 @@ enum AdminRole {
 }
 
 model User {
-  id               String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  username         String       @unique
-  email            String       @unique
-  firstName        String?      @map("first_name")
-  lastName         String?      @map("last_name")
-  organization     String?
-  billingAddressId String?      @map("billing_address_id") @db.Uuid
-  billingAddress   Address?     @relation("UserBillingAddress", fields: [billingAddressId], references: [id])
-  balanceAdjust    Decimal      @default(0) @map("balance_adjust") @db.Decimal(12, 2)
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username          String    @unique
+  email             String    @unique
+  firstName         String?   @map("first_name")
+  lastName          String?   @map("last_name")
+  organization      String?
+  billingAddressId  String?   @map("billing_address_id") @db.Uuid
+  billingAddress    Address?  @relation("UserBillingAddress", fields: [billingAddressId], references: [id])
+  shippingAddressId String?   @map("shipping_address_id") @db.Uuid
+  shippingAddress   Address?  @relation("UserShippingAddress", fields: [shippingAddressId], references: [id])
+  balanceAdjust     Decimal   @default(0) @map("balance_adjust") @db.Decimal(12, 2)
+  // Free-text import-batch identifier, matching the legacy `ImportId` column exactly
+  // (legacy "Edit Customer" screen: "Import Id") — not modeled further since no ETL import
+  // job exists yet to give it real meaning.
+  importId          String?   @map("import_id")
   // Legacy CF password hashes (SHA-1(password + salt), the same scheme for both bema and
   // customer accounts) likely can't be verified by a new KDF without knowing the exact
   // legacy scheme — see docs/migrations/07-risks-and-open-questions.md ("Password hash
@@ -115,6 +121,11 @@ model User {
   // 'en'/'ge' — matches the locale ids already used by next-intl (docs/decisions/0008).
   language String? @default("en")
 
+  // Legacy "Edit Customer" screen's "Notification Type: [x] Via mail [ ] Via SMS" row —
+  // the delivery-channel toggles, separate from *which* events notify (below).
+  notifyViaMail Boolean @default(true) @map("notify_via_mail")
+  notifyViaSms  Boolean @default(false) @map("notify_via_sms")
+
   // BEMA-only fields (legacy: only shown/editable when accountType = BemaUser).
   suffix     String?
   agentPrice Boolean? @map("agent_price")
@@ -127,6 +138,12 @@ model User {
   invoices  Invoice[]
   payments  Payment[]
   balance   UserBalance?
+  pricingRules CustomerPricingRule[]
+
+  // Legacy "Edit Customer" screen's per-event notification checkbox grid ("Parcel was
+  // picked up", "We just got your parcel(s)", ...) — which MessageTypes this account
+  // wants to be notified for, independent of the mail/SMS channel toggles above.
+  notificationMessageTypes MessageType[] @relation("UserNotificationPreferences")
 
   @@map("users")
   @@index([accountType])
@@ -154,21 +171,93 @@ model Address {
   lastName     String? @map("last_name")
   firstNameGe  String? @map("first_name_ge")
   lastNameGe   String? @map("last_name_ge")
+  title        String?
   organization String?
+  // Shipping-address-only field on the legacy "Edit Customer" screen (not shown for
+  // billing) — kept nullable/generic here rather than splitting Address into two models.
+  email        String?
   city         String?
   state        String?
   country      String?
   postalCode   String? @map("postal_code")
   street1      String?
   street2      String?
-  phone1       String?
-  phone2       String?
-  phone3       String?
+  // Five distinct phone-ish fields, matching the legacy "Edit Customer" contact-info
+  // layout exactly (Private Number / Cell Phone / Work Phone / Home Phone / Fax) — this
+  // replaces an earlier, less faithful `phone1`/`phone2`/`phone3` naming from before this
+  // screen's full field set was cross-checked against the live site.
+  privateNumber String? @map("private_number")
+  cellPhone     String? @map("cell_phone")
+  workPhone     String? @map("work_phone")
+  homePhone     String? @map("home_phone")
+  fax           String?
 
-  usersAsBilling User[]     @relation("UserBillingAddress")
-  receivers      Receiver[]
+  usersAsBilling  User[]     @relation("UserBillingAddress")
+  usersAsShipping User[]     @relation("UserShippingAddress")
+  receivers       Receiver[]
 
   @@map("addressbook")
+}
+
+// Legacy "Edit Customer" screen's per-event notification checkbox grid — "queried live
+// from a messageTypes table" per the legacy-research notes this schema is based on.
+// Seeded once via prisma/seed-message-types.ts (bun run db:seed), not user-editable yet
+// (no bema screen manages this list — it's a fixed reference table for now).
+model MessageType {
+  key       String  @id
+  label     String
+  sortOrder Int     @map("sort_order")
+
+  users User[] @relation("UserNotificationPreferences")
+
+  @@map("message_types")
+}
+
+enum ServiceType {
+  Regular @map("regular")
+  Express @map("express")
+
+  @@map("service_type")
+}
+
+enum PricingRuleMode {
+  FixedPrice @map("fixed_price")
+  Discount   @map("discount")
+
+  @@map("pricing_rule_mode")
+}
+
+// "Pricing Rules (Custom Rates & Discounts)" on the legacy "Edit Customer" screen —
+// per-customer shipping rate overrides/discounts by service type and date range. Matches
+// `customer_pricing_rules`, the one place docs/migrations/02-parcels-domain-analysis.md §4
+// notes the legacy team already made ad hoc raw-SQL schema changes (`database/
+// migration_add_audit_columns.sql`, `migration_add_overlap_trigger.sql`) — i.e. this table
+// already exists in the legacy DB and predates the parcels-domain redesign generally.
+// "Active"/"Expired" status shown in the legacy UI is computed from `validFrom`/`validTo`
+// vs. now(), not a stored column — no trigger needed for something this cheap to derive.
+model CustomerPricingRule {
+  id          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String          @map("user_id") @db.Uuid
+  user        User            @relation(fields: [userId], references: [id])
+  serviceType ServiceType     @map("service_type")
+  mode        PricingRuleMode
+  // Interpreted per `mode`: a flat USD/KG price when `FixedPrice`, a percentage when
+  // `Discount` — matching the legacy form's "USD per KG" hint text under this field.
+  value       Decimal         @db.Decimal(10, 2)
+  validFrom   DateTime        @map("valid_from") @db.Date
+  validTo     DateTime?       @map("valid_to") @db.Date
+  notes       String?
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  // Free-text username of the acting admin, not an FK — matches the legacy "Created By"/
+  // "Modified By" columns, which are plainly display-only audit fields, not a real
+  // relation any other feature needs to join against.
+  createdBy String?  @map("created_by")
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  updatedBy String?  @map("updated_by")
+
+  @@map("customer_pricing_rules")
+  @@index([userId])
 }
 
 model Receiver {

@@ -13,10 +13,10 @@
   flex-direction: column;
   gap: 14px;
 
-  legend {
-    font-size: 15px;
+  .legend {
+    font-size: 18px;
     font-weight: 700;
-    margin-bottom: 6px;
+    margin-bottom: 12px;
     padding: 0;
   }
 }

@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { useBemaAuth } from '@/components/admin/AuthProvider';
+import { Sidebar } from '@/components/admin/Sidebar';
 import { routes } from '@/lib/routes';
 import s from './protected.module.css';
 
@@ -28,29 +28,17 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
   return (
     <div className={s.shell}>
-      <nav className={s.nav}>
-        <div className={s.brand}>bema</div>
-        <ul className={s.navList}>
-          <li>
-            <Link href={routes.bema.users({ accountType: 'BemaUser' })}>BEMA Users</Link>
-          </li>
-          <li>
-            <Link href={routes.bema.users({ accountType: 'Customer' })}>Customers</Link>
-          </li>
-        </ul>
-        <div className={s.navUser}>
-          <span>{user.username}</span>
-          <button
-            type="button"
-            onClick={async () => {
-              await logout();
-              router.push(routes.bema.login());
-            }}
-          >
-            Logout
-          </button>
-        </div>
-      </nav>
+      {/* useSearchParams (used to highlight the active nav item) needs a Suspense
+          boundary — see the other bema pages that read search params for the same reason. */}
+      <Suspense fallback={null}>
+        <Sidebar
+          user={user}
+          onLogout={async () => {
+            await logout();
+            router.push(routes.bema.login());
+          }}
+        />
+      </Suspense>
       <main className={s.content}>{children}</main>
     </div>
   );

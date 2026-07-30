@@ -102,7 +102,7 @@ export function UserForm({
       <ErrorList errors={errors} />
 
       <fieldset className={s.section}>
-        <legend>Account Information</legend>
+        <legend className={s.legend}>Account Information</legend>
 
         <label className={s.field}>
           Username

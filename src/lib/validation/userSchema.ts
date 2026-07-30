@@ -1,8 +1,33 @@
 import { z } from 'zod';
 
 // Mirrors extensions/components/validation/bema/UserEdit.cfc's rules from the legacy app
-// (username/email/password constraints). Address (billing/shipping) fields are
-// deliberately out of scope for this pass — see PROGRESS.md.
+// (username/email/password constraints), extended to cover the full legacy "Edit
+// Customer"/"Edit BEMA User" field set (see docs/decisions/0011-bema-admin.md's update on
+// full-parity fields) — account info, notification prefs, billing/shipping address.
+//
+// Address requiredness (e.g. legacy's country-conditional State/PostalCode rule) is
+// deliberately NOT fully replicated here — every address field is optional/lenient. This
+// is a documented simplification, not an oversight: the fields all exist and round-trip
+// correctly, but the exact legacy required/optional-per-country matrix isn't enforced yet.
+const addressSchema = z.object({
+  firstName: z.string().max(50).nullable().optional(),
+  lastName: z.string().max(50).nullable().optional(),
+  title: z.string().max(50).nullable().optional(),
+  organization: z.string().max(100).nullable().optional(),
+  email: z.string().email().nullable().optional().or(z.literal('')),
+  country: z.string().max(100).nullable().optional(),
+  street1: z.string().max(100).nullable().optional(),
+  street2: z.string().max(100).nullable().optional(),
+  city: z.string().max(50).nullable().optional(),
+  state: z.string().max(50).nullable().optional(),
+  postalCode: z.string().max(20).nullable().optional(),
+  privateNumber: z.string().max(30).nullable().optional(),
+  cellPhone: z.string().max(30).nullable().optional(),
+  workPhone: z.string().max(30).nullable().optional(),
+  homePhone: z.string().max(30).nullable().optional(),
+  fax: z.string().max(30).nullable().optional(),
+});
+
 const baseFields = {
   username: z.string().min(5).max(50),
   email: z.string().email().max(100),
@@ -15,6 +40,13 @@ const baseFields = {
   suffix: z.string().max(50).nullable().optional(),
   agentPrice: z.boolean().nullable().optional(),
   language: z.enum(['en', 'ge']).nullable().optional(),
+  importId: z.string().max(100).nullable().optional(),
+  balanceAdjust: z.number().optional(),
+  notifyViaMail: z.boolean().optional(),
+  notifyViaSms: z.boolean().optional(),
+  notificationMessageTypeKeys: z.array(z.string()).optional(),
+  billingAddress: addressSchema.nullable().optional(),
+  shippingAddress: addressSchema.nullable().optional(),
 };
 
 function passwordDoesNotContainUsername(data: { username: string; password?: string }) {
@@ -39,10 +71,7 @@ export const updateUserSchema = z
   })
   .partial()
   .refine(
-    (data) =>
-      !data.password ||
-      !data.username ||
-      passwordDoesNotContainUsername({ username: data.username, password: data.password }),
+    (data) => !data.password || !data.username || passwordDoesNotContainUsername({ username: data.username, password: data.password }),
     { message: 'Password must not contain the username.', path: ['password'] },
   )
   .refine((data) => data.accountType !== 'BemaUser' || data.adminRole !== null, {
@@ -58,4 +87,13 @@ export const listUsersQuerySchema = z.object({
   active: z.enum(['true', 'false']).optional(),
   sort: z.enum(['lastName', 'username', 'email', 'createdAt']).default('lastName'),
   dir: z.enum(['asc', 'desc']).default('asc'),
+});
+
+export const pricingRuleSchema = z.object({
+  serviceType: z.enum(['Regular', 'Express']),
+  mode: z.enum(['FixedPrice', 'Discount']),
+  value: z.number().positive(),
+  validFrom: z.string().min(1),
+  validTo: z.string().nullable().optional(),
+  notes: z.string().max(255).nullable().optional(),
 });

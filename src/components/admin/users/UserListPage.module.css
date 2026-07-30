@@ -11,13 +11,13 @@
   background: #fff;
   padding: 12px 16px;
   border-radius: 6px;
+}
 
-  > * {
-    min-width: 160px;
-  }
+.filterControl {
+  width: 140px;
+  flex-shrink: 0;
 }
 
 .spacer {
   flex: 1;
-  min-width: 0 !important;
 }
