@@ -1,0 +1,337 @@
+// Phase 1 schema (see docs/migrations/04-postgres-schema-design.md and
+// docs/decisions/0010-prisma-migrations.md). This is a redesign, not a 1:1 port of the
+// legacy MSSQL `gzavnili` database — see docs/migrations/05-data-migration-strategy.md for
+// why a mechanical column copy is explicitly the wrong approach for the `parcels` domain.
+//
+// Naming convention: camelCase in Prisma/TS, snake_case in Postgres (via @map/@@map) —
+// the legacy MSSQL schema uses PascalCase columns (TrackingNum, UserId, ...); this project
+// deliberately does not carry that convention forward.
+
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  importFileExtension = ""
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// --- Parcel status -----------------------------------------------------------------
+//
+// Replaces the legacy non-sargable `CASE WHEN len(TrackingX) > 1 ...` waterfall
+// (docs/migrations/02-parcels-domain-analysis.md §2.1) with a real, maintained column.
+// The priority order below (not_on_hold > on_hold > delivered > ... > new) matches the
+// bema admin list query, per docs/migrations/04-postgres-schema-design.md §1 — chosen as
+// the default/provisional order. The single-parcel `read()` legacy endpoint checks
+// `delivered` *before* the hold flags, a discrepancy flagged as an open business question
+// in docs/migrations/07-risks-and-open-questions.md (open question #1), NOT YET
+// confirmed by the client. Do not treat this ordering as final without that sign-off —
+// see the `fn_recompute_parcel_status` function body (in the initial migration) for the
+// single place this precedence is encoded.
+enum ParcelStatus {
+  New              @map("new")
+  Awaiting         @map("awaiting")
+  Received         @map("received")
+  Shipped          @map("shipped")
+  Delay            @map("delay")
+  Custom           @map("custom")
+  ProcessingCustom @map("processing_custom")
+  Office           @map("office")
+  OutDelivery      @map("out_delivery")
+  Region           @map("region")
+  Delivered        @map("delivered")
+  OnHold           @map("on_hold")
+  NotOnHold        @map("not_on_hold")
+
+  @@map("parcel_status")
+}
+
+model User {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username         String    @unique
+  firstName        String?   @map("first_name")
+  lastName         String?   @map("last_name")
+  organization     String?
+  billingAddressId String?   @map("billing_address_id") @db.Uuid
+  billingAddress   Address?  @relation("UserBillingAddress", fields: [billingAddressId], references: [id])
+  balanceAdjust    Decimal   @default(0) @map("balance_adjust") @db.Decimal(12, 2)
+  // Legacy CF password hashes likely can't be verified by a new KDF (bcrypt/argon2) without
+  // knowing the exact legacy scheme — see docs/migrations/07-risks-and-open-questions.md
+  // ("Password hash migration"). `passwordAlgo` distinguishes "legacy" rows (re-hash on
+  // next successful login) from rows already migrated to the new KDF.
+  passwordHash     String?   @map("password_hash")
+  passwordAlgo     String?   @map("password_algo")
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  parcels   Parcel[]     @relation("ParcelUser")
+  receivers Receiver[]
+  invoices  Invoice[]
+  payments  Payment[]
+  balance   UserBalance?
+
+  @@map("users")
+}
+
+model Address {
+  id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  firstName    String? @map("first_name")
+  lastName     String? @map("last_name")
+  firstNameGe  String? @map("first_name_ge")
+  lastNameGe   String? @map("last_name_ge")
+  organization String?
+  city         String?
+  state        String?
+  country      String?
+  postalCode   String? @map("postal_code")
+  street1      String?
+  street2      String?
+  phone1       String?
+  phone2       String?
+  phone3       String?
+
+  usersAsBilling User[]     @relation("UserBillingAddress")
+  receivers      Receiver[]
+
+  @@map("addressbook")
+}
+
+model Receiver {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  // Not explicitly enumerated in docs/migrations/02-parcels-domain-analysis.md (which only
+  // confirms ReceiverId/AddressId) — inferred so "my receivers" can be scoped per sender.
+  // Verify against the legacy `receivers` table before the ETL backfill in
+  // docs/migrations/05-data-migration-strategy.md relies on it.
+  userId    String? @map("user_id") @db.Uuid
+  user      User?   @relation(fields: [userId], references: [id])
+  addressId String  @map("address_id") @db.Uuid
+  address   Address @relation(fields: [addressId], references: [id])
+
+  parcels Parcel[]
+
+  @@map("receivers")
+  @@index([userId])
+}
+
+model DeliveryOffice {
+  id             String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  officeName     String  @map("office_name")
+  officeNameGe   String? @map("office_name_ge")
+  city           String?
+  letter         String?
+  searchPatterns String? @map("search_patterns")
+
+  parcelOffices ParcelOffice[]
+
+  @@map("delivery_offices")
+}
+
+model ParcelOffice {
+  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  // One current office assignment per parcel — matches the legacy `TOP 1` lookup in
+  // docs/migrations/02-parcels-domain-analysis.md §2.2. History of prior office
+  // reassignments is not tracked, same as the legacy system.
+  parcelId String   @unique @map("parcel_id") @db.Uuid
+  parcel   Parcel   @relation(fields: [parcelId], references: [id])
+  officeId String   @map("office_id") @db.Uuid
+  office   DeliveryOffice @relation(fields: [officeId], references: [id])
+
+  assignedAt DateTime @default(now()) @map("assigned_at") @db.Timestamptz(6)
+
+  @@map("parceloffice")
+  @@index([officeId])
+}
+
+model Invoice {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  user        User     @relation(fields: [userId], references: [id])
+  invoiceDate DateTime @map("invoice_date") @db.Timestamptz(6)
+
+  items         InvoiceItem[]
+  invoicedOnParcels Parcel[]  @relation("ParcelInvoice")
+
+  @@map("invoices")
+  @@index([userId, invoiceDate])
+}
+
+model InvoiceItem {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  invoiceId String  @map("invoice_id") @db.Uuid
+  invoice   Invoice @relation(fields: [invoiceId], references: [id])
+  parcelId  String  @map("parcel_id") @db.Uuid
+  parcel    Parcel  @relation(fields: [parcelId], references: [id])
+  amount    Decimal @db.Decimal(12, 2)
+
+  @@map("invoices_items")
+  @@index([parcelId])
+  @@index([invoiceId])
+}
+
+model Payment {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId          String   @map("user_id") @db.Uuid
+  user            User     @relation(fields: [userId], references: [id])
+  paymentDate     DateTime @map("payment_date") @db.Timestamptz(6)
+  amount          Decimal  @db.Decimal(12, 2)
+  // e.g. 'balance', or a payment-gateway identifier — kept as a free-form string, matching
+  // the legacy column's usage (excludes 'balance' from user_balances.paid_amount, per
+  // docs/migrations/02-parcels-domain-analysis.md §2.2).
+  paymentMethodId String   @map("payment_method_id")
+
+  @@map("payments")
+  @@index([userId, paymentDate])
+}
+
+// Single-row operational settings table (legacy `config`) — a cross-cutting dependency for
+// multiple modules (docs/migrations/01-current-state-audit.md §risk register), migrated
+// early per docs/migrations/06-phased-rollout-plan.md Phase 1. `id` is pinned to 1 via a
+// CHECK constraint added in the initial migration (see migration.sql) so a second row can
+// never be inserted by accident.
+model Config {
+  id            Int       @id @default(1)
+  crate         String?
+  dtExpressShip DateTime? @map("dt_express_ship") @db.Timestamptz(6)
+  dtExpressEst  DateTime? @map("dt_express_est") @db.Timestamptz(6)
+  dtRegularShip DateTime? @map("dt_regular_ship") @db.Timestamptz(6)
+  dtRegularEst  DateTime? @map("dt_regular_est") @db.Timestamptz(6)
+  expAwb        String?   @map("exp_awb")
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("config")
+}
+
+// New in this schema (docs/migrations/04-postgres-schema-design.md §2): the user-level
+// `paidamount`/`invoiceamount` aggregate that the legacy query recomputed identically for
+// every parcel row belonging to that user — the single worst offender in
+// docs/migrations/02-parcels-domain-analysis.md §2.2. Maintained by a trigger on
+// payments/invoices writes (see migration.sql), read once per list query instead.
+model UserBalance {
+  userId        String   @id @map("user_id") @db.Uuid
+  user          User     @relation(fields: [userId], references: [id])
+  paidAmount    Decimal  @default(0) @map("paid_amount") @db.Decimal(12, 2)
+  invoiceAmount Decimal  @default(0) @map("invoice_amount") @db.Decimal(12, 2)
+  balance       Decimal  @default(0) @db.Decimal(12, 2)
+  updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("user_balances")
+}
+
+// New in this schema: append-only audit trail the legacy system lacks outside the
+// write-only `operations` table (docs/migrations/04-postgres-schema-design.md §1).
+// Written by the same trigger/function that maintains `parcels.status`.
+model ParcelStatusHistory {
+  id        String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  parcelId  String       @map("parcel_id") @db.Uuid
+  parcel    Parcel       @relation(fields: [parcelId], references: [id])
+  status    ParcelStatus
+  changedAt DateTime     @default(now()) @map("changed_at") @db.Timestamptz(6)
+  changedBy String?      @map("changed_by")
+  reason    String?
+
+  @@map("parcel_status_history")
+  @@index([parcelId, changedAt])
+}
+
+model Parcel {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  user       User      @relation("ParcelUser", fields: [userId], references: [id])
+  receiverId String?   @map("receiver_id") @db.Uuid
+  receiver   Receiver? @relation(fields: [receiverId], references: [id])
+
+  trackingNum  String?   @map("tracking_num")
+  trackingNum2 String?   @map("tracking_num2")
+  tripDate     DateTime? @map("trip_date") @db.Timestamptz(6)
+  created      DateTime  @default(now()) @db.Timestamptz(6)
+
+  debt   Decimal? @db.Decimal(12, 2)
+  value  Decimal? @db.Decimal(12, 2)
+  weight Decimal? @db.Decimal(12, 2)
+
+  contents  String?
+  store     String?
+  service   String?
+  groupId   String?  @map("group_id")
+  location  String?
+  iLocation String?  @map("i_location")
+  notes     String?
+
+  // Source-of-truth hold flags (kept as the underlying facts, same as legacy). `status`
+  // below is a derived projection of these plus the Tracking* milestones — see the enum
+  // doc comment and fn_recompute_parcel_status for the precedence rule.
+  bOnHold    Boolean @default(false) @map("b_on_hold")
+  bNotOnHold Boolean @default(false) @map("b_not_on_hold")
+
+  // The 11 milestone timestamp columns (docs/migrations/02-parcels-domain-analysis.md §4) —
+  // kept as-is; these are the real event facts. NULL replaces the legacy
+  // `len(datetimeCol) > 1` sentinel-string convention — confirm during the ETL backfill
+  // (docs/migrations/05-data-migration-strategy.md §3) that this holds for 100% of rows.
+  trackingAway             DateTime? @map("tracking_away") @db.Timestamptz(6)
+  trackingReceived         DateTime? @map("tracking_received") @db.Timestamptz(6)
+  trackingShipped          DateTime? @map("tracking_shipped") @db.Timestamptz(6)
+  trackingDelay            DateTime? @map("tracking_delay") @db.Timestamptz(6)
+  trackingCustom           DateTime? @map("tracking_custom") @db.Timestamptz(6)
+  trackingProcessingCustom DateTime? @map("tracking_processing_custom") @db.Timestamptz(6)
+  trackingOffice           DateTime? @map("tracking_office") @db.Timestamptz(6)
+  trackingSendRegion       DateTime? @map("tracking_send_region") @db.Timestamptz(6)
+  trackingOutDelivery      DateTime? @map("tracking_out_delivery") @db.Timestamptz(6)
+  trackingDeliveredSigned  DateTime? @map("tracking_delivered_signed") @db.Timestamptz(6)
+
+  trackingEstDelivery DateTime? @map("tracking_est_delivery") @db.Timestamptz(6)
+  trackingEstShip     DateTime? @map("tracking_est_ship") @db.Timestamptz(6)
+
+  trackingReceivedBy        String? @map("tracking_received_by")
+  trackingDeliveredSignedBy String? @map("tracking_delivered_signed_by")
+
+  topFlag Boolean @default(false) @map("top_flag")
+  awb     String?
+  isDr    Boolean @default(false) @map("is_dr")
+
+  payMethod1 String?  @map("pay_method1")
+  payMethod2 String?  @map("pay_method2")
+  payAmount1 Decimal? @map("pay_amount1") @db.Decimal(12, 2)
+  payAmount2 Decimal? @map("pay_amount2") @db.Decimal(12, 2)
+
+  parcelType   String?  @map("parcel_type")
+  bNotify      Boolean  @default(false) @map("b_notify")
+  bNotDeclared Boolean  @default(false) @map("b_not_declared")
+
+  length    Decimal? @db.Decimal(10, 2)
+  width     Decimal? @db.Decimal(10, 2)
+  high      Decimal? @db.Decimal(10, 2)
+  dimWeight Decimal? @map("dim_weight") @db.Decimal(10, 2)
+
+  additionalUsername  String? @map("additional_username")
+  additionalFirstname String? @map("additional_firstname")
+  additionalLastname  String? @map("additional_lastname")
+  buser               String?
+  onlineSource         String? @map("online_source")
+  balanceAdjust        Decimal? @map("balance_adjust") @db.Decimal(12, 2)
+
+  // --- Phase 1 redesign additions (docs/migrations/04-postgres-schema-design.md §1-2) ---
+  // All five of these are maintained by triggers (see migration.sql) — application code
+  // must never write them directly; it only ever reads them. This is what eliminates the
+  // 8-10 independently-drifted status copies and the six per-row correlated subqueries
+  // documented in docs/migrations/02-parcels-domain-analysis.md §2.2 and §7.
+  status        ParcelStatus @default(New)
+  isPaid        Boolean      @default(false) @map("is_paid")
+  isInvoiced    Boolean      @default(false) @map("is_invoiced")
+  invoiceId     String?      @map("invoice_id") @db.Uuid
+  invoice       Invoice?     @relation("ParcelInvoice", fields: [invoiceId], references: [id])
+  invoiceAmount Decimal      @default(0) @map("invoice_amount") @db.Decimal(12, 2)
+  officeName    String?      @map("office_name")
+
+  invoiceItems  InvoiceItem[]
+  parcelOffice  ParcelOffice?
+  statusHistory ParcelStatusHistory[]
+
+  @@map("parcels")
+  @@index([tripDate, id], map: "parcels_trip_date_id_idx")
+  @@index([status])
+  @@index([userId])
+  @@index([receiverId])
+  @@index([created])
+  @@index([trackingNum])
+}

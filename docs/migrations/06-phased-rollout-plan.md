@@ -40,6 +40,8 @@ Postgres becomes the system of record early; MSSQL is kept as a bounded-window r
 
 **Exit criteria:** reconciliation checks pass on a full copy of production data; schema and triggers reviewed and considered stable enough to build against.
 
+**Status (implemented, this pass):** schema + triggers stood up via Prisma (`prisma/schema.prisma`, `prisma/migrations/`) — see [docs/decisions/0010-prisma-migrations.md](../decisions/0010-prisma-migrations.md) for the ORM/engine choice and the migration-safety policy. All triggers (`fn_recompute_parcel_status`, status history, office-name/invoice/user-balance denormalization) smoke-tested manually against the local docker-compose Postgres. **Not done yet**: the ETL/backfill scripts from [05-data-migration-strategy.md](05-data-migration-strategy.md) (no MSSQL source is reachable from this environment), and the reconciliation checks — those remain this phase's actual exit criteria. The status-order open question (see [07-risks-and-open-questions.md](07-risks-and-open-questions.md) #1) is implemented provisionally, not resolved.
+
 ---
 
 ## Phase 2 — Public static site (SSG)

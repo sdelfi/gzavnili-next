@@ -223,11 +223,37 @@ file for scope/sequencing.
       `s.social` reference which only existed as a non-exported `:global(.social)` in
       `Footer.module.css` (fixed by making `.social` a real local class, matching how
       `.title` is already handled).
+- [x] **Phase 1 database foundation implemented**: Prisma 7 schema (`prisma/schema.prisma`) + initial migration (`prisma/migrations/20260730161912_init/`) standing up the full
+      parcels-domain redesign from `docs/migrations/04-postgres-schema-design.md` — `users`,
+      `addressbook`, `receivers`, `parcels` (extended with `status`/`is_paid`/`is_invoiced`/
+      `invoice_id`/`invoice_amount`/`office_name`), `invoices`/`invoices_items`, `payments`,
+      `parceloffice`/`delivery_offices`, `config` (single-row, `CHECK`-enforced), `user_balances`,
+      `parcel_status_history`. Hand-written SQL (Prisma's DSL can't express this) implements
+      the single authoritative status trigger (`fn_recompute_parcel_status`, replacing the
+      8-10 drifted copies in the legacy code) plus denormalization triggers for office name,
+      invoice/paid state, and the per-user balance aggregate — all smoke-tested manually
+      against the local docker-compose Postgres (status waterfall, office rename
+      propagation, invoice/payment denorm all verified end-to-end). See
+      `docs/decisions/0010-prisma-migrations.md` for: the Prisma 7 setup specifics (driver
+      adapters, `prisma.config.ts`), the migration-safety policy (`bun run db:migrate` for
+      local only, guarded by `scripts/guard-local-db.mjs`; `bun run db:migrate:deploy` is
+      the only command production ever runs; no `db:push`/`db:reset` script exists at all),
+      and — important — an explicit re-confirmation with the client that Postgres (not
+      MySQL, which the client had actually said they preferred for hosting-familiarity
+      reasons) is the right call here, given the trigram/partial-index search wins this
+      schema specifically needs. The status priority-order question
+      (`docs/migrations/07-risks-and-open-questions.md` #1) is implemented provisionally
+      (hold flags first), not resolved — flagged in both that doc and the schema/migration
+      comments.
+- [ ] Phase 1 NOT complete: the MSSQL→Postgres ETL/backfill scripts and reconciliation
+      checks from `docs/migrations/05-data-migration-strategy.md` still need to be built —
+      no MSSQL source was reachable from this environment to build/test them against.
 - [ ] Remaining public/marketing pages (services, cargo, courier, pricing, FAQ, legal/customs, news)
-- [ ] Public unauthenticated tracking page wired to real Postgres data (Phase 1 schema/backend
-      not built yet — this page is currently just a UI shell/modal)
+- [ ] Public unauthenticated tracking page wired to real Postgres data (schema now exists,
+      per above — this page is still currently just a UI shell/modal, not wired up)
 
 ## Not started
 
-- Phase 0 (audit), Phase 1 (Postgres schema/backend), Phase 3 (authorized zone), Phase 4 (bema
-  admin), Phase 5 (mobile API), Phase 6 (cron), Phase 7 (cutover) — see the rollout plan.
+- Phase 0 (audit), Phase 3 (authorized zone), Phase 4 (bema admin), Phase 5 (mobile API),
+  Phase 6 (cron), Phase 7 (cutover) — see the rollout plan. Phase 1 is in progress (schema/
+  triggers done, ETL/backfill not started — see above).
