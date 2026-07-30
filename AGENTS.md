@@ -42,6 +42,12 @@ intentionally style via global classnames rather than CSS Modules (see
 `docs/decisions/0002-select-library.md`) — that's a different, already-decided
 pattern, not a license to leave other components flat too.
 
+When a component's folder has types worth naming (props types other components
+import, enums, anything beyond the component's own inline prop destructuring),
+put them in that folder's `types.ts`, not inline in the `.tsx` file — e.g.
+`src/components/ui/Icon/types.ts`'s `IconName`. Re-export from `index.ts`
+alongside the component itself.
+
 # Global CSS cleanup
 
 `public/css/style.css` (and its siblings) is legacy-ported global CSS, not a permanent home

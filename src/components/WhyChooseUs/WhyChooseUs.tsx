@@ -1,19 +1,11 @@
 import cn from 'classnames';
 import { getTranslations } from 'next-intl/server';
 import { Calculator } from '@/components/Calculator';
+import { Icon, type IconName } from '@/components/ui/Icon';
 import s from './WhyChooseUs.module.css';
 // Icons are positional (not part of the translated content) — index-matched to the
 // `WhyChooseUs.items` array in messages/*.json.
-const ICONS = [
-  'icon-whyus-1',
-  'icon-whyus-7',
-  'icon-whyus-2',
-  'icon-whyus-8',
-  'icon-whyus-5',
-  'icon-whyus-3',
-  'icon-whyus-4',
-  'icon-whyus-6',
-];
+const ICONS: IconName[] = ['whyus-1', 'whyus-7', 'whyus-2', 'whyus-8', 'whyus-5', 'whyus-3', 'whyus-4', 'whyus-6'];
 
 export async function WhyChooseUs() {
   const t = await getTranslations('WhyChooseUs');
@@ -29,7 +21,7 @@ export async function WhyChooseUs() {
           <div className={cn('col col-8', s.col8, s.col)}>
             {items.map((item, i) => (
               <div className={s.whyusItem} key={item.title}>
-                <i className={`icon ${ICONS[i]}`}></i>
+                <Icon name={ICONS[i]} />
                 <div className={s.whyusInfo}>
                   <div className={s.txt}>{item.title}</div>
                   <div className={s.desc}>{item.desc}</div>
@@ -42,7 +34,7 @@ export async function WhyChooseUs() {
             <div className={s.heading}>
               <h3>{t('calculatorTitle')}</h3>{' '}
               <a href="">
-                <i className="icon icon-info"></i>
+                <Icon name="info" />
               </a>
             </div>
             <p>{t('calculatorSubtitle')}</p>

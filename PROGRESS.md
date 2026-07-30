@@ -367,14 +367,42 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       list filter/sort/page state you came from, matching the legacy
       `user_edit.cfm`'s `location(form.rs)` — previously it always reset to page 1,
       unfiltered.
-- [ ] **"Login as user"** (Customers list icon) is a disabled placeholder, not wired yet.
-      Client confirmed the direction (2026-07-30): build a real customer-facing auth realm
-      in this Next.js app (separate from the bema realm, same pattern as
-      `docs/migrations/03-target-architecture.md` §3's "two independent auth realms"), not
-      a stopgap link into the still-live legacy site. This is a substantial standalone piece
-      of work (customer login/session/JWT-or-cookie realm, then the actual impersonation
-      endpoint bema calls to mint a session for a given customer) — scope it as its own
-      task/plan rather than bolting it onto a UI-polish pass.
+- [x] **Customer-facing auth realm** (2026-07-30): login, register, forgot/reset password
+      (email link), and "remember me" — the prerequisite for bema's "Login as user" icon
+      (still a disabled placeholder — the actual admin-mints-a-session-for-a-customer
+      endpoint is separate, not-yet-built follow-up). Separate JWT secret/cookies from the
+      bema realm (`CUSTOMER_AUTH_SECRET`, `gz_access_token`/`gz_refresh_token`), Server
+      Actions (`src/app/[locale]/authenticate/actions.ts`) rather than `/api/*` Route
+      Handlers since the public site has no client-side fetch/auth layer today. Same
+      URLs/`<title>` as the legacy `authenticate/{login,register,forgot,reset}` pages (client
+      request: SEO/backlink equity). "Remember me" = a longer-lived refresh cookie (30d vs.
+      24h), not a separate token/column. Register auto-generates a `GZ`+number username
+      (porting legacy's `getNewUsername()`) and skips email verification (accounts
+      auto-confirm — no confirmation-email flow built, only the reset-link email). New
+      `src/lib/email/sendEmail.ts` (`nodemailer`, logs to console if `SMTP_HOST` unset — no
+      real SMTP credentials exist in this environment yet). Full writeup:
+      `docs/decisions/0012-customer-auth.md`.
+- [x] New shared `ui/Icon` component wraps the legacy sprite-icon system
+      (`public/css/style.css`'s `i.icon.icon-*` classes) — `HeaderClient.tsx`'s icons ported
+      to it as the first usage. Doesn't move the underlying CSS out of `style.css` yet (see
+      the new AGENTS.md "Global CSS cleanup" rule — that's a page-by-page migration as more
+      public pages get ported, not a one-shot rewrite).
+- [ ] **"Login as user"** (Customers list icon) is still a disabled placeholder — the
+      customer auth realm above is the prerequisite and now exists, but the actual bema
+      endpoint that mints a session for a given customer id isn't built yet. Scope as its own
+      small follow-up now that the realm exists.
+- [ ] Customer-auth follow-ups (see `docs/decisions/0012-customer-auth.md`): no `/account`
+      dashboard yet (login/register redirect to home instead); no email-verification-on-
+      register step (accounts auto-confirm); no SMS password recovery or Facebook OAuth
+      (both existed in legacy, excluded from this pass); `routes.testAccountLogin()`'s
+      `?testaccount=1` demo-login link is unwired (shows the normal login form); real SMTP
+      credentials still need to be set in production `.env` for reset-password emails to
+      actually deliver (currently logged to console).
+- [ ] **Global CSS cleanup** (see AGENTS.md's new rule): `public/css/style.css` should get
+      progressively emptied out as each public page is touched — move component-specific
+      rules into that component's CSS Module, shared rules into `src/app/globals.css`. Not
+      started as a dedicated pass; do it incrementally per client instruction (2026-07-30),
+      not as a one-shot rewrite.
 - [ ] **Statement** (Customers list `$` icon) links to a real route
       (`/bema/statements/[id]`, `routes.bema.userStatement`) that's a placeholder page only
       ("Not implemented yet") — the statements module itself isn't built. See the rollout

@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import cn from 'classnames';
 import { Link } from '@/i18n/navigation';
 import { Input } from '@/components/ui/Input';
+import { Icon } from '@/components/ui/Icon';
 import { routes } from '@/lib/routes';
 import s from './Footer.module.css';
 
@@ -32,7 +33,7 @@ export async function Footer() {
             <div className={s.inputGroup}>
               <Input type="text" id="signup-input" className={s.signupInput} />
               <a className={s.signupBtn}>
-                <i className="icon icon-arr3"></i>
+                <Icon name="arr3" />
               </a>
             </div>
             <a href="https://tawk.to/chat/56ba62ae4003e62e173fad2a/default/?$_tawk_popout=true">Chat</a>

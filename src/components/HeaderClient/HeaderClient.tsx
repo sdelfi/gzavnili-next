@@ -143,7 +143,7 @@ export function HeaderClient({
           <ul className={s.usermenu}>
             <li>
               <a href={routes.login()}>
-                <i className="icon icon-inbox"></i> <span>{t('inbox')}</span>
+                <Icon name="inbox" /> <span>{t('inbox')}</span>
               </a>
             </li>
             <li>
@@ -154,7 +154,7 @@ export function HeaderClient({
                   setTrackingOpen(true);
                 }}
               >
-                <i className="icon icon-tracking"></i> <span>{t('tracking')}</span>
+                <Icon name="tracking" /> <span>{t('tracking')}</span>
               </a>
             </li>
             <li>
@@ -165,16 +165,16 @@ export function HeaderClient({
                   setLoginOpen(true);
                 }}
               >
-                <i className="icon icon-login"></i> <span>{t('login')}</span>
+                <Icon name="login" /> <span>{t('login')}</span>
               </a>
             </li>
           </ul>
 
           <div className={cn(s.headermenuBlock, { [s.active]: openDropdown === 'menu' })}>
             <div className={s.headermenuToggler} onClick={() => toggleDropdown('menu')}>
-              <i className="icon icon-menu">
+              <Icon name="menu">
                 <span></span>
-              </i>{' '}
+              </Icon>{' '}
               {t('menu')}
             </div>
             <ul className={s.headermenu}>
@@ -221,7 +221,7 @@ export function HeaderClient({
               <Input type="text" name="id" placeholder={t('trackingModal.placeholder')} />
             </div>
             <button type="submit" className="btn btn-blue">
-              {t('trackingModal.submit')} <i className="icon icon-arr1"></i>
+              {t('trackingModal.submit')} <Icon name="arr1" inButton />
             </button>
           </form>
         </div>
@@ -245,7 +245,7 @@ export function HeaderClient({
               />
             </div>
             <button type="submit" className="btn btn-blue" disabled={loginPending}>
-              {t('loginModal.submit')} <i className="icon icon-arr1"></i>
+              {t('loginModal.submit')} <Icon name="arr1" inButton />
             </button>
           </form>
           <div className={s.or}>
@@ -253,7 +253,7 @@ export function HeaderClient({
           </div>
           <p>
             <a href={routes.testAccountLogin()} className="btn btn-blue">
-              {t('loginModal.temporaryAccess')} <i className="icon icon-arr1"></i>
+              {t('loginModal.temporaryAccess')} <Icon name="arr1" inButton />
             </a>
           </p>
           <p>

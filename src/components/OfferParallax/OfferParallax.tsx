@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import s from './OfferParallax.module.css';
 import cn from 'classnames';
+import { Icon } from '@/components/ui/Icon';
 
 // Replaces additional.js: $('#offer-parallax').parallax_bg("50%", 0.3, 615);
 // (../http/js/jquery.parallax-bg.js) — shifts the background image vertically as the section
@@ -51,7 +52,7 @@ export function OfferParallax() {
 
           <div className="btn-block">
             <a href="" className="btn btn-red">
-              {t('cta')} <i className="icon icon-arr1"></i>
+              {t('cta')} <Icon name="arr1" inButton />
             </a>
           </div>
         </div>

@@ -55,21 +55,6 @@ input.btn {
     cursor: pointer
 }
 
-.btn i.icon,
-a.btn i.icon,
-input.btn i.icon {
-    margin: 0 2px 0 4px
-}
-
-.btn i.icon.icon-arr1,
-.btn i.icon.icon-arr2,
-a.btn i.icon.icon-arr1,
-a.btn i.icon.icon-arr2,
-input.btn i.icon.icon-arr1,
-input.btn i.icon.icon-arr2 {
-    line-height: 28px
-}
-
 .btn.btn-red,
 a.btn.btn-red,
 input.btn.btn-red {
@@ -384,24 +369,6 @@ i.icon.icon-time {
     background-position: 0 -104px
 }
 
-i.icon.icon-tracking {
-    width: 61px;
-    height: 42px;
-    background-position: 0 -149px
-}
-
-i.icon.icon-login {
-    width: 40px;
-    height: 42px;
-    background-position: 0 -206px
-}
-
-i.icon.icon-inbox {
-    width: 36px;
-    height: 42px;
-    background-position: 0 -5988px
-}
-
 i.icon.icon-slider-1 {
     width: 48px;
     height: 40px;
@@ -424,106 +391,6 @@ i.icon.icon-slider-4 {
     width: 39px;
     height: 40px;
     background-position: 0 -575px
-}
-
-i.icon.icon-arr1 {
-    width: 12px;
-    height: 13px;
-    background-position: -35px -2251px
-}
-
-i.icon.icon-arr2 {
-    width: 12px;
-    height: 13px;
-    background-position: -69px -2251px
-}
-
-i.icon.icon-whyus-1 {
-    width: 64px;
-    height: 41px;
-    background-position: 0 -1204px
-}
-
-i.icon.icon-whyus-2 {
-    width: 52px;
-    height: 52px;
-    background-position: 0 -1305px
-}
-
-i.icon.icon-whyus-3 {
-    width: 47px;
-    height: 44px;
-    background-position: 5px -1414px
-}
-
-i.icon.icon-whyus-4 {
-    width: 52px;
-    height: 52px;
-    background-position: 0 -1505px
-}
-
-i.icon.icon-whyus-5 {
-    width: 61px;
-    height: 61px;
-    background-position: 0 -1596px
-}
-
-i.icon.icon-whyus-6 {
-    width: 56px;
-    height: 50px;
-    background-position: 0 -1705px
-}
-
-i.icon.icon-whyus-7 {
-    width: 60px;
-    height: 57px;
-    background-position: 0 -1801px
-}
-
-i.icon.icon-whyus-8 {
-    width: 63px;
-    height: 51px;
-    background-position: 0 -1909px
-}
-
-i.icon.icon-info {
-    width: 21px;
-    height: 22px;
-    background-position: 0 -2681px
-}
-
-i.icon.icon-info:hover {
-    background-position: -40px -2681px
-}
-
-i.icon.icon-menu {
-    position: relative;
-    width: 22px;
-    height: 18px;
-    background: 0 0
-}
-
-i.icon.icon-menu span,
-i.icon.icon-menu span:after,
-i.icon.icon-menu span:before {
-    position: absolute;
-    display: block;
-    width: 22px;
-    height: 3px;
-    background: #fff;
-    border-radius: 1px
-}
-
-i.icon.icon-menu span:before {
-    content: "";
-    top: 6px;
-    left: 0
-}
-
-i.icon.icon-menu span:after {
-    content: "";
-    top: 12px;
-    left: 0
 }
 
 i.icon.icon-menusm {

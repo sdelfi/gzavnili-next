@@ -1,0 +1,145 @@
+/* Ported from public/css/style.css's `i.icon`/`i.icon.icon-*`/`.btn i.icon` rules (the base
+   sprite-image rule plus one block per icon actually in use) — see the new AGENTS.md "Global
+   CSS cleanup" rule and PROGRESS.md. Same sprite sheet (public/img/icons.png), same
+   width/height/background-position values, just scoped to this component instead of global
+   classnames. */
+
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+  background: url('/img/icons.png') no-repeat;
+}
+
+/* Margin/line-height that legacy applied via the `.btn i.icon` descendant selector when an
+   icon sits inside a button/link styled `.btn` — exposed as a prop instead of relying on an
+   ancestor selector, since this component's classes are scoped (not globally named `icon`
+   anymore for `.btn` to reach into). */
+.inButton {
+  margin: 0 2px 0 4px;
+}
+
+.arr1.inButton,
+.arr2.inButton {
+  line-height: 28px;
+}
+
+.inbox {
+  width: 36px;
+  height: 42px;
+  background-position: 0 -5988px;
+}
+
+.tracking {
+  width: 61px;
+  height: 42px;
+  background-position: 0 -149px;
+}
+
+.login {
+  width: 40px;
+  height: 42px;
+  background-position: 0 -206px;
+}
+
+.menu {
+  position: relative;
+  width: 22px;
+  height: 18px;
+  background: 0 0;
+
+  span,
+  span::before,
+  span::after {
+    position: absolute;
+    display: block;
+    width: 22px;
+    height: 3px;
+    background: #fff;
+    border-radius: 1px;
+  }
+
+  span::before {
+    content: '';
+    top: 6px;
+    left: 0;
+  }
+
+  span::after {
+    content: '';
+    top: 12px;
+    left: 0;
+  }
+}
+
+.arr1 {
+  width: 12px;
+  height: 13px;
+  background-position: -35px -2251px;
+}
+
+.arr2 {
+  width: 12px;
+  height: 13px;
+  background-position: -69px -2251px;
+}
+
+/* .arr3 intentionally has no size/position — see types.ts's comment on this pre-existing
+   legacy gap (no CSS rule for icon-arr3 ever existed). */
+
+.info {
+  width: 21px;
+  height: 22px;
+  background-position: 0 -2681px;
+
+  &:hover {
+    background-position: -40px -2681px;
+  }
+}
+
+.whyus1 {
+  width: 64px;
+  height: 41px;
+  background-position: 0 -1204px;
+}
+
+.whyus2 {
+  width: 52px;
+  height: 52px;
+  background-position: 0 -1305px;
+}
+
+.whyus3 {
+  width: 47px;
+  height: 44px;
+  background-position: 5px -1414px;
+}
+
+.whyus4 {
+  width: 52px;
+  height: 52px;
+  background-position: 0 -1505px;
+}
+
+.whyus5 {
+  width: 61px;
+  height: 61px;
+  background-position: 0 -1596px;
+}
+
+.whyus6 {
+  width: 56px;
+  height: 50px;
+  background-position: 0 -1705px;
+}
+
+.whyus7 {
+  width: 60px;
+  height: 57px;
+  background-position: 0 -1801px;
+}
+
+.whyus8 {
+  width: 63px;
+  height: 51px;
+  background-position: 0 -1909px;
+}

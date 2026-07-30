@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { Icon } from '@/components/ui/Icon';
 
 // Ports the pricing/ETA logic that used to live server-side in
 // `../http/views/homecals.cfm` (GET-param driven, re-rendered by ColdFusion on every submit —
@@ -218,7 +219,7 @@ export function Calculator() {
       </div>
       <div className="btn-block">
         <button type="submit" className="btn btn-blue">
-          {t('calculate')} <i className="icon icon-arr2"></i>
+          {t('calculate')} <Icon name="arr2" inButton />
         </button>
       </div>
 
