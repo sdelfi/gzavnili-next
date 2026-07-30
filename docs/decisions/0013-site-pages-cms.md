@@ -93,17 +93,22 @@ first and rejected — real content has `{CALCULATOR}` sitting inside a still-op
 (`<div class="calc-block-inner">...{CALCULATOR}</div>`), so each half is unbalanced HTML on
 its own, and the browser auto-closes the dangling parent at each fragment's own boundary,
 breaking the `.calc-block` box styling around the calculator. Instead: the whole content
-renders as **one** `dangerouslySetInnerHTML` (keeping the original nesting intact), with
-`{CALCULATOR}` swapped for an inert marker div (`data-calculator-slot`); a client component
-(`CalculatorPortal.tsx`) then finds that marker after mount and `createPortal`s the real,
-already-ported `Calculator` component into it. `{NEXTSEND}`/`{NEXTDEL}` are plain
+renders as **one** `dangerouslySetInnerHTML` (keeping the original nesting intact), with each
+wired token swapped for its own inert marker div (`data-calculator-slot`,
+`data-quote-form-slot`, `data-question-form-slot`); a shared client component
+(`SlotPortal.tsx`, generalized from the original single-purpose `CalculatorPortal.tsx` once a
+second/third placeholder needed the same trick) finds each marker after mount and
+`createPortal`s the real component into it. `{NEXTSEND}`/`{NEXTDEL}` are plain
 server-computed text substitutions (no component needed).
 
-**Only `{CALCULATOR}` is wired up** — it's the one confirmed in real content and the only
-token with an existing React port. `{COURIERCALC_FORM}`/`{QUESTIONFORM}`/`{QUOTEFORM}`/
-`{HELPTOSHOP}`/`{VOLUMECAL}` are left as literal, visible placeholder text if a page ever
-contains them — a known, flagged gap, not a silent failure — until each of their source
-sub-templates gets its own React port.
+**`{CALCULATOR}`/`{QUOTEFORM}`/`{QUESTIONFORM}` are wired up** (`Calculator`/`QuoteForm`/
+`QuestionForm`, the latter two backed by `submitQuoteForm`/`submitQuestionForm` Server Actions
+in `src/lib/actions/siteForms.ts`, which mail to `info@gzavnili.com` exactly like legacy's
+`quote_form.cfm`/`question_form.cfm`). `{COURIERCALC_FORM}`/`{HELPTOSHOP}`/`{VOLUMECAL}` are
+still left as literal, visible placeholder text if a page ever contains them — a known,
+flagged gap, not a silent failure — until each of their source sub-templates (each a
+substantially larger dynamic multi-row calculator, unlike the two plain contact-style forms
+above) gets its own React port.
 
 ## Architecture
 
@@ -165,10 +170,12 @@ sub-templates gets its own React port.
   literal `ge/` *prefix*) — imported as ordinary `en`-locale pages with slugs
   `questions/ge`/`shop/learn/ge` rather than being mis-detected as Georgian. Flagged in case
   they turn out to need different handling once actually visited/verified live.
-- **`{COURIERCALC_FORM}`/`{QUESTIONFORM}`/`{QUOTEFORM}`/`{HELPTOSHOP}`/`{VOLUMECAL}`** —
-  the other layout-level placeholder tokens (see the section above) render as literal text
-  until each gets its own React port and a `PageContent` case, same pattern as
-  `{CALCULATOR}`/`CalculatorPortal.tsx`.
+- **`{COURIERCALC_FORM}`/`{HELPTOSHOP}`/`{VOLUMECAL}`** — the remaining layout-level
+  placeholder tokens (see the section above) render as literal text until each gets its own
+  React port and a `PageContent` case, same pattern as `{CALCULATOR}`/`{QUOTEFORM}`/
+  `{QUESTIONFORM}`/`SlotPortal.tsx`. Each backs a materially bigger legacy sub-template
+  (dynamic add/remove item rows, ~270-330 lines of CFML) than the two simple contact-style
+  forms already ported, so they're a separate, larger pass.
 - **`public/css/static.css`** is a wholesale, uncurated copy of prod's stylesheet (see the
   section above) — re-sync it by re-fetching `usa.gzavnili.com/css/style.css` outright when
   it's next known to be stale, don't hand-edit it piecemeal.

@@ -267,6 +267,42 @@
     "heading": "Mobile app",
     "text": "Download - Free tool, for good news! "
   },
+  "QuoteForm": {
+    "freightType": "Freight type",
+    "freightTypeOptions": ["Regular Shipping", "Accelerated Shipping", "Decelerated Shipping"],
+    "cityOfDeparture": "City of departure",
+    "weight": "Weight",
+    "icoterms": "Icoterms",
+    "icotermsOptions": ["Regular Shipping", "Accelerated Shipping", "Decelerated Shipping"],
+    "deliveryCity": "Delivery city",
+    "length": "Length",
+    "height": "Height",
+    "width": "Width",
+    "dimensionOptions": ["in", "cm", "m"],
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "send": "Send",
+    "thankYou": "Thank You",
+    "genericError": "Please fill in all required fields."
+  },
+  "QuestionForm": {
+    "name": "Your first and last name",
+    "email": "Your e-mail",
+    "subject": "Subject matter",
+    "subjectOptions": [
+      "Express Service",
+      "Regular Service",
+      "Cargo Service",
+      "Parcel Declaration",
+      "Custom Clearance",
+      "Other Reason"
+    ],
+    "message": "Text message",
+    "send": "Send",
+    "thankYou": "Thank You",
+    "genericError": "Please fill in all required fields."
+  },
   "News": {
     "heading": "Latest Company News",
     "items": [

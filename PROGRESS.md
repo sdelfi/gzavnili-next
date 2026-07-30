@@ -569,6 +569,19 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       Site Settings mega-form (shipping dates/AWB/pricing) deferred to the parcels domain.
       `Config` Prisma model (previously unused) extended with `popupEnabled`/
       `popupMessageEn`/`popupMessageGe` (migration `20260731180000_add_site_popup`).
+- [x] **`{QUOTEFORM}`/`{QUESTIONFORM}` CMS placeholders wired up** (client-reported:
+      `cargo.html` was rendering the literal `{QUOTEFORM}` text instead of a form —
+      docs/decisions/0013-site-pages-cms.md's "known gap"). Ported legacy's
+      `quote_form.cfm`/`question_form.cfm` as `src/components/QuoteForm/`/
+      `src/components/QuestionForm/`, backed by `submitQuoteForm`/`submitQuestionForm` Server
+      Actions (`src/lib/actions/siteForms.ts`) that mail to `info@gzavnili.com` via the
+      existing `sendEmail()` helper, same as legacy's `cfmail`. Generalized the single-purpose
+      `CalculatorPortal.tsx` into a reusable `SlotPortal.tsx` now that 3 placeholders need the
+      same "portal into an inert marker div" trick; `PageContent` now takes a `locale` prop.
+      Affects `cargo.html` (both forms) and `parcel-service.html` (`{QUESTIONFORM}` only), en
+      + ge. `{COURIERCALC_FORM}`/`{HELPTOSHOP}`/`{VOLUMECAL}` remain unported — each is a
+      materially bigger dynamic calculator, not a simple contact form; deliberately deferred,
+      client to prioritize next.
 - [ ] Remaining bema modules per the rollout plan: parcels (the actual client pain point —
       see `docs/migrations/02-parcels-domain-analysis.md`/`04-postgres-schema-design.md`),
       products, orders, statements, content, reports, messages, config, coupons-adjacent
