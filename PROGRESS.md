@@ -351,6 +351,34 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       plaintext `PasswordShort` column, a deliberate security improvement with
       identical external behavior. See `docs/decisions/0011-bema-admin.md`'s
       "Idle-lock modal" section for the full writeup.
+- [x] **UI polish pass**: sidebar was scrolling away with the page instead of staying
+      pinned — made `position: sticky; top: 0; height: 100vh` with its own internal
+      `.scrollArea` scroll instead of `max-height` on a normal in-flow block. Added a basic
+      responsive breakpoint (768px) as groundwork only — `.shell` stacks to a single
+      column, `UserForm`/`AddressFields`/`PricingRulesSection`'s 2-column grids collapse to
+      1 column; not a full mobile redesign. `Table` padding tightened (`6px/10px`, 13px
+      font) to match the legacy `table.browse`'s tight density instead of a roomy modern
+      default. Users list: added the "Country" column for BEMA Users (legacy `vwUsers.cfm`
+      shows it only for `tid eq 1`) via a `billingAddress: { select: { country } }` include;
+      added the two action icons the Customers list was missing (legacy: "Login as
+      reseller", "View Statement", both `tid neq 1`-only) as `IconButton` (new shared `ui/`
+      icon-link component, inline SVG rather than vendoring the legacy PNGs). Edit/Add now
+      carry a `returnTo` querystring param so saving/cancelling lands back on the exact
+      list filter/sort/page state you came from, matching the legacy
+      `user_edit.cfm`'s `location(form.rs)` — previously it always reset to page 1,
+      unfiltered.
+- [ ] **"Login as user"** (Customers list icon) is a disabled placeholder, not wired yet.
+      Client confirmed the direction (2026-07-30): build a real customer-facing auth realm
+      in this Next.js app (separate from the bema realm, same pattern as
+      `docs/migrations/03-target-architecture.md` §3's "two independent auth realms"), not
+      a stopgap link into the still-live legacy site. This is a substantial standalone piece
+      of work (customer login/session/JWT-or-cookie realm, then the actual impersonation
+      endpoint bema calls to mint a session for a given customer) — scope it as its own
+      task/plan rather than bolting it onto a UI-polish pass.
+- [ ] **Statement** (Customers list `$` icon) links to a real route
+      (`/bema/statements/[id]`, `routes.bema.userStatement`) that's a placeholder page only
+      ("Not implemented yet") — the statements module itself isn't built. See the rollout
+      plan below.
 - [ ] Real HTTP/browser-level verification of the bema UI (login form, list screen,
       create/edit forms, pricing rules) — only logic-level verification was possible this
       session; do this the next time a dev server is reachable.

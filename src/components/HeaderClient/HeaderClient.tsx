@@ -1,15 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import Image from 'next/image';
 import cn from 'classnames';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
 import { Modal } from '@/components/Modal';
 import { Input } from '@/components/ui/Input';
+import { Alert } from '@/components/ui/Alert';
+import { Icon } from '@/components/ui/Icon';
 import { isOfficeOpen, type OfficeId } from '@/lib/officeHours';
 import { OFFICES, setOfficeCookie } from '@/lib/offices';
 import { routes } from '@/lib/routes';
+import { loginAction, type ActionState } from '@/app/[locale]/authenticate/actions';
 import s from './HeaderClient.module.css';
 
 // The interactive half of Header (dropdown toggles, office switching, tracking/login
@@ -44,6 +47,7 @@ export function HeaderClient({
   const [officeOpenNow, setOfficeOpenNow] = useState(initialOfficeOpenNow);
   const [trackingOpen, setTrackingOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
+  const [loginState, loginFormAction, loginPending] = useActionState<ActionState, FormData>(loginAction, undefined);
 
   const activeOffice = OFFICES[officeIndex];
   const otherLocale = locale === 'en' ? 'ge' : 'en';
@@ -226,14 +230,21 @@ export function HeaderClient({
       <Modal open={loginOpen} onClose={() => setLoginOpen(false)} variant="w420">
         <div className={s.loginBlock}>
           <h3>{t('loginModal.title')}</h3>
-          <form action={routes.login()} method="post">
+          {loginState?.error && <Alert variant="error">{loginState.error}</Alert>}
+          <form action={loginFormAction}>
+            <input type="hidden" name="locale" value={locale} />
             <div className="input-group">
-              <Input type="text" name="login_username" placeholder={t('loginModal.accountPlaceholder')} />
+              <Input type="text" name="login_username" placeholder={t('loginModal.accountPlaceholder')} required />
             </div>
             <div className="input-group">
-              <Input type="password" name="login_password" placeholder={t('loginModal.passwordPlaceholder')} />
+              <Input
+                type="password"
+                name="login_password"
+                placeholder={t('loginModal.passwordPlaceholder')}
+                required
+              />
             </div>
-            <button type="submit" className="btn btn-blue">
+            <button type="submit" className="btn btn-blue" disabled={loginPending}>
               {t('loginModal.submit')} <i className="icon icon-arr1"></i>
             </button>
           </form>

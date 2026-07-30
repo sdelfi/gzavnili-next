@@ -26,6 +26,7 @@ export const routes = {
   logout: () => '/authenticate/logout',
   register: () => '/authenticate/register',
   forgotPassword: () => '/authenticate/forgot/',
+  resetPassword: (token: string) => `/authenticate/reset?token=${encodeURIComponent(token)}`,
   testAccountLogin: () => '/authenticate/login/?testaccount=1',
   /** Any other static `<slug>.html` marketing page. */
   page: (slug: StaticPageSlug) => `/${slug}.html`,

@@ -42,6 +42,18 @@ intentionally style via global classnames rather than CSS Modules (see
 `docs/decisions/0002-select-library.md`) — that's a different, already-decided
 pattern, not a license to leave other components flat too.
 
+# Global CSS cleanup
+
+`public/css/style.css` (and its siblings) is legacy-ported global CSS, not a permanent home
+for new styling. Whenever you touch a page/component that relies on rules in there: if a
+rule is specific to that one component, move it into that component's own `.module.css`
+(CSS Modules, per "One component, one folder" above) instead of leaving it global; if a rule
+is genuinely shared across many components (resets, typography, `.container`, `.btn`, form
+control base styles), move it to `src/app/globals.css` instead of leaving it in the legacy
+file. The end goal is to empty `style.css` out entirely, component by component, as each
+page gets touched — not a one-shot rewrite, but also not something to skip just because a
+page "already works" with the old global rule still in place.
+
 # Routing
 
 Every internal `href`/`action` goes through `src/lib/routes.ts`'s `routes`
