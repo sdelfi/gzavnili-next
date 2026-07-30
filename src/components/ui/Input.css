@@ -1,0 +1,44 @@
+/*
+ * Base text-input styling — moved from public/css/style.css's `input[type=text|email|
+ * password]`/`textarea` and `.input-group input[type=...]` rules, per AGENTS.md's "Global
+ * CSS cleanup": Input.tsx renders these exact elements, so the styling belongs with the
+ * component — same already-decided pattern as Select.css (docs/decisions/0002-select-library.md).
+ * `.input-group` itself (the wrapper div/label around an Input) is a separate, more generic
+ * concern used directly in JSX by many forms, not owned by Input — that part lives in
+ * globals.css instead.
+ */
+input[type='text'],
+input[type='email'],
+input[type='password'],
+textarea {
+  padding: 10px 12px;
+  color: #4c4c4c;
+  font-size: 15px;
+  font-family: 'Open Sans', arial;
+  font-weight: 600;
+  line-height: 20px;
+  border: 1px solid #bfbfbf;
+  border-radius: 2px;
+}
+
+.input-group input[type='text'],
+.input-group input[type='email'],
+.input-group input[type='password'] {
+  width: 100%;
+  max-width: 600px;
+}
+
+.input-group input[type='text'].datepicker,
+.input-group input[type='password'].datepicker {
+  padding: 10px 50px 10px 17px;
+  width: 155px;
+  position: relative;
+  cursor: pointer;
+  background: url('/img/icons.png') 115px -5092px no-repeat;
+}
+
+.input-group textarea {
+  width: 100%;
+  max-width: 600px;
+  resize: none;
+}

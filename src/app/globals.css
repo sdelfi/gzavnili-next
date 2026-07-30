@@ -870,3 +870,56 @@ input:focus:-ms-input-placeholder {
   color: #818181;
   opacity: 0.5;
 }
+
+/* Moved from public/css/style.css — the `.input-group` wrapper (label + field layout) used
+   directly in JSX by many forms (LoginForm, RegisterForm, ...), not owned by any single
+   component the way Input.css's `input[type=...]` rules are owned by Input.tsx. See
+   AGENTS.md's "Global CSS cleanup" rule. */
+.input-group {
+  margin-bottom: 25px;
+}
+
+.input-group .input-group {
+  margin-bottom: 0;
+}
+
+.input-group label {
+  font-size: 15px;
+  color: #818181;
+  margin-bottom: 3px;
+  display: block;
+}
+
+.input-group.inline-group input,
+.input-group.inline-group label {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.input-group .radio-block {
+  padding: 5px 0;
+}
+
+.input-group .radio-block::before,
+.input-group .radio-block::after {
+  content: '';
+  display: table;
+}
+
+.input-group .radio-block label {
+  float: left;
+  margin: 2px 15px 2px 0;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+.input-group .radio-block label:nth-child(3) {
+  margin-right: 0;
+}
+
+.input-group .radio-block label.error {
+  display: block;
+  width: 100%;
+  font-weight: 400;
+}

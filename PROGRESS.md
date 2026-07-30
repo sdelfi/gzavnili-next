@@ -532,6 +532,14 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       `FaqAccordion` component instead (it already has this exact CSS properly extracted
       into its own module) rather than porting the rule a second time. New AGENTS.md rule:
       "Pages are thin."
+- [x] **`Input` component now owns its own CSS** (client-flagged: `.input-group
+      input[type=text]` still sat in `style.css`): split into `src/components/ui/Input.css`
+      (the `input[type=...]`/`.datepicker`/`textarea` element styling — same already-decided
+      pattern as `Select.css`, see docs/decisions/0002-select-library.md) and
+      `src/app/globals.css` (the `.input-group` wrapper/label/radio-block layout, since
+      that's used directly in JSX by many forms, not owned by `Input.tsx` itself). Page-
+      specific modifiers still using these selectors (`.form-smaller`, `.tracking-page`,
+      `search-parcels`, ...) left untouched in `style.css` — not this component's concern.
 - [ ] Remaining bema modules per the rollout plan: parcels (the actual client pain point —
       see `docs/migrations/02-parcels-domain-analysis.md`/`04-postgres-schema-design.md`),
       products, orders, statements, content, reports, messages, config, coupons-adjacent

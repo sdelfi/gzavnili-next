@@ -79,94 +79,9 @@ input.btn.btn-blue:hover {
     background: #3fa3f0
 }
 
-input[type=text],
-input[type=email],
-input[type=password],
-textarea {
-    padding: 10px 12px;
-    color: #4c4c4c;
-    font-size: 15px;
-    font-family: "Open Sans", arial;
-    font-weight: 600;
-    line-height: 20px;
-    border: 1px solid #bfbfbf;
-    border-radius: 2px
-}
-
-.input-group {
-    margin-bottom: 25px
-}
-
-.input-group .input-group {
-    margin-bottom: 0
-}
-
-.input-group label {
-    font-size: 15px;
-    color: #818181;
-    margin-bottom: 3px;
-    display: block
-}
-
-.input-group input[type=text],
-.input-group input[type=email],
-.input-group input[type=password] {
-    width: 100%;
-    max-width: 600px
-}
-
-.input-group input[type=text].datepicker,
-.input-group input[type=password].datepicker {
-    padding: 10px 50px 10px 17px;
-    width: 155px;
-    position: relative;
-    cursor: pointer;
-    background: url(../img/icons.png) 115px -5092px no-repeat
-}
-
-.input-group textarea {
-    width: 100%;
-    max-width: 600px;
-    resize: none
-}
-
-.input-group .select2 {
-    width: 100% !important
-}
-
-.input-group.inline-group input,
-.input-group.inline-group label {
-    display: inline-block;
-    vertical-align: middle
-}
-
-.input-group .radio-block {
-    padding: 5px 0
-}
-
-.input-group .radio-block:after,
-.input-group .radio-block:before {
-    content: "";
-    display: table
-}
-
-.input-group .radio-block label {
-    float: left;
-    margin: 2px 15px 2px 0;
-    font-size: 14px;
-    line-height: 20px;
-    font-weight: 600
-}
-
-.input-group .radio-block label:nth-child(3) {
-    margin-right: 0
-}
-
-.input-group .radio-block label.error {
-    display: block;
-    width: 100%;
-    font-weight: 400
-}
+/* `input[type=...]`/`.input-group`/`.radio-block` etc. moved to
+   src/components/ui/Input.css (the element-styling part) and src/app/globals.css (the
+   `.input-group` wrapper-layout part) — see AGENTS.md's "Global CSS cleanup" rule. */
 
 div.icon img,
 i.icon {
