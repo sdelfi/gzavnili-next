@@ -44,6 +44,11 @@ export const routes = {
     // Legacy "View Statement" icon-link (`../statements/statement.cfm?userid=...`) —
     // stubbed until the statements module is built, see PROGRESS.md.
     userStatement: (id: string) => `/bema/statements/${id}`,
+    // Standalone Receivers admin screen — legacy `bema/parcels/receivers.cfm`. Distinct from
+    // the parcel form's inline receiver picker, which has no route of its own.
+    receivers: () => '/bema/receivers',
+    receiverNew: () => '/bema/receivers/new',
+    receiverEdit: (id: string) => `/bema/receivers/${id}`,
     // Parcels — legacy `bema/parcels/parcels.cfm`. `deliveryRequests()` is the same screen
     // with legacy's `delreq=1` slice applied (its own sidebar entry there too), not a
     // separate page.

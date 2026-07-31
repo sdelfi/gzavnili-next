@@ -39,7 +39,11 @@ const NAV_GROUPS: NavGroup[] = [
         href: routes.bema.users({ accountType: 'Customer' }),
         isActive: (pathname, search) => pathname === '/bema/users' && search.get('accountType') === 'Customer',
       },
-      { label: 'Receivers' },
+      {
+        label: 'Receivers',
+        href: routes.bema.receivers(),
+        isActive: (pathname) => pathname.startsWith('/bema/receivers'),
+      },
       {
         label: 'Parcels',
         href: routes.bema.parcels(),

@@ -282,6 +282,10 @@ model Receiver {
   // from "does a Georgian-script name exist" while this column was missing — see
   // docs/decisions/0015.
   isGeCitizen Boolean @default(false) @map("is_ge_citizen")
+  // Legacy `receivers.Status` — the standalone Receivers admin screen (`receivers-delete.cfm`)
+  // soft-deletes by setting this to 0 rather than removing the row, since a receiver already
+  // attached to past parcels can't be hard-deleted without orphaning them.
+  active      Boolean @default(true)
   // Not explicitly enumerated in docs/migrations/02-parcels-domain-analysis.md (which only
   // confirms ReceiverId/AddressId) — inferred so "my receivers" can be scoped per sender.
   // Verify against the legacy `receivers` table before the ETL backfill in

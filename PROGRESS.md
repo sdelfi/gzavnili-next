@@ -269,6 +269,33 @@ bema builds on. See `docs/decisions/0011-bema-admin.md` for the full research/de
 writeup (legacy `edit_users.cfm`/`users.cfm` behavior, what was deliberately simplified,
 why).
 
+- [x] **Standalone Receivers screen** (legacy `bema/parcels/{receivers,receivers-update,
+      receivers-delete}.cfm` + `views/parcels/{vwReceivers,vwReceiversUpdate}.cfm`) — the
+      management screen the parcel form's `ParcelReceiverSection` picker never had: browse/
+      search/paginate all receivers (optionally scoped to one customer), add/edit one
+      directly, deactivate one — none of which required a parcel in the loop before this.
+      `Receiver.active` (`Boolean @default(true)`) added to the schema (migration
+      `20260801120000_receiver_active`) for legacy's `Status` soft-delete, which had no
+      column at all previously. `GET /api/bema/receivers` is now dual-mode: unchanged
+      `{ receivers }` shape when called with just `?userId=` (the parcel form's picker,
+      untouched), paginated/searchable `{ items, total }` when called with `?page=` (the new
+      list screen) — same route, so the two callers can't drift. New `POST`/`PATCH /api/bema/
+      receivers/[id]` (create/update, admin-only per legacy's stricter
+      `WEBSITE_ADMINISTRATOR,ADMINISTRATOR` gate on writes vs. the broader browse/picker
+      access) and `DELETE` (soft delete, sets `active=false`) reuse `upsertReceiver()` from
+      `parcelShared.ts` rather than duplicating the address-upsert logic a third time.
+      `receiverSchema.ts` mirrors legacy's `ReceiverUpdate.cfc` validation (first/last name
+      and city and phone1 always required, state+postal code required unless country is
+      "GE") — deliberately stricter than, and independent of, the parcel form's own relaxed
+      inline validation (`ParcelDraftModal.tsx`), which is untouched. New: `ReceiverListPage`/
+      `ReceiverForm` (`src/components/admin/receivers/`), `/bema/receivers` (+`/new`,
+      `/[id]`), sidebar's pre-existing unlinked "Receivers" placeholder now wired to
+      `routes.bema.receivers()`. **Not ported**: legacy's known-country-list validation on
+      the Country field (no such list exists in this codebase — the field stays free-text,
+      matching `ParcelReceiverSection`'s existing 2-letter Country input) and the
+      `findReceiver()` name/city/user uniqueness lookup (only used by the customer-facing
+      self-service address book, `receiverUniqCheck.cfm`, which is out of bema's scope).
+
 - [x] **Parcel edit screen** (`bema/parcels/parcels-update.cfm` + `views/parcels/
       vwParcelsUpdate.cfm`, ~1,900 lines between them — the item flagged as "the big one" in
       the parcels follow-ups below). Full field set in legacy's own five groupings, each its

@@ -18,6 +18,27 @@ skips) it — see AGENTS.md's "Legacy fidelity: bugs are ported, not fixed" rule
 
 ---
 
+## Receivers screen: hardcoded username block (`receivers.cfm`) — 2026-08-01
+
+**Found:** `../http/bema/parcels/receivers.cfm:1-3` — before the normal group-based access
+check even runs, the screen unconditionally `<cfabort>`s if the logged-in bema username is
+literally `GZ28489`: `<cfif ListFind('GZ28489', session.buser.getUsername())><cfabort></cfif>`.
+No comment explaining why; reads as one specific account someone locked out of this one
+screen at some point (e.g. after a data-entry incident), not a role- or permission-based
+rule — every other access check in this file (and its sibling `receivers-update.cfm`/
+`receivers-delete.cfm`) is a normal `groups="..."` check, this is the only hardcoded-username
+gate in the receivers module.
+
+**Not reachable, nothing to port.** This project's auth model (`src/lib/auth/session.ts`,
+`AdminRole` enum) has no concept of a per-account username blocklist independent of role —
+and no legacy user data has been imported yet (see `docs/migrations/05-data-migration-
+strategy.md`), so a `GZ28489` account doesn't exist in this schema to block. Recorded here so
+if/when legacy bema accounts are ever imported, this one-off exclusion isn't silently lost —
+it's a decision to make explicitly (ask the client whether it's still wanted) rather than to
+either quietly carry over or quietly drop.
+
+---
+
 ## Parcels list "Export Airway" (`airway.cfm`) — 2026-07-31, corrected 2026-08-01
 
 **Found (first pass, wrong):** with no `airway.cfm` source available and no real export sample
