@@ -137,7 +137,11 @@ model User {
 
   // BEMA-only fields (legacy: only shown/editable when accountType = BemaUser).
   suffix     String?
-  agentPrice Boolean? @map("agent_price")
+  // The flat per-kg rate a BEMA Agent charges on the batch "Add Parcel" screen instead of the
+  // customer's normal pricing (`parcels-add.js`'s `isAgent && agentPrice` branch) — a real
+  // numeric rate in legacy (`vwUserEditForm.cfm`'s `<input type="number" step="0.01">`), not
+  // the bare flag this was previously simplified to. See docs/findings.md.
+  agentPrice Decimal? @map("agent_price") @db.Decimal(10, 2)
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)

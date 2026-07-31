@@ -4,6 +4,7 @@ import {
   computeGroupIncrease,
   finalDebt,
   priceOverrideScale,
+  resolveAgentFlatRate,
   type DraftParcelCalcInput,
 } from '../batchPricing';
 
@@ -113,5 +114,50 @@ describe('priceOverrideScale / finalDebt', () => {
 
   test('a zero raw total never divides by zero', () => {
     expect(priceOverrideScale(0, 50)).toBe(1);
+  });
+});
+
+describe('resolveAgentFlatRate', () => {
+  const agent = (over: Partial<{ isAgent: boolean; agentPrice: number | null; username: string }> = {}) => ({
+    isAgent: true,
+    agentPrice: 6,
+    username: 'GZ100',
+    ...over,
+  });
+
+  test('applies for a BEMA Agent with a configured rate', () => {
+    expect(resolveAgentFlatRate(agent())).toBe(6);
+  });
+
+  test('does not apply to a non-agent, even with a rate configured', () => {
+    expect(resolveAgentFlatRate(agent({ isAgent: false }))).toBeNull();
+  });
+
+  test('does not apply when no rate is configured (null or zero)', () => {
+    expect(resolveAgentFlatRate(agent({ agentPrice: null }))).toBeNull();
+    expect(resolveAgentFlatRate(agent({ agentPrice: 0 }))).toBeNull();
+  });
+
+  test('does not apply to the one legacy-excluded account', () => {
+    expect(resolveAgentFlatRate(agent({ username: 'GZ2863114' }))).toBeNull();
+  });
+});
+
+describe('computeDraftParcelTotals — agent flat rate', () => {
+  test('overrides the base price for Regular service only, leaving Express/Cargo at normal pricing', () => {
+    const items: DraftParcelCalcInput[] = [
+      item({ id: 'a', service: 'Regular', weight: 2 }),
+      item({ id: 'b', groupId: '2', service: 'Express', weight: 2 }),
+    ];
+    const { items: results } = computeDraftParcelTotals(items, [], 6);
+    // Regular: agent flat rate 2kg * $6 = $12 (vs. the $16 default schedule would give).
+    expect(results.find((r) => r.id === 'a')?.baseDebt).toBe(12);
+    // Express: untouched by the agent rate — still the $7/kg default schedule.
+    expect(results.find((r) => r.id === 'b')?.baseDebt).toBe(14);
+  });
+
+  test('a null agent rate leaves normal pricing untouched', () => {
+    const { items: results } = computeDraftParcelTotals([item({ weight: 2 })], [], null);
+    expect(results[0].baseDebt).toBe(16);
   });
 });

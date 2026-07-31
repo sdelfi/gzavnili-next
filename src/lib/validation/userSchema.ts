@@ -38,7 +38,9 @@ const baseFields = {
   active: z.boolean().optional(),
   confirmed: z.boolean().optional(),
   suffix: z.string().max(50).nullable().optional(),
-  agentPrice: z.boolean().nullable().optional(),
+  // The BEMA Agent flat per-kg rate — see prisma/schema.prisma's doc comment on
+  // `User.agentPrice` and docs/findings.md.
+  agentPrice: z.number().nonnegative().nullable().optional(),
   language: z.enum(['en', 'ge']).nullable().optional(),
   importId: z.string().max(100).nullable().optional(),
   balanceAdjust: z.number().optional(),

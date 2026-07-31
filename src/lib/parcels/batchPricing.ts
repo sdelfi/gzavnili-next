@@ -1,11 +1,13 @@
-// The batch "Add Parcel" screen's group-delivery-fee and payment-split math, ported from
-// `bema/include/js/parcels-add.js`'s `sortParcelsTable()`/`goWeight()` and the POST handler
-// in `bema/parcels/parcels-add.cfm` (the percentPay/percentPay2/parcelsAmountTotalPercent
-// block). Per-kg base pricing itself is untouched — that's `calculateParcelPrice()` in
-// `./pricing.ts`, used identically here and on the edit screen. What's here is specific to
-// batch add: several draft parcels for one customer share a "group" (`groupid`), and a
-// group's delivery method adds a shared fee split evenly across its parcels, on top of a
-// $5-per-group minimum charge.
+// The batch "Add Parcel" screen's group-delivery-fee, agent flat-rate, and payment-split
+// math, ported from `bema/include/js/parcels-add.js`'s `sortParcelsTable()`/
+// `calculateDebtByService()` and the POST handler in `bema/parcels/parcels-add.cfm` (the
+// percentPay/percentPay2/parcelsAmountTotalPercent block). Base per-kg pricing is
+// `calculateParcelPrice()` in `./pricing.ts`, same as the edit screen — *except* for the one
+// override this screen alone has: a BEMA Agent charges their own configured flat rate for
+// Regular-service parcels instead, see `resolveAgentFlatRate()`. Beyond that, what's here is
+// specific to batch add: several draft parcels for one customer share a "group" (`groupid`),
+// and a group's delivery method adds a shared fee split evenly across its parcels, on top of
+// a $5-per-group minimum charge.
 //
 // Ported as pure functions (no React, no fetch) so the arithmetic — the part explicitly
 // flagged as needing care — is unit-testable on its own.
@@ -13,6 +15,35 @@
 import { calculateParcelPrice, type PricingRule } from './pricing';
 
 export type Delivery = 'Pickup' | 'Delivery' | 'Region';
+
+// The one legacy account excluded from the agent flat-rate override "due to role change"
+// (`bema/include/exclude-agents.cfm`'s comment: "GZ2863114 - Exclude MR ... from financial
+// reports due to role change") — the same account `agent-prefix-map.cfm` maps to the "MR"
+// tracking-number prefix, which `calculateDebtByService()`'s `userPref != 'MR'` check also
+// excludes from the flat rate. Matched by username (not the legacy GUID, which won't exist
+// post-migration) since `exclude-agents.cfm`'s comment is the only place a stable identifier
+// for this specific account appears in the source. See docs/findings.md.
+const AGENT_RATE_EXCLUDED_USERNAMES = new Set(['GZ2863114']);
+
+export type ActingAgent = {
+  /** `session.buser.getGroupId() eq 15` — this account's own `adminRole`, not the customer's. */
+  isAgent: boolean;
+  /** `session.buser.getAgentprice()` — a falsy value (null or 0) means "no override configured". */
+  agentPrice: number | null;
+  username: string;
+};
+
+/** The flat per-kg rate a BEMA Agent charges for Regular-service parcels on this screen,
+ *  instead of the customer's normal pricing — ported from `calculateDebtByService()`. Not
+ *  applied for Express/Cargo (legacy's own branches for those services never check this),
+ *  and not applied to the one excluded account. Returns `null` when the override doesn't
+ *  apply at all, so callers can fall back to normal pricing without a second check. */
+export function resolveAgentFlatRate(actingUser: ActingAgent): number | null {
+  if (!actingUser.isAgent) return null;
+  if (!actingUser.agentPrice) return null;
+  if (AGENT_RATE_EXCLUDED_USERNAMES.has(actingUser.username)) return null;
+  return actingUser.agentPrice;
+}
 
 export type DraftParcelCalcInput = {
   id: string;
@@ -63,14 +94,21 @@ export function computeGroupIncrease(groupWeight: number, groupBaseAmount: numbe
 /** Prices every draft parcel (base rate, then its group's fee share) and rolls the groups up
  *  for the on-screen subtotals. All parcels in a group are assumed to share one delivery
  *  method — the UI enforces that before a draft ever reaches here, same as legacy's
- *  `groupidCheck` validator. */
+ *  `groupidCheck` validator. `agentFlatRate` — the resolved result of `resolveAgentFlatRate()`
+ *  — overrides the base price for Regular-service items when present; `null` (the common
+ *  case: not an agent, or no rate configured) leaves normal pricing untouched. */
 export function computeDraftParcelTotals(
   items: DraftParcelCalcInput[],
   rules: PricingRule[],
+  agentFlatRate: number | null = null,
 ): { items: DraftParcelCalcResult[]; groups: GroupSummary[]; grandTotal: { weight: number; amount: number } } {
   const baseDebts = new Map<string, number>();
   for (const item of items) {
-    baseDebts.set(item.id, calculateParcelPrice({ service: item.service, weight: item.weight, dimWeight: 0, rules }).amount);
+    const base =
+      agentFlatRate !== null && item.service === 'Regular'
+        ? round2(item.weight * agentFlatRate)
+        : calculateParcelPrice({ service: item.service, weight: item.weight, dimWeight: 0, rules }).amount;
+    baseDebts.set(item.id, base);
   }
 
   const groupIds = [...new Set(items.map((i) => i.groupId))];

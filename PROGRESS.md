@@ -622,19 +622,32 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       minimum-charge/Price-Total-override math itself (what actually computes `parcels.debt`)
       was independently re-verified line-by-line against the same POST handler and stands.
       See docs/decisions/0017's "traced into the DAO, confirmed dead" section.
-      Deliberately not ported, each with its own reasoning in the decision doc: the tmp-table
-      tracking-number reservation (drafts live in React state instead), the agent
-      tracking-number prefix (keyed off legacy MSSQL ids that don't exist post-migration),
-      the BEMA-agent flat-rate override (already a bare boolean elsewhere),
-      `generateNewTracking()`'s ajax uniqueness loop for Duplicate, and per-draft inline error
-      targeting on a batch-submit validation failure (flat message list instead) — that last
-      one is a real, flagged gap for a large batch.
-      **Still open, needs a client decision, not a technical one:** whether to keep the now-
-      confirmed-inert "Payment method 2"/two "Amount" fields in the UI (faithful to the actual
-      legacy screen) or remove them (they do nothing, in legacy and here). Whether the
-      BEMA-agent flat-rate override (skipped above) is actually relied on by real accounts in
-      production is also unconfirmed — if it is, that's a real pricing gap for that user
-      segment, not just a cosmetic one.
+      **Second correction, same day (client instruction: port legacy logic 1:1, bugs
+      included, and record findings instead of silently deciding):** the BEMA-agent flat-rate
+      override (`isAgent`/`agentPrice`, Regular-service parcels only) was initially skipped
+      because `User.agentPrice` had been simplified to a bare `Boolean` in an earlier phase.
+      Re-opened and built properly instead: schema migration
+      (`20260731230000_agent_price_numeric`) restoring `agentPrice` to the real numeric rate
+      legacy has, a "Agent Price" field added to `UserForm` (previously not wired into this
+      project's user-edit screen at all), `resolveAgentFlatRate()` in `batchPricing.ts`
+      (unit-tested), and the acting-session-based resolution in both `parcelBatchAdd.ts`
+      (authoritative) and the client preview. The one `userPref == 'MR'` exclusion in legacy
+      was resolved to a real username (`GZ2863114`) by cross-referencing
+      `exclude-agents.cfm`'s comment, not skipped as unrecoverable. See docs/findings.md for
+      the full trace. Also added AGENTS.md's "Legacy fidelity: bugs are ported, not fixed"
+      rule and `docs/findings.md` itself as the process this correction follows going
+      forward.
+      Deliberately still not ported, each with its own reasoning in the decision doc: the
+      tmp-table tracking-number reservation (drafts live in React state instead), the agent
+      tracking-number *prefix* specifically (the pricing half is now ported; the cosmetic
+      `CH`/`MR` tracking-number letters have no recoverable identifier for two of the three
+      legacy GUIDs), `generateNewTracking()`'s ajax uniqueness loop for Duplicate, and
+      per-draft inline error targeting on a batch-submit validation failure (flat message list
+      instead) — that last one is a real, flagged gap for a large batch.
+      **Still open, per client instruction ("everything as in legacy" for the split fields
+      specifically):** the "Payment method 2"/two "Amount" fields stay in the UI exactly as
+      legacy has them, confirmed inert (see docs/findings.md) — kept, not removed, since the
+      client's instruction was fields-and-logic-as-legacy across the board.
 - [ ] Parcel view, parcel print, the statements module's invoice/history popups, and the
       messages module's Send/Resend SMS. Also "Export Airway" (`export=2` → `airway.cfm`), a
       document for the airline rather than a view of the list, and the edit form's "Invoice

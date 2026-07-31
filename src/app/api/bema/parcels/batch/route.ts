@@ -39,6 +39,6 @@ export async function POST(request: NextRequest) {
     seen.add(trackingNum);
   }
 
-  const { parcels } = await saveParcelBatch(parsed.data);
+  const { parcels } = await saveParcelBatch(parsed.data, { id: auth.session.sub, role: auth.session.role });
   return NextResponse.json({ parcels }, { status: 201 });
 }

@@ -93,10 +93,13 @@ have their own `docs/findings.md` entry too (found-it/evidence detail lives ther
 - **The agent tracking-number prefix** (`agent-prefix-map.cfm`: three hardcoded legacy MSSQL
   `BemaUser` GUIDs → `CH`/`MR`). Those ids don't exist in this schema (every id here is freshly
   generated on create), so the mapping has nothing to match against post-migration. A real
-  "agent prefix" field on `User` would be the honest fix; not built this pass.
-- **The BEMA-agent flat-rate override** (`isAgent`/`agentPrice`, `parcels-add.js`'s
-  `calculateDebtByService`). `User.agentPrice` was already simplified to a bare boolean flag
-  in an earlier phase (no numeric per-kg rate stored) — this pass didn't re-open that.
+  "agent prefix" field on `User` would be the honest fix; not built this pass. The *pricing*
+  half of this same mechanism (below) is ported — only the cosmetic tracking-number letters
+  aren't.
+- **The BEMA-agent flat-rate override is now ported**, not skipped — see docs/findings.md's
+  entry for the full trace (including how the `agentPrice` schema field went from a
+  simplified `Boolean` back to the real numeric rate legacy actually has, and how the one
+  `userPref == 'MR'` exclusion was resolved to a username via `exclude-agents.cfm`).
 - **`generateNewTracking()`'s ajax-backed uniqueness loop** for "Duplicate". The batch table's
   Duplicate button just reseeds the default time-based tracking core; the final submit's own
   duplicate check catches a real collision (a rare case for a manual duplicate click), rather

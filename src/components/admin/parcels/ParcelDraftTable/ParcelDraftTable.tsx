@@ -22,6 +22,7 @@ const num = (value: string) => {
 export function ParcelDraftTable({
   drafts,
   rules,
+  agentFlatRate,
   onAdd,
   onEdit,
   onDuplicate,
@@ -30,6 +31,9 @@ export function ParcelDraftTable({
 }: {
   drafts: DraftParcelFormState[];
   rules: PricingRule[];
+  /** Resolved via `resolveAgentFlatRate()` from the *acting* BEMA operator, not the customer
+   *  — see `ParcelAddPage`. */
+  agentFlatRate: number | null;
   onAdd: () => void;
   onEdit: (clientId: string) => void;
   onDuplicate: (clientId: string) => void;
@@ -39,6 +43,7 @@ export function ParcelDraftTable({
   const calc = computeDraftParcelTotals(
     drafts.map((d) => ({ id: d.clientId, groupId: d.groupId, delivery: d.delivery, service: d.service, weight: num(d.weight) })),
     rules,
+    agentFlatRate,
   );
   const byId = new Map(calc.items.map((i) => [i.id, i]));
 

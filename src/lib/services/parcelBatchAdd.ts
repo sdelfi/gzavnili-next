@@ -1,5 +1,6 @@
+import type { AdminRole } from '@/generated/prisma/client';
 import { db } from '@/lib/db';
-import { computeDraftParcelTotals, finalDebt, priceOverrideScale } from '@/lib/parcels/batchPricing';
+import { computeDraftParcelTotals, finalDebt, priceOverrideScale, resolveAgentFlatRate } from '@/lib/parcels/batchPricing';
 import type { PricingRule } from '@/lib/parcels/pricing';
 import { runParcelOperation } from '@/lib/services/parcelOperations';
 import { orNull, upsertCustomer, upsertReceiver } from '@/lib/services/parcelShared';
@@ -26,7 +27,9 @@ import type { AddParcelBatchInput } from '@/lib/validation/parcelBatchSchema';
 // GUIDs → `CH`/`MR`) is not ported: those ids are legacy `BemaUser` primary keys that don't
 // exist in this schema (ids here are freshly generated on create), so the mapping has
 // nothing to match against post-migration. Flagged in docs/decisions/0017, not silently
-// dropped.
+// dropped. The *pricing* half of that same mechanism — the BEMA Agent flat-rate override,
+// keyed off the acting operator's own account rather than the customer's — is ported; see
+// `resolveAgentFlatRate()` in `batchPricing.ts` and docs/findings.md.
 //
 // --- The payment split: traced into the DAO, and it's dead code ---------------------------
 //
@@ -55,7 +58,12 @@ import type { AddParcelBatchInput } from '@/lib/validation/parcelBatchSchema';
 
 export type DraftParcelResult = { trackingNum: string; parcelId: string };
 
-export async function saveParcelBatch(input: AddParcelBatchInput): Promise<{ parcels: DraftParcelResult[] }> {
+export async function saveParcelBatch(
+  input: AddParcelBatchInput,
+  /** The BEMA operator actually running this screen (from the session, not the customer the
+   *  parcels are for) — decides whether the agent flat-rate override applies. */
+  actingUser: { id: string; role: AdminRole },
+): Promise<{ parcels: DraftParcelResult[] }> {
   const rules = await db.customerPricingRule.findMany({ where: { userId: input.userId } });
   const pricingRules: PricingRule[] = rules.map((r) => ({
     id: r.id,
@@ -67,6 +75,16 @@ export async function saveParcelBatch(input: AddParcelBatchInput): Promise<{ par
     notes: r.notes,
   }));
 
+  const acting = await db.user.findUnique({
+    where: { id: actingUser.id },
+    select: { username: true, agentPrice: true },
+  });
+  const agentFlatRate = resolveAgentFlatRate({
+    isAgent: actingUser.role === 'BemaAgent',
+    agentPrice: acting?.agentPrice ? Number(acting.agentPrice) : null,
+    username: acting?.username ?? '',
+  });
+
   const calcInputs = input.draftParcels.map((draft, index) => ({
     id: String(index),
     groupId: draft.groupId,
@@ -74,7 +92,7 @@ export async function saveParcelBatch(input: AddParcelBatchInput): Promise<{ par
     service: draft.service,
     weight: draft.weight,
   }));
-  const { items } = computeDraftParcelTotals(calcInputs, pricingRules);
+  const { items } = computeDraftParcelTotals(calcInputs, pricingRules, agentFlatRate);
   const rawGrandTotal = items.reduce((sum, i) => sum + i.rawTotal, 0);
   const scale = priceOverrideScale(rawGrandTotal, input.priceTotal);
 

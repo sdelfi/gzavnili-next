@@ -22,6 +22,7 @@ import {
   type DraftParcelFormState,
   type QuickCustomerFormState,
 } from '@/lib/parcels/batchForm';
+import { resolveAgentFlatRate } from '@/lib/parcels/batchPricing';
 import type { PricingRule } from '@/lib/parcels/pricing';
 import type { AddParcelBatchPayload } from '@/lib/validation/parcelBatchSchema';
 import { routes } from '@/lib/routes';
@@ -40,11 +41,11 @@ import s from './ParcelAddPage.module.css';
 //   instead of round-tripping through the server on every add, so there's nothing to
 //   reserve; the final submit's own uniqueness check (shared with the edit screen) is what
 //   actually has to hold.
-// * The agent tracking-number prefix (`agent-prefix-map.cfm`) and the BEMA-agent flat-rate
-//   override (`isAgent`/`agentPrice` in `parcels-add.js`) — the first keys off legacy MSSQL
-//   ids that don't exist in this schema, the second off a field already simplified to a bare
-//   boolean elsewhere in this project. Both flagged in docs/decisions/0017, not silently
-//   dropped.
+// * The agent tracking-number prefix (`agent-prefix-map.cfm`) — keys off legacy MSSQL ids
+//   that don't exist in this schema. Flagged in docs/decisions/0017, not silently dropped.
+//   The BEMA-agent flat-rate override itself *is* ported — see `resolveAgentFlatRate()`
+//   below, applied to the live preview the same way `parcelBatchAdd.ts` applies it
+//   server-side at submit.
 // * `generateNewTracking()`'s recursive ajax-backed uniqueness search for "Duplicate" — this
 //   just reseeds the default time-based core and lets the final submit's own duplicate check
 //   catch a real collision, rather than looping ajax calls for what's a rare edge case.
@@ -181,6 +182,13 @@ export function ParcelAddPage() {
   }
 
   const activeRules = rules.userId === resolvedUserId ? rules.rules : [];
+  // For the on-screen preview only — the authoritative calculation is server-side, re-derived
+  // independently in `parcelBatchAdd.ts` from the acting session, not trusted from the client.
+  const agentFlatRate = resolveAgentFlatRate({
+    isAgent: user?.adminRole === 'BemaAgent',
+    agentPrice: user?.agentPrice ? Number(user.agentPrice) : null,
+    username: user?.username ?? '',
+  });
 
   return (
     <div className={s.page}>
@@ -201,6 +209,7 @@ export function ParcelAddPage() {
       <ParcelDraftTable
         drafts={drafts}
         rules={activeRules}
+        agentFlatRate={agentFlatRate}
         onAdd={openNewDraft}
         onEdit={openEditDraft}
         onDuplicate={duplicateDraft}

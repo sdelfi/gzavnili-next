@@ -17,6 +17,9 @@ export type BemaUser = {
   adminRole: AdminRole | null;
   /** Only `/me` includes this — it decides which payment methods the parcels screen offers. */
   billingAddress?: { country: string | null } | null;
+  /** BEMA Agent flat per-kg rate (see `resolveAgentFlatRate()` in `lib/parcels/batchPricing`)
+   *  — a `Decimal` on the server, so this arrives JSON-serialised as a numeric string. */
+  agentPrice?: string | number | null;
 };
 
 type AuthState = {

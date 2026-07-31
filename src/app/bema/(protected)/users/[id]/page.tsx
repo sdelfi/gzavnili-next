@@ -17,6 +17,7 @@ type RawUser = Partial<UserFormValues> & {
   billingAddress?: RawAddress;
   shippingAddress?: RawAddress;
   balanceAdjust?: string | number | null;
+  agentPrice?: string | number | null;
 };
 
 function toAddressFormValues(address: RawAddress): AddressFormValues {
@@ -47,6 +48,7 @@ function EditUserPageInner({ params }: { params: Promise<{ id: string }> }) {
   const initialValues: Partial<UserFormValues> = {
     ...user,
     balanceAdjust: user.balanceAdjust != null ? String(user.balanceAdjust) : '0',
+    agentPrice: user.agentPrice != null ? String(user.agentPrice) : '',
     billingAddress: toAddressFormValues(user.billingAddress),
     shippingAddress: toAddressFormValues(user.shippingAddress),
   };

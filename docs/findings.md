@@ -79,23 +79,44 @@ hold here. There is no code path producing the typo's observable effect to repli
 isn't a case of "found a bug, chose not to port it," there's genuinely no reachable behavior
 attached to it in this flow.
 
-### BEMA-agent flat-rate override and the agent tracking-number prefix
+### BEMA-agent flat-rate override — ported; the tracking-number prefix half stays unported
 
-**Found:** `parcels-add.js`'s `calculateDebtByService()`/`goWeight()` charge a BEMA agent
-(`session.buser.getGroupId() eq 15`) a flat `agentPrice` per kg instead of the standard rate,
-when `userPref != 'MR'`. `userPref` itself comes from `agent-prefix-map.cfm`, which maps three
-hardcoded legacy MSSQL `BemaUser` GUIDs to `CH`/`MR` prefixes used in the tracking number.
+**Found:** `parcels-add.js`'s `calculateDebtByService()` charges a BEMA agent
+(`session.buser.getGroupId() eq 15`, i.e. the *acting operator's own account* — not the
+customer the parcels are for) a flat `agentPrice` per kg instead of the standard rate, for
+Regular-service parcels only (the Express/Cargo branches of the same function never check
+`isAgent`), when `userPref != 'MR'`. `userPref` comes from `agent-prefix-map.cfm`, which maps
+three hardcoded legacy MSSQL `BemaUser` GUIDs to `CH`/`MR` prefixes. Cross-checking the "MR"
+one against `bema/include/exclude-agents.cfm`'s comment (`"GZ2863114 - Exclude MR
+(26259424-...) from financial reports due to role change"`) gave a stable identifier — a
+*username*, not a GUID — for the one account this exclusion actually names. `User.agentPrice`
+being a real numeric rate (not the bare `Boolean` this schema had simplified it to in an
+earlier phase) is confirmed by `bema/users/user_edit.cfm`/`vwUserEditForm.cfm`: a genuine
+`<input type="number" step="0.01">` on the BEMA-user edit screen, currently not even wired
+into this project's `UserForm` at all.
 
-**Verdict: open — needs a decision, and it's a real pricing-formula question, not a cosmetic
-one.** `User.agentPrice` in this schema is already a bare `Boolean` (a simplification made in
-an earlier phase, before this pass), with no numeric per-kg rate stored anywhere — so there is
-currently nothing to port *even if* this override is wanted, without a schema change (a new
-numeric rate field + wherever it's set on the BEMA Agent user-edit form). The three hardcoded
-GUIDs for the tracking-number prefix don't exist in this schema at all (every id here is
-freshly generated on create), so that half is unrecoverable as-is regardless. **Not built.**
-Whether real BEMA Agent accounts in production actually rely on the flat-rate override is
-unconfirmed — if yes, every such account gets the wrong price via this screen (and the
-edit screen, and the pricing-rules-driven suggestion on both) until it's built.
+**Verdict: ported.**
+- `prisma/schema.prisma`: `User.agentPrice` changed from `Boolean?` to `Decimal(10,2)?`
+  (migration `20260731230000_agent_price_numeric`) — the boolean was itself the gap, not a
+  decision to preserve.
+- `UserForm`/`userSchema.ts`: a real "Agent Price" number input, alongside "Suffix" (both
+  BemaUser-only fields in legacy, same `typeid eq 1` gate).
+- `batchPricing.ts`'s `resolveAgentFlatRate()`: `isAgent && agentPrice && username !=
+  'GZ2863114'` → the configured rate, else `null`. Applied in `computeDraftParcelTotals()` for
+  Regular-service items only, matching `calculateDebtByService()`'s own service check.
+  `parcelBatchAdd.ts` resolves this from the *acting session's* user id (not the customer),
+  matching legacy's `session.buser`; the client-side live preview
+  (`ParcelAddPage`/`ParcelDraftTable`) resolves the same way from `useBemaAuth()`'s `user` for
+  display, but the server's own independent resolution is what's authoritative.
+- The `CH`/`MR` **tracking-number prefix** itself stays unported — the two `CH` GUIDs have no
+  recoverable identifier anywhere in the source (unlike MR's), and the whole prefix is
+  cosmetic (doesn't affect price), see docs/decisions/0017.
+
+**Not yet independently verifiable:** whether the specific numeric rate value carried over
+correctly for any *real* legacy agent — no legacy data has been imported yet (ETL not
+started, per PROGRESS.md), so `GZ2863114` and any BEMA Agent's `agentPrice` are both empty in
+this schema today. The mechanism is in place and unit-tested against the formula; it has
+nothing to act on until real accounts exist.
 
 ---
 

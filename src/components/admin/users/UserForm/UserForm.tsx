@@ -36,6 +36,7 @@ const FIELD_LABELS: Record<string, string> = {
   password: 'Password',
   adminRole: 'User Type',
   suffix: 'Suffix',
+  agentPrice: 'Agent Price',
   passwordShort: 'Short Password',
   importId: 'Import Id',
   balanceAdjust: 'Balance Adjust',
@@ -68,6 +69,9 @@ export type UserFormValues = {
   confirmed: boolean;
   adminRole: AdminRole | null;
   suffix: string;
+  /** The BEMA Agent flat per-kg rate, blank for "not set" — see `prisma/schema.prisma`'s
+   *  doc comment on `User.agentPrice` and docs/findings.md. */
+  agentPrice: string;
   passwordShort: string;
   importId: string;
   balanceAdjust: string;
@@ -114,6 +118,7 @@ export function UserForm({
     confirmed: initialValues?.confirmed ?? false,
     adminRole: initialValues?.adminRole ?? (accountType === 'BemaUser' ? 'BemaStandard' : null),
     suffix: initialValues?.suffix ?? '',
+    agentPrice: initialValues?.agentPrice ?? '',
     passwordShort: '',
     importId: initialValues?.importId ?? '',
     balanceAdjust: initialValues?.balanceAdjust ?? '0',
@@ -159,11 +164,12 @@ export function UserForm({
     }
 
     setSubmitting(true);
-    const { password, passwordShort, balanceAdjust, ...rest } = values;
+    const { password, passwordShort, balanceAdjust, agentPrice, ...rest } = values;
     const payload = {
       ...rest,
       accountType,
       balanceAdjust: Number(balanceAdjust) || 0,
+      agentPrice: agentPrice.trim() === '' ? null : Number(agentPrice),
       ...(password ? { password } : {}),
       ...(passwordShort ? { passwordShort } : {}),
     };
@@ -300,6 +306,15 @@ export function UserForm({
             <label className={s.field}>
               Suffix
               <Input value={values.suffix} onChange={(e) => set('suffix', e.target.value)} />
+            </label>
+            <label className={s.field}>
+              Agent Price
+              <Input
+                type="number"
+                step="0.01"
+                value={values.agentPrice}
+                onChange={(e) => set('agentPrice', e.target.value)}
+              />
             </label>
             <div className={s.field}>
               User Type
