@@ -1,0 +1,19 @@
+.group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+}
+
+.option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.option input {
+  accent-color: #337ab7;
+  cursor: pointer;
+}

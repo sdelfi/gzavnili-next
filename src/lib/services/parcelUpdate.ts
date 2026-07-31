@@ -1,7 +1,6 @@
-import type { Prisma } from '@/generated/prisma/client';
 import { db } from '@/lib/db';
-import { PHONE1, PHONE2, PHONE3 } from '@/lib/services/parcelQuery';
 import { runParcelOperation } from '@/lib/services/parcelOperations';
+import { orNull, upsertCustomer, upsertReceiver } from '@/lib/services/parcelShared';
 import type { UpdateParcelInput } from '@/lib/validation/parcelSchema';
 
 // Saving the parcel edit form, ported from `bema/parcels/parcels-update.cfm`'s POST branch.
@@ -14,9 +13,6 @@ import type { UpdateParcelInput } from '@/lib/validation/parcelSchema';
 // a customer renamed for a parcel that didn't save. The paid/unpaid operation stays *outside*
 // it, deliberately: it raises invoices and payments of its own and is the same call the list
 // screen's bulk toolbar makes, so it keeps its own transaction semantics.
-
-/** Empty string means "not set" throughout this form; the DB wants NULL. */
-const orNull = (value: string) => (value.trim() === '' ? null : value.trim());
 
 /** `date`/`datetime-local` input value → instant. Bare dates land at UTC midnight, matching
  *  how the list screen's date filters read them back. */
@@ -40,78 +36,12 @@ export type ParcelSaveResult = { id: string; receiverId: string | null };
 export async function saveParcel(parcelId: string, input: UpdateParcelInput): Promise<ParcelSaveResult> {
   const receiverId = await db.$transaction(async (tx) => {
     // --- Receiver ---------------------------------------------------------------------
-    // The address is written either way; only a brand-new receiver also needs the join row.
-    const addressData: Prisma.AddressUncheckedCreateInput = {
-      firstName: orNull(input.receiver.firstName),
-      lastName: orNull(input.receiver.lastName),
-      firstNameGe: orNull(input.receiver.firstNameGe),
-      lastNameGe: orNull(input.receiver.lastNameGe),
-      organization: orNull(input.receiver.organization),
-      country: orNull(input.receiver.country),
-      street1: orNull(input.receiver.street1),
-      street2: orNull(input.receiver.street2),
-      city: orNull(input.receiver.city),
-      state: orNull(input.receiver.state),
-      postalCode: orNull(input.receiver.postalCode),
-      [PHONE1]: orNull(input.receiver.phone1),
-      [PHONE2]: orNull(input.receiver.phone2),
-      [PHONE3]: orNull(input.receiver.phone3),
-    };
-
-    let nextReceiverId = input.receiver.receiverId ?? null;
-    if (nextReceiverId) {
-      const existing = await tx.receiver.findUnique({ where: { id: nextReceiverId }, select: { addressId: true } });
-      if (existing) {
-        await tx.address.update({ where: { id: existing.addressId }, data: addressData });
-        await tx.receiver.update({
-          where: { id: nextReceiverId },
-          data: { isGeCitizen: input.receiver.isGeCitizen },
-        });
-      } else {
-        // The receiver was deleted between loading the form and saving it — legacy would
-        // have silently written an orphan. Fall through to creating a fresh one instead.
-        nextReceiverId = null;
-      }
-    }
-    if (!nextReceiverId) {
-      const address = await tx.address.create({ data: addressData });
-      const created = await tx.receiver.create({
-        data: { userId: input.userId, addressId: address.id, isGeCitizen: input.receiver.isGeCitizen },
-      });
-      nextReceiverId = created.id;
-    }
+    const nextReceiverId = await upsertReceiver(tx, input.userId, input.receiver);
 
     // --- Sender (customer) ------------------------------------------------------------
     // Legacy updates the customer's name and their *billing* address from this form on every
     // parcel save. Kept, including the surprising part: editing a parcel edits the customer.
-    const customer = await tx.user.findUnique({ where: { id: input.userId }, select: { billingAddressId: true } });
-    if (customer) {
-      const customerAddress: Prisma.AddressUncheckedCreateInput = {
-        firstName: orNull(input.customer.firstName),
-        lastName: orNull(input.customer.lastName),
-        organization: orNull(input.customer.organization),
-        country: orNull(input.customer.country),
-        street1: orNull(input.customer.street1),
-        street2: orNull(input.customer.street2),
-        city: orNull(input.customer.city),
-        state: orNull(input.customer.state),
-        postalCode: orNull(input.customer.postalCode),
-        [PHONE1]: orNull(input.customer.phone1),
-        [PHONE2]: orNull(input.customer.phone2),
-      };
-      const billingAddressId = customer.billingAddressId
-        ? (await tx.address.update({ where: { id: customer.billingAddressId }, data: customerAddress })).id
-        : (await tx.address.create({ data: customerAddress })).id;
-
-      await tx.user.update({
-        where: { id: input.userId },
-        data: {
-          firstName: orNull(input.customer.firstName),
-          lastName: orNull(input.customer.lastName),
-          billingAddressId,
-        },
-      });
-    }
+    await upsertCustomer(tx, input.userId, input.customer);
 
     // --- Parcel -----------------------------------------------------------------------
     // Tracking numbers are upper-cased on save, same as legacy — operators type them in

@@ -591,21 +591,44 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       still outstanding for the screens built before it: login form, users list, create/edit
       forms, pricing rules. The same throwaway-Postgres setup makes this cheap now.
       (The `Bun.password` bug this item used to also carry is fixed — see the entry below.)
-- [ ] **Parcels screens still not built**, all rendered inert with a "Not implemented yet"
-      title on the row's action column rather than dropped: **add parcel** (legacy serves it
-      from the same file as edit via `nrc=1`, with its own defaults, button row and "Save &
-      Add Another" flow — the natural next step now that edit exists and its sections are
-      reusable), parcel view, parcel print, the statements module's invoice/history popups,
-      and the messages module's Send/Resend SMS. Also "Export Airway" (`export=2` →
-      `airway.cfm`), a document for the airline rather than a view of the list, and the edit
-      form's "Invoice File" upload/preview row, which belongs to the files module.
-- [ ] **Parcels: two things worth confirming with the client** before they harden into
-      behaviour — (a) the Debt filter is a *not-equal* match on uninvoiced parcels (the value
-      `0` meaning "has a debt figure at all"), faithfully ported but unintuitive enough that
-      it may not be what operators think it does; (b) legacy's `addressbook.Phone1/2/3` were
-      mapped onto this schema's `cellPhone`/`homePhone`/`privateNumber` by reading the legacy
-      CSV export's own column headers, not from the MSSQL schema — worth a cross-check during
-      the ETL backfill, since it decides which number the list and export show.
+- [x] **Add Parcel** (2026-07-31, `docs/decisions/0017-bema-add-parcel.md`): the sidebar's
+      "Add Parcel (new)" entry (label's "(new)" dropped, per client instruction) turned out to
+      point at a genuinely different, second controller (`parcels-add.cfm` +
+      `vwParcelsAdd.cfm`) from the single-parcel `nrc=1` add mode the first pass targeted —
+      one customer, a batch of draft parcels (each its own receiver) assembled client-side and
+      created together, with a shared per-group delivery-fee/minimum-charge calculation and a
+      two-payment-method split across the whole batch. Built: `batchPricing.ts` (the
+      calculation, unit-tested — group fee tiers, minimum-charge stacking, Price Total
+      override scaling, payment split), `parcelBatchAdd.ts`/`parcelBatchCustomer.ts` (service
+      layer; extracted `parcelShared.ts`'s `upsertReceiver`/`upsertCustomer` out of the edit
+      screen's `parcelUpdate.ts` so both screens share the receiver/customer-upsert logic),
+      `POST /api/bema/parcels/batch` + `/quick-customer`, five new components
+      (`ParcelAddCustomerSection`/`ParcelDraftFields`/`ParcelDraftModal`/`ParcelDraftTable`/
+      `ParcelAddPaymentSection`/`ParcelAddPage`) plus two new shared UI primitives
+      (`ui/RadioGroup`, `ui/Dialog`) and `Input`/ `ParcelReceiverSection` widened to be
+      reusable here (ref-forwarding; narrower prop type). Also fixed while in the area: the
+      customer-requiredness gap and the Regular→Personal store auto-toggle, both real
+      behaviour on *both* add screens but only enforced client-side/half-ported on the edit
+      screen before this pass — see `parcelSchema.ts`'s customer `.refine()`s and
+      `ParcelDetailsSection`'s `handleServiceChange`. Deliberately not ported, each with its
+      own reasoning in the decision doc: the tmp-table tracking-number reservation (drafts
+      live in React state instead), the agent tracking-number prefix (keyed off legacy MSSQL
+      ids that don't exist post-migration), the BEMA-agent flat-rate override (already a bare
+      boolean elsewhere), `generateNewTracking()`'s ajax uniqueness loop for Duplicate, and
+      per-draft inline error targeting on a batch-submit validation failure (surfaces as a
+      flat message list instead) — that last one is a real, flagged gap for a large batch.
+- [ ] Parcel view, parcel print, the statements module's invoice/history popups, and the
+      messages module's Send/Resend SMS. Also "Export Airway" (`export=2` → `airway.cfm`), a
+      document for the airline rather than a view of the list, and the edit form's "Invoice
+      File" upload/preview row, which belongs to the files module.
+- [ ] **Parcels: one thing worth confirming with the client** before it hardens into
+      behaviour — the Debt filter is a *not-equal* match on uninvoiced parcels (the value `0`
+      meaning "has a debt figure at all"), faithfully ported but unintuitive enough that it may
+      not be what operators think it does.
+      (The other item this bullet used to carry — legacy's `addressbook.Phone1/2/3` mapping
+      onto `cellPhone`/`homePhone`/`privateNumber` — is confirmed correct: cross-checked
+      directly against `vwReceiversUpdate.cfm`'s field labels this pass, "Phone (1)"/
+      "Phone (2)"/"Private #", matching the mapping already in place.)
 - [ ] Address-field requiredness (e.g. legacy's country-conditional State/PostalCode rule),
       and independent confirmation of `CustomerPricingRule`'s exact legacy semantics/column
       set (inferred from the live screen, not cross-checked against the legacy MSSQL

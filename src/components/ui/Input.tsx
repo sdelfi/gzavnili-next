@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes } from 'react';
+import { forwardRef, type InputHTMLAttributes } from 'react';
 import './Input.css';
 
 // Shared text/password input — `Input.css` (moved out of public/css/style.css, see that
@@ -13,11 +13,16 @@ import './Input.css';
 // `<label class="error">` right after the field — not a native HTML5 validation bubble. `error`
 // reproduces that same markup/class (`.error { color: red !important }` in
 // public/css/style_custom.css) instead of relying on `required`/`:invalid`.
-export function Input({ error, type = 'text', ...props }: InputHTMLAttributes<HTMLInputElement> & { error?: string }) {
-  return (
-    <>
-      <input type={type} {...props} />
-      {error && <label className="error">{error}</label>}
-    </>
-  );
-}
+//
+// Forwards its ref to the underlying `<input>` — the parcel form's Tracking # field needs it
+// to focus+select on mount, the one legacy behaviour that can't be done any other way.
+export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement> & { error?: string }>(
+  function Input({ error, type = 'text', ...props }, ref) {
+    return (
+      <>
+        <input ref={ref} type={type} {...props} />
+        {error && <label className="error">{error}</label>}
+      </>
+    );
+  },
+);

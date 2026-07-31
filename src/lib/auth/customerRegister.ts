@@ -5,7 +5,7 @@ import { hashPassword } from './password';
 // Legacy `getNewUsername()` (MSSQLUserDAO.cfc): usernames auto-generated as `GZ` + an
 // incrementing number, never chosen by the customer — ported verbatim rather than asking
 // for a username on the register form (the form doesn't have one either, matching legacy).
-async function generateNextUsername() {
+export async function generateNextUsername() {
   const candidates = await db.user.findMany({
     where: { username: { startsWith: 'GZ' } },
     select: { username: true },

@@ -1,0 +1,42 @@
+.wrapper {
+  margin-top: 16px;
+}
+
+.header {
+  margin-bottom: 10px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table th,
+.table td {
+  border: 1px solid #e5e5e5;
+  padding: 6px 8px;
+  text-align: left;
+}
+
+.empty {
+  text-align: center;
+  color: #888;
+  padding: 16px;
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.groupTotal {
+  background: #f7f7f7;
+  font-size: 13px;
+}
+
+.grandTotal {
+  margin-top: 10px;
+  font-size: 14px;
+}

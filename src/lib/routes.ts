@@ -49,6 +49,9 @@ export const routes = {
     // separate page.
     parcels: () => '/bema/parcels',
     parcelEdit: (id: string) => `/bema/parcels/${id}`,
+    // Legacy `parcels-add.cfm` — the batch multi-parcel-per-customer screen, distinct from
+    // `parcelEdit()`'s single-parcel form.
+    parcelAdd: () => '/bema/parcels/add',
     deliveryRequests: () => '/bema/parcels?deliveryRequest=1',
     // Site Pages CMS (docs/decisions/0013-site-pages-cms.md) — legacy `bema/content/pages.cfm`.
     pages: () => '/bema/pages',

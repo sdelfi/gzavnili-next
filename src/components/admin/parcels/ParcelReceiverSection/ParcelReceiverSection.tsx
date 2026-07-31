@@ -20,15 +20,18 @@ import s from './ParcelReceiverSection.module.css';
 
 const NEW_RECEIVER = '';
 
+// Only reads/writes `userId` (to reload the receiver list), `receiver` and `officeId` — typed
+// against that slice rather than the whole form so the batch "Add Parcel" screen's per-draft
+// state (which has no trip date, AWB, etc.) can reuse this component unchanged.
 export function ParcelReceiverSection({
   form,
   setReceiver,
   set,
   errors,
 }: {
-  form: ParcelFormState;
+  form: Pick<ParcelFormState, 'userId' | 'officeId' | 'receiver'>;
   setReceiver: <K extends keyof ParcelFormState['receiver']>(key: K, value: ParcelFormState['receiver'][K]) => void;
-  set: <K extends keyof ParcelFormState>(key: K, value: ParcelFormState[K]) => void;
+  set: (key: 'officeId', value: string) => void;
   errors: Record<string, string>;
 }) {
   // Stored together with the customer they were loaded for, and read back only when that

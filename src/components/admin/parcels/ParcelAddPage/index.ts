@@ -1,0 +1,1 @@
+export { ParcelAddPage } from './ParcelAddPage';

@@ -1,0 +1,12 @@
+.page {
+  max-width: 1100px;
+}
+
+.title {
+  margin: 0 0 16px;
+  font-size: 22px;
+}
+
+.actions {
+  margin-top: 20px;
+}

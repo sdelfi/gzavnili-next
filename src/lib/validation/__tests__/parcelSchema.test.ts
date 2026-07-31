@@ -13,7 +13,7 @@ const validParcel = (over: Record<string, unknown> = {}) => ({
   weight: '4.5',
   value: '120',
   receiver: { city: 'Tbilisi', country: 'GE', phone1: '599112233', firstName: 'Giorgi', lastName: 'Kapanadze' },
-  customer: {},
+  customer: { firstName: 'Ann', lastName: 'Smith', country: 'US', city: 'Philadelphia', phone1: '2155551234' },
   ...over,
 });
 

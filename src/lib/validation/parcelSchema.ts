@@ -102,24 +102,24 @@ export type ParcelOperationInput = z.infer<typeof parcelOperationSchema>;
 // validator does *not* check is left permissive here too — this is the same form, not a
 // stricter one.
 
-const money = z
+export const money = z
   .union([z.number(), z.string()])
   .transform((v) => (typeof v === 'number' ? v : v.trim()))
   .refine((v) => v === '' || !Number.isNaN(Number(v)), 'Must be a number')
   .transform((v) => (v === '' ? null : Number(v)));
 
-const requiredMoney = (label: string) => money.refine((v): v is number => v !== null, `${label} is required.`);
+export const requiredMoney = (label: string) => money.refine((v): v is number => v !== null, `${label} is required.`);
 
 /** `datetime-local`/`date` input value, or empty for "not set". Stored as-is and interpreted
  *  as UTC by the service layer, matching how the list screen reads these back. */
-const optionalDateTime = z
+export const optionalDateTime = z
   .string()
   .trim()
   .refine((v) => v === '' || !Number.isNaN(Date.parse(v)), 'Invalid date')
   .optional()
   .default('');
 
-const receiverSchema = z.object({
+export const receiverSchema = z.object({
   /** Empty = "< New Receiver >": the address is created and attached to the customer. */
   receiverId: z.uuid().nullable().optional(),
   isGeCitizen: z.boolean().default(false),
@@ -141,7 +141,7 @@ const receiverSchema = z.object({
 
 /** The sender's own billing details, editable inline on the parcel form — legacy saves these
  *  back onto the customer record on every parcel save. */
-const customerSchema = z.object({
+export const customerSchema = z.object({
   firstName: z.string().max(50).default(''),
   lastName: z.string().max(50).default(''),
   organization: z.string().max(100).default(''),
@@ -271,6 +271,32 @@ export const updateParcelSchema = z
   .refine((d) => d.payAmount2 === null || d.payAmount2 <= 0 || d.payMethod2 !== '', {
     message: 'Select payment method for the partial payment',
     path: ['payMethod2'],
+  })
+  // The sender's own contact details, editable inline on this form. Legacy gates the Save
+  // button's *client-side* JS on these five being non-empty (`btnsavex`'s click handler in
+  // vwParcelsUpdate.cfm) — there was no server-side enforcement to port from `ParcelUpdate.cfc`
+  // itself, but leaving it client-only here would mean the one enforcement legacy has is gone
+  // entirely, not preserved. Same five fields, same "no state/postal/zip check" scope legacy
+  // gives the customer block (unlike the receiver's US-only state/zip rule above).
+  .refine((d) => d.customer.firstName !== '', {
+    message: 'Customer First Name is required.',
+    path: ['customer', 'firstName'],
+  })
+  .refine((d) => d.customer.lastName !== '', {
+    message: 'Customer Last Name is required.',
+    path: ['customer', 'lastName'],
+  })
+  .refine((d) => d.customer.country !== '', {
+    message: 'Customer Country is required.',
+    path: ['customer', 'country'],
+  })
+  .refine((d) => d.customer.city !== '', {
+    message: 'Customer City is required.',
+    path: ['customer', 'city'],
+  })
+  .refine((d) => d.customer.phone1 !== '', {
+    message: 'Customer Phone (1) is required.',
+    path: ['customer', 'phone1'],
   });
 
 /** Parsed shape, as the service layer receives it: money coerced to `number | null`, dates

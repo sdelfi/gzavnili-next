@@ -2,6 +2,8 @@ import { apiDelete, apiGet, apiPatch, apiPost } from '../http';
 import type { ParcelListResponse } from '@/lib/parcels/types';
 import type { ParcelDetail } from '@/lib/services/parcelDetail';
 import type { UpdateParcelPayload } from '@/lib/validation/parcelSchema';
+import type { AddParcelBatchPayload, QuickCustomerPayload } from '@/lib/validation/parcelBatchSchema';
+import type { DraftParcelResult } from '@/lib/services/parcelBatchAdd';
 import type { ParcelOperation } from '@/lib/parcels/constants';
 
 // Typed client for /api/bema/parcels/* — see AGENTS.md's "API calls go through a service
@@ -195,4 +197,16 @@ export function listDeliveryOffices() {
  *  code" operation warns about before reusing it. */
 export function checkParcelCode(pcode: string) {
   return apiGet<{ count: number }>(`/api/bema/parcels/check-code?pcode=${encodeURIComponent(pcode)}`);
+}
+
+// --- Batch "Add Parcel" -------------------------------------------------------------------
+
+/** The customer box's "Save"/"Update" button — creates or refreshes a customer's name/
+ *  billing address immediately, ahead of drafting any parcels for them. */
+export function saveQuickCustomer(payload: QuickCustomerPayload) {
+  return apiPost<{ userId: string }>('/api/bema/parcels/quick-customer', payload);
+}
+
+export function createParcelsBatch(payload: AddParcelBatchPayload) {
+  return apiPost<{ parcels: DraftParcelResult[] }>('/api/bema/parcels/batch', payload);
 }
