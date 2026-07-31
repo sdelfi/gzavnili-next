@@ -10,6 +10,24 @@ This version has breaking changes — APIs, conventions, and file structure may 
 Do not add a `Co-Authored-By:` trailer (or any AI-attribution trailer) to commit
 messages in this repo.
 
+# Commit authorship
+
+Every commit's author and committer must be the human owner of this repo — currently
+Stanislav <delfi89@gmail.com> — never the agent (e.g. `Claude <noreply@anthropic.com>`).
+Set `user.name`/`user.email` (locally, for the commit — not `git config --global`) before
+committing if the environment's default identity is an agent identity. If commits already
+landed under an agent identity, rewrite the affected commits' author/committer before
+pushing (or before merging, if already pushed) — don't leave agent-authored commits in the
+history.
+
+# Branch naming
+
+Branch names must never contain "claude", the name of any other AI agent/assistant, or any
+other AI-attribution marker (e.g. `claude/…`, `…-claude-…`, `copilot/…`). Use a plain,
+descriptive branch name instead (e.g. `parcels-react`, `fix-parcel-search`). This applies to
+every new branch created in this repo going forward; it does not retroactively require
+renaming a branch that already has an open PR under an old name unless asked.
+
 # Shared components
 
 Reusable UI primitives (inputs, selects, buttons, and the like) belong in
