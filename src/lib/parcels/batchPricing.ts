@@ -117,22 +117,10 @@ export function finalDebt(rawTotal: number, scale: number): number {
   return round2(rawTotal * scale);
 }
 
-/** Splits the two payment-method amounts (entered once, for the whole batch) across parcels
- *  proportionally to each parcel's *unscaled* share of the total — legacy computes
- *  `payAmount1`/`payAmount2` from `parcelInfo.debt + parcelInfo.increase` before the
- *  price-total override is applied to `form.debt`, so a Price Total override changes what
- *  gets charged without changing how the payment amounts are split. Preserved as found. */
-export function paymentSplit(
-  rawTotal: number,
-  rawGrandTotal: number,
-  paymentAmount1: number,
-  paymentAmount2: number,
-): { payAmount1: number; payAmount2: number } {
-  if (rawGrandTotal === 0) return { payAmount1: 0, payAmount2: 0 };
-  const percentPay = (paymentAmount1 * 100) / rawGrandTotal;
-  const percentPay2 = (paymentAmount2 * 100) / rawGrandTotal;
-  return {
-    payAmount1: round2((rawTotal * percentPay) / 100),
-    payAmount2: round2((rawTotal * percentPay2) / 100),
-  };
-}
+// `parcels-add.cfm` also computes a `payAmount1`/`payAmount2` split of the two
+// payment-method amounts, proportional to each parcel's share of the total. It is not
+// reproduced here: traced all the way into `MSSQLParcelDAO.cfc`'s actual `doOperation('paid')`
+// implementation, that split has no effect on anything stored — the function invoices each
+// parcel for its own full `debt` regardless, ignoring the `payAmount1` argument entirely
+// (see `parcelBatchAdd.ts`'s file header for the full trace). A function computing that split
+// here would be dead code calculating a number nothing downstream consumes.

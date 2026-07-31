@@ -596,13 +596,12 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       point at a genuinely different, second controller (`parcels-add.cfm` +
       `vwParcelsAdd.cfm`) from the single-parcel `nrc=1` add mode the first pass targeted —
       one customer, a batch of draft parcels (each its own receiver) assembled client-side and
-      created together, with a shared per-group delivery-fee/minimum-charge calculation and a
-      two-payment-method split across the whole batch. Built: `batchPricing.ts` (the
-      calculation, unit-tested — group fee tiers, minimum-charge stacking, Price Total
-      override scaling, payment split), `parcelBatchAdd.ts`/`parcelBatchCustomer.ts` (service
-      layer; extracted `parcelShared.ts`'s `upsertReceiver`/`upsertCustomer` out of the edit
-      screen's `parcelUpdate.ts` so both screens share the receiver/customer-upsert logic),
-      `POST /api/bema/parcels/batch` + `/quick-customer`, five new components
+      created together, with a shared per-group delivery-fee/minimum-charge calculation.
+      Built: `batchPricing.ts` (the calculation, unit-tested — group fee tiers, minimum-charge
+      stacking, Price Total override scaling), `parcelBatchAdd.ts`/`parcelBatchCustomer.ts`
+      (service layer; extracted `parcelShared.ts`'s `upsertReceiver`/`upsertCustomer` out of
+      the edit screen's `parcelUpdate.ts` so both screens share the receiver/customer-upsert
+      logic), `POST /api/bema/parcels/batch` + `/quick-customer`, five new components
       (`ParcelAddCustomerSection`/`ParcelDraftFields`/`ParcelDraftModal`/`ParcelDraftTable`/
       `ParcelAddPaymentSection`/`ParcelAddPage`) plus two new shared UI primitives
       (`ui/RadioGroup`, `ui/Dialog`) and `Input`/ `ParcelReceiverSection` widened to be
@@ -610,13 +609,32 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       customer-requiredness gap and the Regular→Personal store auto-toggle, both real
       behaviour on *both* add screens but only enforced client-side/half-ported on the edit
       screen before this pass — see `parcelSchema.ts`'s customer `.refine()`s and
-      `ParcelDetailsSection`'s `handleServiceChange`. Deliberately not ported, each with its
-      own reasoning in the decision doc: the tmp-table tracking-number reservation (drafts
-      live in React state instead), the agent tracking-number prefix (keyed off legacy MSSQL
-      ids that don't exist post-migration), the BEMA-agent flat-rate override (already a bare
-      boolean elsewhere), `generateNewTracking()`'s ajax uniqueness loop for Duplicate, and
-      per-draft inline error targeting on a batch-submit validation failure (surfaces as a
-      flat message list instead) — that last one is a real, flagged gap for a large batch.
+      `ParcelDetailsSection`'s `handleServiceChange`.
+      **Correction (same day, before anything shipped further):** the client asked "are you
+      sure the pricing formula is 1:1?" — re-verifying by reading `MSSQLParcelDAO.cfc`'s
+      actual `doOperation('paid')` (not just the `.cfm` call site) found that legacy's
+      apparent two-payment-method split (`payAmount1`/`payAmount2`, proportional to each
+      parcel's share) is dead code: the DAO ignores the passed amount and always invoices a
+      parcel's full `debt`. The first version of this port had faithfully transcribed the
+      *formula* but then used it for something legacy itself doesn't do (a proportional
+      invoice). Fixed to reuse `applyPaidOperation` (full debt, matching the edit screen)
+      and removed the now-provably-dead `paymentSplit()` function. The base price/group-fee/
+      minimum-charge/Price-Total-override math itself (what actually computes `parcels.debt`)
+      was independently re-verified line-by-line against the same POST handler and stands.
+      See docs/decisions/0017's "traced into the DAO, confirmed dead" section.
+      Deliberately not ported, each with its own reasoning in the decision doc: the tmp-table
+      tracking-number reservation (drafts live in React state instead), the agent
+      tracking-number prefix (keyed off legacy MSSQL ids that don't exist post-migration),
+      the BEMA-agent flat-rate override (already a bare boolean elsewhere),
+      `generateNewTracking()`'s ajax uniqueness loop for Duplicate, and per-draft inline error
+      targeting on a batch-submit validation failure (flat message list instead) — that last
+      one is a real, flagged gap for a large batch.
+      **Still open, needs a client decision, not a technical one:** whether to keep the now-
+      confirmed-inert "Payment method 2"/two "Amount" fields in the UI (faithful to the actual
+      legacy screen) or remove them (they do nothing, in legacy and here). Whether the
+      BEMA-agent flat-rate override (skipped above) is actually relied on by real accounts in
+      production is also unconfirmed — if it is, that's a real pricing gap for that user
+      segment, not just a cosmetic one.
 - [ ] Parcel view, parcel print, the statements module's invoice/history popups, and the
       messages module's Send/Resend SMS. Also "Export Airway" (`export=2` → `airway.cfm`), a
       document for the airline rather than a view of the list, and the edit form's "Invoice

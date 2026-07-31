@@ -3,7 +3,6 @@ import {
   computeDraftParcelTotals,
   computeGroupIncrease,
   finalDebt,
-  paymentSplit,
   priceOverrideScale,
   type DraftParcelCalcInput,
 } from '../batchPricing';
@@ -114,25 +113,5 @@ describe('priceOverrideScale / finalDebt', () => {
 
   test('a zero raw total never divides by zero', () => {
     expect(priceOverrideScale(0, 50)).toBe(1);
-  });
-});
-
-describe('paymentSplit', () => {
-  test('splits each payment method proportionally to a parcel\'s unscaled share', () => {
-    // Two $50 parcels, $100 total. Paying $60 via method 1 and $20 via method 2 overall.
-    expect(paymentSplit(50, 100, 60, 20)).toEqual({ payAmount1: 30, payAmount2: 10 });
-  });
-
-  test('uses the unscaled raw total even when a Price Total override changed what\'s charged', () => {
-    // Legacy computes payAmount1/2 from parcelInfo.debt+increase before the override is
-    // applied to form.debt — preserved rather than re-based on the scaled amount.
-    const raw = 50;
-    const scaled = finalDebt(raw, priceOverrideScale(100, 80));
-    expect(scaled).toBe(40);
-    expect(paymentSplit(raw, 100, 60, 0)).toEqual({ payAmount1: 30, payAmount2: 0 });
-  });
-
-  test('a zero grand total never divides by zero', () => {
-    expect(paymentSplit(0, 0, 10, 10)).toEqual({ payAmount1: 0, payAmount2: 0 });
   });
 });

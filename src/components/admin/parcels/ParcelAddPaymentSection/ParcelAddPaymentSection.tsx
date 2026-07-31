@@ -9,9 +9,14 @@ import s from './ParcelAddPaymentSection.module.css';
 
 // The batch "Add Parcel" screen's payment box — legacy's two "Payment method"/amount pairs
 // plus the "Price Total" override and notification checkboxes, from the `panel-heading` block
-// below the parcels table in `views/parcels/vwParcelsAdd.cfm`. The actual split of these two
-// amounts across the drafted parcels is `batchPricing.ts`'s `paymentSplit()` — this component
-// only collects the four numbers/strings that feed it.
+// below the parcels table in `views/parcels/vwParcelsAdd.cfm`.
+//
+// "Payment method 1" is the only one of these four fields with any real effect: anything but
+// "Debt" marks every drafted parcel paid in full (see `parcelBatchAdd.ts`'s file header — the
+// split legacy computes from the two Amount fields was traced all the way into the DAO and
+// turns out to be dead code, invoicing each parcel's full debt regardless of what's typed
+// here). Kept in the form anyway, matching the legacy screen operators actually see, pending
+// a product decision on whether to remove them now that's confirmed (docs/decisions/0017).
 
 export type PaymentFormState = {
   paymentMethod1: string;

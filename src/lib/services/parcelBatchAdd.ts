@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
-import { computeDraftParcelTotals, finalDebt, paymentSplit, priceOverrideScale } from '@/lib/parcels/batchPricing';
+import { computeDraftParcelTotals, finalDebt, priceOverrideScale } from '@/lib/parcels/batchPricing';
 import type { PricingRule } from '@/lib/parcels/pricing';
+import { runParcelOperation } from '@/lib/services/parcelOperations';
 import { orNull, upsertCustomer, upsertReceiver } from '@/lib/services/parcelShared';
 import type { AddParcelBatchInput } from '@/lib/validation/parcelBatchSchema';
 
@@ -27,12 +28,30 @@ import type { AddParcelBatchInput } from '@/lib/validation/parcelBatchSchema';
 // nothing to match against post-migration. Flagged in docs/decisions/0017, not silently
 // dropped.
 //
-// Payment is applied per parcel for exactly its own share of the two payment-method amounts
-// (`batchPricing.ts`'s `paymentSplit`), not by reusing the edit screen's/list's
-// `applyPaidOperation` (which invoices "whatever debt isn't already covered by a prior
-// partial payment") — that would over-invoice here whenever the two amounts entered don't
-// add up to the full batch total, since this screen's `payAmount2` column means "this
-// parcel's method-2 share of *this* payment", not "an earlier partial payment to net off".
+// --- The payment split: traced into the DAO, and it's dead code ---------------------------
+//
+// `parcels-add.cfm` computes a `payAmount1`/`payAmount2` split of the two payment-method
+// amounts, proportional to each parcel's share of the batch total, and passes `payAmount1`
+// into `parcelDao.doOperation('paid', payAmount1 = form.payAmount1)`. It looks like it
+// should matter. Read all the way into `MSSQLParcelDAO.cfc`'s actual `doOperation('paid')`
+// implementation, and it doesn't: that function ignores the `payAmount1` argument entirely
+// and computes its own amount from the *parcel row already in the database* —
+// `resAmount = parcel.getDebt()`, minus `parcel.getPayAmount2()` only if that column is
+// already non-zero. And `payMethod2`/`payAmount2` are never included in this screen's own
+// `parcel.init(...)` call before `parcelDao.create(parcel)` — so for a parcel created here,
+// that column is always empty, `resAmount` is always the parcel's full (already
+// group-fee/Price-Total-scaled) `debt`, and the split computed a few lines earlier changes
+// nothing about what gets invoiced. Confirmed by reading the same DAO's `unpaid`/`paid`
+// branches and the shared `applyPaidOperation` this project already ported for the edit
+// screen (`parcelOperations.ts`) — it's the same "full debt, minus payAmount2 if set" rule,
+// verified against the DAO source, not just against the .cfm call site.
+//
+// So: every parcel gets invoiced/paid its full `debt` when payment method 1 isn't "Debt",
+// full stop — reusing `runParcelOperation('paid', ...)` below, exactly like the edit screen
+// does, rather than the proportional split this file used to compute. See
+// docs/decisions/0017 for the "what to do about the now-provably-inert Payment method 2/
+// Amount fields in the UI" question this raised, which is a product call, not a technical
+// one, and hasn't been made yet.
 
 export type DraftParcelResult = { trackingNum: string; parcelId: string };
 
@@ -60,18 +79,9 @@ export async function saveParcelBatch(input: AddParcelBatchInput): Promise<{ par
   const scale = priceOverrideScale(rawGrandTotal, input.priceTotal);
 
   // Selecting anything other than "Debt" for payment method 1 marks every parcel in the
-  // batch paid, regardless of how much of the total that method's amount actually covers —
-  // literally what legacy's `isPaid = (form.payMethod1 neq "Debt")` gate does.
+  // batch paid, for its full (scaled) debt — legacy's `isPaid = (form.payMethod1 neq
+  // "Debt")` gate, and `applyPaidOperation`'s own "full debt" rule (see the file header).
   const isPaid = input.paymentMethod1 !== 'Debt';
-
-  const perParcel = input.draftParcels.map((draft, index) => {
-    const calc = items[index];
-    return {
-      draft,
-      debt: finalDebt(calc.rawTotal, scale),
-      split: paymentSplit(calc.rawTotal, rawGrandTotal, input.paymentAmount1 ?? 0, input.paymentAmount2 ?? 0),
-    };
-  });
 
   const results = await db.$transaction(async (tx) => {
     // Legacy re-saves the customer's name/billing address on every parcel save here too,
@@ -80,7 +90,9 @@ export async function saveParcelBatch(input: AddParcelBatchInput): Promise<{ par
     await upsertCustomer(tx, input.userId, input.customer);
 
     const created: DraftParcelResult[] = [];
-    for (const { draft, debt, split } of perParcel) {
+    for (let index = 0; index < input.draftParcels.length; index++) {
+      const draft = input.draftParcels[index];
+      const debt = finalDebt(items[index].rawTotal, scale);
       const receiverId = await upsertReceiver(tx, input.userId, draft.receiver);
 
       const parcel = await tx.parcel.create({
@@ -99,10 +111,6 @@ export async function saveParcelBatch(input: AddParcelBatchInput): Promise<{ par
           bNotify: draft.notify,
           trackingReceived: draft.trackingReceived ? new Date(draft.trackingReceived) : new Date(),
           trackingReceivedBy: orNull(draft.trackingReceivedBy),
-          // This parcel's method-2 share of the batch payment — same columns the edit
-          // screen's "Partial paid" field writes.
-          payMethod2: split.payAmount2 > 0 ? input.paymentMethod2 : null,
-          payAmount2: split.payAmount2 > 0 ? split.payAmount2 : null,
         },
       });
 
@@ -117,24 +125,14 @@ export async function saveParcelBatch(input: AddParcelBatchInput): Promise<{ par
   });
 
   if (isPaid) {
-    for (let i = 0; i < results.length; i++) {
-      const amount = perParcel[i].split.payAmount1;
-      if (amount <= 0) continue;
-      const parcelId = results[i].parcelId;
-      const now = new Date();
-      await db.$transaction(async (tx) => {
-        await tx.invoice.create({
-          data: { userId: input.userId, invoiceDate: now, items: { create: [{ parcelId, amount }] } },
-        });
-        await tx.payment.create({
-          data: { userId: input.userId, paymentDate: now, amount, paymentMethodId: input.paymentMethod1 },
-        });
-        await tx.parcel.update({
-          where: { id: parcelId },
-          data: { bPaidDelivery: true, payMethod1: input.paymentMethod1, payAmount1: amount },
-        });
-      });
-    }
+    await runParcelOperation({
+      operation: 'paid',
+      parcelIds: results.map((r) => r.parcelId),
+      payMethod1: input.paymentMethod1,
+      pCode: '',
+      awb: '',
+      buser: '',
+    });
   }
 
   return { parcels: results };

@@ -33,30 +33,49 @@ screens need them) and were kept.
    weight or price).
 5. **Price Total override** — an optional field; left blank or matching the calculated total
    is a no-op, anything else scales every parcel's price proportionally
-   (`priceOverrideScale()`/`finalDebt()`).
-6. **Two-payment-method split** — `paymentAmount1`/`paymentAmount2` (entered once, for the
-   whole batch) are split across parcels proportionally to each parcel's *unscaled* share of
-   the total (`paymentSplit()`) — legacy computes this from the pre-override amount, so a
-   Price Total override changes what gets charged without changing how the two payment
-   amounts are divided up. Preserved as found, not reconciled.
+   (`priceOverrideScale()`/`finalDebt()`). This is what's actually stored in `parcels.debt` —
+   the number the client's "one error can cost millions" worry is really about — and it's
+   traced 1:1 against `parcels-add.cfm`'s POST handler line by line, not just against the
+   client-side display.
 
 All of the above is pure, DB-free, and unit-tested (`batchPricing.test.ts`) — the group-fee
-tiers, the minimum-charge stacking, the override scale, and the payment split.
+tiers, the minimum-charge stacking, and the override scale.
 
-## Payment application: a deliberate departure from `applyPaidOperation`
+## The two-payment-method split: traced into the DAO, confirmed dead
 
-Selecting anything other than "Debt" for payment method 1 marks *every* parcel in the batch
-paid, regardless of how much of the total that method's amount actually covers — literally
-legacy's `isPaid = (form.payMethod1 neq "Debt")` gate.
+`parcels-add.cfm` *also* computes a `payAmount1`/`payAmount2` split of the two payment-method
+amounts, proportional to each parcel's share of the total, and passes `payAmount1` into
+`parcelDao.doOperation('paid', payAmount1 = form.payAmount1)`. An earlier version of this
+port reproduced that split and invoiced each parcel for its own share, on the reasoning that
+reusing the edit screen's `applyPaidOperation` (which invoices the *full* debt) would
+over-charge a partial batch payment.
 
-The existing single-parcel `applyPaidOperation` (`parcelOperations.ts`, used by the edit
-screen and the list's bulk toolbar) invoices "whatever debt isn't already covered by a prior
-partial payment" — right for that screen, where `payAmount2` means "an earlier partial
-payment, net it off." Reusing it here would have meant every parcel gets invoiced for its
-*full* remaining debt the moment payment method 1 is anything but Debt, even if the amount
-entered only covers a fraction of the batch total. `parcelBatchAdd.ts` instead invoices each
-parcel for exactly its own computed share of `paymentAmount1` — a parcel with a zero share
-(payment doesn't stretch that far) gets no invoice/payment record at all, not a full one.
+That reasoning was wrong, caught only by reading `MSSQLParcelDAO.cfc`'s actual
+`doOperation('paid')` body (not just the `.cfm` call site): it **ignores the `payAmount1`
+argument entirely** and computes its own amount from the parcel row already in the database —
+`resAmount = parcel.getDebt()`, minus `parcel.getPayAmount2()` only if that column is already
+non-zero. `payMethod2`/`payAmount2` are never included in this screen's own `parcel.init(...)`
+call before `parcelDao.create(parcel)`, so for every parcel created here that column is always
+empty, and `resAmount` is always the parcel's full (already group-fee/Price-Total-scaled)
+`debt`. The split computed a few lines earlier in the `.cfm` is never read again outside of
+one commented-out `if` block — it's dead code in the running application, not a real payment
+mechanism.
+
+**Corrected**: `parcelBatchAdd.ts` now reuses `applyPaidOperation`/`runParcelOperation('paid',
+...)` exactly like the edit screen does — every parcel invoiced/paid its full `debt` the
+moment payment method 1 isn't "Debt", full stop. `batchPricing.ts` no longer computes a
+payment split at all (a `paymentSplit()` function existed briefly and was removed once this
+was confirmed — keeping a function that computes a number nothing consumes would be actively
+misleading).
+
+**Open, and it's a product call, not a technical one**: the "Payment method 2" / two "Amount"
+fields in `ParcelAddPaymentSection` are still in the form, matching what the legacy screen
+actually renders (`#paymentAmount`/`#paymentAmount2`/`#paymentMethod2`, `#paymentAmount`
+even marked `required="true"`) — but they are now confirmed to have **zero effect** on what
+gets invoiced, in legacy today, same as here. Whether to leave them in (faithful to the
+screen operators already use) or remove them (they're dead weight that could read as "this
+records a $30 payment via check" when it does nothing of the kind) hasn't been decided; ask
+before doing either.
 
 ## What's intentionally not ported, and why
 
