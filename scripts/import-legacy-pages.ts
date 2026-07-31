@@ -1,19 +1,22 @@
 #!/usr/bin/env bun
-// One-time ETL: imports the legacy bema "Site Pages" content cache
-// (../http/include/pages/*.json, one file per page, named `{sha1(url)}.json` — see
-// MSSQLPageDAO.cfc) into this project's Postgres `pages` table. Local-dev-only: the source
-// directory is a sibling checkout of the legacy codebase that only exists on a dev machine,
-// never in production (see docs/decisions/0013-site-pages-cms.md for the full investigation
-// that established these files are genuinely live content, not dead/orphaned).
+// One-time ETL: imports the legacy bema "Site Pages" content cache (originally
+// `../http/include/pages/*.json` in the sibling legacy checkout, one file per page, named
+// `{sha1(url)}.json` — see MSSQLPageDAO.cfc) into this project's Postgres `pages` table. The
+// source JSON files are snapshotted into `scripts/data/legacy-pages/` (committed to this
+// repo) rather than read from that sibling checkout, because the checkout only exists on a
+// dev machine — production never has it. See docs/decisions/0013-site-pages-cms.md for the
+// full investigation that established these files are genuinely live content, not
+// dead/orphaned.
 //
-// Idempotent: upserts on (locale, slug), safe to re-run after re-exporting fresher legacy
-// files. Run with `bun run import:legacy-pages` (guarded to local DBs only, like db:migrate).
+// Idempotent: upserts on (locale, slug), safe to re-run. If the legacy source ever changes
+// again, re-copy fresh files into `scripts/data/legacy-pages/` before re-running. Run with
+// `bun run import:legacy-pages` (guarded to local DBs only, like db:migrate).
 import 'dotenv/config';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { db } from '../src/lib/db';
 
-const LEGACY_PAGES_DIR = path.resolve(__dirname, '../../http/include/pages');
+const LEGACY_PAGES_DIR = path.resolve(__dirname, 'data/legacy-pages');
 
 type LegacyPage = {
   url: string;
