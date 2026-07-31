@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/Input';
 import { Checkbox } from '@/components/ui/Checkbox';
 import { Button } from '@/components/ui/Button';
 import { ErrorList } from '@/components/ui/Alert';
-import { CustomerPicker } from '@/components/admin/parcels/CustomerPicker';
+import { CustomerPicker } from '@/components/ui/CustomerPicker';
 import { routes } from '@/lib/routes';
 import { createReceiver, updateReceiver } from '@/lib/api/bema/receivers';
 import { ApiError, extractErrorMessages } from '@/lib/api/http';

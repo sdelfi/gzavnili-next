@@ -5,14 +5,13 @@ import { Input } from '@/components/ui/Input';
 import { listUsers } from '@/lib/api/bema/users';
 import s from './CustomerPicker.module.css';
 
-// "Search For Customer" on the parcel form — legacy's jQuery-autocomplete box over
-// `bema/ajax/users.cfm`, which writes the chosen id into a hidden `userid` field and its
-// label into a `<span>`. Same shape here: type to search, pick a row, and the selection is
-// what the form actually submits.
-//
-// Its own component (rather than a field inside the details section) because picking the
-// customer is what drives the rest of the form — the receiver list and the pricing rules
-// both reload from it — and because the "add parcel" screen will need exactly this control.
+// "Search For Customer" — legacy's jQuery-autocomplete box over `bema/ajax/users.cfm`, which
+// writes the chosen id into a hidden `userid` field and its label into a `<span>`. Same
+// shape here: type to search, pick a row, and the selection is what the caller acts on.
+// Shared across the parcel-add form, the receiver form, and the global Pricing Rules
+// Administration filter bar — promoted here (rather than left under
+// `admin/parcels/`) once it hit a second/third caller, per this repo's shared-components
+// rule.
 
 type CustomerRow = {
   id: string;
@@ -30,12 +29,16 @@ export function CustomerPicker({
   value,
   label,
   onChange,
+  onClear,
   error,
 }: {
   value: string;
   /** Label of the currently-selected customer, shown until a new one is picked. */
   label: string;
   onChange: (customer: { id: string; label: string }) => void;
+  /** When provided, shows a "Clear" affordance next to the selection (for optional filter-bar
+   *  usage) rather than the "must pick one" form-field usage. */
+  onClear?: () => void;
   error?: string;
 }) {
   const [query, setQuery] = useState('');
@@ -115,7 +118,14 @@ export function CustomerPicker({
         </ul>
       )}
 
-      <div className={s.selected}>» {value ? label : <i>Not selected</i>}</div>
+      <div className={s.selected}>
+        » {value ? label : <i>Not selected</i>}
+        {onClear && value && (
+          <button type="button" className={s.clear} onClick={onClear}>
+            Clear
+          </button>
+        )}
+      </div>
       {error && <label className="error">{error}</label>}
     </div>
   );

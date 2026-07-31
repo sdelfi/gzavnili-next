@@ -52,7 +52,7 @@ export function ParcelPricingSection({
   useEffect(() => {
     if (!userId) return;
     let cancelled = false;
-    listPricingRules<PricingRule>(userId, true)
+    listPricingRules<PricingRule>(userId)
       .then((data) => !cancelled && setLoaded({ userId, rules: data.rules }))
       .catch(() => !cancelled && setLoaded({ userId, rules: [] }));
     return () => {

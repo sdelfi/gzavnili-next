@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Field } from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
-import { CustomerPicker } from '@/components/admin/parcels/CustomerPicker';
+import { CustomerPicker } from '@/components/ui/CustomerPicker';
 import { PARCEL_CONTENTS, SERVICE_OPTIONS } from '@/lib/parcels/constants';
 import { checkTrackingNum } from '@/lib/api/bema/parcels';
 import type { ParcelFormState } from '@/lib/parcels/form';

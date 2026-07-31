@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
 import { getUser, listUsers } from '@/lib/api/bema/users';
 import { saveQuickCustomer } from '@/lib/api/bema/parcels';
-import { customerLabel } from '@/components/admin/parcels/CustomerPicker';
+import { customerLabel } from '@/components/ui/CustomerPicker';
 import { ApiError } from '@/lib/api/http';
 import { blankQuickCustomer, quickCustomerToPayload, type QuickCustomerFormState } from '@/lib/parcels/batchForm';
 import s from './ParcelAddCustomerSection.module.css';

@@ -1,0 +1,1 @@
+export { PricingRulesAdminPage } from './PricingRulesAdminPage';

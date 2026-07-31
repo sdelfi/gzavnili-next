@@ -234,6 +234,75 @@ nothing to act on until real accounts exist.
 
 ---
 
+## Customer Pricing Rules: soft delete, overlap trigger, `Cargo` service type — 2026-08-01
+
+**Found:** the first-pass port of "Pricing Rules (Custom Rates & Discounts)"
+(`PricingRulesSection`, `docs/decisions/0011-bema-admin.md`) only covered a fraction of
+`customer_pricing_rules`'s real legacy behavior, discovered while fixing an unrelated bug
+(a nested `<form>` breaking the "Add Rule" button — see `UserForm.tsx`/`PricingRulesSection.
+tsx`):
+
+1. Legacy's "Remove" (`bema/ajax/pricing/deleteRule.cfm` →
+   `MSSQLCustomerPricingRuleDAO.deactivatePricingRule`, `../extensions/components/DAO/MSSQL/
+   MSSQLCustomerPricingRuleDAO.cfc:431-456`) sets `IsActive=0` + `DeletedDate`/`DeletedBy` —
+   never a real row delete — and a matching "Restore"
+   (`restoreRule.cfm` → `activatePricingRule`, same file:464-517) flips it back. The port's
+   first pass did a real `db.customerPricingRule.delete()`.
+2. `PricingService.createPricingRule` (`../extensions/components/service/PricingService.
+   cfc:265-340`) rejects a new rule if it overlaps an existing *active* rule for the same
+   `userId`+`serviceType` in date range (`validateRuleForConflicts` →
+   `getOverlappingRules`), and a DB trigger (`../database/migration_add_overlap_trigger.
+   sql`) re-checks the same thing on every `INSERT`/`UPDATE`, so restoring a deactivated rule
+   can also fail with "Cannot create overlapping pricing rules for the same customer and
+   service type." The port's first pass had no such check anywhere.
+3. Legacy `ServiceType` is `Regular`/`Express`/`Cargo` (`vwPricingRulesSection.cfm`,
+   `vwGlobalPricingRulesAdmin.cfm`); the Prisma enum and `PricingRulesSection` UI only had
+   `Regular`/`Express`.
+4. Legacy's per-customer Status column (`vwPricingRulesSection.cfm`'s
+   `displayPricingRules`) is keyed purely off `IsActive`/`DeletedDate` ("Active"/"Inactive"),
+   independent of whether the rule's date range has actually expired — a rule can show
+   "Active" while expired; date-range validity only affects the separate "Show Active Only"
+   list toggle. The port's first-pass `isActive()` helper instead conflated the two into
+   "Active"/"Expired".
+5. There's a second, entirely separate legacy screen —
+   "Pricing Rules Administration" (`bema/pricing_global_rules.cfm` /
+   `vwGlobalPricingRulesAdmin.cfm`, `groupId 10`-gated) — a paginated, filterable,
+   cross-customer view over the same table, with its own AJAX endpoint
+   (`getAllRulesGlobal.cfm`). Nothing under this had been built at all.
+
+**Verdict: ported, with one deliberate mechanism substitution.**
+- Schema (migration `20260801012211_customer_pricing_rules_soft_delete_cargo`):
+  `CustomerPricingRule` gained `isActive`/`deletedAt`/`deletedBy`; `ServiceType` gained
+  `Cargo`.
+- API: `POST`/`.../restore` both call `findOverlappingActiveRule`
+  (`src/lib/services/pricingRuleOverlap.ts`) before writing, replicating
+  `getOverlappingRules`'s exact interval-intersection condition. `DELETE` now updates
+  (`isActive:false`, `deletedAt`/`deletedBy`) instead of deleting the row; a new
+  `[ruleId]/restore/route.ts` reverses it.
+- The legacy DB trigger itself is **not** reproduced as a hand-authored Postgres trigger —
+  every write to this table goes through this app's API (no direct-DB write path exists
+  outside it), so the app-layer check in `findOverlappingActiveRule` achieves the same
+  rejected behavior without a second enforcement layer. This is a deliberate mechanism
+  substitution, not a skipped behavior — the *reject overlapping active rules on create and
+  on restore* behavior is fully ported, just enforced once rather than twice.
+- `PricingRulesSection`: `Cargo` added to the form; Status column now keys off `isActive`
+  alone; "Show All Rules"/"active only" toggle now combines `isActive && withinDateRange`
+  client-side (matching legacy's `displayPricingRules`); Actions column shows
+  "Deactivate"/"Restore" instead of "Remove"; value hint switches between "USD per KG" and
+  "% Discount (0-100)" by mode, and 0-100 is enforced both client-side and in
+  `pricingRuleSchema`.
+- New "Pricing Rules Administration" page (`routes.bema.pricingRules()`,
+  `PricingRulesAdminPage`, `src/app/api/bema/pricing-rules/route.ts`), gated to
+  `BemaAdministrator` only — the closest analog to legacy's `groupId 10` exclusivity in this
+  app's flatter `AdminRole` model.
+
+**Not yet independently verifiable:** whether `groupId 10` maps 1:1 to `BemaAdministrator`
+(vs. some other legacy group) — inferred from `docs/decisions/0011-bema-admin.md`'s existing
+note that `AdminRole` collapsed several legacy admin groups into one enum, not confirmed
+against legacy group data directly.
+
+---
+
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not
 being a real FK, `isGeCitizen` being inferred rather than stored — are recorded in their
 respective decision docs and PROGRESS.md instead; not backfilled here.)*

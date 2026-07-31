@@ -73,6 +73,7 @@ export async function saveParcelBatch(
     validFrom: r.validFrom.toISOString(),
     validTo: r.validTo?.toISOString() ?? null,
     notes: r.notes,
+    isActive: r.isActive,
   }));
 
   const acting = await db.user.findUnique({

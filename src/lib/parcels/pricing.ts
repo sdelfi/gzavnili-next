@@ -13,12 +13,15 @@
 
 export type PricingRule = {
   id: string;
-  serviceType: 'Regular' | 'Express';
+  serviceType: 'Regular' | 'Express' | 'Cargo';
   mode: 'FixedPrice' | 'Discount';
   value: string | number;
   validFrom: string;
   validTo: string | null;
   notes: string | null;
+  // Soft-delete flag — a deactivated rule must never apply to a price calculation even if its
+  // date range would otherwise match. See docs/findings.md's "Customer Pricing Rules" entry.
+  isActive: boolean;
 };
 
 export type PriceResult = {
@@ -76,6 +79,7 @@ function defaultPrice(service: string, billableWeight: number, isDimensional: bo
 function activeRule(rules: PricingRule[], service: string, on: Date): PricingRule | null {
   return (
     rules.find((rule) => {
+      if (!rule.isActive) return false;
       if (rule.serviceType !== service) return false;
       if (new Date(rule.validFrom) > on) return false;
       if (!rule.validTo) return true;

@@ -1,0 +1,46 @@
+.subtitle {
+  color: #666;
+  margin: 0 0 16px;
+}
+
+.filters {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.filterGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.field {
+  flex: 1;
+  min-width: 180px;
+  display: block;
+}
+
+.activeRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.filterActions {
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 15px;
+}
+
+.resultsInfo {
+  margin: 0 0 12px;
+  padding: 10px;
+  background: #e8f4f8;
+  border-left: 4px solid #09c;
+  border-radius: 2px;
+}

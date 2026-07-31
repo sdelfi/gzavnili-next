@@ -11,6 +11,7 @@ const rule = (over: Partial<PricingRule> = {}): PricingRule => ({
   validFrom: '2020-01-01T00:00:00.000Z',
   validTo: null,
   notes: null,
+  isActive: true,
   ...over,
 });
 

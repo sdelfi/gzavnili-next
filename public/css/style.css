@@ -13,11 +13,7 @@
 .partnershops .partnershops-group .partnershops-list:after,
 .tracking-page .page-heading .tracking-form .input-group:after,
 .tracking-points:after,
-.whychooseus-online .whychooseus-online-list:after,
-section.related-stores .related-stores-h:after,
-section.related-stores .related-stores-list:after,
-section.stores .store-coupons .coupon-list .item:after,
-section.stores .store-info-top:after {
+.whychooseus-online .whychooseus-online-list:after {
     clear: both
 }
 
@@ -1199,8 +1195,7 @@ label.checked-label {
 
 .news-page .news-list .item .item-r .more-block a.more:hover,
 .partners-page .page-heading .partner-info .gotoshop:hover,
-.share-block .share ul li a:hover,
-section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
+.share-block .share ul li a:hover {
     opacity: .9
 }
 
@@ -2489,81 +2484,6 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     position: relative
 }
 
-.stores-menu-block {
-    position: absolute;
-    bottom: 0;
-    left: auto;
-    right: auto;
-    max-width: 1200px;
-    width: 100%;
-    padding: 0 20px 0 0;
-    margin: 0 auto;
-    z-index: 10
-}
-
-.stores-menu-block ul.stores-menu {
-    display: table;
-    width: 100%
-}
-
-.stores-menu-block ul.stores-menu li {
-    display: table-cell;
-    vertical-align: middle
-}
-
-.stores-menu-block ul.stores-menu li a {
-    color: #fff;
-    font-size: 18px;
-    text-decoration: none;
-    padding: 10px 10px 20px;
-    height: 70px;
-    line-height: 33px;
-    border-bottom: 7px solid transparent;
-    display: inline-block
-}
-
-.stores-menu-block ul.stores-menu li a .svg-icon {
-    margin-right: 5px;
-    display: inline-block;
-    vertical-align: middle;
-    color-fill: #fff
-}
-
-.stores-menu-block ul.stores-menu li a .svg-icon.svg-icon-1 {
-    width: 27px;
-    height: 27px
-}
-
-.stores-menu-block ul.stores-menu li a .svg-icon.svg-icon-2 {
-    width: 33px;
-    height: 27px
-}
-
-.stores-menu-block ul.stores-menu li a .svg-icon.svg-icon-3 {
-    width: 34px;
-    height: 22px
-}
-
-.stores-menu-block ul.stores-menu li a .svg-icon.svg-icon-4 {
-    width: 31px;
-    height: 31px
-}
-
-.stores-menu-block ul.stores-menu li a .svg-icon.svg-icon-5 {
-    width: 33px;
-    height: 34px
-}
-
-.stores-menu-block ul.stores-menu li a .svg-icon.svg-icon-6 {
-    width: 30px;
-    height: 30px
-}
-
-.stores-menu-block ul.stores-menu li a span {
-    vertical-align: middle;
-    display: inline-block
-}
-
 .howonlineworks .howonlineworks-block:after,
 .howonlineworks .howonlineworks-block:before,
 .partnershops .partnershops-group .partnershops-heading:after,
@@ -2572,11 +2492,6 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
 .whychooseus-online .whychooseus-online-list:before {
     display: table;
     content: ""
-}
-
-.stores-menu-block ul.stores-menu li.active a,
-.stores-menu-block ul.stores-menu li:hover a {
-    border-bottom-color: #3fa3f0
 }
 
 .whychooseus-online {
@@ -2830,372 +2745,6 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
 
 .helptoshop .helptoshop-form .btn-block a.btn {
     width: 175px
-}
-
-.stores-page .page-heading {
-    background: url(../img/bg-stores.jpg) 50% 50% no-repeat;
-    background-size: cover;
-    padding: 22px 0 85px;
-    position: relative
-}
-
-section.stores {
-    padding: 27px 0 80px
-}
-
-section.stores .store-back {
-    padding-bottom: 27px
-}
-
-section.stores .store-back a {
-    text-decoration: none;
-    border-bottom: 1px solid #3fa3f0;
-    font-size: 16px;
-    font-family: Montserrat
-}
-
-section.stores .store-back a:hover {
-    border-bottom: none
-}
-
-section.stores .store-info-top {
-    margin-bottom: 20px;
-    position: relative
-}
-
-section.stores .store-info-top:after,
-section.stores .store-info-top:before {
-    content: "";
-    display: table
-}
-
-section.stores .store-info-top .store-info-l {
-    width: 60%;
-    float: left;
-    margin-bottom: 20px;
-    padding-right: 30px
-}
-
-section.stores .store-info-top .store-info-l .store-img {
-    display: block;
-    line-height: 0;
-    padding: 13% 20%;
-    position: relative;
-    max-width: 580px
-}
-
-section.stores .store-info-top .store-info-l .store-img .store-logo {
-    background: #fff;
-    display: block;
-    height: 140px;
-    position: relative;
-    width: 100%;
-    text-align: center;
-    line-height: 140px;
-    font-size: 20px
-}
-
-section.stores .store-info-top .store-info-l .store-img .store-logo img {
-    margin-left: auto;
-    margin-right: auto;
-    display: inline-block;
-    vertical-align: middle;
-    max-width: 100%
-}
-
-section.stores .store-info-top .store-info-r {
-    width: 40%;
-    float: left;
-    margin-bottom: 20px
-}
-
-section.stores .store-info-top .store-info-r p {
-    color: #20599d;
-    font-size: 18px;
-    margin: 0 0 12px
-}
-
-section.stores .store-info-top .store-info-r .store-pmethods {
-    margin-bottom: 40px
-}
-
-section.stores .store-info-top .store-info-r .store-pmethods .method {
-    display: inline-block;
-    vertical-align: middle;
-    margin: 0 10px 10px 0
-}
-
-section.stores .store-info-top .store-info-r .store-freeshipping {
-    background: url(../img/usa-map.jpg) 5px 30px no-repeat;
-    min-height: 160px
-}
-
-section.stores .store-info-top .store-info-r .store-freeshipping p span {
-    color: #000
-}
-
-section.stores .store-info-txt {
-    margin-bottom: 50px
-}
-
-section.stores .store-info-txt p {
-    font-size: 14px
-}
-
-section.stores .store-coupons h3 {
-    font-size: 24px;
-    font-family: Montserrat;
-    font-weight: 400;
-    margin-bottom: 20px
-}
-
-section.stores .store-coupons .coupon-list {
-    margin-bottom: 50px
-}
-
-section.stores .store-coupons .coupon-list .item {
-    border-bottom: 1px solid #d1d1d1;
-    margin-bottom: 18px;
-    padding-bottom: 18px
-}
-
-section.stores .store-coupons .coupon-list .item:after,
-section.stores .store-coupons .coupon-list .item:before {
-    content: "";
-    display: table
-}
-
-section.stores .store-coupons .coupon-list .item .item-l {
-    float: left;
-    width: 67%
-}
-
-section.stores .store-coupons .coupon-list .item .item-l .title {
-    font-size: 18px
-}
-
-section.stores .store-coupons .coupon-list .item .item-l .date {
-    color: #666
-}
-
-section.stores .store-coupons .coupon-list .item .reveal-btn {
-    float: right;
-    width: 33%;
-    text-align: right
-}
-
-section.stores .store-coupons .coupon-list .item .reveal-btn a {
-    background: url(../img/reveal-btn.jpg) no-repeat;
-    width: 156px;
-    height: 47px;
-    display: inline-block;
-    color: #fff;
-    text-align: center;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 20px;
-    padding: 18px 10px 9px;
-    text-decoration: none
-}
-
-section.stores .store-coupons .coupon-list .item .reveal-btn-code {
-    float: right;
-    width: 200px;
-    height: 55px;
-    position: relative
-}
-
-section.stores .store-coupons .coupon-list .item .reveal-btn-code .cover-btn {
-    border: 3px solid #20599d;
-    background: #daedfc;
-    color: #20599d;
-    font-weight: 700;
-    text-align: center;
-    padding: 15px;
-    font-size: 16px;
-    line-height: 19px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, .3);
-    border-radius: 4px;
-    position: relative;
-    cursor: pointer;
-    z-index: 1;
-    -webkit-transition: all .3s ease;
-    transition: all .3s ease;
-    opacity: 1;
-    visibility: visible
-}
-
-section.stores .store-coupons .coupon-list .item .reveal-btn-code .cover-btn:hover {
-    box-shadow: 0 3px 7px rgba(0, 0, 0, .5)
-}
-
-section.stores .store-coupons .coupon-list .item .reveal-btn-code .cover-btn.hidden {
-    opacity: 0;
-    visibility: hidden
-}
-
-section.stores .store-coupons .coupon-list .item .reveal-btn-code .hidden-code {
-    background: #eaeaea;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, .2) inset;
-    position: absolute;
-    z-index: 0;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    font-size: 16px;
-    padding: 7px 10px;
-    border-radius: 5px;
-    line-height: 1.3;
-    color: transparent;
-    -webkit-transition: all 1.3s ease;
-    transition: all 1.3s ease
-}
-
-section.stores .store-coupons .coupon-list .item .reveal-btn-code .hidden-code .code {
-    opacity: 0;
-    -webkit-transition: all 1.3s ease;
-    transition: all 1.3s ease;
-    color: #000;
-    font-weight: 700
-}
-
-section.stores .store-coupons .coupon-list .item .reveal-btn-code .hidden-code .link {
-    opacity: 0;
-    -webkit-transition: all 1.3s ease;
-    transition: all 1.3s ease
-}
-
-section.stores .store-coupons .coupon-list .item .reveal-btn-code .hidden-code.active {
-    text-shadow: none
-}
-
-section.stores .store-coupons .coupon-list .item .reveal-btn-code .hidden-code.active .code,
-section.stores .store-coupons .coupon-list .item .reveal-btn-code .hidden-code.active .link {
-    opacity: 1;
-    visibility: visible
-}
-
-section.stores .store-coupons .loadmore {
-    text-align: center
-}
-
-section.stores .store-coupons .loadmore a {
-    font-family: Montserrat
-}
-
-section.related-stores {
-    padding-bottom: 80px
-}
-
-section.related-stores .related-stores-h {
-    margin-bottom: 20px
-}
-
-section.related-stores .related-stores-h:after,
-section.related-stores .related-stores-h:before {
-    content: "";
-    display: table
-}
-
-section.related-stores .related-stores-h h3 {
-    font-size: 24px;
-    font-family: Montserrat;
-    font-weight: 400;
-    margin-bottom: 20px;
-    float: left;
-    padding-right: 30px
-}
-
-section.related-stores .related-stores-list .item .info .title,
-section.related-stores .related-stores-list .item .link a {
-    font-size: 18px
-}
-
-section.related-stores .related-stores-h .seeall {
-    float: right;
-    padding-top: 17px
-}
-
-section.related-stores .related-stores-list:after,
-section.related-stores .related-stores-list:before {
-    content: "";
-    display: table
-}
-
-section.related-stores .related-stores-list .item {
-    width: 23.5%;
-    float: left;
-    margin: 0 2% 0 0;
-    border: 1px solid #bfbfbf;
-    border-radius: 2px
-}
-
-section.related-stores .related-stores-list .item:nth-child(4n) {
-    margin-right: 0
-}
-
-section.related-stores .related-stores-list .item .img a {
-    padding: 20%;
-    position: relative;
-    line-height: 0;
-    display: block
-}
-
-section.related-stores .related-stores-list .item .img a .store-logo {
-    background: #fff;
-    display: block;
-    height: 80px;
-    position: relative;
-    text-align: center;
-    padding: 10px 0;
-    width: 100%
-}
-
-section.related-stores .related-stores-list .item .img a .store-logo img {
-    left: 50%;
-    margin-left: -60px;
-    margin-top: -30px;
-    position: absolute;
-    top: 50%
-}
-
-section.related-stores .related-stores-list .item .img a .store-logo span {
-    display: block;
-    height: 60px;
-    line-height: 60px;
-    text-align: center;
-    width: 100%
-}
-
-section.related-stores .related-stores-list .item .img .partner-tooltip {
-    display: none
-}
-
-section.related-stores .related-stores-list .item .info {
-    padding: 12px
-}
-
-section.related-stores .related-stores-list .item .info .details div {
-    margin: 3px 0
-}
-
-section.related-stores .related-stores-list .item .link {
-    text-align: center
-}
-
-section.related-stores .loadmore {
-    display: none;
-    text-align: center
-}
-
-section.related-stores .loadmore a.btn {
-    font-size: 14px;
-    font-weight: 400;
-    padding: 8px 10px;
-    width: 200px;
-    height: 44px;
-    font-family: "Open Sans"
 }
 
 .contacts-page .page-heading {
@@ -5050,78 +4599,6 @@ a.btn-mail.mail-prev {
         width: 50%
     }
 
-    .online-page .page-heading,
-    .stores-page .page-heading {
-        padding-bottom: 20px
-    }
-
-    .stores-menu-block {
-        position: relative;
-        height: 64px
-    }
-
-    .stores-menu-block ul.stores-menu {
-        position: absolute;
-        top: 64px;
-        width: 300px
-    }
-
-    .stores-menu-block ul.stores-menu li {
-        display: none;
-        background: #2a70b7;
-        height: 50px;
-        border-width: 0 2px;
-        border-color: #fff;
-        border-style: solid
-    }
-
-    .stores-menu-block ul.stores-menu li a {
-        border-bottom: 1px solid rgba(255, 255, 255, .3);
-        display: block;
-        width: 100%;
-        padding: 5px 10px;
-        line-height: 36px;
-        height: 50px
-    }
-
-    .stores-menu-block ul.stores-menu li a:active,
-    .stores-menu-block ul.stores-menu li a:hover {
-        border-bottom: 1px solid rgba(255, 255, 255, .3);
-        background: #20599d
-    }
-
-    .stores-menu-block ul.stores-menu li.active {
-        width: 300px;
-        display: block;
-        border: 2px solid #fff;
-        height: 64px;
-        position: absolute;
-        top: -64px;
-        left: 0;
-        background: 0 0
-    }
-
-    .stores-menu-block ul.stores-menu li.active:after {
-        content: "";
-        display: block;
-        width: 10px;
-        height: 6px;
-        background: url(../img/icons.png) -61px -2341px;
-        position: absolute;
-        right: 21px;
-        top: 29px
-    }
-
-    .stores-menu-block ul.stores-menu li.active a {
-        padding: 16px 10px;
-        line-height: 22px;
-        height: 60px;
-        border: none
-    }
-
-    .stores-menu-block ul.stores-menu.expanded li {
-        display: block
-    }
 }
 
 @media (max-width: 991px) {
@@ -5327,31 +4804,6 @@ a.btn-mail.mail-prev {
 
     .partnershops .partnershops-group .partnershops-list .item:nth-child(2n) {
         margin-right: 0
-    }
-
-    section.related-stores .related-stores-h .seeall {
-        display: none
-    }
-
-    section.related-stores .related-stores-list .item {
-        width: 48%;
-        margin: 0 4% 4% 0
-    }
-
-    section.related-stores .related-stores-list .item:nth-child(4n) {
-        margin-right: inherit
-    }
-
-    section.related-stores .related-stores-list .item:nth-child(2n) {
-        margin-right: 0
-    }
-
-    section.related-stores .related-stores-list .item .img img {
-        width: 100%
-    }
-
-    section.related-stores .loadmore {
-        display: block
     }
 }
 
@@ -5889,20 +5341,6 @@ a.btn-mail.mail-prev {
 
     .account-mail .mail-block .mail-content {
         margin: 0
-    }
-
-    section.stores .store-info-top .store-info-l {
-        width: 100%;
-        padding: 0
-    }
-
-    section.stores .store-info-top .store-info-r {
-        width: 100%
-    }
-
-    section.related-stores .related-stores-h h3 {
-        display: block;
-        float: none
     }
 }
 
@@ -6664,27 +6102,6 @@ a.btn-mail.mail-prev {
         margin-right: inherit
     }
 
-    section.stores .store-coupons .coupon-list .item .item-l {
-        float: none;
-        margin: 0 0 20px;
-        width: 100%
-    }
-
-    section.stores .store-coupons .coupon-list .item .reveal-btn,
-    section.stores .store-coupons .coupon-list .item .reveal-btn-code {
-        float: none;
-        width: 200px;
-        text-align: left
-    }
-
-    section.related-stores .related-stores-list .item {
-        width: 100%;
-        margin: 0 0 30px
-    }
-
-    section.related-stores .related-stores-list .item:nth-child(2n) {
-        margin-right: inherit
-    }
 }
 
 @media (max-width: 399px) {

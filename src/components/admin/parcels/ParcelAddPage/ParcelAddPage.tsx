@@ -90,7 +90,7 @@ export function ParcelAddPage() {
   useEffect(() => {
     if (!resolvedUserId) return;
     let cancelled = false;
-    listPricingRules<PricingRule>(resolvedUserId, true)
+    listPricingRules<PricingRule>(resolvedUserId)
       .then((data) => !cancelled && setRules({ userId: resolvedUserId, rules: data.rules }))
       .catch(() => !cancelled && setRules({ userId: resolvedUserId, rules: [] }));
     return () => {

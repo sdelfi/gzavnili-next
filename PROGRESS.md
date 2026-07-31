@@ -942,6 +942,26 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       in the sidebar already). Coupons itself excluded per client instruction — never gets a
       working link. Parcels' *list* is done (above); its sibling screens are the open part —
       see the next item.
+- [x] **Pricing Rules: fixed "Add Rule" reload bug + full legacy parity pass.** Root cause
+      of the reported bug: `PricingRulesSection`'s own `<form>` was nested inside `UserForm`'s
+      outer `<form>` — invalid HTML, so the browser dropped the inner one and "Add Rule"
+      actually submitted the whole customer edit form. Fixed by closing the outer `<form>`
+      before rendering `PricingRulesSection`. Investigating "is this feature actually done"
+      surfaced several legacy behaviors the first pass hadn't ported — see
+      `docs/findings.md`'s "Customer Pricing Rules" entry for full detail: soft delete
+      ("Deactivate"/"Restore" instead of a real row delete — `isActive`/`deletedAt`/
+      `deletedBy` added, migration `20260801012211_customer_pricing_rules_soft_delete_cargo`),
+      overlap/conflict rejection on create and restore (`findOverlappingActiveRule`,
+      `src/lib/services/pricingRuleOverlap.ts`, replacing legacy's DB trigger with an
+      app-layer check since there's no direct-DB write path here), a missing `Cargo` service
+      type, and a Status-column fidelity bug (legacy keys "Active"/"Inactive" off the flag
+      alone, not date-range expiry — restored to match). Also built the second legacy screen
+      the client asked to bring over alongside this fix: "Pricing Rules Administration"
+      (`routes.bema.pricingRules()`, `PricingRulesAdminPage`, `GET /api/bema/pricing-rules`),
+      a paginated/filterable cross-customer view, `BemaAdministrator`-gated (closest analog
+      to legacy's `groupId 10`). `CustomerPicker` promoted from `admin/parcels/` to
+      `components/ui/` (already had 3 callers; this is the 4th) with an added optional
+      "Clear" affordance for filter-bar use.
 
 ## Not started
 

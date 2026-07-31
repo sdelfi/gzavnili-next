@@ -67,7 +67,11 @@ const NAV_GROUPS: NavGroup[] = [
       { label: 'Check on hold' },
       { label: 'Change Parcel status' },
       { label: 'Money collect' },
-      { label: 'Pricing Rules' },
+      {
+        label: 'Pricing Rules',
+        href: routes.bema.pricingRules(),
+        isActive: (pathname) => pathname.startsWith('/bema/pricing-rules'),
+      },
     ],
   },
   {
@@ -81,10 +85,6 @@ const NAV_GROUPS: NavGroup[] = [
       { label: 'Send message' },
       { label: 'Messages' },
     ],
-  },
-  {
-    title: 'COUPONS',
-    items: [{ label: 'Stores' }],
   },
   {
     title: 'CONTENT',

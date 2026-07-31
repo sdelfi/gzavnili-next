@@ -58,6 +58,10 @@ export const routes = {
     // `parcelEdit()`'s single-parcel form.
     parcelAdd: () => '/bema/parcels/add',
     deliveryRequests: () => '/bema/parcels?deliveryRequest=1',
+    // "Pricing Rules Administration" — legacy `bema/pricing_global_rules.cfm`, the
+    // cross-customer counterpart to the per-customer Pricing Rules section on the customer
+    // edit form (which has no route of its own — it's inline on `userEdit()`).
+    pricingRules: () => '/bema/pricing-rules',
     // Site Pages CMS (docs/decisions/0013-site-pages-cms.md) — legacy `bema/content/pages.cfm`.
     pages: () => '/bema/pages',
     pageNew: () => '/bema/pages/new',
