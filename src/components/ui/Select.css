@@ -91,3 +91,42 @@ html .rselect__control {
   background: #20599d;
   color: #fff;
 }
+
+.rselect__group-heading {
+  padding: 6px 12px 2px;
+  color: #999;
+  font-family: 'Open Sans', arial;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/*
+ * Compact variant (`<Select size="sm">`) for the bema admin screens, which pack a dozen
+ * filters into one row — the legacy panel's own `form-group-xs`/`input-sm` Bootstrap sizing.
+ * Same skin, smaller box; nothing else changes.
+ */
+html .rselect-sm .rselect__control {
+  min-height: 30px;
+}
+
+.rselect-sm .rselect__value-container {
+  padding: 0 8px;
+}
+
+.rselect-sm .rselect__placeholder,
+.rselect-sm .rselect__single-value,
+.rselect-sm .rselect__input-container {
+  font-size: 13px;
+}
+
+.rselect-sm .rselect__dropdown-indicator {
+  width: 20px;
+  height: 28px;
+}
+
+.rselect-sm .rselect__option {
+  padding: 4px 10px;
+  font-size: 13px;
+}

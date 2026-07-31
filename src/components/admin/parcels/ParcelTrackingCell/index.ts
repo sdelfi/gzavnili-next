@@ -1,0 +1,1 @@
+export { ParcelTrackingCell } from './ParcelTrackingCell';

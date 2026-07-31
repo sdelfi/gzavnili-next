@@ -10,6 +10,13 @@ import './Select.css';
 // react-select's built-in inline (emotion) styles so Select.css's plain classnames
 // (via classNamePrefix) are the only source of truth for how this looks.
 export type SelectOption<T extends string = string> = { value: T; label: string };
+/** react-select renders a `{ label, options }` entry as an option group — used by the bema
+ *  parcels list's Service/Type filter, which legacy faked with unselectable `--Service--`
+ *  separator rows inside one flat list. */
+export type SelectOptionGroup<T extends string = string> = { label: string; options: SelectOption<T>[] };
+
+const flatten = <T extends string>(options: (SelectOption<T> | SelectOptionGroup<T>)[]): SelectOption<T>[] =>
+  options.flatMap((option) => ('options' in option ? option.options : [option]));
 
 export function Select<T extends string = string>({
   instanceId,
@@ -18,6 +25,7 @@ export function Select<T extends string = string>({
   onChange,
   placeholder,
   isSearchable = false,
+  size = 'md',
   error,
   ...props
 }: {
@@ -28,15 +36,18 @@ export function Select<T extends string = string>({
   // with more than one Select, or any server that's handled more than one request. Pass
   // something stable and unique per field (its name/id is usually right there already).
   instanceId: string;
-  options: SelectOption<T>[];
+  options: (SelectOption<T> | SelectOptionGroup<T>)[];
   value: T | '';
   onChange: (value: T) => void;
   placeholder?: string;
+  /** `sm` is the compact control the bema admin screens use (legacy Bootstrap's
+   *  `form-group-xs`); `md` is the public site's full-height field. */
+  size?: 'sm' | 'md';
   // Same convention as ui/Input.tsx's `error` — a jquery.validate-style `<label class="error">`
   // rendered right after the field, not a native browser validation bubble.
   error?: string;
 } & Omit<ReactSelectProps<SelectOption<T>, false>, 'options' | 'value' | 'onChange' | 'placeholder' | 'instanceId'>) {
-  const selected = options.find((option) => option.value === value) ?? null;
+  const selected = flatten(options).find((option) => option.value === value) ?? null;
 
   return (
     <>
@@ -45,6 +56,7 @@ export function Select<T extends string = string>({
         instanceId={instanceId}
         unstyled
         isSearchable={isSearchable}
+        className={size === 'sm' ? 'rselect-sm' : undefined}
         classNamePrefix="rselect"
         placeholder={placeholder}
         options={options}

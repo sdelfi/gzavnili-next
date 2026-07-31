@@ -269,6 +269,42 @@ bema builds on. See `docs/decisions/0011-bema-admin.md` for the full research/de
 writeup (legacy `edit_users.cfm`/`users.cfm` behavior, what was deliberately simplified,
 why).
 
+- [x] **Parcels list** (`bema/parcels/parcels.cfm` + `views/parcels/vwParcels_work2.cfm` — the
+      live pair of four near-identical copies; see `docs/decisions/0015-bema-parcels-list.md`
+      for how that was established and for the full port/divergence writeup). The whole
+      screen: both search forms with every filter ported 1:1 (keyword/sender AND-of-ORs,
+      trip/received/status dates, service-delivery-type grouped dropdown, group, city, status
+      waterfall, paid, debt, plus the "extra search" milestone-range + Received By form),
+      sender/trip/group card grouping, sortable + paginated, the bulk operations toolbar
+      (delete, all nine status stamps, paid/unpaid with real invoice+payment creation,
+      change code with the collision warning, set AWB with trip-date stamping), per-card
+      Group pay, per-row delete and hold-clear, CSV export, the Delivery Request (`delreq`)
+      slice with its Buser column and assign-and-send-out shortcut, and the agent-role
+      restrictions (own parcels only, no operations toolbar) now enforced server-side.
+      Layout: `src/components/admin/parcels/{ParcelListPage,ParcelFilters,ParcelExtraFilters,
+      ParcelOperationsBar,ParcelGroupCard,ParcelRow,ParcelTrackingCell,ParcelPaymentCell,
+      ParcelRowActions}`, `src/lib/parcels/{constants,types,format,groupParcels}.ts`,
+      `src/lib/services/{parcelQuery,parcelOperations}.ts`,
+      `src/lib/validation/parcelSchema.ts`, `src/lib/api/bema/parcels.ts`, and
+      `/api/bema/parcels{,/[id],/operations,/export,/check-code}`. New shared UI primitives
+      promoted to `src/components/ui/`: `Field` (labelled control, a pattern `UserForm`/
+      `PageForm` had already hand-rolled) and `Checkbox` (needs the indeterminate state for
+      the per-card select-all); `ui/Select` gained option groups and a compact `size="sm"`.
+      **Found dead in legacy and not ported**: the "Recent Parcels" block (gated on a
+      constant-false `<cfif … and 0>`, but still paying for a second full `getParcels()` scan
+      on every request) and the `agentPrefix` argument (computed, passed, never referenced by
+      the query). **Legacy bugs fixed rather than reproduced**: three status-filter options
+      that silently returned an unfiltered list, a count-vs-page-query mismatch on the
+      `office` filter, a GET link that mutated hold flags, the To-hour dropdown showing the
+      From-hour, and unstable pagination with no sort tiebreaker — full table in decision
+      0015. Schema additions (`parcels.pcode`, `parcels.b_paid_delivery`, `config.reg_awb`)
+      in `prisma/migrations/20260731200000_add_parcel_pcode_paid_delivery/`.
+      **Verified end-to-end this time, not just logic-level**: a throwaway local Postgres was
+      stood up, the migrations applied, a fixture seeded, and every filter, every bulk
+      operation, the CSV export, the auth guards (401/403/agent scoping) and the rendered
+      screen exercised against a running dev server via HTTP and a headless browser (which
+      caught one real defect — duplicate sibling React keys on the two filter forms).
+
 - [x] **Auth**: two-realm JWT design (`bema_access_token`/`bema_refresh_token` httpOnly
       cookies, `jose`/HS256, 15min/7day TTLs, `BEMA_AUTH_SECRET`) — `src/lib/auth/{jwt,
 cookies,session,login,password}.ts`. Password hashing via `Bun.password`
@@ -450,9 +486,30 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       (`/bema/statements/[id]`, `routes.bema.userStatement`) that's a placeholder page only
       ("Not implemented yet") — the statements module itself isn't built. See the rollout
       plan below.
-- [ ] Real HTTP/browser-level verification of the bema UI (login form, list screen,
-      create/edit forms, pricing rules) — only logic-level verification was possible this
-      session; do this the next time a dev server is reachable.
+- [ ] Real HTTP/browser-level verification of the bema UI — **done for the parcels list**
+      (a local Postgres + dev server + headless Chromium run, see the parcels entry above),
+      still outstanding for the screens built before it: login form, users list, create/edit
+      forms, pricing rules. The same throwaway-Postgres setup makes this cheap now.
+      Separately: **`Bun.password` is unavailable inside the Next.js runtime** — `next dev`
+      runs the route handlers under Node even when started with `bun`, so
+      `/api/bema/auth/login` 500s with `ReferenceError: Bun is not defined`
+      (`src/lib/auth/password.ts:19`). Pre-existing, found while smoke-testing parcels, and
+      it means **bema login does not work at all** outside a Bun-native server. Needs a
+      runtime-agnostic KDF (e.g. `@node-rs/argon2`) or `export const runtime` pinning —
+      worth fixing before anything else here.
+- [ ] **Parcels screens the list links out to**, all rendered inert with a "Not implemented
+      yet" title on the row's action column rather than dropped: parcel edit
+      (`vwParcelsUpdate.cfm`, ~1,400 lines — the big one), parcel view, parcel print, the
+      statements module's invoice/history popups, and the messages module's Send/Resend SMS.
+      Also "Export Airway" (`export=2` → `airway.cfm`), which is a document for the airline
+      rather than a view of the list.
+- [ ] **Parcels: two things worth confirming with the client** before they harden into
+      behaviour — (a) the Debt filter is a *not-equal* match on uninvoiced parcels (the value
+      `0` meaning "has a debt figure at all"), faithfully ported but unintuitive enough that
+      it may not be what operators think it does; (b) legacy's `addressbook.Phone1/2/3` were
+      mapped onto this schema's `cellPhone`/`homePhone`/`privateNumber` by reading the legacy
+      CSV export's own column headers, not from the MSSQL schema — worth a cross-check during
+      the ETL backfill, since it decides which number the list and export show.
 - [ ] Address-field requiredness (e.g. legacy's country-conditional State/PostalCode rule),
       and independent confirmation of `CustomerPricingRule`'s exact legacy semantics/column
       set (inferred from the live screen, not cross-checked against the legacy MSSQL
@@ -582,11 +639,11 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       + ge. `{COURIERCALC_FORM}`/`{HELPTOSHOP}`/`{VOLUMECAL}` remain unported — each is a
       materially bigger dynamic calculator, not a simple contact form; deliberately deferred,
       client to prioritize next.
-- [ ] Remaining bema modules per the rollout plan: parcels (the actual client pain point —
-      see `docs/migrations/02-parcels-domain-analysis.md`/`04-postgres-schema-design.md`),
-      products, orders, statements, content, reports, messages, config, coupons-adjacent
-      Stores (structurally placeholder-recorded in the sidebar already). Coupons itself
-      excluded per client instruction — never gets a working link.
+- [ ] Remaining bema modules per the rollout plan: products, orders, statements, content,
+      reports, messages, config, coupons-adjacent Stores (structurally placeholder-recorded
+      in the sidebar already). Coupons itself excluded per client instruction — never gets a
+      working link. Parcels' *list* is done (above); its sibling screens are the open part —
+      see the next item.
 
 ## Not started
 

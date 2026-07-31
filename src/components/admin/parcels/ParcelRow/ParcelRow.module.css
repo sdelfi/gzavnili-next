@@ -1,0 +1,50 @@
+.even {
+  background: #fff;
+}
+
+.odd {
+  background: #fafafa;
+}
+
+.selected {
+  background: #eaf3fb;
+}
+
+.center {
+  text-align: center;
+}
+
+.right {
+  text-align: right;
+}
+
+.wrap {
+  white-space: normal;
+  word-break: break-word;
+}
+
+.tracking {
+  font-weight: 700;
+}
+
+.muted {
+  color: #777;
+  font-size: 11px;
+}
+
+.specs {
+  border-collapse: collapse;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.specLabel {
+  color: #777;
+  padding: 0 6px 0 0;
+  white-space: nowrap;
+}
+
+.specValue {
+  text-align: right;
+  white-space: nowrap;
+}

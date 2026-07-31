@@ -40,10 +40,20 @@ const NAV_GROUPS: NavGroup[] = [
         isActive: (pathname, search) => pathname === '/bema/users' && search.get('accountType') === 'Customer',
       },
       { label: 'Receivers' },
-      { label: 'Parcels' },
+      {
+        label: 'Parcels',
+        href: routes.bema.parcels(),
+        isActive: (pathname, search) => pathname === '/bema/parcels' && search.get('deliveryRequest') !== '1',
+      },
       { label: 'Parcels Reports' },
       { label: 'Parcels Reports 2' },
-      { label: 'Delivery Request' },
+      {
+        // Legacy's `parcels.cfm?delreq=1` — its own nav entry there too, but the same screen
+        // with an extra filter and an extra column, not a separate page.
+        label: 'Delivery Request',
+        href: routes.bema.deliveryRequests(),
+        isActive: (pathname, search) => pathname === '/bema/parcels' && search.get('deliveryRequest') === '1',
+      },
       { label: 'Add Parcel (new)' },
       { label: 'Add Online Parcel' },
       { label: 'Check on hold' },

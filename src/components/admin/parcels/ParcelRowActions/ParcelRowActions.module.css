@@ -1,0 +1,35 @@
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.action {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: 11px;
+  color: #337ab7;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.action:hover {
+  text-decoration: underline;
+}
+
+.danger {
+  color: #d9534f;
+}
+
+.pending {
+  color: #aaa;
+  cursor: default;
+}
+
+.pending:hover {
+  text-decoration: none;
+}

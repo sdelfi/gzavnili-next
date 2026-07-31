@@ -1,0 +1,38 @@
+.onHold {
+  display: block;
+  color: #d9534f;
+  margin-bottom: 4px;
+}
+
+.notOnHold {
+  display: block;
+  color: #3c763d;
+  margin-bottom: 4px;
+}
+
+.confirm {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: #337ab7;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.timeline {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.label {
+  color: #777;
+  padding: 0 6px 0 0;
+  white-space: nowrap;
+}
+
+.value {
+  white-space: nowrap;
+}

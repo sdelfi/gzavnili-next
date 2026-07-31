@@ -1,0 +1,30 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  white-space: nowrap;
+}
+
+.hint {
+  font-size: 11px;
+  color: #888;
+}
+
+.sm {
+  flex: 0 1 90px;
+}
+
+.md {
+  flex: 0 1 170px;
+}
+
+.lg {
+  flex: 1 1 260px;
+}

@@ -15,6 +15,8 @@ export type BemaUser = {
   firstName: string | null;
   lastName: string | null;
   adminRole: AdminRole | null;
+  /** Only `/me` includes this — it decides which payment methods the parcels screen offers. */
+  billingAddress?: { country: string | null } | null;
 };
 
 type AuthState = {

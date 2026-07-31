@@ -36,3 +36,7 @@ file or the live site.
 | 0009 | Catch CSS Modules typos via generated TS types, not an ESLint plugin | [decisions/0009-css-modules-type-checking.md](decisions/0009-css-modules-type-checking.md) |
 | 0010 | Prisma 7 for schema/migrations; Postgres reconfirmed over MySQL; migration safety policy | [decisions/0010-prisma-migrations.md](decisions/0010-prisma-migrations.md) |
 | 0011 | bema admin panel: auth + user management (first slice) | [decisions/0011-bema-admin.md](decisions/0011-bema-admin.md) |
+| 0012 | Customer-facing auth realm (login/register/forgot/reset) | [decisions/0012-customer-auth.md](decisions/0012-customer-auth.md) |
+| 0013 | Site Pages CMS (bema "Site Pages") | [decisions/0013-site-pages-cms.md](decisions/0013-site-pages-cms.md) |
+| 0014 | Site-wide announcement popup (bema "Site Settings" → "Popup") | [decisions/0014-site-popup.md](decisions/0014-site-popup.md) |
+| 0015 | bema Parcels list: what was ported, and what was deliberately not | [decisions/0015-bema-parcels-list.md](decisions/0015-bema-parcels-list.md) |

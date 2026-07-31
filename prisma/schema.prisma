@@ -368,7 +368,14 @@ model Config {
   dtExpressEst  DateTime? @map("dt_express_est") @db.Timestamptz(6)
   dtRegularShip DateTime? @map("dt_regular_ship") @db.Timestamptz(6)
   dtRegularEst  DateTime? @map("dt_regular_est") @db.Timestamptz(6)
+  // The two "current trip" AWB codes. Setting a parcel's AWB to one of these (bema parcels
+  // list → "Set AWB" bulk operation) is what stamps that trip's estimated ship/delivery
+  // dates onto the parcel — see `applyAwbOperation` in src/lib/services/parcelOperations.ts,
+  // ported from the legacy `MSSQLParcelDAO.doOperation()`'s `awb` branch. `regAwb` was
+  // missing from this model until the parcels list screen needed it (only `expAwb` had been
+  // carried over); the legacy `config` table has both.
   expAwb        String?   @map("exp_awb")
+  regAwb        String?   @map("reg_awb")
 
   // Site-wide announcement popup (bema "Site Settings" → "Popup" section; legacy `config`
   // table's `ePopup`/`PopupMessageen`/`PopupMessagege` columns, shown via
@@ -474,6 +481,20 @@ model Parcel {
   awb     String?
   isDr    Boolean @default(false) @map("is_dr")
 
+  // Short human-readable pickup code, shared by every parcel in the same sender/trip group
+  // and printed on the group header of the bema parcels list ("Code - 123456"). Set in bulk
+  // via the list screen's "Change code" operation, which first warns if the code is already
+  // in use elsewhere (legacy `bema/ajax/checkCode.cfm`, now
+  // /api/bema/parcels/check-code). Legacy column: `parcels.pCode`.
+  pcode String?
+
+  // "The delivery fee for this parcel has been collected." Legacy `bPaidDelivery`: set by the
+  // list screen's "Set Status - Paid" operation alongside the invoice/payment it creates, and
+  // read back by the Delivery Request (`delreq`) filter to tell paid-for delivery requests
+  // apart from unpaid ones. Distinct from `isPaid`, which is trigger-derived from whether an
+  // invoice item exists at all.
+  bPaidDelivery Boolean @default(false) @map("b_paid_delivery")
+
   payMethod1 String?  @map("pay_method1")
   payMethod2 String?  @map("pay_method2")
   payAmount1 Decimal? @map("pay_amount1") @db.Decimal(12, 2)
@@ -519,6 +540,10 @@ model Parcel {
   @@index([receiverId])
   @@index([created])
   @@index([trackingNum])
+  @@index([pcode])
+  // The bema parcels list's "Received By" filter (legacy `eadmin`), which is also the
+  // implicit default filter for a BemaAgent and for an unfiltered first page load.
+  @@index([trackingReceivedBy])
 }
 
 // --- Site Pages CMS (bema "Site Pages" — see docs/decisions/0013-site-pages-cms.md) --------
