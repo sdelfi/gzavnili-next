@@ -18,6 +18,27 @@ skips) it — see AGENTS.md's "Legacy fidelity: bugs are ported, not fixed" rule
 
 ---
 
+## Parcels list "Export Airway" (`airway.cfm`) — 2026-07-31
+
+**Found:** the parcels list's second export link (legacy `export=2`, "Export Airway") always
+downloads a file containing only a title line (`Air Cargo Manifest`) and a column header row
+(`HAWB,No. of Pieces,Account ID,Carrier Tracking Number (s),Shipper Name,Shipper Address,
+Consignee Name,Consignee Address,ActualWeight,Value of HAWB,Description of Contents`) — no
+data rows, regardless of what filters are applied on the screen. No `airway.cfm` source exists
+anywhere in this repo (or elsewhere available to this port) to confirm *why* — whether the row
+population was removed, never finished, or depends on something (a manifest table, a carrier
+API) that isn't part of this codebase at all. Confirmed against the running legacy site rather
+than source, since no source was recoverable.
+
+**Verdict: ported as-is.** `src/app/api/bema/parcels/export-airway/route.ts` always returns the
+same static two-line CSV; it does not read the screen's filters, because legacy's version
+observably doesn't either. This is the "bugs are ported, not fixed" rule applied to a case
+where there is no legacy source to read the *logic* from, only the observable output — if a
+real per-parcel manifest export is wanted later, that's a new feature to design and confirm
+with the client, not a fidelity port.
+
+---
+
 ## Batch "Add Parcel" (`parcels-add.cfm`) — 2026-07-31
 
 ### The two-payment-method split is dead code

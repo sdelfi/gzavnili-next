@@ -35,18 +35,21 @@ export async function GET(request: NextRequest) {
   }
   const query = parsed.data;
 
-  // Two implicit "Received By" scopes, both straight from legacy `parcels.cfm`:
-  // an agent may only ever see the parcels they received themselves (enforced here on the
-  // server, where legacy only enforced it by overwriting a URL param in the view), and an
-  // unfiltered page load defaults to the same scope for everyone else so the first screen is
-  // the operator's own work rather than the entire table.
-  let forcedReceivedBy: string | null = null;
+  // Two implicit "Received By" scopes, both straight from legacy `parcels.cfm`: an agent may
+  // only ever see the parcels they received themselves, and an unfiltered page load defaults
+  // to the same scope for everyone else so the first screen is the operator's own work rather
+  // than the entire table. Legacy renders this by actually setting `eadmin` to the current
+  // admin and feeding that same value into the "Received By" select's `value` — the dropdown
+  // just shows the truth of what's applied, not a hidden override. `effectiveReceivedBy` below
+  // is that value, so the client can seed the "Received By" select the same way instead of
+  // leaving it showing "Any" while a different filter is silently in effect.
+  let effectiveReceivedBy: string | null = null;
   if (auth.session.role === 'BemaAgent') {
-    forcedReceivedBy = auth.session.sub;
     query.receivedBy = auth.session.sub;
-  } else if (!query.receivedBy && query.allReceivers !== '1' && !hasMeaningfulFilter(query)) {
-    forcedReceivedBy = auth.session.sub;
+    effectiveReceivedBy = auth.session.sub;
+  } else if (!query.receivedBy && !hasMeaningfulFilter(query)) {
     query.receivedBy = auth.session.sub;
+    effectiveReceivedBy = auth.session.sub;
   }
 
   const where = buildParcelWhere(query);
@@ -73,7 +76,7 @@ export async function GET(request: NextRequest) {
     page: query.page,
     perPage: query.perPage,
     lariRate: config?.crate ? Number(config.crate) || null : null,
-    forcedReceivedBy,
+    effectiveReceivedBy,
   };
 
   return NextResponse.json(body);

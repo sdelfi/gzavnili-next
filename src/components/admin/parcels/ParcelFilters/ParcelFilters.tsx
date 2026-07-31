@@ -27,11 +27,13 @@ export function ParcelFilters({
   filters,
   onApply,
   exportHref,
+  airwayExportHref,
   canExport,
 }: {
   filters: ParcelFiltersState;
   onApply: (patch: Partial<ParcelFiltersState>) => void;
   exportHref: string;
+  airwayExportHref: string;
   canExport: boolean;
 }) {
   // Seeded from the applied filters and then owned by this form. When the applied filters
@@ -50,124 +52,128 @@ export function ParcelFilters({
   return (
     <form className={s.form} onSubmit={handleSubmit}>
       <div className={s.row}>
-        <Field label="Show:" width="sm">
-          <Select
-            instanceId="parcel-perpage"
-            size="sm"
-            options={PER_PAGE_OPTIONS}
-            value={String(draft.perPage)}
-            onChange={(value) => set('perPage', Number(value) || 25)}
-          />
-        </Field>
+        <div className={s.fields}>
+          <Field label="Show:" width="sm">
+            <Select
+              instanceId="parcel-perpage"
+              size="sm"
+              options={PER_PAGE_OPTIONS}
+              value={String(draft.perPage)}
+              onChange={(value) => set('perPage', Number(value) || 25)}
+            />
+          </Field>
 
-        <Field label="Search:" htmlFor="parcel-search">
-          <Input
-            id="parcel-search"
-            value={draft.search}
-            placeholder="Receiver, tracking #, AWB…"
-            onChange={(e) => set('search', e.target.value)}
-          />
-        </Field>
+          <Field label="Search:" htmlFor="parcel-search">
+            <Input
+              id="parcel-search"
+              value={draft.search}
+              placeholder="Receiver, tracking #, AWB…"
+              onChange={(e) => set('search', e.target.value)}
+            />
+          </Field>
 
-        <Field label="Sender:" htmlFor="parcel-sender">
-          <Input
-            id="parcel-sender"
-            value={draft.sender}
-            placeholder="Name or username"
-            onChange={(e) => set('sender', e.target.value)}
-          />
-        </Field>
+          <Field label="Sender:" htmlFor="parcel-sender">
+            <Input
+              id="parcel-sender"
+              value={draft.sender}
+              placeholder="Name or username"
+              onChange={(e) => set('sender', e.target.value)}
+            />
+          </Field>
 
-        <Field label="Trip Date:" htmlFor="parcel-tripdate">
-          <Input
-            id="parcel-tripdate"
-            type="date"
-            value={draft.tripDate}
-            onChange={(e) => set('tripDate', e.target.value)}
-          />
-        </Field>
+          <Field label="Trip Date:" htmlFor="parcel-tripdate">
+            <Input
+              id="parcel-tripdate"
+              type="date"
+              value={draft.tripDate}
+              onChange={(e) => set('tripDate', e.target.value)}
+            />
+          </Field>
 
-        <Field label="Received Date:" htmlFor="parcel-receiveddate">
-          <Input
-            id="parcel-receiveddate"
-            type="date"
-            value={draft.receivedDate}
-            onChange={(e) => set('receivedDate', e.target.value)}
-          />
-        </Field>
+          <Field label="Received Date:" htmlFor="parcel-receiveddate">
+            <Input
+              id="parcel-receiveddate"
+              type="date"
+              value={draft.receivedDate}
+              onChange={(e) => set('receivedDate', e.target.value)}
+            />
+          </Field>
 
-        <Field label="Service/Type:">
-          <Select
-            instanceId="parcel-service"
-            size="sm"
-            isClearable
-            placeholder="Any"
-            options={SERVICE_FILTER_GROUPS}
-            value={draft.service}
-            onChange={(value) => set('service', value)}
-          />
-        </Field>
+          <Field label="Service/Type:">
+            <Select
+              instanceId="parcel-service"
+              size="sm"
+              isClearable
+              placeholder="Any"
+              options={SERVICE_FILTER_GROUPS}
+              value={draft.service}
+              onChange={(value) => set('service', value)}
+            />
+          </Field>
 
-        <Field label="Group:" htmlFor="parcel-groupid" width="sm">
-          <Input
-            id="parcel-groupid"
-            value={draft.groupId}
-            maxLength={5}
-            onChange={(e) => set('groupId', e.target.value)}
-          />
-        </Field>
+          <Field label="Group:" htmlFor="parcel-groupid" width="sm">
+            <Input
+              id="parcel-groupid"
+              value={draft.groupId}
+              maxLength={5}
+              onChange={(e) => set('groupId', e.target.value)}
+            />
+          </Field>
 
-        <Field label="City:">
-          <Select
-            instanceId="parcel-city"
-            size="sm"
-            options={CITY_FILTER_OPTIONS}
-            value={draft.city}
-            onChange={(value) => set('city', value)}
-          />
-        </Field>
+          <Field label="City:">
+            <Select
+              instanceId="parcel-city"
+              size="sm"
+              options={CITY_FILTER_OPTIONS}
+              value={draft.city}
+              onChange={(value) => set('city', value)}
+            />
+          </Field>
 
-        <Field label="Status:">
-          <Select
-            instanceId="parcel-status"
-            size="sm"
-            options={STATUS_FILTER_OPTIONS}
-            value={draft.status}
-            onChange={(value) => set('status', value)}
-          />
-        </Field>
+          <Field label="Status:">
+            <Select
+              instanceId="parcel-status"
+              size="sm"
+              options={STATUS_FILTER_OPTIONS}
+              value={draft.status}
+              onChange={(value) => set('status', value)}
+            />
+          </Field>
 
-        <Field label="Status Date:" htmlFor="parcel-statusdate">
-          <Input
-            id="parcel-statusdate"
-            type="date"
-            value={draft.statusDate}
-            onChange={(e) => set('statusDate', e.target.value)}
-          />
-        </Field>
+          <Field label="Status Date:" htmlFor="parcel-statusdate">
+            <Input
+              id="parcel-statusdate"
+              type="date"
+              value={draft.statusDate}
+              onChange={(e) => set('statusDate', e.target.value)}
+            />
+          </Field>
 
-        <Field label="Paid:" width="sm">
-          <Select
-            instanceId="parcel-ispaid"
-            size="sm"
-            options={PAID_FILTER_OPTIONS}
-            value={draft.isPaid}
-            onChange={(value) => set('isPaid', value)}
-          />
-        </Field>
+          <Field label="Paid:" width="sm">
+            <Select
+              instanceId="parcel-ispaid"
+              size="sm"
+              options={PAID_FILTER_OPTIONS}
+              value={draft.isPaid}
+              onChange={(value) => set('isPaid', value)}
+            />
+          </Field>
 
-        {/* Not a "debt equals" box: it matches uninvoiced parcels whose debt differs from the
-            amount typed, and the value 0 means "has a debt figure at all". See
-            buildParcelWhere() — the hint keeps that from looking like a bug to an operator. */}
-        <Field label="Debt:" htmlFor="parcel-debt" width="sm" hint="≠ amount">
-          <Input id="parcel-debt" value={draft.debt} onChange={(e) => set('debt', e.target.value)} />
-        </Field>
+          <Field label="Debt:" htmlFor="parcel-debt" width="sm">
+            <Input id="parcel-debt" value={draft.debt} onChange={(e) => set('debt', e.target.value)} />
+          </Field>
+        </div>
 
         <div className={s.actions}>
           <Button type="submit">GO</Button>
           {canExport && (
             <a className={s.exportLink} href={exportHref} download>
               Export Parcels (CSV)
+            </a>
+          )}
+          {canExport && (
+            <a className={s.exportLink} href={airwayExportHref} download>
+              Export Airway
             </a>
           )}
         </div>

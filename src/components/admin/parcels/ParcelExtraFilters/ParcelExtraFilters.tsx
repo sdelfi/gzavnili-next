@@ -49,8 +49,6 @@ export function ParcelExtraFilters({
 
   return (
     <form className={s.form} onSubmit={handleSubmit}>
-      <span className={s.title}>Extra search</span>
-
       <div className={s.row}>
         <Field label="From Date:" htmlFor="parcel-fromdate">
           <Input
@@ -60,7 +58,7 @@ export function ParcelExtraFilters({
             onChange={(e) => set('fromDate', e.target.value)}
           />
         </Field>
-        <Field label="HH:" width="sm">
+        <Field label="HH:" width="xs">
           <Select
             instanceId="parcel-fromhour"
             size="sm"
@@ -69,7 +67,7 @@ export function ParcelExtraFilters({
             onChange={(value) => set('fromHour', value)}
           />
         </Field>
-        <Field label="MM:" width="sm">
+        <Field label="MM:" width="xs">
           <Select
             instanceId="parcel-fromminute"
             size="sm"
@@ -82,7 +80,7 @@ export function ParcelExtraFilters({
         <Field label="To Date:" htmlFor="parcel-todate">
           <Input id="parcel-todate" type="date" value={draft.toDate} onChange={(e) => set('toDate', e.target.value)} />
         </Field>
-        <Field label="HH:" width="sm">
+        <Field label="HH:" width="xs">
           <Select
             instanceId="parcel-tohour"
             size="sm"
@@ -91,7 +89,7 @@ export function ParcelExtraFilters({
             onChange={(value) => set('toHour', value)}
           />
         </Field>
-        <Field label="MM:" width="sm">
+        <Field label="MM:" width="xs">
           <Select
             instanceId="parcel-tominute"
             size="sm"
@@ -111,7 +109,7 @@ export function ParcelExtraFilters({
           />
         </Field>
 
-        <Field label="Received By" width="lg">
+        <Field label="Received By" width="md">
           <Select
             instanceId="parcel-receivedby"
             size="sm"

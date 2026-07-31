@@ -48,10 +48,6 @@ export const listParcelsQuerySchema = z.object({
   // "Extra search" form: a milestone-timestamp range plus who received the parcel.
   extraStatus: optionalText,
   receivedBy: optionalText,
-  // Opts out of the implicit "only parcels you received" scope an otherwise-unfiltered list
-  // falls back to (see the list route). Legacy had no such escape hatch — the only way to see
-  // everyone's parcels was to set some unrelated filter and wonder why.
-  allReceivers: z.enum(['', '1']).catch(''),
   fromDate: dateOnly,
   fromHour: z.coerce.number().int().min(0).max(23).catch(0),
   fromMinute: z.coerce.number().int().min(0).max(59).catch(0),

@@ -19,7 +19,7 @@
 .row {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 14px;
+  gap: 6px 8px;
   align-items: flex-end;
 }
 

@@ -1243,8 +1243,8 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     margin: 45px 0;
     display: flex;
     flex-wrap: wrap;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
+    
+    
     justify-content: space-between
 }
 
@@ -1436,8 +1436,8 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
 .courier-pickup .pickup-locations {
     display: flex;
     flex-wrap: wrap;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
+    
+    
     justify-content: space-between;
     margin-top: 40px
 }
@@ -1472,8 +1472,8 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
 
 .courier-office .courier-offices {
     display: flex;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
+    
+    
     justify-content: space-between;
     flex-wrap: wrap;
     padding-top: 25px
@@ -1672,8 +1672,8 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
 .news-page .news-list {
     display: flex;
     flex-wrap: wrap;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
+    
+    
     justify-content: space-between;
     padding: 45px 0 0
 }
@@ -2028,8 +2028,8 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
     -webkit-box-direction: normal;
     -ms-flex-direction: column;
     flex-direction: column;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
+    
+    
     justify-content: space-between
 }
 
@@ -2388,10 +2388,10 @@ section.stores .store-coupons .coupon-list .item .reveal-btn a:hover {
 
 .tracking .tracking-results .timeline .timeline-inner {
     display: flex;
-    -ms-flex-wrap: nowrap;
+    
     flex-wrap: nowrap;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
+    
+    
     justify-content: space-between;
     z-index: 1;
     position: relative
@@ -3389,8 +3389,8 @@ section.map .gmaps-contactinfo .item .email:before {
 section.prices .prices-list {
     padding: 30px 0;
     display: flex;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
+    
+    
     justify-content: space-between
 }
 
@@ -3537,8 +3537,8 @@ section.prices .prices-infoblock .item .item-inner .info .desc {
 .account-menu-block .container {
     display: flex;
     flex-wrap: wrap;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
+    
+    
     justify-content: space-between
 }
 
@@ -3636,10 +3636,10 @@ fieldset legend {
 
 .filter-block {
     display: flex;
-    -ms-flex-wrap: nowrap;
+    
     flex-wrap: nowrap;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
+    
+    
     justify-content: space-between
 }
 
@@ -3723,10 +3723,10 @@ fieldset legend {
 
 .paymentactivity .heading {
     display: flex;
-    -ms-flex-wrap: nowrap;
+    
     flex-wrap: nowrap;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
+    
+    
     justify-content: space-between;
     margin-bottom: 10px
 }
@@ -4065,10 +4065,10 @@ fieldset legend {
 
 .accountdelreq .delreq-btn-block-1 {
     display: flex;
-    -ms-flex-wrap: nowrap;
+    
     flex-wrap: nowrap;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
+    
+    
     justify-content: space-between;
     -ms-flex-line-pack: center;
     align-content: center;
@@ -4252,10 +4252,10 @@ fieldset legend {
 
 .accreg-btn-block {
     display: flex;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
+    
+    
     justify-content: space-between;
-    -ms-flex-wrap: nowrap;
+    
     flex-wrap: nowrap;
     margin: 50px 0
 }
@@ -4329,10 +4329,10 @@ fieldset legend {
 
 .accountaddparcel .heading {
     display: flex;
-    -ms-flex-wrap: nowrap;
+    
     flex-wrap: nowrap;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
+    
+    
     justify-content: space-between;
     margin: 40px 0 30px
 }
@@ -4388,10 +4388,10 @@ fieldset legend {
 
 .accountshipaddress .shipaddress-info {
     display: flex;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
+    
+    
     justify-content: space-between;
-    -ms-flex-wrap: nowrap;
+    
     flex-wrap: nowrap;
     margin: 50px 0
 }
@@ -5188,7 +5188,7 @@ a.btn-mail.mail-prev {
     }
 
     .courier-georgia .georgia-map {
-        display: -ms-flexbox;
+        
         display: flex;
         flex-wrap: wrap
     }
@@ -5210,11 +5210,11 @@ a.btn-mail.mail-prev {
         -webkit-box-ordinal-group: 3;
         -ms-flex-order: 2;
         order: 2;
-        display: -ms-flexbox;
+        
         display: flex;
         flex-wrap: wrap;
-        -webkit-box-pack: justify;
-        -ms-flex-pack: justify;
+        
+        
         justify-content: space-between
     }
 
@@ -5972,7 +5972,7 @@ a.btn-mail.mail-prev {
     }
 
     table.bluetable.archiveparcels-table tr {
-        display: -ms-flexbox;
+        
         display: flex;
         flex-wrap: wrap;
         background: #f4f4f4;
@@ -6035,7 +6035,7 @@ a.btn-mail.mail-prev {
     }
 
     table.bluetable.myparcels-table tr {
-        display: -ms-flexbox;
+        
         display: flex;
         flex-wrap: wrap;
         background: #f4f4f4;
@@ -6381,7 +6381,7 @@ a.btn-mail.mail-prev {
     }
 
     table.bluetable tr {
-        display: -ms-flexbox;
+        
         display: flex;
         flex-wrap: wrap;
         background: #f4f4f4;
@@ -6534,12 +6534,12 @@ a.btn-mail.mail-prev {
 
     .paymentactivity .heading .currbalance {
         text-align: left;
-        display: -ms-flexbox;
+        
         display: flex;
-        -ms-flex-wrap: nowrap;
+        
         flex-wrap: nowrap;
-        -webkit-box-pack: justify;
-        -ms-flex-pack: justify;
+        
+        
         justify-content: space-between;
         margin-bottom: 50px
     }

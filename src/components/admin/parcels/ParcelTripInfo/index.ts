@@ -1,0 +1,1 @@
+export { ParcelTripInfo } from './ParcelTripInfo';

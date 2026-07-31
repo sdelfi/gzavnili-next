@@ -18,7 +18,7 @@ export function Field({
 }: {
   label: ReactNode;
   htmlFor?: string;
-  width?: 'sm' | 'md' | 'lg';
+  width?: 'xs' | 'sm' | 'md' | 'lg';
   hint?: ReactNode;
   children: ReactNode;
 }) {

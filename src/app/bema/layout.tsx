@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default function BemaRootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
+      <body className="bema">
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

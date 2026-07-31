@@ -6,18 +6,29 @@
   margin-bottom: 10px;
 }
 
+/* Two columns: the fields (which wrap internally onto as many lines as they need) on the
+   left, and GO/export as a column spanning that whole block's height on the right — not just
+   aligned to whichever line the last field wrapped onto. */
 .row {
   display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.fields {
+  display: flex;
   flex-wrap: wrap;
-  gap: 10px 14px;
+  gap: 6px 8px;
   align-items: flex-end;
+  flex: 1;
+  min-width: 0;
 }
 
 .actions {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-left: auto;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
 .exportLink {

@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Alert } from '@/components/ui/Alert';
-import { Button } from '@/components/ui/Button';
 import { useBemaAuth } from '@/components/admin/AuthProvider';
+import { ParcelTripInfo } from '@/components/admin/parcels/ParcelTripInfo';
 import { ParcelAddCustomerSection } from '@/components/admin/parcels/ParcelAddCustomerSection';
 import { ParcelDraftTable } from '@/components/admin/parcels/ParcelDraftTable';
 import { ParcelDraftModal } from '@/components/admin/parcels/ParcelDraftModal';
@@ -191,7 +191,9 @@ export function ParcelAddPage() {
   });
 
   return (
-    <div className={s.page}>
+    <div>
+      <ParcelTripInfo />
+
       <h1 className={s.title}>Add Parcel</h1>
 
       {errors.length > 0 && (
@@ -210,20 +212,22 @@ export function ParcelAddPage() {
         drafts={drafts}
         rules={activeRules}
         agentFlatRate={agentFlatRate}
-        onAdd={openNewDraft}
         onEdit={openEditDraft}
         onDuplicate={duplicateDraft}
         onRemove={removeDraft}
-        addDisabled={!resolvedUserId}
       />
 
-      <ParcelAddPaymentSection form={payment} set={setPayment} adminCountry={user?.billingAddress?.country ?? null} errors={{}} />
-
-      <div className={s.actions}>
-        <Button type="button" onClick={handleSubmit} disabled={saving || !resolvedUserId || drafts.length === 0}>
-          {saving ? 'Saving…' : 'Save'}
-        </Button>
-      </div>
+      <ParcelAddPaymentSection
+        form={payment}
+        set={setPayment}
+        adminCountry={user?.billingAddress?.country ?? null}
+        errors={{}}
+        onAdd={openNewDraft}
+        addDisabled={!resolvedUserId}
+        onSubmit={handleSubmit}
+        saving={saving}
+        submitDisabled={saving || !resolvedUserId || drafts.length === 0}
+      />
 
       {editing && (
         <ParcelDraftModal

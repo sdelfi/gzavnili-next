@@ -71,7 +71,14 @@ export function ParcelAddCustomerSection({
     if (resolvedUserId || trimmedQuery.length < MIN_QUERY_LENGTH) return;
     let cancelled = false;
     const timer = setTimeout(() => {
-      listUsers<SearchRow>({ accountType: 'Customer', page: 1, perPage: 20, sort: 'lastName', dir: 'asc', search: trimmedQuery })
+      listUsers<SearchRow>({
+        accountType: 'Customer',
+        page: 1,
+        perPage: 20,
+        sort: 'lastName',
+        dir: 'asc',
+        search: trimmedQuery,
+      })
         .then((data) => !cancelled && setResults(data.items))
         .catch(() => !cancelled && setResults([]));
     }, DEBOUNCE_MS);
@@ -126,87 +133,107 @@ export function ParcelAddCustomerSection({
   }
 
   return (
-    <fieldset className={s.section}>
-      <legend className={s.legend}>Customer</legend>
-
+    <div className={s.panel}>
       {error && <Alert variant="error">{error}</Alert>}
 
-      <div className={s.grid}>
-        <Field label="Search:" width="lg">
-          <Input
-            value={query}
-            placeholder="Search by name, username or email…"
-            disabled={!!resolvedUserId}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          {visibleResults.length > 0 && (
-            <ul className={s.results}>
-              {visibleResults.map((row) => (
-                <li key={row.id}>
-                  <button type="button" onClick={() => pickExisting(row.id)}>
-                    {customerLabel(row)}
-                  </button>
-                </li>
-              ))}
-            </ul>
+      <div className={s.row}>
+        <div className={s.grid}>
+          <Field label="Customer:" width="lg">
+            <div className={s.searchWrap}>
+              <Input
+                value={query}
+                placeholder="Search by name, username or email…"
+                disabled={!!resolvedUserId}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              {visibleResults.length > 0 && (
+                <ul className={s.results}>
+                  {visibleResults.map((row) => (
+                    <li key={row.id}>
+                      <button type="button" onClick={() => pickExisting(row.id)}>
+                        {customerLabel(row)}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </Field>
+          <Field label=" " width="sm">
+            <Button type="button" variant="secondary" onClick={clear} disabled={!resolvedUserId && !customer.firstName}>
+              Clear
+            </Button>
+          </Field>
+
+          <Field label="Organization:" htmlFor="qc-org" width="lg">
+            <Input
+              id="qc-org"
+              value={customer.organization}
+              onChange={(e) => setCustomer('organization', e.target.value)}
+            />
+          </Field>
+          <Field label="First Name:" htmlFor="qc-firstname">
+            <Input
+              id="qc-firstname"
+              value={customer.firstName}
+              onChange={(e) => setCustomer('firstName', e.target.value)}
+            />
+          </Field>
+          <Field label="Last Name:" htmlFor="qc-lastname">
+            <Input
+              id="qc-lastname"
+              value={customer.lastName}
+              onChange={(e) => setCustomer('lastName', e.target.value)}
+            />
+          </Field>
+          <Field label="Email:" htmlFor="qc-email">
+            <Input id="qc-email" value={customer.email} onChange={(e) => setCustomer('email', e.target.value)} />
+          </Field>
+          <Field label="Country:" htmlFor="qc-country">
+            <Input
+              id="qc-country"
+              value={customer.country}
+              maxLength={2}
+              onChange={(e) => setCustomer('country', e.target.value.toUpperCase())}
+            />
+          </Field>
+          <Field label="Address 1:" htmlFor="qc-street1" width="lg">
+            <Input id="qc-street1" value={customer.street1} onChange={(e) => setCustomer('street1', e.target.value)} />
+          </Field>
+          <Field label="Address 2:" htmlFor="qc-street2" width="lg">
+            <Input id="qc-street2" value={customer.street2} onChange={(e) => setCustomer('street2', e.target.value)} />
+          </Field>
+          <Field label="City:" htmlFor="qc-city">
+            <Input id="qc-city" value={customer.city} onChange={(e) => setCustomer('city', e.target.value)} />
+          </Field>
+          {customer.country !== 'GE' && (
+            <>
+              <Field label="State:" htmlFor="qc-state">
+                <Input id="qc-state" value={customer.state} onChange={(e) => setCustomer('state', e.target.value)} />
+              </Field>
+              <Field label="Zip Code:" htmlFor="qc-zip">
+                <Input
+                  id="qc-zip"
+                  value={customer.postalCode}
+                  onChange={(e) => setCustomer('postalCode', e.target.value)}
+                />
+              </Field>
+            </>
           )}
-        </Field>
-        <Field label=" " width="sm">
-          <Button type="button" variant="secondary" onClick={clear} disabled={!resolvedUserId && !customer.firstName}>
-            Clear
+          <Field label="Cell phone:" htmlFor="qc-phone1">
+            <Input id="qc-phone1" value={customer.phone1} onChange={(e) => setCustomer('phone1', e.target.value)} />
+          </Field>
+          <Field label="Phone:" htmlFor="qc-phone2">
+            <Input id="qc-phone2" value={customer.phone2} onChange={(e) => setCustomer('phone2', e.target.value)} />
+          </Field>
+        </div>
+
+        <div className={s.actions}>
+          <Button type="button" className={s.save} onClick={save} disabled={saving}>
+            {saving ? 'Saving…' : resolvedUserId ? 'Update' : 'Save'}
           </Button>
-        </Field>
-
-        <Field label="Organization:" htmlFor="qc-org" width="lg">
-          <Input id="qc-org" value={customer.organization} onChange={(e) => setCustomer('organization', e.target.value)} />
-        </Field>
-        <Field label="First Name:" htmlFor="qc-firstname">
-          <Input id="qc-firstname" value={customer.firstName} onChange={(e) => setCustomer('firstName', e.target.value)} />
-        </Field>
-        <Field label="Last Name:" htmlFor="qc-lastname">
-          <Input id="qc-lastname" value={customer.lastName} onChange={(e) => setCustomer('lastName', e.target.value)} />
-        </Field>
-        <Field label="Email:" htmlFor="qc-email">
-          <Input id="qc-email" value={customer.email} onChange={(e) => setCustomer('email', e.target.value)} />
-        </Field>
-        <Field label="Country:" htmlFor="qc-country">
-          <Input
-            id="qc-country"
-            value={customer.country}
-            maxLength={2}
-            onChange={(e) => setCustomer('country', e.target.value.toUpperCase())}
-          />
-        </Field>
-        <Field label="Address 1:" htmlFor="qc-street1" width="lg">
-          <Input id="qc-street1" value={customer.street1} onChange={(e) => setCustomer('street1', e.target.value)} />
-        </Field>
-        <Field label="Address 2:" htmlFor="qc-street2" width="lg">
-          <Input id="qc-street2" value={customer.street2} onChange={(e) => setCustomer('street2', e.target.value)} />
-        </Field>
-        <Field label="City:" htmlFor="qc-city">
-          <Input id="qc-city" value={customer.city} onChange={(e) => setCustomer('city', e.target.value)} />
-        </Field>
-        {customer.country !== 'GE' && (
-          <>
-            <Field label="State:" htmlFor="qc-state">
-              <Input id="qc-state" value={customer.state} onChange={(e) => setCustomer('state', e.target.value)} />
-            </Field>
-            <Field label="Zip Code:" htmlFor="qc-zip">
-              <Input id="qc-zip" value={customer.postalCode} onChange={(e) => setCustomer('postalCode', e.target.value)} />
-            </Field>
-          </>
-        )}
-        <Field label="Cell phone:" htmlFor="qc-phone1">
-          <Input id="qc-phone1" value={customer.phone1} onChange={(e) => setCustomer('phone1', e.target.value)} />
-        </Field>
-        <Field label="Phone:" htmlFor="qc-phone2">
-          <Input id="qc-phone2" value={customer.phone2} onChange={(e) => setCustomer('phone2', e.target.value)} />
-        </Field>
+        </div>
       </div>
-
-      <Button type="button" onClick={save} disabled={saving}>
-        {saving ? 'Saving…' : resolvedUserId ? 'Update' : 'Save'}
-      </Button>
-    </fieldset>
+    </div>
   );
 }

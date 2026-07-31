@@ -83,7 +83,7 @@ export function ParcelDraftModal({
           <Button type="button" onClick={() => handleSave(false)}>
             {isEdit ? 'Save parcel' : 'Add parcel'}
           </Button>
-          <Button type="button" variant="secondary" onClick={() => handleSave(true)}>
+          <Button type="button" variant="success" onClick={() => handleSave(true)}>
             {isEdit ? 'Save parcel and receiver' : 'Add parcel and receiver'}
           </Button>
         </>

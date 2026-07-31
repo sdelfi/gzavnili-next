@@ -557,10 +557,10 @@ html .whychooseus .col-8.fix .whyus-item:nth-child(2n + 1) {
 ul.icons-list {
   /*margin-bottom: 20px;*/
   width: 100%;
-  display: -ms-flexbox;
+  
   display: flex;
-  -webkit-box-pack: justify;
-  -ms-flex-pack: justify;
+  
+  
   justify-content: space-between;
 }
 
@@ -569,9 +569,9 @@ ul.icons-list li {
 }
 
 ul.icons-list li > a {
-  display: -ms-flexbox;
+  
   display: flex;
-  -ms-flex-wrap: nowrap;
+  
   flex-wrap: nowrap;
 }
 
@@ -580,7 +580,7 @@ ul.icons-list li.color-red {
 }
 
 ul.icons-list li.two-line {
-  display: -ms-flexbox;
+  
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;

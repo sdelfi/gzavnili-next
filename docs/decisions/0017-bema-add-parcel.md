@@ -133,3 +133,39 @@ real customer id before a single parcel can be drafted, same here.
   the edit screen never grows a batch table.
 - **The "Add Parcel" link that used to live on the parcels list itself is legacy-dead**
   (commented out) and stays that way; the sidebar entry is the only path in.
+
+## Visual-parity pass — 2026-07-31
+
+No `vwParcelsAdd.cfm` source exists anywhere in this repo (same gap as the parcels-list export,
+see `docs/findings.md`); this pass compared the built screen against a live-site screenshot
+rather than source, so it's a fidelity pass on structure/labels, not a re-verified port.
+
+- **Draft-parcels table columns** (`ParcelDraftTable.tsx`) changed from `Receiver, Phone, City,
+  Group, Weight, Value, Price, Tracking #, Actions` to legacy's actual set and order: `First
+  Name, Last Name, Cell Phone, Group, Weight, Value, Tracking #, Phone, Ubany, City, Street,
+  Actions`. "Ubany" is `receiver.street2` and "Phone" is `receiver.phone2` — confirmed against
+  the existing parcels-list CSV export's own column mapping (`export/route.ts`'s `UBANY`/
+  `PHONE2` columns use the same fields), not guessed fresh. The per-row `Price` column is
+  dropped — legacy's table doesn't have one; the grand total already shown below the table
+  (`Price Total`) is legacy's only per-batch price display.
+- **The bordered "Customer"/"Payment" panels are gone.** They were never a documented legacy
+  behaviour — `findings.md`/this doc describe the *fields*, never a bordered-box layout — and
+  were in fact just this codebase's own incidental convention (identical CSS hand-rolled twice).
+  Replaced with `ui/FormSection` (see below), a flat `<fieldset>`/`<legend>` with no border,
+  closer to legacy's flowing unboxed field rows.
+
+**New shared component**: `src/components/ui/FormSection/` — a bordered-panel-free
+`<fieldset>`/`<legend>` wrapper, extracted per AGENTS.md's "if a pattern shows up in a second
+place" rule (`ParcelAddCustomerSection` and `ParcelAddPaymentSection` had hand-rolled the exact
+same fieldset/border/legend CSS independently). It only owns the section chrome; each caller
+keeps its own field-row layout.
+
+**Open — worth a real style pass, not something this change resolves**: the bema admin has no
+written visual-style convention (field density/widths, whether a section gets a border, row vs.
+grid layout) — `ui/Field`'s `sm`/`md`/`lg` widths and now `ui/FormSection` are shared, but
+different screens still each choose their own field grouping/spacing ad hoc, and the parcels
+list's own filter bar (`ParcelFilters.module.css`) uses a third, unrelated layout approach
+(`nowrap` + horizontal scroll, chosen there specifically to keep every legacy filter field on
+one line — see `docs/decisions/0015-bema-parcels-list.md`). Worth converging on one documented
+admin-form layout language before more screens get built, rather than each screen re-deriving
+its own — flagged here rather than decided unilaterally.

@@ -1,0 +1,25 @@
+.panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 40px;
+  background: #f4f4f5;
+  border: 1px solid #e3e3e3;
+  border-radius: 6px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.column {
+  min-width: 200px;
+  flex: 1;
+}
+
+.column p {
+  margin: 4px 0;
+}
+
+.label {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}

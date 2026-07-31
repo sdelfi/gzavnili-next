@@ -1,5 +1,21 @@
 import { apiGet, apiPatch } from '../http';
 
+export type TripInfo = {
+  shipDate: string | null;
+  estimateDate: string | null;
+  awb: string | null;
+};
+
+export type TripInfoResponse = {
+  express: TripInfo;
+  regular: TripInfo;
+  cargo: TripInfo;
+};
+
+export function getTripInfo() {
+  return apiGet<TripInfoResponse>('/api/bema/config/trip-info');
+}
+
 export type PopupConfig = {
   popupEnabled: boolean;
   popupMessageEn: string;

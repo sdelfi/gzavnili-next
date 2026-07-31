@@ -33,7 +33,6 @@ export type ParcelFiltersState = {
 
   extraStatus: string;
   receivedBy: string;
-  allReceivers: string;
   fromDate: string;
   fromHour: string;
   fromMinute: string;
@@ -63,7 +62,6 @@ export const EMPTY_PARCEL_FILTERS: ParcelFiltersState = {
   userId: '',
   extraStatus: '',
   receivedBy: '',
-  allReceivers: '',
   fromDate: '',
   fromHour: '0',
   fromMinute: '0',
@@ -115,6 +113,12 @@ export function listParcels(filters: ParcelFiltersState) {
 
 export function parcelsExportUrl(filters: ParcelFiltersState) {
   return `/api/bema/parcels/export?${parcelFiltersToQuery(filters).toString()}`;
+}
+
+// Legacy's airway export ignores whatever filters were applied on screen (it never lists any
+// rows at all — see the route's own comment), so there is no filter state to carry here.
+export function parcelsAirwayExportUrl() {
+  return '/api/bema/parcels/export-airway';
 }
 
 export type ParcelOperationPayload = {

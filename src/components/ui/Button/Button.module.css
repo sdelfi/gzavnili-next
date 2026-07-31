@@ -1,10 +1,10 @@
 .button {
   display: inline-block;
-  padding: 8px 18px;
-  border: none;
+  padding: 8px 12px;
+  border: 1px solid transparent;
   border-radius: 3px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   transition: background-color 0.15s ease;
 
@@ -14,21 +14,33 @@
   }
 }
 
+/* Legacy's admin panel is Bootstrap 3 (`btn-primary`/`btn-default`/`btn-success`) — these match
+   its exact shades, not this project's own blue, since operators are used to the old ones. */
 .primary {
-  background: #3fa3f0;
+  background: #337ab7;
   color: #fff;
 
   &:hover:not(:disabled) {
-    background: #2c8ed9;
+    background: #286090;
   }
 }
 
 .secondary {
-  background: #e6e6e6;
+  background: #fff;
   color: #333;
+  border: 1px solid #ccc;
 
   &:hover:not(:disabled) {
-    background: #d5d5d5;
+    background: #e6e6e6;
+  }
+}
+
+.success {
+  background: #5cb85c;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: #449d44;
   }
 }
 

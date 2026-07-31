@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes } from 'react';
 import cn from 'classnames';
 import s from './Button.module.css';
 
-type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'warning';
+type ButtonVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'warning';
 
 // Shared button — see AGENTS.md's "shared components" rule. Self-contained (CSS Modules),
 // not dependent on public/css/style.css globals, since the bema admin panel (the first

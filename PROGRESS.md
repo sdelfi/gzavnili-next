@@ -649,9 +649,59 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       legacy has them, confirmed inert (see docs/findings.md) — kept, not removed, since the
       client's instruction was fields-and-logic-as-legacy across the board.
 - [ ] Parcel view, parcel print, the statements module's invoice/history popups, and the
-      messages module's Send/Resend SMS. Also "Export Airway" (`export=2` → `airway.cfm`), a
-      document for the airline rather than a view of the list, and the edit form's "Invoice
-      File" upload/preview row, which belongs to the files module.
+      messages module's Send/Resend SMS. Also the edit form's "Invoice File" upload/preview
+      row, which belongs to the files module.
+- [x] Parcels list "Export Airway" (`export=2` → `airway.cfm`) link and endpoint
+      (`src/app/api/bema/parcels/export-airway/route.ts`). No legacy source was recoverable;
+      legacy's own version never populates any rows (confirmed against the running site) — the
+      port reproduces that as a static two-line file (title + column headers), not a real
+      per-parcel manifest. See docs/findings.md. Also fixed the filter bar (`ParcelFilters
+      .module.css`) so all 12 fields (including "Debt") always stay on one line — legacy's
+      search bar is a fixed-width, non-responsive row; `flex-wrap` was reflowing it onto a
+      second line on an ordinary window width instead, so it's `nowrap` + horizontal scroll now.
+- [x] "Add Parcel" (batch) visual-parity pass against the live legacy screen (no source exists
+      to diff against, see above): `ParcelDraftTable`'s columns now match legacy's actual set/
+      order (`First Name, Last Name, Cell Phone, Group, Weight, Value, Tracking #, Phone,
+      Ubany, City, Street, Actions`, "Ubany"/"Phone" being `street2`/`phone2`, cross-checked
+      against the CSV export's own column mapping), and the Customer/Payment sections lost
+      their bordered-panel look (never a documented legacy behaviour, just this codebase's own
+      incidental convention, hand-rolled twice) in favor of the new shared `ui/FormSection`.
+      See `docs/decisions/0017-bema-add-parcel.md`'s "Visual-parity pass" section, which also
+      flags — but doesn't resolve — that bema admin has no single documented layout convention
+      across screens (field density, borders, grid vs. row); worth a real style pass before
+      more screens are built.
+- [x] Follow-up round on the same two screens, per explicit client pushback against unrequested
+      additions: **removed the "Showing parcels you received…" banner and its `allReceivers=1`
+      opt-out entirely** — both were an earlier pass's addition, not legacy behaviour (see the
+      reverted entry in `docs/decisions/0015-bema-parcels-list.md`); the underlying silent
+      scoping is still ported, `forcedReceivedBy` is gone from the list API response, and there
+      is no longer any on-screen indication or opt-out, matching legacy exactly. Also dropped
+      the invented "≠ amount" hint next to the Debt filter. Reverted the filter bar's `nowrap` +
+      horizontal-scroll experiment (rejected as "недопустимо") back to `flex-wrap`, this time
+      with meaningfully narrower `ui/Field` widths (`sm`/`md`, plus a new `xs` for the extra
+      form's HH/MM selects) and the export links stacked vertically again instead of in a row,
+      so the 12-field row and its two export links actually fit without scrolling. Fixed
+      `ParcelExtraFilters`'s "Received By" stretching to the full row width (was `width="lg"`,
+      which grows; now `"md"`, which doesn't). Fixed the Add Parcel customer-search
+      autocomplete dropdown rendering at the full page width instead of the search field's own
+      width (`position: relative` had ended up on the whole field row, not the search box).
+      Widened `ui/Dialog`'s default max-width (960px → 1280px, its only consumer today is the
+      per-parcel draft modal) to fit more fields per row like legacy's own wider modal. Added a
+      `success` (green) `Button` variant and switched it in for "Add parcel and receiver" and
+      the draft table's "Add Parcel" button, and changed `primary`'s blue and `secondary`'s
+      style to Bootstrap 3's actual shades (`#337ab7`/white-with-border), since legacy's admin
+      panel is Bootstrap 3 and operators are used to those exact colors, not this project's own
+      blue.
+- [x] Two more rounds on `ParcelFilters`/`ParcelExtraFilters`: (1) the extra search form's
+      "Received By" select was showing "Any" while the implicit own-received scope was
+      silently active — legacy's real mechanism sets `eadmin` into that same select's value, so
+      the dropdown always shows the truth. Brought back a response field for this
+      (`effectiveReceivedBy`, list route) purely to seed that select correctly — not a UI
+      addition like the removed banner, since the select itself already existed and this only
+      makes it accurate. (2) Restructured the main filter bar into two flex columns — fields
+      (wrapping internally) on the left, GO + both export links stretching the full height of
+      that block on the right — instead of GO/export just trailing whichever line the last
+      field wrapped onto.
 - [ ] **Parcels: one thing worth confirming with the client** before it hardens into
       behaviour — the Debt filter is a *not-equal* match on uninvoiced parcels (the value `0`
       meaning "has a debt figure at all"), faithfully ported but unintuitive enough that it may

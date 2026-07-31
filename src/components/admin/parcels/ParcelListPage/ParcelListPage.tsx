@@ -19,6 +19,7 @@ import {
   listParcels,
   parcelFiltersFromQuery,
   parcelFiltersToQuery,
+  parcelsAirwayExportUrl,
   parcelsExportUrl,
   runParcelOperation,
   type ParcelFiltersState,
@@ -54,7 +55,7 @@ export function ParcelListPage() {
   const [total, setTotal] = useState(0);
   const [totalIsExact, setTotalIsExact] = useState(true);
   const [lariRate, setLariRate] = useState<number | null>(null);
-  const [forcedReceivedBy, setForcedReceivedBy] = useState<string | null>(null);
+  const [effectiveReceivedBy, setEffectiveReceivedBy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -99,7 +100,7 @@ export function ParcelListPage() {
         setTotal(data.total);
         setTotalIsExact(data.totalIsExact);
         setLariRate(data.lariRate);
-        setForcedReceivedBy(data.forcedReceivedBy);
+        setEffectiveReceivedBy(data.effectiveReceivedBy);
         // A stale tick would apply the next operation to a parcel that is no longer listed.
         setSelectedIds(new Set());
         setError(null);
@@ -229,20 +230,6 @@ export function ParcelListPage() {
       {error && <Alert variant="error">{error}</Alert>}
       {notice && <Alert variant="success">{notice}</Alert>}
 
-      {/* The server scopes an otherwise-unfiltered list to the current admin's own received
-          parcels (and always does so for an agent) — legacy did the same silently, which is
-          exactly why an operator could not tell why the list looked short. */}
-      {forcedReceivedBy && (
-        <Alert variant="success">
-          Showing parcels you received.{' '}
-          {!isAgent && (
-            <button type="button" className={s.linkButton} onClick={() => applyFilters({ allReceivers: '1', page: 1 })}>
-              Show parcels received by everyone.
-            </button>
-          )}
-        </Alert>
-      )}
-
       {/* Keyed on the applied filters so each form remounts with a fresh draft when they
           change from outside it — prefixed per form, since sibling keys must be unique. */}
       <ParcelFilters
@@ -250,10 +237,18 @@ export function ParcelListPage() {
         filters={filters}
         onApply={applyFilters}
         exportHref={parcelsExportUrl(filters)}
+        airwayExportHref={parcelsAirwayExportUrl()}
         canExport={!isAgent}
       />
 
-      {canOperate && <ParcelExtraFilters key={filterKey} filters={filters} onApply={applyFilters} admins={admins} />}
+      {canOperate && (
+        <ParcelExtraFilters
+          key={filterKey}
+          filters={filters.receivedBy || !effectiveReceivedBy ? filters : { ...filters, receivedBy: effectiveReceivedBy }}
+          onApply={applyFilters}
+          admins={admins}
+        />
+      )}
 
       <div className={s.toolbar}>
         <Button

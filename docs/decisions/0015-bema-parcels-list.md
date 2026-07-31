@@ -57,9 +57,20 @@ dead earlier in this migration (see `PROGRESS.md`).
 ## Deliberate divergences (not bugs either way)
 
 - **The implicit "parcels you received" scope.** Legacy silently sets `eadmin` to the current
-  admin when *no* filter is set, which is genuinely useful (an operator's first screen is
-  their own work) but invisible — the list just looks short. Kept, with two changes: the
-  screen says so in a banner, and `allReceivers=1` opts out. Agents cannot opt out.
+  admin when *no* filter is set — invisible on the *main* list itself, the results just look
+  short. **Reverted to that exact silent behaviour on 2026-07-31** — the scoping itself is
+  still ported (an unfiltered page load, and every agent load, is still pinned to the
+  operator's own received parcels), but an earlier pass had added a banner explaining it plus
+  an `allReceivers=1` opt-out that legacy never had. Per explicit client instruction against
+  unrequested additions ("legacy fidelity: bugs are ported, not fixed" cuts against
+  *unbugging* it with UX legacy doesn't have, too), both are gone: no banner, no opt-out. The
+  only way to see everyone's parcels is what legacy always required — set some other filter.
+  One thing *is* still reported to the client, because it isn't a UI addition: legacy's
+  `eadmin` also feeds the "Received By" select on the *extra* search form, so that dropdown
+  shows the operator's own name whenever the implicit scope is active — not "Any", which would
+  misrepresent what's actually applied. `effectiveReceivedBy` on the list response exists only
+  to seed that select correctly; it is not shown anywhere else and there is no opt-out attached
+  to it.
 - **Payment-method reconstruction.** For an invoiced parcel with no `payMethod1`, legacy ran
   two extra queries per row and, failing those, *guessed* the method from the length of the
   transaction id (32/16 → "Credit Card", 17 → "PayPal", 12 → "Authorize.net"). This schema
@@ -127,14 +138,24 @@ and billing address, the delivery-office assignment, and a `paid`/`unpaid` opera
 ## Scope
 
 Built: the **list** — both search forms, all filters, sender/trip grouping, bulk operations,
-group pay, per-row delete and hold-clear, CSV export, the Delivery Request (`delreq`) slice,
-and the agent role restrictions. And the **edit screen**, per the section above.
+group pay, per-row delete and hold-clear, CSV export, "Export Airway", the Delivery Request
+(`delreq`) slice, and the agent role restrictions. And the **edit screen**, per the section
+above.
 
 Not built (each is its own legacy screen, linked from the row's action column, and rendered
 inert with a "Not implemented yet" title rather than dropped): **add parcel** (legacy serves
 it from the same file as edit via `nrc=1`, with its own defaults, button row and "Save & Add
 Another" flow), parcel view, parcel print, the statements module's invoice and history popups,
 and the messages module's Send/Resend SMS. The edit form's "Invoice File" upload/preview row
-belongs to the files module and is not built either. "Export Airway" (`export=2` →
-`airway.cfm`) is a document for the airline rather than a view of this screen, and is also
-still to do.
+belongs to the files module and is not built either.
+
+**"Export Airway"** (`export=2` → `airway.cfm`) is a document for the airline rather than a
+view of this screen. No legacy `airway.cfm` source exists anywhere in this repo to port from —
+only its column header line was recoverable (confirmed against the running legacy site):
+`HAWB,No. of Pieces,Account ID,Carrier Tracking Number (s),Shipper Name,Shipper Address,
+Consignee Name,Consignee Address,ActualWeight,Value of HAWB,Description of Contents`, under a
+title line `Air Cargo Manifest`. Legacy's export never populates any rows regardless of the
+screen's filters — clicking it always downloads just those two lines. That is a dead/broken
+manifest export in legacy, not a missing feature, so it is ported faithfully as the same
+static two-line file (`src/app/api/bema/parcels/export-airway/route.ts`) rather than being
+"fixed" into a real per-parcel manifest export. See `docs/findings.md`.

@@ -121,6 +121,7 @@ export type ParcelListResponse = {
   perPage: number;
   /** USD→GEL rate from `config.crate`, used for the "… GEL" secondary amounts. */
   lariRate: number | null;
-  /** Whether the server forced a `receivedBy` filter the user did not ask for (see below). */
-  forcedReceivedBy: string | null;
+  /** The admin id actually applied as `receivedBy` when the caller didn't set one — legacy's
+   *  `eadmin` default. Seeds the "Received By" select so it shows the truth, same as legacy. */
+  effectiveReceivedBy: string | null;
 };

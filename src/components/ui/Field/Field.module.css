@@ -17,12 +17,16 @@
   color: #888;
 }
 
+.xs {
+  flex: 0 1 56px;
+}
+
 .sm {
-  flex: 0 1 90px;
+  flex: 0 1 62px;
 }
 
 .md {
-  flex: 0 1 170px;
+  flex: 0 1 126px;
 }
 
 .lg {

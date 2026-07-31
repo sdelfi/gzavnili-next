@@ -1,21 +1,32 @@
-.section {
-  border: 1px solid #e5e5e5;
-  border-radius: 6px;
-  padding: 16px;
-  margin-bottom: 16px;
+.panel {
+  margin-bottom: 12px;
 }
 
-.legend {
-  font-weight: 700;
-  padding: 0 6px;
+.row {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 12px 16px;
-  align-items: start;
-  margin-bottom: 12px;
+  align-items: flex-end;
+  flex: 1;
+  min-width: 0;
+}
+
+.actions {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.save {
+  flex: 1;
+}
+
+.searchWrap {
   position: relative;
 }
 

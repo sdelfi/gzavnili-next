@@ -23,60 +23,51 @@ export function ParcelDraftTable({
   drafts,
   rules,
   agentFlatRate,
-  onAdd,
   onEdit,
   onDuplicate,
   onRemove,
-  addDisabled,
 }: {
   drafts: DraftParcelFormState[];
   rules: PricingRule[];
   /** Resolved via `resolveAgentFlatRate()` from the *acting* BEMA operator, not the customer
    *  — see `ParcelAddPage`. */
   agentFlatRate: number | null;
-  onAdd: () => void;
   onEdit: (clientId: string) => void;
   onDuplicate: (clientId: string) => void;
   onRemove: (clientId: string) => void;
-  addDisabled: boolean;
 }) {
   const calc = computeDraftParcelTotals(
     drafts.map((d) => ({ id: d.clientId, groupId: d.groupId, delivery: d.delivery, service: d.service, weight: num(d.weight) })),
     rules,
     agentFlatRate,
   );
-  const byId = new Map(calc.items.map((i) => [i.id, i]));
-
   // Group ids in first-appearance order, matching the order drafts were added within each
   // group — not a further re-sort.
   const groupOrder = [...new Set(drafts.map((d) => d.groupId))];
 
   return (
     <div className={s.wrapper}>
-      <div className={s.header}>
-        <Button type="button" onClick={onAdd} disabled={addDisabled}>
-          Add Parcel
-        </Button>
-      </div>
-
       <table className={s.table}>
         <thead>
           <tr>
-            <th>Receiver</th>
-            <th>Phone</th>
-            <th>City</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Cell Phone</th>
             <th>Group</th>
             <th>Weight</th>
             <th>Value</th>
-            <th>Price</th>
             <th>Tracking #</th>
+            <th>Phone</th>
+            <th>Ubany</th>
+            <th>City</th>
+            <th>Street</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {drafts.length === 0 && (
             <tr>
-              <td colSpan={9} className={s.empty}>
+              <td colSpan={12} className={s.empty}>
                 No parcels added yet.
               </td>
             </tr>
@@ -88,18 +79,17 @@ export function ParcelDraftTable({
               <Fragment key={groupId}>
                 {groupDrafts.map((draft) => (
                   <tr key={draft.clientId}>
-                    <td>
-                      {draft.receiver.isGeCitizen
-                        ? `${draft.receiver.lastNameGe}, ${draft.receiver.firstNameGe}`
-                        : `${draft.receiver.lastName}, ${draft.receiver.firstName}`}
-                    </td>
+                    <td>{draft.receiver.isGeCitizen ? draft.receiver.firstNameGe : draft.receiver.firstName}</td>
+                    <td>{draft.receiver.isGeCitizen ? draft.receiver.lastNameGe : draft.receiver.lastName}</td>
                     <td>{draft.receiver.phone1}</td>
-                    <td>{draft.receiver.city}</td>
                     <td>{draft.groupId}</td>
                     <td>{draft.weight}</td>
                     <td>{draft.value}</td>
-                    <td>{(byId.get(draft.clientId)?.rawTotal ?? 0).toFixed(2)}</td>
                     <td>{trackingPrefix(draft.delivery, draft.service)}{draft.trackingNum.replace(trackingPrefix(draft.delivery, draft.service), '')}</td>
+                    <td>{draft.receiver.phone2}</td>
+                    <td>{draft.receiver.street2}</td>
+                    <td>{draft.receiver.city}</td>
+                    <td>{draft.receiver.street1}</td>
                     <td className={s.actions}>
                       <Button type="button" variant="secondary" onClick={() => onEdit(draft.clientId)}>
                         Edit
@@ -115,7 +105,7 @@ export function ParcelDraftTable({
                 ))}
                 {groupSummary && (
                   <tr key={`${groupId}-total`} className={s.groupTotal}>
-                    <td colSpan={9}>
+                    <td colSpan={12}>
                       <b>Group {groupId} Total:</b> {groupSummary.weight} KG · {groupSummary.amount.toFixed(2)} USD
                     </td>
                   </tr>
