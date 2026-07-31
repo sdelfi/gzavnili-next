@@ -839,6 +839,12 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       into the CMS content (contact/pick-up-service/help-to-shop/quotation/mailing-list)
       aren't rendered by the generic catch-all yet — each needs its own page + real form
       component, not just raw HTML injection.
+- [x] **`import-legacy-pages.ts` no longer depends on the sibling legacy checkout**
+      (2026-08-01): it previously read `../http/include/pages/*.json` directly from the
+      sibling legacy repo, which only exists on a dev machine — production never has it, so
+      the one-time import couldn't be (re-)run there. Snapshotted the 76 source JSON files
+      into `scripts/data/legacy-pages/` (committed to this repo, ~1MB) and pointed the script
+      there instead.
 - [x] **Site Pages follow-up fixes** (same day): `/parcel-service.html` 404'd — `proxy.ts`'s
       middleware matcher excluded *any* path with a dot (meant for static assets like
       `.css`/`.js`) which also excluded every `.html` CMS page; fixed to exclude by specific
