@@ -119,7 +119,7 @@ export function ParcelRow({
         <Receiver parcel={parcel} />
       </td>
 
-      <td>
+      <td className={s.noPadding}>
         <ParcelTrackingCell parcel={parcel} onConfirmHold={onConfirmHold} />
       </td>
 

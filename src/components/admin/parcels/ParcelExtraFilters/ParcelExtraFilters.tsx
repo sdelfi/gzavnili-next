@@ -5,7 +5,7 @@ import { Field } from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
-import { EXTRA_STATUS_FILTER_OPTIONS, HOUR_OPTIONS, MINUTE_OPTIONS } from '@/lib/parcels/constants';
+import { EXTRA_STATUS_FILTER_OPTIONS, HOUR_OPTIONS, MINUTE_OPTIONS, RECEIVED_BY_ANY } from '@/lib/parcels/constants';
 import type { ParcelFiltersState } from '@/lib/api/bema/parcels';
 import s from './ParcelExtraFilters.module.css';
 
@@ -45,7 +45,13 @@ export function ParcelExtraFilters({
     onApply({ ...draft, page: 1 });
   }
 
-  const adminOptions = [{ value: '', label: 'Any' }, ...admins.map((a) => ({ value: a.id, label: a.name }))];
+  // "Any" is a real, explicit choice — an empty `receivedBy` is what the list API treats as
+  // "not yet set" and defaults to the logged-in admin, so "Any" has to send something other
+  // than `''` to actually mean "no restriction" (see `RECEIVED_BY_ANY`'s doc comment).
+  const adminOptions = [
+    { value: RECEIVED_BY_ANY, label: 'Any' },
+    ...admins.map((a) => ({ value: a.id, label: a.name })),
+  ];
 
   return (
     <form className={s.form} onSubmit={handleSubmit}>

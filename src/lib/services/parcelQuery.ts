@@ -2,6 +2,7 @@ import type { Prisma } from '@/generated/prisma/client';
 import { db } from '@/lib/db';
 import type { ListParcelsQuery } from '@/lib/validation/parcelSchema';
 import type { ParcelListItem } from '@/lib/parcels/types';
+import { RECEIVED_BY_ANY } from '@/lib/parcels/constants';
 
 // Everything that turns the bema parcels list's filter set into a Prisma query, ported from
 // `MSSQLParcelDAO.getParcels()` (extensions/components/DAO/MSSQL/MSSQLParcelDAO.cfc:207).
@@ -208,7 +209,7 @@ export function buildParcelWhere(query: ListParcelsQuery): Prisma.ParcelWhereInp
   if (serviceFilter) and.push(serviceFilter);
 
   if (query.userId) and.push({ userId: query.userId });
-  if (query.receivedBy) and.push({ trackingReceivedBy: query.receivedBy });
+  if (query.receivedBy && query.receivedBy !== RECEIVED_BY_ANY) and.push({ trackingReceivedBy: query.receivedBy });
   if (query.tripDate) and.push({ tripDate: dayRange(query.tripDate) });
   if (query.receivedDate) and.push({ trackingReceived: dayRange(query.receivedDate) });
 

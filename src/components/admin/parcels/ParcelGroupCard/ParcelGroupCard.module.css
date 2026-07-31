@@ -17,10 +17,10 @@
   font-size: 12px;
 }
 
-.table th,
-.table td {
+:where(.table th),
+:where(.table td) {
   border: 1px solid #eee;
-  padding: 5px 6px;
+  padding: 2px;
   vertical-align: top;
   text-align: left;
 }
@@ -70,7 +70,7 @@
   color: #d9534f;
 }
 
-.headerActions {
+.headerActionsInner {
   display: flex;
   flex-wrap: wrap;
   align-items: center;

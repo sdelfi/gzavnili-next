@@ -18,6 +18,36 @@ skips) it — see AGENTS.md's "Legacy fidelity: bugs are ported, not fixed" rule
 
 ---
 
+## Parcels list "Received By: Any" — 2026-08-01
+
+**Found:** legacy `parcels.cfm`'s auto-scope-to-self logic (`url.eadmin = session.buser.getUserID()`
+when no filter is "meaningful", `../http/bema/parcels/parcels.cfm:59-83`) checks `len(url.eh1)
+eq 0` / `eh2`/`et1`/`et2`/`estatus` as part of its "was anything filtered" condition — fields
+that belong to the separate "Extra Search" `<form>` (the From/To hour+minute range selects).
+Those are HTML `<select>`s, which always post a real value (minimum `"0"`), never an empty
+string — so submitting that form *always* fails the `len(...) eq 0` check on at least one of
+those fields, regardless of what the operator actually picked. That accident is the only
+thing that lets "Received By: Any" (`eadmin=""`) actually show all admins' parcels: without
+it, an explicit empty `eadmin` is indistinguishable from "never touched" and would reset back
+to the current admin, same as a fresh page load. Confirmed against the live site
+(`usa.gzavnili.com`): current-user scope shows 68 items, switching to Any shows 549,779.
+
+This project's port (`ParcelListPage`/`ParcelExtraFilters`) shares one merged filter state
+between both of legacy's separate forms and serializes it through a single URL builder, so it
+doesn't get this accidental signal for free — `receivedBy=''` was indistinguishable from
+"not set" and always fell back to self-scoping, so "Any" silently did nothing.
+
+**Ported the observable behavior, not the accident.** Rather than reproduce the HTML-form
+quirk itself (which would require splitting the querystring per-form, a larger change with
+its own tradeoffs — filters from the two forms currently compose in this SPA, unlike legacy's
+per-form GET which discards the other form's fields), "Any" now sends an explicit sentinel
+(`RECEIVED_BY_ANY = 'any'`, `src/lib/parcels/constants.ts`) instead of `''`, so the API can
+tell "explicitly Any" apart from "not yet set" without relying on select-always-has-a-value.
+Net effect for the operator is identical to legacy: default view is scoped to self, explicitly
+picking Any shows everyone's parcels.
+
+---
+
 ## Receivers screen: hardcoded username block (`receivers.cfm`) — 2026-08-01
 
 **Found:** `../http/bema/parcels/receivers.cfm:1-3` — before the normal group-based access

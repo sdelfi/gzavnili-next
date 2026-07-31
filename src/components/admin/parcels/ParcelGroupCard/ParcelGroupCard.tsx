@@ -86,44 +86,46 @@ export function ParcelGroupCard({
             </th>
 
             <th colSpan={columnCount - 6} className={s.headerActions}>
-              {canOperate && (
-                <span className={s.groupPay}>
-                  <div className={s.groupPaySelect}>
-                    <Select
-                      instanceId={`group-pay-${group.key}`}
-                      size="sm"
-                      options={payMethodOptions(adminCountry)}
-                      placeholder="Pay method*"
-                      value={groupPayMethod}
-                      onChange={setGroupPayMethod}
-                    />
-                  </div>
-                  {/* Legacy's "Group pay" first ticks every row in the card if none are
+              <div className={s.headerActionsInner}>
+                {canOperate && (
+                  <span className={s.groupPay}>
+                    <div className={s.groupPaySelect}>
+                      <Select
+                        instanceId={`group-pay-${group.key}`}
+                        size="sm"
+                        options={payMethodOptions(adminCountry)}
+                        placeholder="Pay method*"
+                        value={groupPayMethod}
+                        onChange={setGroupPayMethod}
+                      />
+                    </div>
+                    {/* Legacy's "Group pay" first ticks every row in the card if none are
                       ticked, then runs the paid operation over them — one click to settle a
                       whole shipment. Same here, without the checkbox round-trip. */}
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    disabled={!groupPayMethod}
-                    onClick={() => onGroupPay(ids, groupPayMethod)}
-                  >
-                    Group pay
-                  </Button>
-                </span>
-              )}
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      disabled={!groupPayMethod}
+                      onClick={() => onGroupPay(ids, groupPayMethod)}
+                    >
+                      Group pay
+                    </Button>
+                  </span>
+                )}
 
-              {group.pcode && <span className={s.code}>Code — {group.pcode}</span>}
+                {group.pcode && <span className={s.code}>Code — {group.pcode}</span>}
 
-              <Link className={s.headerLink} href={routes.bema.userEdit(group.user.id)} target="_blank">
-                Customer info
-              </Link>
-              <Link
-                className={s.headerLink}
-                href={`${routes.bema.parcels()}?sender=${encodeURIComponent(group.user.username)}`}
-                target="_blank"
-              >
-                All parcels
-              </Link>
+                <Link className={s.headerLink} href={routes.bema.userEdit(group.user.id)} target="_blank">
+                  Customer info
+                </Link>
+                <Link
+                  className={s.headerLink}
+                  href={`${routes.bema.parcels()}?sender=${encodeURIComponent(group.user.username)}`}
+                  target="_blank"
+                >
+                  All parcels
+                </Link>
+              </div>
             </th>
           </tr>
 

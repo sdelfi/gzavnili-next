@@ -263,3 +263,11 @@ export const MINUTE_OPTIONS: SelectOptionLike[] = Array.from({ length: 12 }, (_,
   value: String(i * 5),
   label: String(i * 5).padStart(2, '0'),
 }));
+
+// "Received By: Any" sentinel — distinct from `''` ("not set", which the list API defaults
+// to the logged-in admin, matching legacy's `eadmin` auto-scoping). Legacy gets this
+// distinction for free by accident (the Extra Search form's hour/minute `<select>`s always
+// post a real value, which happens to be one of the fields legacy's own "was anything
+// filtered" check looks at — see `docs/findings.md`); this schema has no such accident to
+// lean on, so "Any" needs an explicit non-empty value instead of reusing `''`.
+export const RECEIVED_BY_ANY = 'any';

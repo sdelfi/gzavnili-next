@@ -295,6 +295,18 @@ why).
       matching `ParcelReceiverSection`'s existing 2-letter Country input) and the
       `findReceiver()` name/city/user uniqueness lookup (only used by the customer-facing
       self-service address book, `receiverUniqCheck.cfm`, which is out of bema's scope).
+- [x] **Two Parcels-list bugs found while smoke-testing the Receivers work above** (browsing
+      `/bema/parcels` with bench-seeded data surfaced both — neither is receivers-related,
+      fixed in the same pass since they were live blockers for verifying anything on that
+      screen): (1) the "Received By" select showed "Any" on first load even though the API
+      had already scoped the results to the logged-in admin (`ParcelListPage`'s
+      `ParcelExtraFilters` remount `key` didn't include `effectiveReceivedBy`, which only
+      arrives one render after mount — see the code comment now on that `key`). (2)
+      Explicitly picking "Received By: Any" did nothing — `receivedBy=''` was
+      indistinguishable from "not yet touched" and always fell back to self-scoping; now
+      sends an explicit `RECEIVED_BY_ANY` sentinel instead (`src/lib/parcels/constants.ts`).
+      Full root-cause (a legacy HTML-form accident this schema has no equivalent of) in
+      `docs/findings.md`'s "Parcels list Received By: Any" entry.
 
 - [x] **Parcel edit screen** (`bema/parcels/parcels-update.cfm` + `views/parcels/
       vwParcelsUpdate.cfm`, ~1,900 lines between them — the item flagged as "the big one" in
