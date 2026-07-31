@@ -18,24 +18,66 @@ skips) it — see AGENTS.md's "Legacy fidelity: bugs are ported, not fixed" rule
 
 ---
 
-## Parcels list "Export Airway" (`airway.cfm`) — 2026-07-31
+## Parcels list "Export Airway" (`airway.cfm`) — 2026-07-31, corrected 2026-08-01
 
-**Found:** the parcels list's second export link (legacy `export=2`, "Export Airway") always
-downloads a file containing only a title line (`Air Cargo Manifest`) and a column header row
-(`HAWB,No. of Pieces,Account ID,Carrier Tracking Number (s),Shipper Name,Shipper Address,
-Consignee Name,Consignee Address,ActualWeight,Value of HAWB,Description of Contents`) — no
-data rows, regardless of what filters are applied on the screen. No `airway.cfm` source exists
-anywhere in this repo (or elsewhere available to this port) to confirm *why* — whether the row
-population was removed, never finished, or depends on something (a manifest table, a carrier
-API) that isn't part of this codebase at all. Confirmed against the running legacy site rather
-than source, since no source was recoverable.
+**Found (first pass, wrong):** with no `airway.cfm` source available and no real export sample
+to check against, this was assumed to be a two-line stub (`Air Cargo Manifest` title + column
+header, no data). **That assumption was wrong.** A real export pulled from the live legacy site
+(`tmp/airway_export.csv`, provided 2026-08-01) shows the document is a populated manifest header
+— `Airway Bill:`, `SHIPMENT DATE:`, `SHIPPER NAME:`, `CONSIGNEE:`, `AIRPORT OF DEPARTURE:`/
+`AIRPORT OF DESTINATION:`, `NO. OF PIECES:`, `TOTAL ACTUAL WEIGHT:`, `TOTAL Value:` — before the
+same empty data-row table. Only the *data rows* are genuinely always empty, matching what was
+previously (correctly) understood as "the list is empty" — the header portion above it is not
+empty and was simply never seen before this sample existed.
 
-**Verdict: ported as-is.** `src/app/api/bema/parcels/export-airway/route.ts` always returns the
-same static two-line CSV; it does not read the screen's filters, because legacy's version
-observably doesn't either. This is the "bugs are ported, not fixed" rule applied to a case
-where there is no legacy source to read the *logic* from, only the observable output — if a
-real per-parcel manifest export is wanted later, that's a new feature to design and confirm
-with the client, not a fidelity port.
+Byte-for-byte quirks confirmed from the sample: no BOM; every line ends in a bare `\n` except
+the column-header row, which ends `\r\n`; `AIRPORT OF DEPARTURE:`/`AIRPORT OF DESTINATION:` have
+a literal trailing tab character before the newline; `CONSIGNEE:`'s address contains un-decoded
+`&nbsp;` HTML entities as literal text. SHIPPER NAME, CONSIGNEE, and both AIRPORT fields are
+identical across the whole sample regardless of what's being exported — a single hardcoded
+US-warehouse-to-Georgia-office shipment record, not data this schema stores. `SHIPMENT DATE:`,
+`NO. OF PIECES:`, `TOTAL ACTUAL WEIGHT:`, and `TOTAL Value:` are blank in the sample too — kept
+blank, since there's no evidence of what would populate them.
+
+**Verdict: ported as-is** (`src/app/api/bema/parcels/export-airway/route.ts`), reproducing the
+sample byte-for-byte for everything static. **Open — not independently verified:** the "Airway
+Bill" value itself. The route reads `config.regAwb`, falling back to `config.expAwb` — those are
+the only AWB-shaped fields this schema has, but nothing confirms this export actually corresponds
+to the Regular-service AWB specifically (vs. Express, vs. some other selection this schema
+doesn't model at all). Flagged rather than silently assumed correct.
+
+---
+
+## Parcels list CSV export ("Export Parcels") formatting — 2026-07-31, corrected 2026-08-01
+
+**Found (first pass, wrong):** the original build of `/api/bema/parcels/export` replaced
+legacy's actual CSV formatting with "proper" RFC 4180 quoting and a UTF-8 BOM, on the reasoning
+that legacy's own approach (stripping commas out of plain fields, wrapping specific columns in
+Excel's `="…"` formula syntax to stop it eating leading zeros) "mangles the data" and quoting
+properly "keeps the values intact". That is exactly a case of improving on legacy instead of
+porting it — a real 2.7MB export pulled from the live legacy site (`tmp/parcels_export.csv`,
+provided 2026-08-01) confirms legacy really does both of those things, consistently across all
+9,999 sample rows (every row has exactly 28 comma-separated fields — no field is ever
+CSV-quoted even though several contain values that would need it — and exactly 7 `="…"` pairs
+per row, always the same 7 columns).
+
+Further quirks confirmed from the sample, not previously known at all:
+- **Zero-value formatting differs between the DEBT and PAID columns.** DEBT/DEBT GEL render a
+  bare `0.` (trailing decimal point, no digits) when the amount is exactly zero; PAID/PAID GEL
+  render a bare `0` (no decimal point). Any non-zero amount on either renders normally with two
+  decimals, and WEIGHT/VALUE always render with two decimals regardless of value. Two different
+  legacy code paths format the same "zero" two different ways — not unified into one here.
+- **Five receiver/customer columns render a single space when empty, not a blank cell**:
+  FIRST NAME, LAST NAME, ADDRESS, UBANY, STORE NAME. The seven formula-wrapped columns do the
+  same inside their formula (`=" "`, not `=""`). The remaining plain columns (Status, Received
+  in USA, Payment method, Location, Office Name, Notes) render genuinely empty when blank,
+  confirmed from the same sample rows — this isn't a blanket "empty becomes space" rule.
+
+**Verdict: ported as-is.** `csvCell()`'s RFC 4180 quoting and the BOM are gone; replaced with
+`plainCell()` (comma-stripped, no quoting), `formulaCell()` (the seven `="…"` columns, `" "`
+default), `blankAsSpace()` (the five space-default columns), and `debtCell()`/`paidCell()` (the
+asymmetric zero formatting). See `src/app/api/bema/parcels/export/route.ts`'s file header for
+the full column-by-column breakdown.
 
 ---
 

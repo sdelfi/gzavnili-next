@@ -51,8 +51,15 @@ dead earlier in this migration (see `PROGRESS.md`).
 | `?rid=…&status=notonhold` clears both hold flags **from a GET link**, executed inline at the top of the list page | `POST /api/bema/parcels/:id/clear-hold` |
 | An agent's "only my parcels" scope is enforced by overwriting a URL param inside the view | Enforced server-side in the route handler, from the session role |
 | A bulk "office" operation silently drops parcels held by customs from the id list and reports nothing | Same rule, but the skipped ids and the reason come back in the response and are shown |
-| CSV export strips the delimiter out of values and wraps some columns in `="…"` to fight Excel's autoformatting | RFC 4180 quoting plus a UTF-8 BOM — values arrive intact, Georgian names included |
 | Paging via `row_number() over (order by <one column>)` with no tiebreaker — rows can be skipped or repeated across pages when timestamps collide | `id` as the final sort key |
+
+**No longer in this table**: CSV export delimiter/quoting. An earlier pass here replaced
+legacy's comma-stripping-plus-`="…"`-wrapping with RFC 4180 quoting and a UTF-8 BOM, reasoned
+about above as a bug fix ("values arrive intact"). A real legacy export sample confirmed
+otherwise — that formatting is legacy's actual, exact behavior, including quirks not previously
+known (asymmetric zero-formatting between DEBT and PAID, a five-column "blank renders as a
+single space" rule). Reverted to match; see `docs/findings.md`'s "Parcels list CSV export"
+entry for the full detail this table entry used to gloss over.
 
 ## Deliberate divergences (not bugs either way)
 

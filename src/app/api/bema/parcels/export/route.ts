@@ -16,8 +16,29 @@ import type { ParcelListItem } from '@/lib/parcels/types';
 // `url.export eq 1` branch (its third and final `content` header assignment; the two before
 // it are earlier, overwritten versions of the same line).
 //
+// Every quirk below is confirmed byte-for-byte against a real export pulled off the live
+// legacy site (`tmp/parcels_export.csv`), not guessed — an earlier version of this route had
+// replaced legacy's actual formatting with clean RFC 4180 quoting and a UTF-8 BOM as an
+// "improvement". That was a real deviation, reverted here:
+// * No BOM — legacy's file starts directly with the header, no `﻿`.
+// * Plain text columns never get CSV-quoted, even when the value contains a comma — a comma
+//   inside one of these is stripped instead (the delimiter itself is removed, not escaped).
+// * Seven columns are wrapped in Excel's `="…"` formula syntax instead — PHONE, PHONE2,
+//   PRIVATE NUMBER, TRACKING #, "Received By First/Last Name", and PARCEL CONTENT — the
+//   trick that stops Excel eating a leading zero or reformatting a long numeric-looking
+//   string. Empty values in these columns render `=" "` (a literal single space inside the
+//   formula), not `=""`.
+// * Five receiver/customer columns (FIRST NAME, LAST NAME, ADDRESS, UBANY, STORE NAME) render
+//   a single space when empty rather than a blank cell; the remaining plain columns (Status,
+//   Received in USA, Payment method, Location, Office Name, Notes) render genuinely empty.
+// * DEBT/DEBT GEL render `0.` (a bare trailing decimal point, no digits after it) when the
+//   value is exactly zero; PAID/PAID GEL render a bare `0` (no decimal point at all) when
+//   zero. Any non-zero amount, and WEIGHT/VALUE regardless of value, always render with two
+//   decimals as normal. Two different legacy code paths formatting the same "zero" value two
+//   different ways — kept exactly, not unified into one.
+//
 // Legacy's second export ("Export Airway", `export=2` → `airway.cfm`) is a different
-// document for the airline, not a view of this screen — out of scope here and still to do.
+// document for the airline — see `/api/bema/parcels/export-airway`.
 //
 // One legacy line is deliberately not ported: it rewrites the USERNAME column to
 // `"Linoli " & additional_username` for the single hard-coded account `GZ20001`. That is a
@@ -62,16 +83,21 @@ const COLUMNS = [
 ];
 
 const money = (value: number | null | undefined) => (value == null ? '0.00' : value.toFixed(2));
+/** DEBT/DEBT GEL's own zero formatting — see the file header. */
+const debtCell = (value: number) => (value === 0 ? '0.' : value.toFixed(2));
+/** PAID/PAID GEL's own zero formatting — see the file header. */
+const paidCell = (value: number) => (value === 0 ? '0' : value.toFixed(2));
 const day = (iso: string | null) => (iso ? iso.slice(0, 10) : '');
 
-/** RFC 4180 quoting. Legacy instead stripped the delimiter out of every value and wrapped
- *  some columns in `="…"` to stop Excel eating leading zeros off phone/tracking numbers —
- *  that mangles the data to work around a spreadsheet import quirk. Quoting properly keeps
- *  the values intact; the same columns are still text, because they are quoted. */
-function csvCell(value: unknown): string {
-  const text = value == null ? '' : String(value);
-  return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
-}
+/** Plain text columns: the delimiter is stripped out, not escaped — legacy never quotes a
+ *  field, so a comma inside one would otherwise misalign every column after it. */
+const plainCell = (value: unknown) => String(value ?? '').replace(/,/g, '');
+/** The five receiver/customer columns that render a single space rather than a blank cell
+ *  when empty. */
+const blankAsSpace = (value: string | null | undefined) => (value && value.trim() ? plainCell(value) : ' ');
+/** The seven Excel-formula-wrapped columns — see the file header. Not comma-stripped: these
+ *  are codes/names legacy trusted not to contain one. */
+const formulaCell = (value: string | null | undefined) => `="${value && value.trim() ? value : ' '}"`;
 
 /** Legacy display fallbacks, in order: the receiver's Georgian name stands in for a missing
  *  Latin one, and the "additional" free-text name stands in for a missing receiver record. */
@@ -132,44 +158,41 @@ export async function GET(request: NextRequest) {
 
     lines.push(
       [
-        name.first,
-        name.last,
-        item.user.username,
-        item.user.firstName ?? '',
-        item.user.lastName ?? '',
-        item.receiver?.city ?? '',
-        item.receiver?.street1 ?? '',
-        item.receiver?.street2 ?? '',
-        item.receiver?.phone1 ?? '',
-        item.receiver?.phone2 ?? '',
-        item.receiver?.phone3 ?? '',
-        item.trackingNum ?? '',
-        receivedBy?.firstName ?? '',
-        receivedBy?.lastName ?? '',
-        item.store ?? '',
-        money(debtUsd),
-        money(paidUsd),
-        money(debtUsd * lariRate),
-        money(paidUsd * lariRate),
+        blankAsSpace(name.first),
+        blankAsSpace(name.last),
+        plainCell(item.user.username),
+        plainCell(item.user.firstName ?? ''),
+        plainCell(item.user.lastName ?? ''),
+        plainCell(item.receiver?.city ?? ''),
+        blankAsSpace(item.receiver?.street1),
+        blankAsSpace(item.receiver?.street2),
+        formulaCell(item.receiver?.phone1),
+        formulaCell(item.receiver?.phone2),
+        formulaCell(item.receiver?.phone3),
+        formulaCell(item.trackingNum),
+        formulaCell(receivedBy?.firstName ?? ''),
+        formulaCell(receivedBy?.lastName ?? ''),
+        blankAsSpace(item.store),
+        debtCell(debtUsd),
+        paidCell(paidUsd),
+        debtCell(debtUsd * lariRate),
+        paidCell(paidUsd * lariRate),
         money(item.weight),
         money(item.value),
-        item.contents ?? '',
-        item.status,
-        day(item.trackingReceived),
-        paymentMethod(item),
-        item.location ?? '',
-        item.officeName ?? '',
+        formulaCell(item.contents),
+        plainCell(item.status),
+        plainCell(day(item.trackingReceived)),
+        plainCell(paymentMethod(item)),
+        plainCell(item.location ?? ''),
+        plainCell(item.officeName ?? ''),
         // Legacy flattens newlines out of Notes because it never quoted anything; kept
         // because a note spanning rows is unreadable in a spreadsheet either way.
-        (item.notes ?? '').replace(/[\r\n]+/g, ' '),
-      ]
-        .map(csvCell)
-        .join(','),
+        plainCell((item.notes ?? '').replace(/[\r\n]+/g, ' ')),
+      ].join(','),
     );
   }
 
-  // A BOM so Excel opens the Georgian receiver names as UTF-8 rather than as mojibake.
-  return new NextResponse(`﻿${lines.join('\n')}`, {
+  return new NextResponse(lines.join('\n'), {
     headers: {
       'Content-Type': 'text/csv; charset=utf-8',
       'Content-Disposition': 'attachment; filename="parcels.csv"',

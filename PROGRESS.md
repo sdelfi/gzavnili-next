@@ -719,6 +719,32 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       dropped `ParcelAddPage.module.css`'s `max-width: 1100px`, which had no legacy basis and
       made the page narrower than the rest of bema. See `docs/decisions/0017-bema-add-parcel.md`
       ("Visual-parity pass" / "Corrected layout").
+- [x] Shared `ui/PageHeading` — every bema admin page's `<h1>` (Browse Parcels/Delivery
+      Requests, Edit Parcel, Add Parcel, Customers/BEMA Users, Site Pages, Add/Edit Page,
+      Add/Edit User, Site Settings, the statement stub) had drifted into two or three
+      different font-size/weight/margin combinations across screens, plus a few bare unstyled
+      `<h1>`s in thin `page.tsx` files. One component now owns the page-title look everywhere,
+      with an optional trailing `meta` slot for the count/status line a few pages already had.
+      Also gave `UserListPage`/`PageListPage`'s `.filterBar` a border — a white card on a
+      white page background was invisible except for its padding once the page background was
+      changed to white.
+- [x] **Corrected the two parcels CSV exports against real legacy export samples**
+      (`tmp/parcels_export.csv`, `tmp/airway_export.csv`, provided 2026-08-01) — both prior
+      passes had guessed without a real reference and guessed wrong. "Export Parcels": legacy
+      never CSV-quotes anything (a comma inside a plain field is stripped, not escaped), wraps
+      exactly 7 specific columns in Excel's `="…"` formula syntax, has no BOM, and has two
+      further undocumented quirks confirmed only from the sample — DEBT/PAID render zero
+      differently (`0.` vs bare `0`), and 5 receiver/customer columns render a single space
+      instead of a blank cell when empty. All reverted from this project's earlier "RFC 4180 +
+      BOM" replacement back to legacy's actual formatting — see `docs/decisions/0015`'s
+      now-removed table row and `docs/findings.md`. "Export Airway": the previous pass's guess
+      that the whole document was a two-line stub was wrong — only the data-row table is
+      empty; the manifest header above it (Airway Bill/Shipment Date/Shipper/Consignee/
+      Airports/totals) is real and mostly static, now reproduced byte-for-byte including a
+      trailing tab on two lines and a lone `\r\n` on the header row where every other line
+      uses `\n`. The Airway Bill value itself (`config.regAwb`, falling back to `expAwb`)
+      is still an inference, flagged as such in `docs/findings.md` — not confirmed against
+      which service the export actually corresponds to.
 - [ ] **Parcels: one thing worth confirming with the client** before it hardens into
       behaviour — the Debt filter is a *not-equal* match on uninvoiced parcels (the value `0`
       meaning "has a debt figure at all"), faithfully ported but unintuitive enough that it may
