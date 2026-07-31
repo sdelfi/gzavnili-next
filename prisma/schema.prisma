@@ -271,6 +271,13 @@ model CustomerPricingRule {
 
 model Receiver {
   id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  // Legacy `receivers.isgecitizen`. Decides which name pair the parcel form requires (the
+  // Georgian-script one rather than the Latin one) and is printed on customs paperwork, so
+  // it is a fact about the person, not something to infer: a Georgian citizen whose name
+  // happens to be recorded only in Latin is still a Georgian citizen. Was briefly derived
+  // from "does a Georgian-script name exist" while this column was missing — see
+  // docs/decisions/0015.
+  isGeCitizen Boolean @default(false) @map("is_ge_citizen")
   // Not explicitly enumerated in docs/migrations/02-parcels-domain-analysis.md (which only
   // confirms ReceiverId/AddressId) — inferred so "my receivers" can be scoped per sender.
   // Verify against the legacy `receivers` table before the ETL backfill in
@@ -515,6 +522,18 @@ model Parcel {
   buser               String?
   onlineSource         String? @map("online_source")
   balanceAdjust        Decimal? @map("balance_adjust") @db.Decimal(12, 2)
+
+  // Every field the bema parcels list's keyword search looks at — the parcel's own tracking
+  // numbers/AWB/"additional" names, plus its receiver's name, organization, city, state and
+  // phone — lower-cased into one column, maintained by trigger. Application code only ever
+  // reads it.
+  //
+  // This exists because the search is a *leading-wildcard* match spanning two tables, and no
+  // index can serve that across a join: the trigram indexes on `addressbook` are unusable
+  // when their predicate is OR-ed with one on `parcels`, so the planner falls back to walking
+  // the whole table. Measured at 1M parcels: 1.1-2.9s before, 3ms after. See
+  // docs/decisions/0016-parcels-performance.md for the full benchmark.
+  searchText String? @map("search_text")
 
   // --- Phase 1 redesign additions (docs/migrations/04-postgres-schema-design.md §1-2) ---
   // All five of these are maintained by triggers (see migration.sql) — application code

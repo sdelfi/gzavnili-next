@@ -164,6 +164,7 @@ export function checkTrackingNum(trackingNum: string, excludeId?: string) {
 export type ReceiverOption = {
   id: string;
   label: string;
+  isGeCitizen: boolean;
   address: {
     firstName: string;
     lastName: string;

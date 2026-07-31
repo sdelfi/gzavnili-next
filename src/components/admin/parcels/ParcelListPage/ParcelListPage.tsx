@@ -52,6 +52,7 @@ export function ParcelListPage() {
 
   const [items, setItems] = useState<ParcelListItem[]>([]);
   const [total, setTotal] = useState(0);
+  const [totalIsExact, setTotalIsExact] = useState(true);
   const [lariRate, setLariRate] = useState<number | null>(null);
   const [forcedReceivedBy, setForcedReceivedBy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -96,6 +97,7 @@ export function ParcelListPage() {
         if (cancelled) return;
         setItems(data.items);
         setTotal(data.total);
+        setTotalIsExact(data.totalIsExact);
         setLariRate(data.lariRate);
         setForcedReceivedBy(data.forcedReceivedBy);
         // A stale tick would apply the next operation to a parcel that is no longer listed.
@@ -218,7 +220,10 @@ export function ParcelListPage() {
     <div>
       <div className={s.heading}>
         <h1 className={s.title}>{deliveryRequest ? 'Delivery Requests' : 'Browse Parcels'}</h1>
-        <span className={s.total}>{total} parcel(s)</span>
+        <span className={s.total}>
+          {total.toLocaleString()}
+          {totalIsExact ? '' : '+'} parcel(s)
+        </span>
       </div>
 
       {error && <Alert variant="error">{error}</Alert>}
@@ -313,6 +318,7 @@ export function ParcelListPage() {
         page={filters.page}
         perPage={filters.perPage}
         total={total}
+        totalIsExact={totalIsExact}
         onPageChange={(page) => applyFilters({ page })}
       />
     </div>

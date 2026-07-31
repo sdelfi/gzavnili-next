@@ -19,7 +19,7 @@ export const PARCEL_DETAIL_INCLUDE = {
       billingAddress: true,
     },
   },
-  receiver: { select: { id: true, address: true } },
+  receiver: { select: { id: true, isGeCitizen: true, address: true } },
   parcelOffice: { select: { officeId: true } },
 } satisfies Prisma.ParcelInclude;
 
@@ -160,10 +160,7 @@ export function toParcelDetail(row: ParcelDetailRow): ParcelDetail {
 
     receiver: {
       receiverId: row.receiver?.id ?? null,
-      // Legacy stores this on the receiver row (`receivers.isgecitizen`); this schema doesn't
-      // carry that column, so it's derived from whether a Georgian-script name is on file —
-      // which is the only thing the flag actually controls (which name pair is required).
-      isGeCitizen: Boolean(address?.firstNameGe || address?.lastNameGe),
+      isGeCitizen: row.receiver?.isGeCitizen ?? false,
       firstName: text(address?.firstName),
       lastName: text(address?.lastName),
       firstNameGe: text(address?.firstNameGe),

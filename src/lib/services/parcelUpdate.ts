@@ -63,6 +63,10 @@ export async function saveParcel(parcelId: string, input: UpdateParcelInput): Pr
       const existing = await tx.receiver.findUnique({ where: { id: nextReceiverId }, select: { addressId: true } });
       if (existing) {
         await tx.address.update({ where: { id: existing.addressId }, data: addressData });
+        await tx.receiver.update({
+          where: { id: nextReceiverId },
+          data: { isGeCitizen: input.receiver.isGeCitizen },
+        });
       } else {
         // The receiver was deleted between loading the form and saving it — legacy would
         // have silently written an orphan. Fall through to creating a fresh one instead.
@@ -71,7 +75,9 @@ export async function saveParcel(parcelId: string, input: UpdateParcelInput): Pr
     }
     if (!nextReceiverId) {
       const address = await tx.address.create({ data: addressData });
-      const created = await tx.receiver.create({ data: { userId: input.userId, addressId: address.id } });
+      const created = await tx.receiver.create({
+        data: { userId: input.userId, addressId: address.id, isGeCitizen: input.receiver.isGeCitizen },
+      });
       nextReceiverId = created.id;
     }
 

@@ -132,47 +132,53 @@ function buildServiceFilter(service: string): Prisma.ParcelWhereInput | null {
 }
 
 /** Space-delimited AND-of-ORs, the legacy keyword-search shape: every term must match
- *  somewhere, but each term may match any of the listed columns. */
+ *  somewhere, but each term may match any of the searchable columns.
+ *
+ *  Those columns live on two tables (the parcel's own tracking numbers/AWB/"additional"
+ *  names, and its receiver's name/organization/city/state/phone), and an OR spanning two
+ *  tables cannot use an index on either — the planner has to walk `parcels` and join out per
+ *  row. At 1M parcels that measured 1.1-2.9s. `parcels.search_text` is those same columns
+ *  denormalised into one trigger-maintained column with a GIN trigram index (see the
+ *  20260731210000 migration), which turns the same search into a single-table indexed lookup
+ *  at 3ms. Lower-cased on both sides, so a plain `contains` is already case-insensitive —
+ *  `mode: 'insensitive'` would force `lower(search_text)` and lose the index.
+ *
+ *  Legacy searched tracking numbers on `right(keyword, 12)` — pasting a long carrier
+ *  reference still finds the parcel by its trailing digits. That trailing-substring match is
+ *  subsumed here: `%term%` against the same text already matches any substring. */
 function buildSearchFilter(search: string): Prisma.ParcelWhereInput[] {
   return search
     .split(/\s+/)
     .filter(Boolean)
-    .map((term) => ({
-      OR: [
-        { receiver: { address: { organization: { contains: term, mode: 'insensitive' as const } } } },
-        { receiver: { address: { firstName: { contains: term, mode: 'insensitive' as const } } } },
-        { receiver: { address: { lastName: { contains: term, mode: 'insensitive' as const } } } },
-        { receiver: { address: { [PHONE1]: { contains: term, mode: 'insensitive' as const } } } },
-        { receiver: { address: { city: { contains: term, mode: 'insensitive' as const } } } },
-        { receiver: { address: { state: { contains: term, mode: 'insensitive' as const } } } },
-        { additionalFirstname: { contains: term, mode: 'insensitive' as const } },
-        { additionalLastname: { contains: term, mode: 'insensitive' as const } },
-        { additionalUsername: { contains: term, mode: 'insensitive' as const } },
-        { buser: { contains: term, mode: 'insensitive' as const } },
-        { awb: { contains: term, mode: 'insensitive' as const } },
-        // Legacy searches tracking numbers on `right(keyword, 12)` — pasting a long carrier
-        // reference still finds the parcel by its trailing digits.
-        { trackingNum: { contains: term.slice(-12), mode: 'insensitive' as const } },
-        { trackingNum2: { contains: term.slice(-12), mode: 'insensitive' as const } },
-      ],
-    }));
+    .map((term) => ({ searchText: { contains: term.toLowerCase() } }));
 }
 
-/** Same shape as `buildSearchFilter`, against the *sender's* billing address — plus an exact
- *  username match, which is what the group header's "All parcels" link relies on. */
+/** The sender filter: the same AND-of-ORs, against the *sender's* own billing address, plus
+ *  an exact username match (what the group header's "All parcels" link relies on).
+ *
+ *  The OR sits **inside** the `user` relation filter rather than being six parcel-level
+ *  conditions OR-ed together, and that structure is the whole point: written the other way
+ *  Prisma emits one correlated subquery per branch and the search took 5.5s at 1M parcels;
+ *  written this way it emits a single `user_id IN (SELECT ... FROM users LEFT JOIN
+ *  addressbook ...)` over the 20k-row `users` table — 50ms. Same results, one subquery.
+ *
+ *  `parcels.search_text` is not reused here because it deliberately covers the *receiver*;
+ *  senders are few enough that filtering them directly is already cheap. */
 function buildSenderFilter(sender: string): Prisma.ParcelWhereInput[] {
   return sender
     .split(/\s+/)
     .filter(Boolean)
     .map((term) => ({
-      OR: [
-        { user: { billingAddress: { organization: { contains: term, mode: 'insensitive' as const } } } },
-        { user: { billingAddress: { firstName: { contains: term, mode: 'insensitive' as const } } } },
-        { user: { billingAddress: { lastName: { contains: term, mode: 'insensitive' as const } } } },
-        { user: { billingAddress: { [PHONE1]: { contains: term, mode: 'insensitive' as const } } } },
-        { user: { billingAddress: { city: { contains: term, mode: 'insensitive' as const } } } },
-        { user: { username: term } },
-      ],
+      user: {
+        OR: [
+          { billingAddress: { organization: { contains: term, mode: 'insensitive' as const } } },
+          { billingAddress: { firstName: { contains: term, mode: 'insensitive' as const } } },
+          { billingAddress: { lastName: { contains: term, mode: 'insensitive' as const } } },
+          { billingAddress: { [PHONE1]: { contains: term, mode: 'insensitive' as const } } },
+          { billingAddress: { city: { contains: term, mode: 'insensitive' as const } } },
+          { username: term },
+        ],
+      },
     }));
 }
 

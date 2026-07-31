@@ -40,3 +40,4 @@ file or the live site.
 | 0013 | Site Pages CMS (bema "Site Pages") | [decisions/0013-site-pages-cms.md](decisions/0013-site-pages-cms.md) |
 | 0014 | Site-wide announcement popup (bema "Site Settings" → "Popup") | [decisions/0014-site-popup.md](decisions/0014-site-popup.md) |
 | 0015 | bema Parcels (list + edit): what was ported, and what was deliberately not | [decisions/0015-bema-parcels-list.md](decisions/0015-bema-parcels-list.md) |
+| 0016 | Parcels list performance: measured at 1M rows, fixes, and the repeatable benchmark script | [decisions/0016-parcels-performance.md](decisions/0016-parcels-performance.md) |

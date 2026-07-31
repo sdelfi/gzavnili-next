@@ -113,7 +113,10 @@ export type ParcelGroup = {
 
 export type ParcelListResponse = {
   items: ParcelListItem[];
+  /** Capped — see `COUNT_CAP` in the list route. When `totalIsExact` is false this is the cap,
+   *  not the real number, and the UI renders it as "10,000+". */
   total: number;
+  totalIsExact: boolean;
   page: number;
   perPage: number;
   /** USD→GEL rate from `config.crate`, used for the "… GEL" secondary amounts. */

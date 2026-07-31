@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({
     receivers: rows.map((row) => ({
       id: row.id,
+      isGeCitizen: row.isGeCitizen,
       label:
         [row.address.lastName, row.address.firstName].filter(Boolean).join(', ') ||
         [row.address.lastNameGe, row.address.firstNameGe].filter(Boolean).join(', ') ||

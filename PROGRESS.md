@@ -305,6 +305,54 @@ why).
       the price suggestion following the larger weight, and the delivery-office dropdown
       loading.
 
+- [x] **Parcels list performance, measured at 1M rows** (docs/decisions/0016-parcels-
+      performance.md) — the client's stated reason for this whole migration, and until now
+      only tested against a four-row fixture. Seeded a throwaway Postgres with 1M parcels /
+      650k invoices+payments / 20k customers and ran the real API. The schema redesign's own
+      fixes held up as designed (status filter: 6ms; the "Paid" filter that used to be a
+      correlated subquery: 1.2ms), but three things broke at volume and are now fixed:
+      **keyword search** (1.1-2.9s → 3ms) — the search spans two tables with an OR, which no
+      index can serve across a join, so `parcels.search_text` denormalises every searchable
+      field from both tables into one trigger-maintained column with a GIN trigram index (new
+      migration `20260731210000_parcels_search_and_indexes`); **milestone date filters**
+      (1971ms → 1ms) — ten partial indexes, one per tracking milestone, `WHERE col IS NOT
+      NULL`; **the exact row count** (200-525ms → 3ms) — capped at 10,000 (`totalIsExact` in
+      the response, rendered as "10,000+" past the cap; legacy always computed the exact
+      count and paid for it on every page load); and, found along the way, **the sender
+      filter** (5.5s → 0.13s) — Prisma emitted one correlated subquery per OR branch when the
+      filter was six parcel-level conditions; restructured as one `user` relation filter, one
+      subquery. Full before/after table for every filter in the decision doc.
+      **New: `scripts/benchmark-parcels.ts`** (`bun run benchmark:parcels`) — reproduces the
+      whole benchmark against any database (`--seed --scale=N --confirm=<db name>`, then
+      `--bench` drives the real endpoints over HTTP and reports timings, `--reset` to wipe
+      it), so a future change can be checked the same way instead of redoing this by hand.
+      Verified it reproduces the same figures as the manual run, at both 50k and 1M scale.
+- [x] **Two follow-up items from the parcels work resolved, not left as compromises**:
+      `receivers.is_ge_citizen` is now a real column (migration
+      `20260731220000_receiver_is_ge_citizen`, backfilled from the previous inference so no
+      existing receiver flips) — the parcel form persists what the operator sets instead of
+      re-guessing it from whether a Georgian-script name happens to be on file. And legacy's
+      hard-coded `officeid = 999` "Need delivery" pseudo-office is now a real
+      `delivery_offices` row (`scripts/seed-delivery-offices.ts`, idempotent, added to
+      `db:seed`), so it round-trips through the real foreign key like every other office.
+- [x] **Automated tests** (`bun test`, `bun run test`) — 81 tests across 6 files, all pure/
+      unit-level (no database; the parcels domain's business logic is what regresses
+      silently, not the framework wiring around it): `parcelQuery.test.ts` locks down every
+      filter's exact Prisma shape (the status waterfall's exclusion lists, the debt filter's
+      "0 means has-a-figure, not zero" rule, the sender/paid/city semantics) so a refactor
+      that quietly drops an exclusion fails a test instead of surfacing as "an operator says
+      the numbers look wrong"; `groupParcels.test.ts` covers the shipment-card grouping key
+      and sort order; `pricing.test.ts` covers the price-suggestion schedule and customer
+      pricing-rule precedence/date-range logic; `parcelSchema.test.ts` + `zodErrors` coverage
+      lock down every validation rule ported from `ParcelUpdate.cfc`; `form.test.ts`
+      round-trips the edit form's API-shape → input-values → payload conversions through the
+      real server schema, so a dropped field fails loudly instead of silently saving as NULL;
+      `format.test.ts` covers the date/money display helpers. Not covered yet (needs a
+      running Postgres, unlike the rest): the API route handlers and the
+      `saveParcel`/`runParcelOperation` service functions — worth adding once there's a
+      standard way to spin up a disposable test database in CI, flagged rather than skipped
+      silently.
+
 - [x] **Password hashing is runtime-agnostic** (`src/lib/auth/password.ts`): `Bun.password`
       → argon2id via `hash-wasm`. Not a portability preference — a real outage: `next dev`/
       `next start` run route handlers under **Node** even when the server is launched with

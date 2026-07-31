@@ -17,6 +17,14 @@ import type { ParcelListResponse } from '@/lib/parcels/types';
 // roles are the equivalent set (docs/decisions/0011-bema-admin.md).
 const PARCEL_ROLES = ['BemaStandard', 'BemaAdministrator', 'BemaAgent'] as const;
 
+// The list shows a total, and an exact `count(*)` over a filtered slice of a million-row
+// table costs ~200-500ms — several times what the page of 25 rows costs, and paid on every
+// keystroke-free page load. Counting is therefore capped: the total is exact up to this many
+// rows and reported as "10,000+" beyond it (`totalIsExact: false`), which takes ~3ms. Nobody
+// pages to row 650,000; legacy computed the exact count every time and it is a large part of
+// why the screen was slow. See docs/decisions/0016-parcels-performance.md.
+const COUNT_CAP = 10_000;
+
 export async function GET(request: NextRequest) {
   const auth = await requireBemaSession(request, [...PARCEL_ROLES]);
   if (auth.response) return auth.response;
@@ -43,8 +51,8 @@ export async function GET(request: NextRequest) {
 
   const where = buildParcelWhere(query);
 
-  const [total, rows, config] = await Promise.all([
-    db.parcel.count({ where }),
+  const [cappedTotal, rows, config] = await Promise.all([
+    db.parcel.count({ where, take: COUNT_CAP + 1 }),
     db.parcel.findMany({
       where,
       orderBy: buildParcelOrderBy(query.sort, query.dir),
@@ -56,10 +64,12 @@ export async function GET(request: NextRequest) {
   ]);
 
   const adminNames = await loadAdminNames(rows);
+  const totalIsExact = cappedTotal <= COUNT_CAP;
 
   const body: ParcelListResponse = {
     items: rows.map((row) => toParcelListItem(row, adminNames)),
-    total,
+    total: totalIsExact ? cappedTotal : COUNT_CAP,
+    totalIsExact,
     page: query.page,
     perPage: query.perPage,
     lariRate: config?.crate ? Number(config.crate) || null : null,

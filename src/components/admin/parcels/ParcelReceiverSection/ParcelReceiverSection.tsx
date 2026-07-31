@@ -73,7 +73,7 @@ export function ParcelReceiverSection({
     for (const [key, value] of Object.entries(chosen.address)) {
       setReceiver(key as keyof ParcelFormState['receiver'], value as never);
     }
-    setReceiver('isGeCitizen', Boolean(chosen.address.firstNameGe || chosen.address.lastNameGe));
+    setReceiver('isGeCitizen', chosen.isGeCitizen);
   }
 
   const receiverOptions = [
