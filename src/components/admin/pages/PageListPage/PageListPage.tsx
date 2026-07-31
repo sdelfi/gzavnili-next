@@ -10,6 +10,7 @@ import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
 import { IconButton } from '@/components/ui/IconButton';
+import { PageHeading } from '@/components/ui/PageHeading';
 import { routes } from '@/lib/routes';
 import { deletePage, listPages } from '@/lib/api/bema/pages';
 import s from './PageListPage.module.css';
@@ -114,7 +115,7 @@ export function PageListPage() {
 
   return (
     <div>
-      <h1 className={s.heading}>Site Pages</h1>
+      <PageHeading>Site Pages</PageHeading>
 
       {error && <Alert variant="error">{error}</Alert>}
 

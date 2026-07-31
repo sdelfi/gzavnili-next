@@ -220,13 +220,9 @@ export function ParcelListPage() {
 
   return (
     <div>
-      <div className={s.heading}>
-        <h1 className={s.title}>{deliveryRequest ? 'Delivery Requests' : 'Browse Parcels'}</h1>
-        <span className={s.total}>
-          {total.toLocaleString()}
-          {totalIsExact ? '' : '+'} parcel(s)
-        </span>
-      </div>
+      <PageHeading meta={`${total.toLocaleString()}${totalIsExact ? '' : '+'} parcel(s)`}>
+        {deliveryRequest ? 'Delivery Requests' : 'Browse Parcels'}
+      </PageHeading>
 
       {error && <Alert variant="error">{error}</Alert>}
       {notice && <Alert variant="success">{notice}</Alert>}

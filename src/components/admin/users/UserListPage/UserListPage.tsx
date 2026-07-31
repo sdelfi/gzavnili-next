@@ -10,6 +10,7 @@ import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
 import { IconButton } from '@/components/ui/IconButton';
+import { PageHeading } from '@/components/ui/PageHeading';
 import { routes } from '@/lib/routes';
 import type { BemaUser } from '@/components/admin/AuthProvider';
 import { listUsers } from '@/lib/api/bema/users';
@@ -124,7 +125,7 @@ export function UserListPage({ accountType }: { accountType: 'BemaUser' | 'Custo
 
   return (
     <div>
-      <h1 className={s.heading}>{accountType === 'BemaUser' ? 'BEMA Users' : 'Customers'}</h1>
+      <PageHeading>{accountType === 'BemaUser' ? 'BEMA Users' : 'Customers'}</PageHeading>
 
       {error && <Alert variant="error">{error}</Alert>}
 

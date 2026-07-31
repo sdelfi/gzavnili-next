@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
+import { PageHeading } from '@/components/ui/PageHeading';
 import { useBemaAuth } from '@/components/admin/AuthProvider';
 import { ParcelDetailsSection } from '@/components/admin/parcels/ParcelDetailsSection';
 import { ParcelReceiverSection } from '@/components/admin/parcels/ParcelReceiverSection';
@@ -169,14 +170,17 @@ export function ParcelEditPage({ parcelId }: { parcelId: string }) {
 
   return (
     <form className={s.page} onSubmit={handleSubmit} noValidate>
-      <div className={s.heading}>
-        <h1 className={s.title}>Edit Parcel</h1>
-        <span className={s.meta}>
-          {original.trackingNum} · status <b>{original.status}</b>
-          {original.pcode && <> · code {original.pcode}</>}
-          {original.debt !== null && <> · debt {formatAmount(original.debt)}</>}
-        </span>
-      </div>
+      <PageHeading
+        meta={
+          <>
+            {original.trackingNum} · status <b>{original.status}</b>
+            {original.pcode && <> · code {original.pcode}</>}
+            {original.debt !== null && <> · debt {formatAmount(original.debt)}</>}
+          </>
+        }
+      >
+        Edit Parcel
+      </PageHeading>
 
       {notice && <Alert variant="success">{notice}</Alert>}
       {formErrors.length > 0 && (

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Alert } from '@/components/ui/Alert';
+import { PageHeading } from '@/components/ui/PageHeading';
 import { useBemaAuth } from '@/components/admin/AuthProvider';
 import { ParcelTripInfo } from '@/components/admin/parcels/ParcelTripInfo';
 import { ParcelAddCustomerSection } from '@/components/admin/parcels/ParcelAddCustomerSection';
@@ -26,7 +27,6 @@ import { resolveAgentFlatRate } from '@/lib/parcels/batchPricing';
 import type { PricingRule } from '@/lib/parcels/pricing';
 import type { AddParcelBatchPayload } from '@/lib/validation/parcelBatchSchema';
 import { routes } from '@/lib/routes';
-import s from './ParcelAddPage.module.css';
 
 // The batch "Add Parcel" screen — `bema/parcels/parcels-add.cfm` + `views/parcels/
 // vwParcelsAdd.cfm`. Distinct from the single-parcel edit screen (`ParcelEditPage`): one
@@ -194,7 +194,7 @@ export function ParcelAddPage() {
     <div>
       <ParcelTripInfo />
 
-      <h1 className={s.title}>Add Parcel</h1>
+      <PageHeading>Add Parcel</PageHeading>
 
       {errors.length > 0 && (
         <Alert variant="error">
