@@ -20,6 +20,10 @@ file or the live site.
   `../PROGRESS.md` for what's actually been done and what it revealed.
 - **`decisions/`** — short, dated records of decisions made *during* implementation that
   aren't already covered by `migrations/` (or that refine it). One file per decision.
+- **[`findings.md`](findings.md)** — a running log of legacy quirks/bugs discovered while
+  porting (not decisions about this project — what the *legacy* source actually does, and
+  what happened to it: ported as-is, not reachable, or open). See AGENTS.md's "Legacy
+  fidelity: bugs are ported, not fixed" rule.
 
 ## Decisions log
 
@@ -41,3 +45,4 @@ file or the live site.
 | 0014 | Site-wide announcement popup (bema "Site Settings" → "Popup") | [decisions/0014-site-popup.md](decisions/0014-site-popup.md) |
 | 0015 | bema Parcels (list + edit): what was ported, and what was deliberately not | [decisions/0015-bema-parcels-list.md](decisions/0015-bema-parcels-list.md) |
 | 0016 | Parcels list performance: measured at 1M rows, fixes, and the repeatable benchmark script | [decisions/0016-parcels-performance.md](decisions/0016-parcels-performance.md) |
+| 0017 | bema Parcels: batch "Add Parcel" (`parcels-add.cfm`) — the group-fee calculation and what wasn't ported | [decisions/0017-bema-add-parcel.md](decisions/0017-bema-add-parcel.md) |

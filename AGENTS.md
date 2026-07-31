@@ -179,3 +179,33 @@ one-off investigation), update `PROGRESS.md`: check off the step(s) completed,
 and add new unchecked items for anything the work revealed as still
 outstanding. Keep entries terse and reference the commit hash. Do this as part
 of the same change, not as a separate follow-up.
+
+# Legacy fidelity: bugs are ported, not fixed
+
+When porting legacy business logic — pricing/fee formulas above all, but this applies
+everywhere — replicate what the legacy code actually does at runtime, including its bugs,
+typos, and dead-looking branches that turn out to matter, rather than silently "fixing" them
+because they look wrong. A porting task is not an invitation to improve the underlying
+behavior; it's an invitation to reproduce it exactly, so the new system's numbers match the
+old one's. This is non-negotiable for anything that computes money (prices, fees, invoices,
+payments) — a quiet "correction" there is a real financial discrepancy, not a cleanup.
+
+This cuts the other way too: don't assume a legacy code path is dead just because it looks
+redundant or the call site seems to imply otherwise. If a computed value (a split, a
+discount, a derived field) is passed into a legacy function, read that function's *actual
+body* before deciding what it does with it — not just the call site — before either porting
+it or skipping it as dead. A value that's computed and threaded through several layers can
+still turn out to be ignored at the bottom, and the only way to know is to read all the way
+down. Get this wrong and you've built something that computes a legacy-faithful-looking
+formula and then uses it for something legacy itself never does — which is a real deviation,
+not a faithful port, even though every individual line looks like one.
+
+When implementing this inevitably surfaces a genuine bug, a dead calculation, or a legacy
+mechanism that can't be carried over as-is (a hardcoded id that doesn't exist post-migration,
+a value the new schema doesn't store), record it in `docs/findings.md` as part of the same
+change — what was found, the evidence (which file/function, quoted or described precisely
+enough to re-derive), and what happened to it (ported as-is / not reachable so nothing to
+port / open and needs a decision). Don't let a finding like this live only in a commit
+message or a decision doc's prose — `findings.md` is the one place to check "has this already
+been found," and a decision doc's "what wasn't ported" section should link to the matching
+findings entry rather than duplicate the investigation.

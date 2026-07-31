@@ -43,6 +43,8 @@ tiers, the minimum-charge stacking, and the override scale.
 
 ## The two-payment-method split: traced into the DAO, confirmed dead
 
+Full investigation and evidence in `docs/findings.md`'s matching entry; summary here.
+
 `parcels-add.cfm` *also* computes a `payAmount1`/`payAmount2` split of the two payment-method
 amounts, proportional to each parcel's share of the total, and passes `payAmount1` into
 `parcelDao.doOperation('paid', payAmount1 = form.payAmount1)`. An earlier version of this
@@ -78,6 +80,9 @@ records a $30 payment via check" when it does nothing of the kind) hasn't been d
 before doing either.
 
 ## What's intentionally not ported, and why
+
+The `$5`-minimum-stacking-with-delivery-fee quirk and the BEMA-agent flat-rate override each
+have their own `docs/findings.md` entry too (found-it/evidence detail lives there); the rest:
 
 - **The tmp-table tracking-number reservation** (`bema/ajax/tmpTracking.cfm`,
   `checkParcelTmpTable`). It exists so legacy's stateless multi-page flow could coordinate
