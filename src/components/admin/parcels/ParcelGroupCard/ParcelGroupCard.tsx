@@ -60,6 +60,12 @@ export function ParcelGroupCard({
   const groupDebt = group.parcels.reduce((total, p) => (p.isPaid ? total : total + (p.debt ?? 0)), 0);
   const senderName = [group.user.firstName, group.user.lastName].filter(Boolean).join(' ');
 
+  // Legacy: `listFind(valueList(parcels.Invoiced), 0)` (any uninvoiced parcel in the
+  // shipment) vs. `tmp2.recordCount eq 1` (the invoiced ones all share exactly one invoice).
+  const hasUninvoiced = group.parcels.some((p) => !p.isInvoiced);
+  const invoiceIds = new Set(group.parcels.map((p) => p.invoiceId).filter((id): id is string => id !== null));
+  const singleInvoiceId = invoiceIds.size === 1;
+
   const columnCount = showBuser ? 11 : 10;
 
   return (
@@ -85,7 +91,7 @@ export function ParcelGroupCard({
               {group.awb && <span className={s.meta}> AWB: {group.awb}</span>}
             </th>
 
-            <th colSpan={columnCount - 6} className={s.headerActions}>
+            <th colSpan={columnCount - 6}>
               <div className={s.headerActionsInner}>
                 {canOperate && (
                   <span className={s.groupPay}>
@@ -115,6 +121,16 @@ export function ParcelGroupCard({
 
                 {group.pcode && <span className={s.code}>Code — {group.pcode}</span>}
 
+                {/* Legacy's "Customer account" is a one-click login-as-that-customer link
+                    (`user_login.cfm`) — same open design question as the row-level "Login as
+                    user" icon in UserListPage (no customer-facing session system to switch
+                    into yet, see docs/decisions/0011-bema-admin.md). Rendered inert with a
+                    title rather than dropped, same convention as ParcelRowActions' pending
+                    actions below. */}
+                <span className={s.headerPending} title="Not implemented yet">
+                  Customer account
+                </span>
+
                 <Link className={s.headerLink} href={routes.bema.userEdit(group.user.id)} target="_blank">
                   Customer info
                 </Link>
@@ -125,6 +141,29 @@ export function ParcelGroupCard({
                 >
                   All parcels
                 </Link>
+
+                {/* Legacy: "Generate Invoice" while any parcel in the shipment is
+                    uninvoiced, else "View Invoice" when the invoiced ones all share one
+                    invoice — neither statements/invoicing screen is built yet
+                    (../statements/invoice-generate.cfm / invoice-view.cfm), so both render
+                    as pending, matching ParcelRowActions' own "View Invoice" placeholder. */}
+                {hasUninvoiced ? (
+                  <span className={s.headerPending} title="Not implemented yet">
+                    Generate Invoice
+                  </span>
+                ) : (
+                  singleInvoiceId && (
+                    <span className={s.headerPending} title="Not implemented yet">
+                      View Invoice
+                    </span>
+                  )
+                )}
+
+                {/* Legacy's group "Print" opens ../parcels/parcels-print.cfm for the ticked
+                    rows in this shipment — not built yet either. */}
+                <span className={s.headerPending} title="Not implemented yet">
+                  Print
+                </span>
               </div>
             </th>
           </tr>

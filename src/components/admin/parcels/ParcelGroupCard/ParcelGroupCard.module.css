@@ -109,6 +109,13 @@
   text-decoration: underline;
 }
 
+.headerPending {
+  font-size: 11px;
+  color: #aaa;
+  white-space: nowrap;
+  cursor: default;
+}
+
 .center {
   text-align: center;
 }

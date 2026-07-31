@@ -307,6 +307,16 @@ why).
       sends an explicit `RECEIVED_BY_ANY` sentinel instead (`src/lib/parcels/constants.ts`).
       Full root-cause (a legacy HTML-form accident this schema has no equivalent of) in
       `docs/findings.md`'s "Parcels list Received By: Any" entry.
+- [x] **Parcels list: shipment-card header was missing half its action row.** `ParcelGroupCard`
+      had Group pay, Code, Customer info and All parcels, but silently dropped legacy's
+      "Customer account" (login-as-customer — same open design question as the row-level
+      "Login as user" in `UserListPage`), "Generate Invoice"/"View Invoice", and "Print" —
+      not decided against, just never added. All three now render as inert placeholders with
+      a title, matching the convention `ParcelRowActions` already established for the exact
+      same kind of gap (target screen not built yet) rather than being dropped outright.
+      Also fixed a latent dead `className={s.headerActions}` reference on that row's `<th>`
+      (a CSS Modules class that never existed, caught once `bun run css-types` was re-run —
+      harmless at runtime, just never applied).
 
 - [x] **Parcel edit screen** (`bema/parcels/parcels-update.cfm` + `views/parcels/
       vwParcelsUpdate.cfm`, ~1,900 lines between them — the item flagged as "the big one" in
