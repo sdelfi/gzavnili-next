@@ -260,6 +260,12 @@ file for scope/sequencing.
 - [ ] Remaining public/marketing pages (services, cargo, courier, pricing, FAQ, legal/customs, news)
 - [ ] Public unauthenticated tracking page wired to real Postgres data (schema now exists,
       per above — this page is still currently just a UI shell/modal, not wired up)
+- [ ] `contact.html`: currently listed in `routes.ts`'s `StaticPageSlug` as if it were a
+      generic admin-authored Site Pages CMS page, but legacy actually serves it from its own
+      dedicated template (`../http/views/contact.html`), not the CMS content system. Needs
+      checking against that legacy template and porting as its own page/component rather
+      than assumed to be CMS-driven content. Not started — flagged only, per explicit
+      instruction not to implement yet.
 
 ## Phase 4 — bema admin (CSR) — in progress
 
