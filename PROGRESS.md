@@ -269,6 +269,22 @@ bema builds on. See `docs/decisions/0011-bema-admin.md` for the full research/de
 writeup (legacy `edit_users.cfm`/`users.cfm` behavior, what was deliberately simplified,
 why).
 
+- [x] **Password hashing is runtime-agnostic** (`src/lib/auth/password.ts`): `Bun.password`
+      → argon2id via `hash-wasm`. Not a portability preference — a real outage: `next dev`/
+      `next start` run route handlers under **Node** even when the server is launched with
+      `bun`, so `Bun` was undefined there and every login 500'd with `ReferenceError: Bun is
+      not defined`. bema auth did not work at all outside a Bun-native server. Chose pure
+      WASM over a native addon (`@node-rs/argon2`) because `hash-wasm` inlines its WASM as
+      base64 inside plain JS — nothing to mark external to the bundler, no per-platform
+      prebuilt `.node`, and it breaks the same way `Bun.password` did if the runtime changes.
+      Cost parameters deliberately match Bun's argon2id defaults exactly (m=65536 KiB, t=2,
+      p=1, 32-byte output), so the swap is invisible: **existing hashes keep verifying** and
+      no re-hash-on-login migration is needed. Verified under both runtimes against a running
+      dev server: login with a hash written by the old `Bun.password` code succeeds, a
+      password change rewrites it in the identical PHC format, login with the new password
+      succeeds and the old one 401s, and the idle-lock `check-password` endpoint still
+      accepts both the full and the short password and rejects a wrong one.
+
 - [x] **Parcels list** (`bema/parcels/parcels.cfm` + `views/parcels/vwParcels_work2.cfm` — the
       live pair of four near-identical copies; see `docs/decisions/0015-bema-parcels-list.md`
       for how that was established and for the full port/divergence writeup). The whole
@@ -490,13 +506,7 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       (a local Postgres + dev server + headless Chromium run, see the parcels entry above),
       still outstanding for the screens built before it: login form, users list, create/edit
       forms, pricing rules. The same throwaway-Postgres setup makes this cheap now.
-      Separately: **`Bun.password` is unavailable inside the Next.js runtime** — `next dev`
-      runs the route handlers under Node even when started with `bun`, so
-      `/api/bema/auth/login` 500s with `ReferenceError: Bun is not defined`
-      (`src/lib/auth/password.ts:19`). Pre-existing, found while smoke-testing parcels, and
-      it means **bema login does not work at all** outside a Bun-native server. Needs a
-      runtime-agnostic KDF (e.g. `@node-rs/argon2`) or `export const runtime` pinning —
-      worth fixing before anything else here.
+      (The `Bun.password` bug this item used to also carry is fixed — see the entry below.)
 - [ ] **Parcels screens the list links out to**, all rendered inert with a "Not implemented
       yet" title on the row's action column rather than dropped: parcel edit
       (`vwParcelsUpdate.cfm`, ~1,400 lines — the big one), parcel view, parcel print, the
