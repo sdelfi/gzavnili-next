@@ -5,6 +5,12 @@
   min-width: 0;
 }
 
+.inline {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
 .label {
   font-size: 12px;
   font-weight: 600;

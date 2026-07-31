@@ -108,7 +108,7 @@ html .rselect__control {
  * Same skin, smaller box; nothing else changes.
  */
 html .rselect-sm .rselect__control {
-  min-height: 30px;
+  min-height: 32px;
 }
 
 .rselect-sm .rselect__value-container {

@@ -1,4 +1,5 @@
 import { Alert } from '@/components/ui/Alert';
+import { PageHeading } from '@/components/ui/PageHeading';
 
 // Stub for the legacy "View Statement" icon-link
 // (`http/bema/statements/statement.cfm?userid=...`) — the statements module itself isn't
@@ -8,7 +9,7 @@ export default async function UserStatementPage({ params }: { params: Promise<{ 
   const { id } = await params;
   return (
     <div>
-      <h1>Statement</h1>
+      <PageHeading>Statement</PageHeading>
       <Alert variant="error">Not implemented yet (customer id: {id}).</Alert>
     </div>
   );

@@ -70,7 +70,7 @@ export function ParcelAddPaymentSection({
           Add Parcel
         </Button>
 
-        <Field label="Payment method 1:" width="lg">
+        <Field label="Payment method 1:" width="lg" inline>
           <Select
             instanceId="batch-paymethod1"
             size="sm"
@@ -80,7 +80,7 @@ export function ParcelAddPaymentSection({
             error={errors.paymentMethod1}
           />
         </Field>
-        <Field label="Amount:" htmlFor="batch-payamount1">
+        <Field label="Amount:" htmlFor="batch-payamount1" inline>
           <Input
             id="batch-payamount1"
             value={form.paymentAmount1}
@@ -89,7 +89,7 @@ export function ParcelAddPaymentSection({
           />
         </Field>
 
-        <Field label="Payment method 2:" width="lg">
+        <Field label="Payment method 2:" width="lg" inline>
           <Select
             instanceId="batch-paymethod2"
             size="sm"
@@ -99,7 +99,7 @@ export function ParcelAddPaymentSection({
             error={errors.paymentMethod2}
           />
         </Field>
-        <Field label="Amount:" htmlFor="batch-payamount2">
+        <Field label="Amount:" htmlFor="batch-payamount2" inline>
           <Input
             id="batch-payamount2"
             value={form.paymentAmount2}
@@ -108,7 +108,7 @@ export function ParcelAddPaymentSection({
           />
         </Field>
 
-        <Field label="Price Total:" htmlFor="batch-pricetotal">
+        <Field label="Price Total:" htmlFor="batch-pricetotal" inline>
           <Input
             id="batch-pricetotal"
             value={form.priceTotal}
@@ -117,7 +117,7 @@ export function ParcelAddPaymentSection({
           />
         </Field>
 
-        <Field label="Notifications:" width="lg">
+        <Field label="Notification types:" width="lg" inline>
           <Checkbox
             label="Via mail"
             checked={form.notifications.includes('Mail')}

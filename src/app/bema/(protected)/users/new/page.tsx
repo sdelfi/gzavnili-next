@@ -3,6 +3,7 @@
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { UserForm } from '@/components/admin/users/UserForm';
+import { PageHeading } from '@/components/ui/PageHeading';
 
 function NewUserPageInner() {
   const searchParams = useSearchParams();
@@ -10,7 +11,7 @@ function NewUserPageInner() {
   const returnTo = searchParams.get('returnTo') ?? undefined;
   return (
     <div>
-      <h1>Add {accountType === 'BemaUser' ? 'BEMA User' : 'Customer'}</h1>
+      <PageHeading>Add {accountType === 'BemaUser' ? 'BEMA User' : 'Customer'}</PageHeading>
       <UserForm accountType={accountType} returnTo={returnTo} />
     </div>
   );

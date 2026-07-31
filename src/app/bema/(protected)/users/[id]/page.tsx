@@ -3,6 +3,7 @@
 import { Suspense, use, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Alert } from '@/components/ui/Alert';
+import { PageHeading } from '@/components/ui/PageHeading';
 import { UserForm, type UserFormValues } from '@/components/admin/users/UserForm';
 import { EMPTY_ADDRESS, type AddressFormValues } from '@/components/admin/users/AddressFields';
 import type { AdminRole } from '@/generated/prisma/client';
@@ -55,7 +56,7 @@ function EditUserPageInner({ params }: { params: Promise<{ id: string }> }) {
 
   return (
     <div>
-      <h1>Edit {user.accountType === 'BemaUser' ? 'BEMA User' : 'Customer'}</h1>
+      <PageHeading>Edit {user.accountType === 'BemaUser' ? 'BEMA User' : 'Customer'}</PageHeading>
       <UserForm accountType={user.accountType} initialValues={initialValues} userId={user.id} returnTo={returnTo} />
     </div>
   );

@@ -3,6 +3,7 @@
 import { Suspense, use, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Alert } from '@/components/ui/Alert';
+import { PageHeading } from '@/components/ui/PageHeading';
 import { PageForm, type PageFormValues } from '@/components/admin/pages/PageForm';
 import { getPage } from '@/lib/api/bema/pages';
 
@@ -26,7 +27,7 @@ function EditPageInner({ params }: { params: Promise<{ id: string }> }) {
 
   return (
     <div>
-      <h1>Edit Page</h1>
+      <PageHeading>Edit Page</PageHeading>
       <PageForm
         initialValues={{
           ...page,
