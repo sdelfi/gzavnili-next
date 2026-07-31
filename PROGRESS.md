@@ -702,6 +702,23 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       (wrapping internally) on the left, GO + both export links stretching the full height of
       that block on the right — instead of GO/export just trailing whichever line the last
       field wrapped onto.
+- [x] Corrected "Add Parcel" (batch) visual parity — the previous pass's guess (no bordered
+      sections anywhere on this screen) was wrong; a follow-up screenshot showed legacy has two
+      real bordered/backed panels here. Added the missing one at the top: `ParcelTripInfo`, the
+      EXPRESS/REGULAR/CARGO ship-day/estimate/AVB block, backed by a new read-only
+      `/api/bema/config/trip-info` route (Cargo fields always blank — no config columns for it,
+      same as legacy). Rebuilt the bottom panel to match legacy's actual grouping: "Add Parcel"
+      + both Payment method pairs + Price Total + notifications + the batch's own "Save" button
+      (moved out of `ParcelAddPage`'s standalone row) all in one bordered panel, Save spanning
+      its full height on the right. `ParcelDraftTable` no longer renders its own "Add Parcel"
+      header — that button moved into the payment panel with everything else legacy groups it
+      with. Flattened `ParcelAddCustomerSection` back to borderless (legacy really doesn't box
+      it) but fixed its first field's label ("Search:" → "Customer:", matching legacy) and gave
+      its Save button the same full-height-column treatment. Deleted `ui/FormSection` — it
+      existed only for the incorrect all-flat guess and had zero callers once corrected. Also
+      dropped `ParcelAddPage.module.css`'s `max-width: 1100px`, which had no legacy basis and
+      made the page narrower than the rest of bema. See `docs/decisions/0017-bema-add-parcel.md`
+      ("Visual-parity pass" / "Corrected layout").
 - [ ] **Parcels: one thing worth confirming with the client** before it hardens into
       behaviour — the Debt filter is a *not-equal* match on uninvoiced parcels (the value `0`
       meaning "has a debt figure at all"), faithfully ported but unintuitive enough that it may

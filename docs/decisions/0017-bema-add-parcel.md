@@ -148,24 +148,50 @@ rather than source, so it's a fidelity pass on structure/labels, not a re-verifi
   `PHONE2` columns use the same fields), not guessed fresh. The per-row `Price` column is
   dropped — legacy's table doesn't have one; the grand total already shown below the table
   (`Price Total`) is legacy's only per-batch price display.
-- **The bordered "Customer"/"Payment" panels are gone.** They were never a documented legacy
-  behaviour — `findings.md`/this doc describe the *fields*, never a bordered-box layout — and
-  were in fact just this codebase's own incidental convention (identical CSS hand-rolled twice).
-  Replaced with `ui/FormSection` (see below), a flat `<fieldset>`/`<legend>` with no border,
-  closer to legacy's flowing unboxed field rows.
+- **The bordered "Customer"/"Payment" panels were removed, then reinstated correctly.** This
+  pass's first attempt (below) guessed, from a screenshot alone, that legacy had *no* bordered
+  boxes anywhere on this screen and flattened both. A follow-up screenshot comparison showed
+  that guess was wrong: legacy has exactly two bordered/backed panels on this screen — the
+  EXPRESS/REGULAR/CARGO trip-info block at the very top, and one panel at the very bottom that
+  contains the "Add Parcel" button, both "Payment method" pairs, "Price Total", the
+  notification checkboxes, *and* the batch's own "Save" button together — not two separate
+  blocks. The "Customer" fields in between have no border and no section heading in legacy at
+  all; "Customer:" is just that row's first field's own label (this project had it labelled
+  "Search:", another mismatch, now fixed), not a section title.
 
-**New shared component**: `src/components/ui/FormSection/` — a bordered-panel-free
-`<fieldset>`/`<legend>` wrapper, extracted per AGENTS.md's "if a pattern shows up in a second
-place" rule (`ParcelAddCustomerSection` and `ParcelAddPaymentSection` had hand-rolled the exact
-same fieldset/border/legend CSS independently). It only owns the section chrome; each caller
-keeps its own field-row layout.
+**Corrected layout** (2026-07-31, same day as the flattening this replaces):
+- `ParcelTripInfo` (new component, `src/components/admin/parcels/ParcelTripInfo/`) — the
+  EXPRESS/REGULAR/CARGO panel, reading `config.dtExpressShip`/`dtExpressEst`/`expAwb` and the
+  `dtRegular*`/`regAwb` equivalents via a new read-only `/api/bema/config/trip-info` route
+  (gated the same as the parcels list, not `CONFIG_ROLES`, since that route is
+  Administrator-only for editing the popup config and this is read-only trip info every
+  operator needs). Cargo has no equivalent config columns in this schema or in legacy, so its
+  three fields are always blank — matching legacy exactly, not filled with a guess. Legacy's
+  own label is "AVB", not "AWB" — kept as the client-visible typo/abbreviation it is, not
+  "corrected".
+- `ParcelAddCustomerSection` — flat again (no border, no legend), first field relabelled
+  "Search:" → "Customer:", and its "Save"/"Update" button now stretches the full height of the
+  wrapped field rows on the right (the same two-column technique as the parcels list's GO/
+  export column, `docs/decisions/0015`), rather than sitting on its own line below the fields.
+- `ParcelAddPaymentSection` — rebuilt as the one bordered/backed panel legacy actually has here:
+  "Add Parcel" (now owned by this component, not `ParcelDraftTable`, which no longer renders
+  its own header/button) sits inline with the payment fields on the left, and "Save" (the
+  batch's actual submit — moved out of `ParcelAddPage`'s own standalone button row) spans the
+  panel's full height on the right, same technique again.
+- **`ui/FormSection` — added in the flattening pass, deleted again the same day.** It existed
+  to give both sections an identical *borderless* fieldset/legend look; once the borders came
+  back (correctly, on the Payment panel) and the Customer section turned out to need no legend
+  at all, it had zero remaining callers. Removed rather than kept around unused.
+- Page width: `ParcelAddPage.module.css`'s `max-width: 1100px` on the page wrapper was also
+  dropped — nothing in legacy caps this screen's width, and it was making the page visibly
+  narrower than the parcels list next to it.
 
-**Open — worth a real style pass, not something this change resolves**: the bema admin has no
-written visual-style convention (field density/widths, whether a section gets a border, row vs.
-grid layout) — `ui/Field`'s `sm`/`md`/`lg` widths and now `ui/FormSection` are shared, but
-different screens still each choose their own field grouping/spacing ad hoc, and the parcels
-list's own filter bar (`ParcelFilters.module.css`) uses a third, unrelated layout approach
-(`nowrap` + horizontal scroll, chosen there specifically to keep every legacy filter field on
-one line — see `docs/decisions/0015-bema-parcels-list.md`). Worth converging on one documented
-admin-form layout language before more screens get built, rather than each screen re-deriving
-its own — flagged here rather than decided unilaterally.
+**Open — worth a real style pass, not something this change resolves**: the bema admin still
+has no written visual-style convention (when a section gets a border vs. stays flat, field
+density/widths, row vs. grid layout) — every judgment above came from screenshot comparison,
+not a documented rule, and got one entire round wrong before this correction. `ui/Field`'s
+`sm`/`xs`/`md`/`lg` widths are shared; the "wrap left, full-height action column on the right"
+layout is now used three times (parcels list filters, this screen's Customer section, this
+screen's Payment panel) but isn't itself a named/shared component yet. Worth converging into
+one documented pattern before more screens get built, rather than each screen re-deriving it —
+flagged here rather than decided unilaterally.

@@ -24,7 +24,7 @@ export function Checkbox({
   return (
     <label className={s.wrapper}>
       {input}
-      <span>{label}</span>
+      <span className={s.label}>{label}</span>
     </label>
   );
 }

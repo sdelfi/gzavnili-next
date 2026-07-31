@@ -13,3 +13,7 @@
   cursor: pointer;
   accent-color: #337ab7;
 }
+
+.label {
+  user-select: none;
+}

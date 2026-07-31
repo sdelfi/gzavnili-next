@@ -5,8 +5,8 @@
   background: #f4f4f5;
   border: 1px solid #e3e3e3;
   border-radius: 6px;
-  padding: 16px 20px;
-  margin-bottom: 16px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
 }
 
 .column {
@@ -14,12 +14,13 @@
   flex: 1;
 }
 
-.column p {
+.column .p {
   margin: 4px 0;
+  font-size: 12px;
 }
 
 .label {
   margin: 0 0 8px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
 }

@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Pagination } from '@/components/ui/Pagination';
+import { PageHeading } from '@/components/ui/PageHeading';
 import { useBemaAuth } from '@/components/admin/AuthProvider';
 import { ParcelFilters } from '@/components/admin/parcels/ParcelFilters';
 import { ParcelExtraFilters } from '@/components/admin/parcels/ParcelExtraFilters';

@@ -34,9 +34,9 @@ export function ParcelTripInfo() {
         return (
           <div key={key} className={s.column}>
             <h2 className={s.label}>{label}</h2>
-            <p>Ship day: {formatDate(trip?.shipDate)}</p>
-            <p>Estimate: {formatDate(trip?.estimateDate)}</p>
-            <p>AVB: {trip?.awb ?? ''}</p>
+            <p className={s.p}>Ship day: {formatDate(trip?.shipDate)}</p>
+            <p className={s.p}>Estimate: {formatDate(trip?.estimateDate)}</p>
+            <p className={s.p}>AVB: {trip?.awb ?? ''}</p>
           </div>
         );
       })}
