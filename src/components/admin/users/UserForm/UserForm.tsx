@@ -190,8 +190,9 @@ export function UserForm({
   }
 
   return (
-    <form className={s.form} onSubmit={handleSubmit}>
-      <ErrorList errors={errors} />
+    <>
+      <form className={s.form} onSubmit={handleSubmit}>
+        <ErrorList errors={errors} />
 
       <CollapsibleSection title="Account Information">
         <div className={s.grid}>
@@ -372,8 +373,9 @@ export function UserForm({
           Cancel
         </Button>
       </div>
+      </form>
 
       {userId && accountType === 'Customer' && <PricingRulesSection userId={userId} />}
-    </form>
+    </>
   );
 }

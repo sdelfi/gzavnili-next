@@ -618,7 +618,9 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       customer auth realm above is the prerequisite and now exists, but the actual bema
       endpoint that mints a session for a given customer id isn't built yet. Scope as its own
       small follow-up now that the realm exists. (Asked the client 2026-07-30 whether to
-      build it now; awaiting confirmation before starting.)
+      build it now; awaiting confirmation before starting.) Same gap now also placeholdered
+      as "Customer account" on the parcels-list shipment-card header (`ParcelGroupCard`,
+      2026-08-01) — one endpoint fixes both call sites.
 - [ ] Customer-auth follow-ups (see `docs/decisions/0012-customer-auth.md`): no `/account`
       dashboard yet (login/register redirect to home instead); no email-verification-on-
       register step (accounts auto-confirm); no SMS password recovery or Facebook OAuth
@@ -699,7 +701,11 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       client's instruction was fields-and-logic-as-legacy across the board.
 - [ ] Parcel view, parcel print, the statements module's invoice/history popups, and the
       messages module's Send/Resend SMS. Also the edit form's "Invoice File" upload/preview
-      row, which belongs to the files module.
+      row, which belongs to the files module. Same set now also pending at the shipment-card
+      (group) header level, not just per-row — `ParcelGroupCard`'s "Generate Invoice"/"View
+      Invoice" and "Print" buttons (2026-08-01) — one statements module and one print/scan
+      module unblocks both the row- and group-level placeholders together, not two separate
+      efforts.
 - [x] Parcels list "Export Airway" (`export=2` → `airway.cfm`) link and endpoint
       (`src/app/api/bema/parcels/export-airway/route.ts`). No legacy source was recoverable;
       legacy's own version never populates any rows (confirmed against the running site) — the
