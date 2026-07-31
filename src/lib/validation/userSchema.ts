@@ -98,11 +98,30 @@ export const listUsersQuerySchema = z.object({
   dir: z.enum(['asc', 'desc']).default('asc'),
 });
 
-export const pricingRuleSchema = z.object({
-  serviceType: z.enum(['Regular', 'Express']),
-  mode: z.enum(['FixedPrice', 'Discount']),
-  value: z.number().positive(),
-  validFrom: z.string().min(1),
-  validTo: z.string().nullable().optional(),
-  notes: z.string().max(255).nullable().optional(),
+// Discount is a percentage (0-100); FixedPrice is an unbounded USD/KG rate — matches the
+// legacy add-rule form's client-side check (`discountPercent between 0 and 100`).
+export const pricingRuleSchema = z
+  .object({
+    serviceType: z.enum(['Regular', 'Express', 'Cargo']),
+    mode: z.enum(['FixedPrice', 'Discount']),
+    value: z.number().positive(),
+    validFrom: z.string().min(1),
+    validTo: z.string().nullable().optional(),
+    notes: z.string().max(255).nullable().optional(),
+  })
+  .refine((data) => data.mode !== 'Discount' || data.value <= 100, {
+    message: 'Discount must be between 0 and 100.',
+    path: ['value'],
+  });
+
+// Global "Pricing Rules Administration" screen's filter bar (`vwGlobalPricingRulesAdmin.cfm`).
+export const listAllPricingRulesQuerySchema = z.object({
+  serviceType: z.enum(['Regular', 'Express', 'Cargo']).optional(),
+  mode: z.enum(['FixedPrice', 'Discount']).optional(),
+  validFromFrom: z.string().optional(),
+  validFromTo: z.string().optional(),
+  customerId: z.string().uuid().optional(),
+  activeOnly: z.enum(['true', 'false']).default('true'),
+  page: z.coerce.number().int().min(1).default(1),
+  perPage: z.coerce.number().int().min(1).max(100).default(25),
 });

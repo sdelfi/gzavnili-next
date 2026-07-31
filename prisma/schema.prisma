@@ -229,6 +229,7 @@ model MessageType {
 enum ServiceType {
   Regular @map("regular")
   Express @map("express")
+  Cargo   @map("cargo")
 
   @@map("service_type")
 }
@@ -246,8 +247,12 @@ enum PricingRuleMode {
 // notes the legacy team already made ad hoc raw-SQL schema changes (`database/
 // migration_add_audit_columns.sql`, `migration_add_overlap_trigger.sql`) — i.e. this table
 // already exists in the legacy DB and predates the parcels-domain redesign generally.
-// "Active"/"Expired" status shown in the legacy UI is computed from `validFrom`/`validTo`
-// vs. now(), not a stored column — no trigger needed for something this cheap to derive.
+// The legacy "Status" column (Active/Inactive) is keyed purely off `IsActive`/`DeletedDate`,
+// independent of whether `validFrom`/`validTo` has actually expired — that's `isActive`
+// below, not derived. Legacy also enforces "no overlapping active rule for the same
+// user+serviceType" via a DB trigger (`database/migration_add_overlap_trigger.sql`); this
+// app has no direct-DB write path, so the same check is done in the API route layer instead
+// (see docs/findings.md) rather than as a hand-authored Postgres trigger.
 model CustomerPricingRule {
   id          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId      String          @map("user_id") @db.Uuid
@@ -260,6 +265,12 @@ model CustomerPricingRule {
   validFrom   DateTime        @map("valid_from") @db.Date
   validTo     DateTime?       @map("valid_to") @db.Date
   notes       String?
+
+  // Soft-delete flag — legacy "Remove" deactivates (IsActive=0) rather than deleting, and
+  // "Restore" flips it back; a hard DELETE never happens in the legacy admin UI.
+  isActive  Boolean   @default(true) @map("is_active")
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+  deletedBy String?   @map("deleted_by")
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   // Free-text username of the acting admin, not an FK — matches the legacy "Created By"/

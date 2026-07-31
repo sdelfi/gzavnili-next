@@ -6,18 +6,21 @@ import { Select } from '@/components/ui/Select';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
-import { createPricingRule, deletePricingRule, listPricingRules } from '@/lib/api/bema/pricingRules';
+import { createPricingRule, deletePricingRule, listPricingRules, restorePricingRule } from '@/lib/api/bema/pricingRules';
 import { ApiError } from '@/lib/api/http';
 import s from './PricingRulesSection.module.css';
 
 type PricingRule = {
   id: string;
-  serviceType: 'Regular' | 'Express';
+  serviceType: 'Regular' | 'Express' | 'Cargo';
   mode: 'FixedPrice' | 'Discount';
   value: string;
   validFrom: string;
   validTo: string | null;
   notes: string | null;
+  // Soft-delete flag — legacy "Remove"/"Restore" toggle this, not a real row delete. The
+  // Status column keys off this alone, not the valid-date window (see `isWithinValidWindow`).
+  isActive: boolean;
   createdAt: string;
   createdBy: string | null;
   updatedAt: string;
@@ -27,6 +30,7 @@ type PricingRule = {
 const SERVICE_TYPE_OPTIONS = [
   { value: 'Regular', label: 'Regular' },
   { value: 'Express', label: 'Express' },
+  { value: 'Cargo', label: 'Cargo' },
 ];
 const MODE_OPTIONS = [
   { value: 'FixedPrice', label: 'Fixed Price' },
@@ -35,7 +39,7 @@ const MODE_OPTIONS = [
 
 const EMPTY_RULE = { serviceType: '', mode: '', value: '', validFrom: '', validTo: '', notes: '' };
 
-function isActive(rule: PricingRule) {
+function isWithinValidWindow(rule: PricingRule) {
   const now = new Date();
   return new Date(rule.validFrom) <= now && (!rule.validTo || new Date(rule.validTo) >= now);
 }
@@ -52,17 +56,25 @@ export function PricingRulesSection({ userId }: { userId: string }) {
   const [submitting, setSubmitting] = useState(false);
 
   const load = useCallback(() => {
-    return listPricingRules<PricingRule>(userId, activeOnly).then((data) => setRules(data.rules));
-  }, [userId, activeOnly]);
+    return listPricingRules<PricingRule>(userId).then((data) => setRules(data.rules));
+  }, [userId]);
 
   useEffect(() => {
     load().catch((err) => setError(err instanceof Error ? err.message : 'Failed to load pricing rules.'));
   }, [load]);
 
+  const visibleRules = activeOnly ? rules.filter((r) => r.isActive && isWithinValidWindow(r)) : rules;
+
   async function handleAddRule(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitting(true);
     setError(null);
+
+    if (form.mode === 'Discount' && (Number(form.value) < 0 || Number(form.value) > 100)) {
+      setError('Discount must be between 0 and 100.');
+      return;
+    }
+
+    setSubmitting(true);
     try {
       await createPricingRule(userId, { ...form, value: Number(form.value), validTo: form.validTo || null });
       setForm(EMPTY_RULE);
@@ -81,9 +93,21 @@ export function PricingRulesSection({ userId }: { userId: string }) {
     }
   }
 
-  async function handleDelete(ruleId: string) {
+  async function handleDeactivate(ruleId: string) {
     await deletePricingRule(userId, ruleId);
     await load();
+  }
+
+  async function handleRestore(ruleId: string) {
+    setError(null);
+    try {
+      await restorePricingRule(userId, ruleId);
+      await load();
+    } catch (err) {
+      setError(err instanceof ApiError && typeof err.body === 'object' && (err.body as { error?: string })?.error
+        ? (err.body as { error: string }).error
+        : 'Failed to restore rule.');
+    }
   }
 
   const columns: Column<PricingRule>[] = [
@@ -96,7 +120,7 @@ export function PricingRulesSection({ userId }: { userId: string }) {
       render: (r) => `${r.validFrom.slice(0, 10)} – ${r.validTo ? r.validTo.slice(0, 10) : '∞'}`,
     },
     { key: 'notes', label: 'Notes', render: (r) => r.notes ?? '' },
-    { key: 'status', label: 'Status', render: (r) => (isActive(r) ? 'Active' : 'Expired') },
+    { key: 'status', label: 'Status', render: (r) => (r.isActive ? 'Active' : 'Inactive') },
     { key: 'createdAt', label: 'Created', render: (r) => r.createdAt.slice(0, 10) },
     { key: 'createdBy', label: 'Created By', render: (r) => r.createdBy ?? '' },
     { key: 'updatedAt', label: 'Modified', render: (r) => r.updatedAt.slice(0, 10) },
@@ -104,11 +128,16 @@ export function PricingRulesSection({ userId }: { userId: string }) {
     {
       key: 'actions',
       label: 'Actions',
-      render: (r) => (
-        <Button type="button" variant="danger" onClick={() => handleDelete(r.id)}>
-          Remove
-        </Button>
-      ),
+      render: (r) =>
+        r.isActive ? (
+          <Button type="button" variant="danger" onClick={() => handleDeactivate(r.id)}>
+            Deactivate
+          </Button>
+        ) : (
+          <Button type="button" variant="warning" onClick={() => handleRestore(r.id)}>
+            Restore
+          </Button>
+        ),
     },
   ];
 
@@ -123,7 +152,7 @@ export function PricingRulesSection({ userId }: { userId: string }) {
         {activeOnly ? 'Show All Rules' : 'Showing active rules only'}
       </Button>
 
-      <Table columns={columns} rows={rules} getRowKey={(r) => r.id} emptyMessage="No pricing rules defined yet" />
+      <Table columns={columns} rows={visibleRules} getRowKey={(r) => r.id} emptyMessage="No pricing rules defined yet" />
 
       <form className={s.addForm} onSubmit={handleAddRule}>
         <h4 className={s.addHeading}>Add New Pricing Rule</h4>
@@ -155,7 +184,7 @@ export function PricingRulesSection({ userId }: { userId: string }) {
               value={form.value}
               onChange={(e) => setForm((f) => ({ ...f, value: e.target.value }))}
             />
-            <span className={s.fieldHint}>USD per KG</span>
+            <span className={s.fieldHint}>{form.mode === 'Discount' ? '% Discount (0-100)' : 'USD per KG'}</span>
           </label>
           <label className={s.field}>
             From Date
