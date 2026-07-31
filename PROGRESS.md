@@ -269,6 +269,42 @@ bema builds on. See `docs/decisions/0011-bema-admin.md` for the full research/de
 writeup (legacy `edit_users.cfm`/`users.cfm` behavior, what was deliberately simplified,
 why).
 
+- [x] **Parcel edit screen** (`bema/parcels/parcels-update.cfm` + `views/parcels/
+      vwParcelsUpdate.cfm`, ~1,900 lines between them — the item flagged as "the big one" in
+      the parcels follow-ups below). Full field set in legacy's own five groupings, each its
+      own component: `ParcelDetailsSection` (tracking #s with the live duplicate check,
+      customer picker, trip date, service, AWB, content, store), `ParcelReceiverSection`
+      (receiver dropdown that refills the address block, GE-citizen name pairs, delivery
+      office), `ParcelCustomerSection`, `ParcelPricingSection` (weight/value/dimensions →
+      dimensional weight → suggested price, partial payment, mark paid/unpaid, location,
+      group, notes) and `ParcelTrackingDatesSection` (all 12 milestones + received-by/
+      delivered-by). Validation ports `validation/bema/ParcelUpdate.cfc` plus the two checks
+      the controller does inline (notes required when weight or amount changes; payment
+      method required when marking paid). The save is the same five-part sequence legacy
+      does — parcel, receiver (created when "< New Receiver >"), the sender's name and
+      billing address, delivery-office assignment, then a `paid`/`unpaid` operation — but
+      the first four are one transaction. New: `src/lib/services/{parcelUpdate,parcelDetail}
+      .ts`, `src/lib/parcels/{form,pricing}.ts`, `src/lib/validation/zodErrors.ts`,
+      `GET`/`PATCH` on `/api/bema/parcels/[id]`, plus `/api/bema/parcels/[id]/clear-hold`,
+      `/api/bema/parcels/check-tracking`, `/api/bema/receivers`,
+      `/api/bema/delivery-offices`. `ui/Textarea` promoted to the shared set (fifth
+      hand-rolled `<textarea>` in the codebase). The list's Edit action is now a real link,
+      threading `returnTo` so a save lands back on the same filtered page.
+      **Legacy bugs fixed rather than reproduced** (full table in decision 0015): the save
+      had no transaction at all; `goWeight()` recalculated the price on every keystroke and
+      silently overwrote a hand-set Amount (now a suggestion with a "Use" button and its
+      reasoning shown); an `alert()` fired on every service/trip-date change; each receiver
+      selection cost a second request; zod's `flatten()` couldn't say which nested field
+      failed (`flattenIssues()` keys by dotted path now). **Divergences**: `isgecitizen` is
+      derived from whether a Georgian-script name exists (this schema has no such column);
+      legacy's hard-coded `officeid = 999` "Need delivery" pseudo-office can't round-trip
+      through a real FK and belongs in `delivery_offices` as data.
+      Verified end-to-end against the local Postgres + dev server: detail load, save,
+      each validation rule, duplicate-tracking 409, mark paid/unpaid, and — in headless
+      Chromium — receiver switching refilling the address, dimensional weight recomputing,
+      the price suggestion following the larger weight, and the delivery-office dropdown
+      loading.
+
 - [x] **Password hashing is runtime-agnostic** (`src/lib/auth/password.ts`): `Bun.password`
       → argon2id via `hash-wasm`. Not a portability preference — a real outage: `next dev`/
       `next start` run route handlers under **Node** even when the server is launched with
@@ -507,12 +543,14 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       still outstanding for the screens built before it: login form, users list, create/edit
       forms, pricing rules. The same throwaway-Postgres setup makes this cheap now.
       (The `Bun.password` bug this item used to also carry is fixed — see the entry below.)
-- [ ] **Parcels screens the list links out to**, all rendered inert with a "Not implemented
-      yet" title on the row's action column rather than dropped: parcel edit
-      (`vwParcelsUpdate.cfm`, ~1,400 lines — the big one), parcel view, parcel print, the
-      statements module's invoice/history popups, and the messages module's Send/Resend SMS.
-      Also "Export Airway" (`export=2` → `airway.cfm`), which is a document for the airline
-      rather than a view of the list.
+- [ ] **Parcels screens still not built**, all rendered inert with a "Not implemented yet"
+      title on the row's action column rather than dropped: **add parcel** (legacy serves it
+      from the same file as edit via `nrc=1`, with its own defaults, button row and "Save &
+      Add Another" flow — the natural next step now that edit exists and its sections are
+      reusable), parcel view, parcel print, the statements module's invoice/history popups,
+      and the messages module's Send/Resend SMS. Also "Export Airway" (`export=2` →
+      `airway.cfm`), a document for the airline rather than a view of the list, and the edit
+      form's "Invoice File" upload/preview row, which belongs to the files module.
 - [ ] **Parcels: two things worth confirming with the client** before they harden into
       behaviour — (a) the Debt filter is a *not-equal* match on uninvoiced parcels (the value
       `0` meaning "has a debt figure at all"), faithfully ported but unintuitive enough that

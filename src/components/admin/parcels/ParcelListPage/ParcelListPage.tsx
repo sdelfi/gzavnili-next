@@ -85,6 +85,8 @@ export function ParcelListPage() {
   // on every render of an equal-but-new object.
   const filterKey = parcelFiltersToQuery(filters).toString();
   const requestKey = `${filterKey}#${reloadToken}`;
+  // Preserved across the edit round-trip so a save lands back on the same filtered page.
+  const returnTo = `${routes.bema.parcels()}?${filterKey}`;
   const loading = loadedKey !== requestKey;
 
   useEffect(() => {
@@ -302,6 +304,7 @@ export function ParcelListPage() {
           lariRate={lariRate}
           adminCountry={user?.billingAddress?.country ?? null}
           canOperate={canOperate}
+          returnTo={returnTo}
           showBuser={deliveryRequest}
         />
       ))}

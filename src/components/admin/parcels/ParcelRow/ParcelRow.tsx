@@ -77,6 +77,7 @@ export function ParcelRow({
   onDelete,
   onConfirmHold,
   lariRate,
+  returnTo,
   showBuser,
 }: {
   parcel: ParcelListItem;
@@ -86,6 +87,7 @@ export function ParcelRow({
   onDelete: () => void;
   onConfirmHold: () => void;
   lariRate: number | null;
+  returnTo: string;
   /** Delivery Request mode adds the column showing who took the parcel out. */
   showBuser: boolean;
 }) {
@@ -134,7 +136,7 @@ export function ParcelRow({
       {showBuser && <td className={s.wrap}>{parcel.buserName}</td>}
 
       <td>
-        <ParcelRowActions parcel={parcel} onDelete={onDelete} />
+        <ParcelRowActions parcel={parcel} returnTo={returnTo} onDelete={onDelete} />
       </td>
     </tr>
   );

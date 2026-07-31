@@ -1,4 +1,4 @@
-# 0015 — bema Parcels list: what was ported, and what was deliberately not
+# 0015 — bema Parcels: what was ported, and what was deliberately not
 
 The parcels screen is the heart of the bema panel — the one every operator lives in. This
 records the source it was ported from, the legacy behaviours found to be dead or broken along
@@ -48,7 +48,7 @@ dead earlier in this migration (see `PROGRESS.md`).
 | The `office` status filter's exclusion list differs between the count query and the page query (only the page query also excludes `region`), so the row count disagreed with the rows | One `buildParcelWhere()` shared by the count, the page and the export |
 | "Extra search"'s To-hour dropdown marks its selected option against `url.eh1`, so it never showed the hour actually applied | One state object per form; the control always shows what is applied |
 | "Extra search" repeats the main form's "Show:" per-page dropdown, and whichever form you submitted last wins | One per-page control, on the main form |
-| `?rid=…&status=notonhold` clears both hold flags **from a GET link**, executed inline at the top of the list page | `PATCH /api/bema/parcels/:id` with `{ clearHold: true }` |
+| `?rid=…&status=notonhold` clears both hold flags **from a GET link**, executed inline at the top of the list page | `POST /api/bema/parcels/:id/clear-hold` |
 | An agent's "only my parcels" scope is enforced by overwriting a URL param inside the view | Enforced server-side in the route handler, from the session role |
 | A bulk "office" operation silently drops parcels held by customs from the id list and reports nothing | Same rule, but the skipped ids and the reason come back in the response and are shown |
 | CSV export strips the delimiter out of values and wraps some columns in `="…"` to fight Excel's autoformatting | RFC 4180 quoting plus a UTF-8 BOM — values arrive intact, Georgian names included |
@@ -91,15 +91,50 @@ Postgres to act as the shadow database. Diffing two schema files also means the 
 `pg_trgm` GIN indexes are invisible to both sides, so no spurious `DROP INDEX` lines needed
 trimming.
 
+## The edit screen (`parcels-update.cfm` + `vwParcelsUpdate.cfm`)
+
+Ported as its own pass, after the list. Same field set, same five groupings legacy uses
+(parcel / receiver / customer / measurements+payment / tracking dates), same validation rules
+(`validation/bema/ParcelUpdate.cfc` plus the two checks the controller does inline), and the
+same five-part save: parcel, receiver (created if "< New Receiver >"), the sender's own name
+and billing address, the delivery-office assignment, and a `paid`/`unpaid` operation.
+
+### Fixed rather than reproduced
+
+| Legacy behaviour | What this port does |
+|---|---|
+| The save writes parcel, receiver, customer, office and payment one after another with **no transaction** — a failure halfway leaves a parcel pointing at a half-written receiver, or a customer renamed for a parcel that didn't save | The first four are one transaction; the paid/unpaid operation stays outside it deliberately, since it raises invoices and payments with their own transaction semantics |
+| `goWeight()` recalculates the price on **every keystroke** in weight or dimensions and overwrites whatever the operator typed into Amount, so a hand-set price cannot survive a later edit to the weight | The suggestion is computed and shown with its reasoning ("Regular — $8.00/kg, on dimensional weight 98.36 kg"); pressing **Use** applies it. Dimensional weight is still filled in automatically — it is derived from three numbers with no judgement in it |
+| `alert('Don\'t forget to check the AWB field')` fires on every Service/Trip Date change | An inline warning next to the AWB field. A modal that interrupts typing to say "remember something later" is the worst possible shape for that reminder |
+| Picking a receiver from the dropdown fetches that one receiver's address in a **second** request, per selection | The customer's receivers come back with their addresses in one request, so selecting fills the fields instantly |
+| Parcel Content is a dropdown plus a free-text box, switched by the literal stored value `"Other"` | One text field, with the dropdown as a shortcut into it — no sentinel value to round-trip |
+| Zod's `flatten()` (and legacy's flat message list) can't say *which* nested field failed | `flattenIssues()` keys every issue by its dotted path (`receiver.city`), so the failing field is the one that gets marked |
+
+### Deliberate divergences
+
+- **`isgecitizen` is derived, not stored.** Legacy keeps a flag on the receiver row; this
+  schema has no such column, so the checkbox is initialised from whether a Georgian-script
+  name is on file — which is the only thing the flag actually controls (which name pair is
+  required). Ticking it makes the GE pair required for that save.
+- **"Need delivery" (`officeid = 999`)** is a hard-coded pseudo-office legacy writes as if it
+  were a real office id. `parceloffice.office_id` is a real foreign key here, so it can't
+  round-trip. It is data, not code: if still wanted, it belongs in `delivery_offices` as a
+  row, after which it appears in the dropdown like any other.
+- **The `MR` agent rate (8.5/kg for Regular)** in `PricingHelper.js` is not carried over —
+  nothing in the legacy codebase sets the `userPref` it keys off, so it can never fire.
+  Related to `agentPrefix` being dead in the list query, above.
+
 ## Scope
 
-Built: the list itself — both search forms, all filters, sender/trip grouping, bulk
-operations, group pay, per-row delete and hold-clear, CSV export, the Delivery Request
-(`delreq`) slice, and the agent role restrictions.
+Built: the **list** — both search forms, all filters, sender/trip grouping, bulk operations,
+group pay, per-row delete and hold-clear, CSV export, the Delivery Request (`delreq`) slice,
+and the agent role restrictions. And the **edit screen**, per the section above.
 
 Not built (each is its own legacy screen, linked from the row's action column, and rendered
-inert with a "Not implemented yet" title rather than dropped): parcel edit
-(`vwParcelsUpdate.cfm`, ~1,400 lines), parcel view, parcel print, the statements module's
-invoice and history popups, and the messages module's Send/Resend SMS. "Export Airway"
-(`export=2` → `airway.cfm`) is a document for the airline rather than a view of this screen,
-and is also still to do.
+inert with a "Not implemented yet" title rather than dropped): **add parcel** (legacy serves
+it from the same file as edit via `nrc=1`, with its own defaults, button row and "Save & Add
+Another" flow), parcel view, parcel print, the statements module's invoice and history popups,
+and the messages module's Send/Resend SMS. The edit form's "Invoice File" upload/preview row
+belongs to the files module and is not built either. "Export Airway" (`export=2` →
+`airway.cfm`) is a document for the airline rather than a view of this screen, and is also
+still to do.

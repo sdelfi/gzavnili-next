@@ -34,6 +34,7 @@ export function ParcelGroupCard({
   lariRate,
   adminCountry,
   canOperate,
+  returnTo,
   showBuser,
 }: {
   group: ParcelGroup;
@@ -46,6 +47,8 @@ export function ParcelGroupCard({
   lariRate: number | null;
   adminCountry: string | null;
   canOperate: boolean;
+  /** Passed down to each row's Edit link so the edit screen can come back here. */
+  returnTo: string;
   showBuser: boolean;
 }) {
   const [groupPayMethod, setGroupPayMethod] = useState('');
@@ -157,6 +160,7 @@ export function ParcelGroupCard({
               onDelete={() => onDeleteParcel(parcel.id)}
               onConfirmHold={() => onConfirmHold(parcel.id)}
               lariRate={lariRate}
+              returnTo={returnTo}
               showBuser={showBuser}
             />
           ))}

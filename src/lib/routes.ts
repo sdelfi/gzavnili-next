@@ -48,6 +48,7 @@ export const routes = {
     // with legacy's `delreq=1` slice applied (its own sidebar entry there too), not a
     // separate page.
     parcels: () => '/bema/parcels',
+    parcelEdit: (id: string) => `/bema/parcels/${id}`,
     deliveryRequests: () => '/bema/parcels?deliveryRequest=1',
     // Site Pages CMS (docs/decisions/0013-site-pages-cms.md) — legacy `bema/content/pages.cfm`.
     pages: () => '/bema/pages',

@@ -1,5 +1,7 @@
 import { apiDelete, apiGet, apiPatch, apiPost } from '../http';
 import type { ParcelListResponse } from '@/lib/parcels/types';
+import type { ParcelDetail } from '@/lib/services/parcelDetail';
+import type { UpdateParcelPayload } from '@/lib/validation/parcelSchema';
 import type { ParcelOperation } from '@/lib/parcels/constants';
 
 // Typed client for /api/bema/parcels/* — see AGENTS.md's "API calls go through a service
@@ -140,7 +142,52 @@ export function deleteParcel(id: string) {
 /** Clears both hold flags, letting the parcel's status fall back to its real milestone —
  *  the "Removed from On Hold → Confirm" action on the list. */
 export function clearParcelHold(id: string) {
-  return apiPatch(`/api/bema/parcels/${id}`, { clearHold: true });
+  return apiPost(`/api/bema/parcels/${id}/clear-hold`);
+}
+
+// --- Parcel edit ---------------------------------------------------------------------------
+
+export function getParcel(id: string) {
+  return apiGet<{ parcel: ParcelDetail }>(`/api/bema/parcels/${id}`);
+}
+
+export function updateParcel(id: string, payload: UpdateParcelPayload) {
+  return apiPatch<{ parcel: ParcelDetail }>(`/api/bema/parcels/${id}`, payload);
+}
+
+/** Advisory duplicate check while typing; the save re-checks server-side. */
+export function checkTrackingNum(trackingNum: string, excludeId?: string) {
+  const qs = new URLSearchParams({ trackingNum, ...(excludeId ? { excludeId } : {}) });
+  return apiGet<{ exists: boolean }>(`/api/bema/parcels/check-tracking?${qs.toString()}`);
+}
+
+export type ReceiverOption = {
+  id: string;
+  label: string;
+  address: {
+    firstName: string;
+    lastName: string;
+    firstNameGe: string;
+    lastNameGe: string;
+    organization: string;
+    country: string;
+    street1: string;
+    street2: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    phone1: string;
+    phone2: string;
+    phone3: string;
+  };
+};
+
+export function listReceivers(userId: string) {
+  return apiGet<{ receivers: ReceiverOption[] }>(`/api/bema/receivers?userId=${encodeURIComponent(userId)}`);
+}
+
+export function listDeliveryOffices() {
+  return apiGet<{ offices: { id: string; label: string }[] }>('/api/bema/delivery-offices');
 }
 
 /** How many other parcels already carry this code — a non-zero count is what the "Change

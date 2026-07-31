@@ -1,0 +1,1 @@
+export { ParcelDetailsSection } from './ParcelDetailsSection';

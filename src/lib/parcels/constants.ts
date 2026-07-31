@@ -106,6 +106,54 @@ export const SORT_OPTIONS: SelectOptionLike[] = [
   { value: 'TrackingNum2', label: 'Tracking # 2' },
 ];
 
+// --- Parcel edit form --------------------------------------------------------------------
+
+// The Service dropdown on the parcel form. Values are stored in `parcels.service`; three of
+// them display under a different name (see `serviceLabel` below), which is why this list is
+// not just `SERVICE_FILTER_GROUPS` flattened — the filter dropdown offers `Cargo` and the
+// delivery/type prefixes, the form offers what a parcel can actually *be*.
+export const SERVICE_OPTIONS: SelectOptionLike[] = [
+  { value: 'Regular', label: 'Regular' },
+  { value: 'Express', label: 'Express' },
+  { value: 'Online', label: 'Online Shopping' },
+  { value: 'Economy', label: 'Philadelphia' },
+  { value: 'saveez', label: 'Saveez.com' },
+  { value: 'Cargo', label: 'Cargo' },
+];
+
+// Legacy's `listContents` — a shortcut list, not a closed set: the field accepts free text
+// and stores whatever it holds (legacy achieved the same with a paired "Other" text box).
+export const PARCEL_CONTENTS = [
+  'Accessories',
+  'Baby Swing',
+  'Bags',
+  'Books',
+  'Car Parts',
+  'Cell Phones',
+  'Clothes',
+  'Computer',
+  'Computer Parts',
+  'Cosmetics',
+  'Food',
+  'Home Electronics',
+  'Household Googs',
+  'Laptop',
+  'Legal Documents',
+  'Medications',
+  'Musical Instruments',
+  'Older Care',
+  'Perfume',
+  'Photo Cameras',
+  'Shoes',
+  'Sporting Goods',
+  'Strollers',
+  'Supplements',
+  'Sweets',
+  'Tools',
+  'Toys',
+  'Watches',
+];
+
 // --- Bulk operations ---------------------------------------------------------------------
 
 export const PARCEL_OPERATIONS = [

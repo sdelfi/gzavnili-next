@@ -1,0 +1,17 @@
+.textarea {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #bfbfbf;
+  border-radius: 2px;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #4c4c4c;
+  background: #fff;
+  resize: vertical;
+}
+
+.textarea:focus {
+  border-color: #3fa3f0;
+  outline: none;
+}
