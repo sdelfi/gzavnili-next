@@ -148,7 +148,7 @@ export function PricingRulesSection({ userId }: { userId: string }) {
 
       {error && <Alert variant="error">{error}</Alert>}
 
-      <Button type="button" variant="secondary" onClick={() => setActiveOnly((prev) => !prev)}>
+      <Button className={s.showAllRules} type="button" variant="secondary" onClick={() => setActiveOnly((prev) => !prev)}>
         {activeOnly ? 'Show All Rules' : 'Showing active rules only'}
       </Button>
 

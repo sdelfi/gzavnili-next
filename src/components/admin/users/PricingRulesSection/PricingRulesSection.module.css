@@ -58,3 +58,7 @@
     grid-template-columns: 1fr;
   }
 }
+
+.showAllRules {
+  margin-bottom: 12px;
+}
