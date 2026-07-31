@@ -240,7 +240,14 @@ export function ParcelListPage() {
 
       {canOperate && (
         <ParcelExtraFilters
-          key={filterKey}
+          // `effectiveReceivedBy` arrives async (after the list fetch resolves), one render
+          // after this component first mounts with the same `filterKey` — since
+          // `ParcelExtraFilters` only seeds its draft from `filters` once (see its own doc
+          // comment), that later value would otherwise never reach the already-mounted
+          // "Received By" select. Including it in the key forces the intended remount once
+          // it lands, so the select shows the truth of what's actually applied (legacy's own
+          // behavior — see the `effectiveReceivedBy` comment on the API route).
+          key={`${filterKey}#${effectiveReceivedBy ?? ''}`}
           filters={filters.receivedBy || !effectiveReceivedBy ? filters : { ...filters, receivedBy: effectiveReceivedBy }}
           onApply={applyFilters}
           admins={admins}
