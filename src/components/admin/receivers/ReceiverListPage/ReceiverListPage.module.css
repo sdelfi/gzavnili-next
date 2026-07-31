@@ -28,3 +28,11 @@
   gap: 2px;
   justify-content: center;
 }
+
+.iconButtonReset {
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: inline-flex;
+}

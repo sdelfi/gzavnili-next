@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
+import { IconButton } from '@/components/ui/IconButton';
 import { PageHeading } from '@/components/ui/PageHeading';
 import { routes } from '@/lib/routes';
 import { listReceiversAdmin, deleteReceiver } from '@/lib/api/bema/receivers';
@@ -109,10 +110,12 @@ export function ReceiverListPage() {
       label: '',
       render: (r) => (
         <div className={s.actions}>
-          <Link href={`${routes.bema.receiverEdit(r.id)}?returnTo=${encodeURIComponent(returnTo)}`}>Edit</Link>
+          <Link href={`${routes.bema.receiverEdit(r.id)}?returnTo=${encodeURIComponent(returnTo)}`}>
+            <IconButton icon="edit" title="Edit" />
+          </Link>
           {r.active && (
-            <button type="button" onClick={() => handleDelete(r.id)}>
-              Delete
+            <button type="button" className={s.iconButtonReset} onClick={() => handleDelete(r.id)}>
+              <IconButton icon="delete" title="Delete" />
             </button>
           )}
         </div>
