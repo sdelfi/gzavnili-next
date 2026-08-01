@@ -35,7 +35,12 @@ Two independent auth realms per [docs/migrations/03-target-architecture.md](../m
 
 ## Shared UI primitives
 
-New, self-contained (CSS Modules, no dependency on `public/css/style.css` — bema doesn't load that stylesheet) additions to `src/components/ui/`, per the client's explicit ask for reusable table/button/etc. components ahead of building out the rest of bema:
+The initial shared set described below has since been moved under
+`src/components/ui/admin/`, with a hard boundary from the public site's visual primitives.
+See [0019-admin-ui-boundary.md](0019-admin-ui-boundary.md) for the current rule and the full
+admin audit.
+
+New, self-contained (CSS Modules, no dependency on `public/css/style.css` — bema doesn't load that stylesheet) additions to `src/components/ui/admin/`, per the client's explicit ask for reusable table/button/etc. components ahead of building out the rest of bema:
 
 - **`Button`** (primary/secondary/danger variants).
 - **`Table`** — generic sortable/zebra-striped data table (presentation-only; sort/pagination state is owned by the page, URL-driven, so lists stay bookmarkable — matching the legacy pattern of keeping all list state in the query string).
