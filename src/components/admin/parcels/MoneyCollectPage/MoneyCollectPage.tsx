@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { PageHeading } from '@/components/ui/PageHeading';
-import { Field } from '@/components/ui/Field';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { Button } from '@/components/ui/Button';
-import { Alert } from '@/components/ui/Alert';
-import { Dialog } from '@/components/ui/Dialog';
+import { PageHeading } from '@/components/ui/admin/PageHeading';
+import { Field } from '@/components/ui/admin/Field';
+import { Input } from '@/components/ui/admin/Input';
+import { Select } from '@/components/ui/admin/Select';
+import { Button } from '@/components/ui/admin/Button';
+import { Alert } from '@/components/ui/admin/Alert';
+import { Dialog } from '@/components/ui/admin/Dialog';
+import { TableSurface } from '@/components/ui/admin/Table';
 import { useBemaAuth } from '@/components/admin/AuthProvider';
 import { formatAmount, formatDate } from '@/lib/parcels/format';
 import {
@@ -196,89 +197,92 @@ export function MoneyCollectPage() {
 
       {report && (
         <>
-          <div className={s.tableWrapper}>
-            <table className={s.table}>
-              <thead>
+          <TableSurface wrapperClassName={s.tableWrapper} density="compact">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Agents Name</th>
+                <th>Cash</th>
+                <th>Credit Card</th>
+                <th>Credit Card GE</th>
+                <th>Bank Deposit</th>
+                <th>Wire Transfer</th>
+                <th>Check</th>
+                <th>Paypal</th>
+                <th>Authorize</th>
+                <th>Total</th>
+                <th>Collection Date</th>
+                <th>Summary Collected</th>
+                <th>Collect By</th>
+                <th>Collected Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {report.groups.length === 0 ? (
                 <tr>
-                  <th></th>
-                  <th>Agents Name</th>
-                  <th>Cash</th>
-                  <th>Credit Card</th>
-                  <th>Credit Card GE</th>
-                  <th>Bank Deposit</th>
-                  <th>Wire Transfer</th>
-                  <th>Check</th>
-                  <th>Paypal</th>
-                  <th>Authorize</th>
-                  <th>Total</th>
-                  <th>Collection Date</th>
-                  <th>Summary Collected</th>
-                  <th>Collect By</th>
-                  <th>Collected Date</th>
+                  <td colSpan={14} className={s.empty}>
+                    No records found.
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {report.groups.length === 0 ? (
-                  <tr>
-                    <td colSpan={14} className={s.empty}>
-                      No records found.
-                    </td>
-                  </tr>
-                ) : (
-                  report.groups.map((g) => {
-                    const key = groupKey(g);
-                    const canSelect = g.collected === null && !!g.updaterUsername;
-                    return (
-                      <tr key={key} onClick={() => selectRow(g)} className={canSelect ? s.selectable : undefined}>
-                        <td onClick={(e) => e.stopPropagation()}>
-                          {canSelect && (
-                            <input
-                              type="radio"
-                              name="checked"
-                              checked={selectedKey === key}
-                              onChange={() => setSelectedKey(key)}
-                            />
-                          )}
-                        </td>
-                        <td>{g.updaterDisplayName}</td>
-                        <td>${formatAmount(g.cash)}</td>
-                        <td>${formatAmount(g.creditCard)}</td>
-                        <td>${formatAmount(g.creditCardGe)}</td>
-                        <td>${formatAmount(g.bankDeposit)}</td>
-                        <td>${formatAmount(g.wireTransfer)}</td>
-                        <td>${formatAmount(g.check)}</td>
-                        <td>${formatAmount(g.paypal)}</td>
-                        <td>${formatAmount(g.authorize)}</td>
-                        <td>
-                          <b>${formatAmount(g.total)}</b>
-                        </td>
-                        <td>{formatDate(`${g.dateKey}T00:00:00.000Z`)}</td>
-                        <td className={g.collected !== null && g.collected !== g.total ? s.mismatch : undefined}>
-                          {g.collected !== null && (
-                            <>
-                              ${formatAmount(g.collected)}{' '}
-                              <button
-                                type="button"
-                                className={s.detailLink}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  openDetailModal(g);
-                                }}
-                              >
-                                Detail
-                              </button>
-                            </>
-                          )}
-                        </td>
-                        <td>{g.collectorUsername}</td>
-                        <td>{g.gDate ? formatDate(g.gDate) : ''}</td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+              ) : (
+                report.groups.map((g) => {
+                  const key = groupKey(g);
+                  const canSelect = g.collected === null && !!g.updaterUsername;
+                  return (
+                    <tr key={key} onClick={() => selectRow(g)} className={canSelect ? s.selectable : undefined}>
+                      <td onClick={(e) => e.stopPropagation()}>
+                        {canSelect && (
+                          // Not `ui/admin/RadioGroup`: that component renders one *group* of
+                          // mutually-exclusive options together in a single wrapper: this is a
+                          // single radio per table row, one row apart from the next, sharing a
+                          // `name` only for native browser exclusivity — a different shape
+                          // `RadioGroup`'s all-options-in-one-`<div>` API can't represent.
+                          <input
+                            type="radio"
+                            name="checked"
+                            checked={selectedKey === key}
+                            onChange={() => setSelectedKey(key)}
+                          />
+                        )}
+                      </td>
+                      <td>{g.updaterDisplayName}</td>
+                      <td>${formatAmount(g.cash)}</td>
+                      <td>${formatAmount(g.creditCard)}</td>
+                      <td>${formatAmount(g.creditCardGe)}</td>
+                      <td>${formatAmount(g.bankDeposit)}</td>
+                      <td>${formatAmount(g.wireTransfer)}</td>
+                      <td>${formatAmount(g.check)}</td>
+                      <td>${formatAmount(g.paypal)}</td>
+                      <td>${formatAmount(g.authorize)}</td>
+                      <td>
+                        <b>${formatAmount(g.total)}</b>
+                      </td>
+                      <td>{formatDate(`${g.dateKey}T00:00:00.000Z`)}</td>
+                      <td className={g.collected !== null && g.collected !== g.total ? s.mismatch : undefined}>
+                        {g.collected !== null && (
+                          <>
+                            ${formatAmount(g.collected)}{' '}
+                            <Button
+                              type="button"
+                              variant="link"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openDetailModal(g);
+                              }}
+                            >
+                              Detail
+                            </Button>
+                          </>
+                        )}
+                      </td>
+                      <td>{g.collectorUsername}</td>
+                      <td>{g.gDate ? formatDate(g.gDate) : ''}</td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </TableSurface>
 
           <Button
             type="button"
