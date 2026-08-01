@@ -99,11 +99,7 @@ export const addParcelBatchSchema = z
 
     d.draftParcels.forEach((draft, index) => {
       for (const issue of receiverIssues(draft.receiver)) {
-        ctx.addIssue({
-          code: 'custom',
-          message: issue.message,
-          path: ['draftParcels', index, 'receiver', ...issue.path],
-        });
+        ctx.addIssue({ code: 'custom', message: issue.message, path: ['draftParcels', index, 'receiver', ...issue.path] });
       }
     });
   });

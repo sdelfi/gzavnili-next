@@ -46,10 +46,7 @@ describe('addParcelBatchSchema', () => {
 
   test('two parcels in the same group must share delivery and service', () => {
     const mismatched = validBatch({
-      draftParcels: [
-        validDraft({ groupId: '1', delivery: 'Pickup' }),
-        validDraft({ groupId: '1', delivery: 'Delivery' }),
-      ],
+      draftParcels: [validDraft({ groupId: '1', delivery: 'Pickup' }), validDraft({ groupId: '1', delivery: 'Delivery' })],
     });
     const result = addParcelBatchSchema.safeParse(mismatched);
     expect(result.success).toBe(false);
@@ -57,10 +54,7 @@ describe('addParcelBatchSchema', () => {
 
   test('two parcels in different groups may have different delivery/service', () => {
     const ok = validBatch({
-      draftParcels: [
-        validDraft({ groupId: '1', delivery: 'Pickup' }),
-        validDraft({ groupId: '2', delivery: 'Delivery' }),
-      ],
+      draftParcels: [validDraft({ groupId: '1', delivery: 'Pickup' }), validDraft({ groupId: '2', delivery: 'Delivery' })],
     });
     expect(addParcelBatchSchema.safeParse(ok).success).toBe(true);
   });
@@ -79,14 +73,7 @@ describe('addParcelBatchSchema', () => {
     const ge = validBatch({
       draftParcels: [
         validDraft({
-          receiver: {
-            city: 'Tbilisi',
-            country: 'GE',
-            phone1: '1',
-            isGeCitizen: true,
-            firstNameGe: 'გ',
-            lastNameGe: 'კ',
-          },
+          receiver: { city: 'Tbilisi', country: 'GE', phone1: '1', isGeCitizen: true, firstNameGe: 'გ', lastNameGe: 'კ' },
         }),
       ],
     });
@@ -109,27 +96,7 @@ describe('quickCustomerSchema', () => {
   });
 
   test('email/first/last/country/city/phone1 are required', () => {
-    expect(
-      quickCustomerSchema.safeParse({
-        userId: null,
-        firstName: '',
-        lastName: 'Smith',
-        email: 'a@b.com',
-        country: 'GE',
-        city: 'Tbilisi',
-        phone1: '1',
-      }).success,
-    ).toBe(false);
-    expect(
-      quickCustomerSchema.safeParse({
-        userId: null,
-        firstName: 'Ann',
-        lastName: 'Smith',
-        email: 'not-an-email',
-        country: 'GE',
-        city: 'Tbilisi',
-        phone1: '1',
-      }).success,
-    ).toBe(false);
+    expect(quickCustomerSchema.safeParse({ userId: null, firstName: '', lastName: 'Smith', email: 'a@b.com', country: 'GE', city: 'Tbilisi', phone1: '1' }).success).toBe(false);
+    expect(quickCustomerSchema.safeParse({ userId: null, firstName: 'Ann', lastName: 'Smith', email: 'not-an-email', country: 'GE', city: 'Tbilisi', phone1: '1' }).success).toBe(false);
   });
 });

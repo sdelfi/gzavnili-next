@@ -7,11 +7,7 @@ export class ApiError extends Error {
     public status: number,
     public body: unknown,
   ) {
-    super(
-      typeof (body as { error?: unknown } | null)?.error === 'string'
-        ? (body as { error: string }).error
-        : `Request failed (${status}).`,
-    );
+    super(typeof (body as { error?: unknown } | null)?.error === 'string' ? (body as { error: string }).error : `Request failed (${status}).`);
   }
 }
 
