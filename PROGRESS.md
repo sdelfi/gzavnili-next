@@ -1062,8 +1062,9 @@ vwParcelsReports.cfm`) ported **in full**: date-range filter, Total Sale, Paymen
       The Money Transfer dialog now uses the shared narrow Dialog size, legacy's
       compact amount-row/three-column layout, reusable `$`-prefixed admin inputs, and a
       formatted collection date. The manager dropdown uses the shared Select portal mode, so
-      its menu overlays the dialog instead of changing its height or adding a scrollbar —
-      commit pending.
+      its menu overlays the dialog instead of changing its height or adding a scrollbar.
+      Admin Input explicitly shields text/email/password sizing from the public Input's global
+      type selectors — commit pending.
 - [x] **Parcels Reports 2** (`bema/parcels/parcels-reports-2-v2.cfm` + `views/parcels/
   vwParcelsReports2-v2.cfm`) ported **in full**, including the legacy DataTables UI
 vwParcelsReports2-v2.cfm`) ported **in full**, including the legacy DataTables UI

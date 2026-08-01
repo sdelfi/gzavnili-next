@@ -25,6 +25,18 @@
   }
 }
 
+/* Public Input intentionally uses global type selectors. The bema root can still receive
+   that CSS through a public component chunk, so repeat the admin typography/padding with a
+   more specific selector to keep every admin Input type the same height. */
+.input[type='text'],
+.input[type='email'],
+.input[type='password'] {
+  padding: 5px 10px;
+  font: inherit;
+  font-size: 13px;
+  line-height: normal;
+}
+
 .inputGroup {
   display: flex;
   min-width: 0;

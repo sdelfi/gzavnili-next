@@ -18,6 +18,7 @@ export function Select<T extends string = string>({
   size = 'md',
   portal = false,
   error,
+  styles: selectStyles,
   ...props
 }: {
   instanceId: string;
@@ -44,6 +45,17 @@ export function Select<T extends string = string>({
           classNamePrefix="admin-select"
           menuPortalTarget={portal && typeof document !== 'undefined' ? document.body : undefined}
           menuPosition={portal ? 'fixed' : undefined}
+          styles={
+            portal
+              ? {
+                  ...selectStyles,
+                  // react-select assigns `z-index: 1` inline to its portal wrapper; a CSS
+                  // class cannot override that inline value, so the stacking fix belongs in
+                  // its styles callback too.
+                  menuPortal: (base) => ({ ...base, zIndex: 1100 }),
+                }
+              : selectStyles
+          }
           classNames={
             portal
               ? {
