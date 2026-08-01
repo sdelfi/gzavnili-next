@@ -719,6 +719,9 @@ model Parcel {
   parcelType   String? @map("parcel_type")
   bNotify      Boolean @default(false) @map("b_notify")
   bNotDeclared Boolean @default(false) @map("b_not_declared")
+  // "Note or name a package" (legacy `ParcelName`) — the bema "Add Online Parcel" screen's
+  // own free-text label, distinct from `notes`. See docs/decisions/0022-parcels-online-add.md.
+  parcelName   String? @map("parcel_name")
 
   length    Decimal? @db.Decimal(10, 2)
   width     Decimal? @db.Decimal(10, 2)

@@ -38,5 +38,9 @@ export async function GET(request: NextRequest) {
       estimateDate: config?.dtCargoEst?.toISOString() ?? null,
       awb: null,
     },
+    // "Add Online Parcel"'s live price calculator (docs/decisions/0022-parcels-online-add.md)
+    // — the only other reader of `Config` this permissively-gated read needs to cover.
+    declaredPrice: config?.declaredPrice ? Number(config.declaredPrice) || 0 : 0,
+    nonDeclaredPrice: config?.nonDeclaredPrice ? Number(config.nonDeclaredPrice) || 0 : 0,
   });
 }

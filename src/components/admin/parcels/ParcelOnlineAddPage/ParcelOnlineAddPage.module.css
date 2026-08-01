@@ -1,0 +1,59 @@
+.tripPanel {
+  display: flex;
+  gap: 24px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 16px;
+}
+
+.tripPanel h4 {
+  margin: 0 0 6px;
+}
+
+.tripPanel p {
+  margin: 2px 0;
+  font-size: 13px;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.trackingRow {
+  max-width: 260px;
+  margin-bottom: 12px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 15px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 12px;
+}
+
+.bottomPanel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 24px;
+  border-top: 1px solid #ddd;
+  padding-top: 15px;
+  margin-top: 8px;
+}
+
+.saveRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+}

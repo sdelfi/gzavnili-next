@@ -5,6 +5,8 @@ import type { UpdateParcelPayload } from '@/lib/validation/parcelSchema';
 import type { AddParcelBatchPayload, QuickCustomerPayload } from '@/lib/validation/parcelBatchSchema';
 import type { DraftParcelResult } from '@/lib/services/parcelBatchAdd';
 import type { ParcelOperation } from '@/lib/parcels/constants';
+import type { OnlineParcelLookup } from '@/lib/services/parcelOnlineLookup';
+import type { CreateOnlineParcelPayload, UpdateOnlineParcelPayload } from '@/lib/validation/parcelOnlineAddSchema';
 
 // Typed client for /api/bema/parcels/* — see AGENTS.md's "API calls go through a service
 // layer". `ParcelFiltersState` is the single source of truth for what the list screen can
@@ -213,4 +215,22 @@ export function saveQuickCustomer(payload: QuickCustomerPayload) {
 
 export function createParcelsBatch(payload: AddParcelBatchPayload) {
   return apiPost<{ parcels: DraftParcelResult[] }>('/api/bema/parcels/batch', payload);
+}
+
+// --- "Add Online Parcel" ------------------------------------------------------------------
+
+/** Legacy `bema/ajax/getParcel.cfm` — the tracking-number-driven lookup this screen's whole
+ *  flow hinges on. `null` when nothing matches. */
+export function lookupOnlineParcel(trackingNum: string) {
+  return apiGet<{ parcel: OnlineParcelLookup | null }>(
+    `/api/bema/parcels/online-lookup?trackingNum=${encodeURIComponent(trackingNum)}`,
+  );
+}
+
+export function createOnlineParcel(payload: CreateOnlineParcelPayload) {
+  return apiPost<{ parcel: { id: string; trackingNum: string } }>('/api/bema/parcels/online-add', payload);
+}
+
+export function updateOnlineParcel(id: string, payload: UpdateOnlineParcelPayload) {
+  return apiPatch<{ parcel: { id: string } }>(`/api/bema/parcels/online-add/${id}`, payload);
 }

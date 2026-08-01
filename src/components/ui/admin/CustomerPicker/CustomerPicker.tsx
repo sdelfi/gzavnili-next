@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Input } from '@/components/ui/Input';
+import { Input } from '@/components/ui/admin/Input';
 import { listUsers } from '@/lib/api/bema/users';
 import s from './CustomerPicker.module.css';
 

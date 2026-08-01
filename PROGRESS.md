@@ -1130,7 +1130,7 @@ mismatch, PayPal only captured via`OnlineSource`, the Service filter's missing
       rules; `GET`/`PATCH /api/bema/config/payment`; `PaymentConfigForm` at `/bema/payment`,
       wired to the pre-existing "Payment Setup" sidebar placeholder). Found and documented (not
       ported) a severe legacy bug: every save on this screen does a blind `DELETE FROM
-  paymentmethods` and re-inserts only the two hardcoded lists, permanently losing any
+paymentmethods` and re-inserts only the two hardcoded lists, permanently losing any
       other payment method and blanking every `CheckoutDescription` — deferred since no
       checkout/orders domain reads that table yet. Verified end-to-end against a real Postgres:
       GET/PATCH round-trip, validation-error and success paths, and confirmed a payment-config
@@ -1150,6 +1150,29 @@ mismatch, PayPal only captured via`OnlineSource`, the Service filter's missing
       `url` filter/sort params; a search column, `messageFormatted`, absent from the list's own
       `SELECT`) — all in docs/findings.md. Verified end-to-end against a real Postgres:
       list/search/filter, active toggle, and delete all confirmed correct.
+- [x] **Add Online Parcel** (`bema/parcels/parcels-online-add-2.cfm` +
+      `parcels-online-add-2.js`) ported — see docs/decisions/0022-parcels-online-add.md.
+      Tracking-number-driven: an operator types a tracking number and either finishes
+      receiving an existing not-yet-received parcel or creates a new one for a Known/Unknown/
+      "Linoli" shipper tab. Independent pricing mechanism from the batch "Add Parcel" screen
+      (`src/lib/parcels/onlinePricing.ts` — `Config.declaredPrice`/`nonDeclaredPrice` for
+      Regular, flat 7x/3.5x for Express/Cargo), the actual consumer the Site Settings pricing
+      fields were waiting on. `Parcel` gained `parcelName`; two placeholder shipper accounts
+      (`GZ20000`/`GZ20001`, `scripts/seed-parcel-shippers.ts`, wired into `bun run db:seed`)
+      replace legacy's two hardcoded, non-portable MSSQL GUIDs. `GET /api/bema/parcels/
+    online-lookup`, `POST .../online-add`, `PATCH .../online-add/:id`;
+      `ParcelOnlineAddPage` at `/bema/parcels/add-online`, wired to the pre-existing "Add
+      Online Parcel" Sidebar placeholder. Also fixed `CustomerPicker` importing the public
+      `ui/Input` instead of `ui/admin/Input` (a UI-boundary-rule violation found while
+      reusing it here). Found and reproduced seven legacy quirks — the create-time
+      "status allow-list" check being dead code (a plain existence check in practice), three
+      _different_ upgrade-allow-lists across the flow, a 2-vs-4-decimal rounding
+      discrepancy in the price calculator, the delivery-method radios having zero pricing
+      effect (`:selected` used on radio inputs, always an empty match), new parcels being
+      permanently locked to Regular/Pickup, and the receiver's postal code being wiped blank
+      on every save through this screen — all in docs/findings.md. Verified end-to-end
+      against a real Postgres: lookup, create (all three shipper tabs), update, duplicate-
+      tracking rejection, and missing-customer rejection all confirmed correct.
 
 ## Not started
 
@@ -1159,9 +1182,6 @@ mismatch, PayPal only captured via`OnlineSource`, the Service filter's missing
 - **Export Airway manifest body**: `airway.cfm`'s per-receiver data rows and NO. OF PIECES/
   TOTAL ACTUAL WEIGHT/TOTAL Value totals (queried live at export time) are not ported — the
   export still always emits an empty data-row table. See docs/findings.md.
-- **Declared/non-declared parcel pricing toggle**: the values are stored and editable
-  (Site Settings), but the pricing toggle that reads them (`parcels-online-add-2.js`) has no
-  ported consumer yet.
 - **`paymentmethods`/`taxes` tables (checkout payment methods, per-method descriptions, state
   taxes)**: not modeled — legacy's only write path destructively wipes them on every Payment
   Preferences save (see docs/decisions/0020-payment-config.md, docs/findings.md). Needs a

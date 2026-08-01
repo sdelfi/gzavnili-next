@@ -57,6 +57,10 @@ export const routes = {
     // Legacy `parcels-add.cfm` — the batch multi-parcel-per-customer screen, distinct from
     // `parcelEdit()`'s single-parcel form.
     parcelAdd: () => '/bema/parcels/add',
+    // Legacy `bema/parcels/parcels-online-add-2.cfm` — the tracking-number-driven single-
+    // parcel screen, distinct from both `parcelAdd()` (batch) and `parcelEdit()` (existing
+    // parcel by id). See docs/decisions/0022-parcels-online-add.md.
+    parcelOnlineAdd: () => '/bema/parcels/add-online',
     deliveryRequests: () => '/bema/parcels?deliveryRequest=1',
     // Legacy `bema/parcels/parcels-reports.cfm` — date-range Total Sale/Payment
     // Collected/Remain Payment report, distinct from the separate "Parcels Reports 2"

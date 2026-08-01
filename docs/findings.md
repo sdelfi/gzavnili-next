@@ -798,6 +798,116 @@ message-text column this screen's query actually returns.
 
 ---
 
+## Add Online Parcel (`bema/parcels/parcels-online-add-2.cfm`) — 2026-08-01
+
+See docs/decisions/0022-parcels-online-add.md for the full picture; the individual findings
+below.
+
+### The server's create-time "status allow-list" check is dead code — it's a plain existence check
+
+**Found:** `parcel2 = read(byTrackingnum=true); if (parcel2.getTrackingnum() neq "" or
+(trackingNumExists(...) and not listFind(status, 'awaiting,onhold,new,notonhold'))) reject`.
+`read(byTrackingnum=true)` and `trackingNumExists()` (both in `MSSQLParcelDAO.cfc`) run the
+identical `TrackingNum = <input>` query against the identical data — whenever the first clause
+is false, the second clause's `trackingNumExists` half is necessarily false too (same query,
+same input), so the status check after the `AND` can never be the deciding factor. Confirmed
+by reading both DAO method bodies, not assumed from the call site.
+
+**Ported as-is**: `createOnlineParcel()`'s uniqueness guard (`TrackingNumberConflictError`) is
+a plain `trackingNumExists()` check — reject if the tracking number exists anywhere, regardless
+of status — not a status-aware one.
+
+### Three different "can this tracking number be upgraded" allow-lists, not one
+
+**Found:** the tracking-lookup success handler gates the edit UI on
+`['awaiting','notonhold','new','delay']`; the pre-submit re-check right before "Save and add
+another" actually submits uses the wider `['awaiting','onhold','new','notonhold','delay']`;
+and (per the finding above) the server's own create-time check isn't status-aware at all. All
+three genuinely differ and none of them agree with each other.
+
+**Ported as-is**, as two separate constants (`ALLOWED_FOR_UPGRADE_UI`/`ALLOWED_FOR_PRESUBMIT`
+in `ParcelOnlineAddPage.tsx`) plus the existence-only server guard above — not unified into one
+"the correct list."
+
+### The dimensional-weight swap-in prices at 2-decimal precision, displays at 4
+
+**Found:** `calcDebt()` writes `d.toFixed(4)` into the `#dimweight` field, but when the
+dimensional weight exceeds actual weight and gets substituted in for pricing, it's re-rounded
+via `formatNumber()` — `Math.round(n*100)/100`, i.e. 2 decimals — before being multiplied by
+the rate. The number that determines the price and the number the operator sees in the Dim
+Weight field are not always the same number.
+
+**Ported as-is** in `calculateOnlineDebt()` (`src/lib/parcels/onlinePricing.ts`) — the returned
+`dimWeight` (display) uses 4-decimal rounding; the internal value used for the debt calculation
+uses 2-decimal rounding when it's the one that wins. Covered by
+`onlinePricing.test.ts`'s "dimensional weight is used instead of actual weight" case.
+
+### The delivery-method radios have zero effect on price
+
+**Found:** the Region (+2.25)/Delivery (+1.25) fee add-ons are gated by
+`jQuery('[name=sdelivery]:selected').val()`. `:selected` is a jQuery pseudo-class that only
+ever matches `<option>` elements inside a `<select>`; `sdelivery` is rendered as radio
+`<input>`s (`<input type="radio" name="sdelivery" value="Pickup" checked />` etc.), so that
+selector produces an empty jQuery set on every evaluation, `.val()` on it is `undefined`, and
+neither `undefined == 'Region'` nor `undefined == 'Delivery'` is ever true. Picking Pickup vs.
+Delivery vs. Region has no effect on the calculated debt, for any parcel, ever.
+
+**Ported as-is**: `calculateOnlineDebt()` takes no delivery parameter at all — there's no
+delivery-dependent branch to reproduce.
+
+### A brand-new online parcel is always Regular + Pickup — no control can change it
+
+**Found:** the Service/Delivery radio row (`.serviceSelect`) is shown only inside the
+tracking-lookup's "found an existing, upgradable parcel" success branch.
+`trackingNotFound()` — the path every genuinely new parcel takes — explicitly adds `.hide` to
+`.serviceSelect` and never removes it. The static HTML's own `checked` attributes (Regular,
+Pickup) are therefore the only values a parcel created from scratch through this screen can
+ever have.
+
+**Ported as-is**: create-mode in `ParcelOnlineAddPage` never renders the Service/Delivery
+radios; the create payload hardcodes `service: 'Regular'`.
+
+### The receiver's postal code is silently wiped on every save through this screen
+
+**Found:** `receiver.init(address = new Address(..., postalCode = form.postalcode, ...))`
+always passes `form.postalcode` — but no `<input name="postalcode">` exists anywhere in
+`vwParcelsOnlineAdd2.cfm`, so it's permanently `""`. This applies even when the operator picks
+an *existing* receiver from the dropdown and only means to update their weight/tracking info —
+that receiver's postal code gets overwritten to blank as a side effect.
+
+**Ported as-is**: `createOnlineParcel()` always passes `postalCode: ''` to `upsertReceiver()`.
+
+### `goCountry()` is called but not defined anywhere reachable from this page
+
+**Found:** `goUser()`'s last statement is `goCountry();`, a function defined in various
+*other* bema screens' own inline `<script>` blocks (`vwUserEditForm.cfm`,
+`vwParcelsUpdate.cfm`, etc.) — none of which this page includes. Calling it here would throw
+`ReferenceError: goCountry is not defined` in a real browser, with no observable effect since
+it's the last statement in its callback and nothing downstream depends on it running.
+
+**Not reachable, nothing to port.**
+
+### `firstnamex`/`lastnamex` and the inline customer-edit box are confirmed dead
+
+**Found:** the "disabled, alternate" receiver name inputs are gated by
+`ListFind(session.buser.listGroups('ADMINISTRATOR'), session.buser.getGroupId()) or 1` — the
+`or 1` makes the condition always true, so only the ordinary editable `firstname`/`lastname`
+fields ever render; the alternate branch is unreachable. Separately, the entire inline
+"Save"/"Update" customer box (`.customerInputs`, `.saveCustomerBtn`, `doCustomerInfo()`) is
+HTML-commented-out in the view.
+
+**Not reachable, nothing to port** for either.
+
+### `form.balance` is declared but never used
+
+**Found:** `<input type="hidden" name="balance" id="balance" value="" />` with a matching
+`cfparam name="form.balance" default=""`, but `form.balance` is never read anywhere in the
+POST handler — not part of `parcel.init(...)` in either branch.
+
+**Not reachable, nothing to port.**
+
+---
+
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not
 being a real FK, `isGeCitizen` being inferred rather than stored — are recorded in their
 respective decision docs and PROGRESS.md instead; not backfilled here.)*

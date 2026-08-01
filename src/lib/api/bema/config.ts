@@ -10,6 +10,8 @@ export type TripInfoResponse = {
   express: TripInfo;
   regular: TripInfo;
   cargo: TripInfo;
+  declaredPrice: number;
+  nonDeclaredPrice: number;
 };
 
 export function getTripInfo() {

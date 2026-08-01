@@ -8,7 +8,7 @@ import s from './ParcelTripInfo.module.css';
 // The EXPRESS/REGULAR/CARGO panel at the top of the batch "Add Parcel" screen — read-only
 // trip info (`views/vwParcelsAdd.cfm`'s header block, above the "Add Parcel" heading).
 
-const COLUMNS: { key: keyof TripInfoResponse; label: string }[] = [
+const COLUMNS: { key: 'express' | 'regular' | 'cargo'; label: string }[] = [
   { key: 'express', label: 'EXPRESS' },
   { key: 'regular', label: 'REGULAR' },
   { key: 'cargo', label: 'CARGO' },
