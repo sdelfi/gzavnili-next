@@ -4,9 +4,12 @@ import { requireBemaSession } from '@/lib/auth/session';
 
 // The EXPRESS/REGULAR/CARGO "Ship day / Estimate / AVB" panel at the top of the batch "Add
 // Parcel" screen (`views/vwParcelsAdd.cfm`) — read-only trip info off the singleton `config`
-// row. Cargo has no equivalent `dt_cargo_*`/awb columns in this schema (there weren't any in
-// legacy either), so its three fields are always blank, same as legacy renders them. Legacy's
-// own label for the AWB code here is "AVB", not "AWB" — kept as-is by the client, not "fixed".
+// row. Cargo's ship/estimate dates are real config columns (`config.dtCargoShip`/
+// `dtCargoEst`, added once `bema/config/settings.cfm`'s source was available — an earlier pass
+// wrongly assumed legacy had no cargo dates at all). Cargo's AWB field genuinely stays blank:
+// legacy's `Config.cfc` has no `CargoAWB` getter — only Regular/Express have their own AWB
+// column. Legacy's own label for the AWB code here is "AVB", not "AWB" — kept as-is by the
+// client, not "fixed".
 //
 // Gated the same as the parcels list itself (any bema role), not `CONFIG_ROLES` from
 // `/api/bema/config` — that route is Administrator-only because it edits the popup config;
@@ -31,8 +34,8 @@ export async function GET(request: NextRequest) {
       awb: config?.regAwb ?? null,
     },
     cargo: {
-      shipDate: null,
-      estimateDate: null,
+      shipDate: config?.dtCargoShip?.toISOString() ?? null,
+      estimateDate: config?.dtCargoEst?.toISOString() ?? null,
       awb: null,
     },
   });

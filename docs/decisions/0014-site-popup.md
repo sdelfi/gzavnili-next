@@ -37,8 +37,12 @@ trimmed message for the visitor's locale before rendering anything
 
 ## Scope
 
-Only the popup fields of legacy's `settings.cfm` mega-form are built. The rest of that
-screen — Consignee/Header Site Message (confirmed dead/unused legacy fields), Airway Bill/
-Date, Regular/Express/Cargo Services shipping dates+AWB, Lari Rate, declared/non-declared
-parcel pricing — belongs to the not-yet-built parcels domain and is deliberately deferred,
-not silently dropped.
+Only the popup fields of legacy's `settings.cfm` mega-form were built in this change. The
+rest of that screen (Consignee, Header Site Message, Airway Bill/Date, Regular/Express/Cargo
+Services shipping dates+AWB, Lari Rate, declared/non-declared parcel pricing) was ported later
+— see `docs/findings.md`'s "Site Settings" section (2026-08-01) for what that covers and two
+corrections it made to earlier guesses about `export-airway`/`trip-info`. "Consignee/Header
+Site Message" turned out **not** to be dead as originally assumed here: `Consignee` is read
+live by the "Export Airway" export, and `Header Site Message` is editable even though this app
+has no display consumer for it yet (`siteMessage2`, not `siteMessage`, is the one confirmed
+fully-dead field).

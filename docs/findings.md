@@ -583,6 +583,98 @@ combined into one column, unlike Credit Card which does get a GE-specific bucket
 
 ---
 
+## Site Settings (`bema/config/settings.cfm` / `vwSettings.cfm`) — 2026-08-01
+
+### "Export Airway"'s Airway Bill/Date/Consignee were guessed as static constants — they aren't
+
+**Found:** the earlier port of `export-airway/route.ts` (2026-07-31/08-01, see the entry above)
+had no `airway.cfm` source available and inferred its content from one real sample export
+(`tmp/airway_export.csv`), concluding `Airway Bill:`/`SHIPMENT DATE:`/`CONSIGNEE:` were fixed,
+hardcoded values baked into every export — and that the AWB code came from `config.regAwb`
+falling back to `config.expAwb`. With `bema/parcels/airway.cfm`'s real source now available
+(found while porting this settings screen, since `Consignee`/`Airway Bill`/`Airway Date` are
+all fields *this* screen edits): all three are read live from `config` on every export —
+`config.getAIRWAYBill()`, `config.getAIRWAYdate()` (formatted `mm/dd/yyyy`), and
+`config.getCONSIGNEE()` (HTML-tag-stripped). None of them come from `regAwb`/`expAwb` — those
+are the separate *trip* AWB codes used by the "Set AWB" bulk parcel operation, not this
+manifest's own bill number. The sample CSV just reflected whatever `config` held at export
+time, including a Consignee value containing literal `&nbsp;` entities someone had typed in
+(legacy's tag-strip regex doesn't touch entities) — not a static literal to hardcode.
+
+**Ported as-is, correcting the earlier guess**: `export-airway/route.ts` now reads
+`config.airwayBill`/`config.airwayDate`/`config.consignee` (new `Config` model fields, this
+change) instead of the hardcoded `CONSIGNEE` constant and the wrong `regAwb`/`expAwb` fallback.
+`SHIPPER NAME` and both `AIRPORT OF` fields are confirmed genuinely hardcoded in `airway.cfm`
+itself, not `config`-sourced — those stay as literals, unchanged.
+
+### "Export Airway"'s manifest body (receiver rows, weight/value totals) — open, not ported
+
+**Found:** `airway.cfm` also runs a live query for parcels/receivers with `tripdate =
+config.AirwayDate`, sums `weight`/`value` into `NO. OF PIECES`/`TOTAL ACTUAL WEIGHT`/`TOTAL
+Value`, and emits one CSV data row per receiver. The current port still always emits an empty
+data-row table under the static header.
+
+**Open — needs a decision.** This is substantially more than a settings-config read (a parcels
+query keyed on `tripdate`, itself not a field this schema's `Parcel` model currently exposes for
+filtering) — porting it is really extending the "Export Airway" parcels-list feature, not the
+Site Settings screen this change is about. Flagged here rather than silently left unmentioned.
+
+### Trip-info's Cargo dates were wrongly assumed to not exist in legacy at all
+
+**Found:** `trip-info/route.ts`'s original comment claimed "Cargo has no equivalent
+`dt_cargo_*`/awb columns in this schema (there weren't any in legacy either)". The `awb` half is
+correct (`Config.cfc` has no `CargoAWB` getter/setter — only Regular/Express have their own AWB
+column) — but the `dt_cargo_*` half was wrong: legacy's `Config`/`MSSQLConfigDAO` has
+`dtCargoShip`/`dtCargoEst` columns, editable on `settings.cfm`'s own "Cargo Services" section,
+just like Regular/Express.
+
+**Ported as-is, correcting the earlier assumption**: `Config` gained `dtCargoShip`/`dtCargoEst`
+(this change), and `trip-info/route.ts`'s cargo branch now returns their real values instead of
+hardcoded `null`. Cargo's `awb` stays `null` — that part of the original comment was correct.
+
+### `siteMessage2` is confirmed write-only and dead — not modeled
+
+**Found:** `settings.cfm`'s POST handler saves `form.sitemessage2` (`param default = ""`) to
+`config.siteMessage2` on every submit, but `vwSettings.cfm` has no `<textarea name="sitemessage2">`
+or any other input for it anywhere in the view. Since HTML forms never submit fields that don't
+exist, `form.sitemessage2` always falls back to its blank `param` default on every real submit —
+meaning every legacy settings save silently overwrites `siteMessage2` to empty, regardless of
+what it held before. No view anywhere reads `config.getSiteMessage2()` either (confirmed by
+grepping the whole legacy `.cfm`/`.cfc`/`.html` tree) — it's entirely write-only *and* the one
+write path that exists always writes blank.
+
+**Not reachable, nothing to port.** Since nothing ever reads the column and the one write path
+is a no-op (always writes the same blank value), there is no observable behavior to reproduce.
+Not added to the `Config` model.
+
+### `siteMessage` ("Header Site Message") has no reachable display consumer in this app
+
+**Found:** `config.getSiteMessage()` is read in exactly one place — `views/layouts/
+default.html`, the layout used only by `error.cfm` (the CFML exception page) — and rendered
+into a `.tga2` div. This Next.js app has no equivalent custom error-page layout (Next's own
+`error.tsx`/`not-found.tsx` mechanism doesn't render arbitrary legacy CFML layouts), so there is
+currently no page in `gzavnili-next` that would display this value.
+
+**Ported as data, not yet as display.** `siteMessage` is modeled on `Config` and editable on the
+new Site Settings screen (parity with legacy's editable field), but has no rendering consumer
+here — same "not-yet-built consumer" situation as declared/non-declared pricing below, not
+treated as dead since an admin genuinely can set it and a future error-page build could read it.
+
+### Declared/non-declared parcel pricing — stored, no consumer yet
+
+**Found:** `declaredPrice`/`nonDeclaredPrice` are only ever read by `lytBema.cfm`'s `dbConfig`
+JS object, consumed by `parcels-online-add-2.js`'s declared-vs-non-declared pricing toggle on
+the (different, not-yet-fully-ported) online parcel-add flow — distinct from this project's
+already-ported batch "Add Parcel" screen (`parcelBatchAdd.ts`/`batchPricing.ts`), whose pricing
+model has no declared/non-declared concept at all.
+
+**Ported as data, no consumer yet.** Both fields are modeled on `Config` and editable on the
+Site Settings screen so the values exist and are ready once/if that pricing toggle is ported;
+no attempt was made to wire them into the existing batch-pricing service, since that would be
+inventing a mechanism the existing ported screen's legacy counterpart never had.
+
+---
+
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not
 being a real FK, `isGeCitizen` being inferred rather than stored — are recorded in their
 respective decision docs and PROGRESS.md instead; not backfilled here.)*

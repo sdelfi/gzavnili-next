@@ -82,21 +82,21 @@ enum AdminRole {
 }
 
 model User {
-  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  username          String    @unique
-  email             String    @unique
-  firstName         String?   @map("first_name")
-  lastName          String?   @map("last_name")
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username          String   @unique
+  email             String   @unique
+  firstName         String?  @map("first_name")
+  lastName          String?  @map("last_name")
   organization      String?
-  billingAddressId  String?   @map("billing_address_id") @db.Uuid
-  billingAddress    Address?  @relation("UserBillingAddress", fields: [billingAddressId], references: [id])
-  shippingAddressId String?   @map("shipping_address_id") @db.Uuid
-  shippingAddress   Address?  @relation("UserShippingAddress", fields: [shippingAddressId], references: [id])
-  balanceAdjust     Decimal   @default(0) @map("balance_adjust") @db.Decimal(12, 2)
+  billingAddressId  String?  @map("billing_address_id") @db.Uuid
+  billingAddress    Address? @relation("UserBillingAddress", fields: [billingAddressId], references: [id])
+  shippingAddressId String?  @map("shipping_address_id") @db.Uuid
+  shippingAddress   Address? @relation("UserShippingAddress", fields: [shippingAddressId], references: [id])
+  balanceAdjust     Decimal  @default(0) @map("balance_adjust") @db.Decimal(12, 2)
   // Free-text import-batch identifier, matching the legacy `ImportId` column exactly
   // (legacy "Edit Customer" screen: "Import Id") — not modeled further since no ETL import
   // job exists yet to give it real meaning.
-  importId          String?   @map("import_id")
+  importId          String?  @map("import_id")
   // Legacy CF password hashes (SHA-1(password + salt), the same scheme for both bema and
   // customer accounts) likely can't be verified by a new KDF without knowing the exact
   // legacy scheme — see docs/migrations/07-risks-and-open-questions.md ("Password hash
@@ -104,8 +104,8 @@ model User {
   // "argon2id"` (via Bun.password, see src/lib/auth/password.ts) from the start; a future
   // ETL import of legacy accounts would set `passwordAlgo = "legacy-sha1"` and re-hash on
   // next successful login instead of attempting to migrate the hash itself.
-  passwordHash     String?      @map("password_hash")
-  passwordAlgo     String?      @map("password_algo")
+  passwordHash      String?  @map("password_hash")
+  passwordAlgo      String?  @map("password_algo")
   // Legacy "short password"/PIN (`PasswordShort` in MSSQL) used by the bema idle-lock modal
   // and money-collect screens to re-authenticate — and, if it matches a *different* active
   // BemaUser's short password, to switch the session to that user (see
@@ -114,18 +114,18 @@ model User {
   // deliberately store it hashed (Bun.password, same as passwordHash) and verify by
   // iterating active BemaUser candidates instead — see docs/decisions/0011-bema-admin.md's
   // idle-lock section for why this is a safety improvement, not a behavior change.
-  passwordShortHash String? @map("password_short_hash")
+  passwordShortHash String?  @map("password_short_hash")
 
   accountType AccountType @default(Customer) @map("account_type")
   adminRole   AdminRole?  @map("admin_role")
 
-  active                  Boolean   @default(true)
-  confirmed               Boolean   @default(false)
-  lockoutEnabled          Boolean   @default(false) @map("lockout_enabled")
-  lockoutExpiresAt        DateTime? @map("lockout_expires_at") @db.Timestamptz(6)
-  lastLoginAt             DateTime? @map("last_login_at") @db.Timestamptz(6)
-  passwordResetToken      String?   @map("password_reset_token")
-  passwordResetExpiresAt  DateTime? @map("password_reset_expires_at") @db.Timestamptz(6)
+  active                 Boolean   @default(true)
+  confirmed              Boolean   @default(false)
+  lockoutEnabled         Boolean   @default(false) @map("lockout_enabled")
+  lockoutExpiresAt       DateTime? @map("lockout_expires_at") @db.Timestamptz(6)
+  lastLoginAt            DateTime? @map("last_login_at") @db.Timestamptz(6)
+  passwordResetToken     String?   @map("password_reset_token")
+  passwordResetExpiresAt DateTime? @map("password_reset_expires_at") @db.Timestamptz(6)
 
   // 'en'/'ge' — matches the locale ids already used by next-intl (docs/decisions/0008).
   language String? @default("en")
@@ -146,25 +146,25 @@ model User {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  parcels   Parcel[]     @relation("ParcelUser")
+  parcels        Parcel[]              @relation("ParcelUser")
   /// Edit-log rows this account authored — the reports' "which admin collected this".
-  parcelEdits ParcelHistory[] @relation("ParcelHistoryUpdater")
+  parcelEdits    ParcelHistory[]       @relation("ParcelHistoryUpdater")
   /// Money-collect records where this account is the *agent being collected from* — see
   /// `MoneyCollectHistory`'s comment for why the collecting manager isn't a second relation.
   moneyCollected MoneyCollectHistory[] @relation("MoneyCollectAgent")
-  receivers Receiver[]
-  invoices  Invoice[]
-  payments  Payment[]
-  balance   UserBalance?
-  pricingRules CustomerPricingRule[]
+  receivers      Receiver[]
+  invoices       Invoice[]
+  payments       Payment[]
+  balance        UserBalance?
+  pricingRules   CustomerPricingRule[]
 
   // Legacy "Edit Customer" screen's per-event notification checkbox grid ("Parcel was
   // picked up", "We just got your parcel(s)", ...) — which MessageTypes this account
   // wants to be notified for, independent of the mail/SMS channel toggles above.
   notificationMessageTypes MessageType[] @relation("UserNotificationPreferences")
 
-  @@map("users")
   @@index([accountType])
+  @@map("users")
 }
 
 // Login attempt audit trail — also drives the lockout logic (N failures since
@@ -179,27 +179,27 @@ model SecurityLog {
   userAgent String?  @map("user_agent")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  @@map("security_log")
   @@index([username, createdAt])
+  @@map("security_log")
 }
 
 model Address {
-  id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  firstName    String? @map("first_name")
-  lastName     String? @map("last_name")
-  firstNameGe  String? @map("first_name_ge")
-  lastNameGe   String? @map("last_name_ge")
-  title        String?
-  organization String?
+  id            String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  firstName     String? @map("first_name")
+  lastName      String? @map("last_name")
+  firstNameGe   String? @map("first_name_ge")
+  lastNameGe    String? @map("last_name_ge")
+  title         String?
+  organization  String?
   // Shipping-address-only field on the legacy "Edit Customer" screen (not shown for
   // billing) — kept nullable/generic here rather than splitting Address into two models.
-  email        String?
-  city         String?
-  state        String?
-  country      String?
-  postalCode   String? @map("postal_code")
-  street1      String?
-  street2      String?
+  email         String?
+  city          String?
+  state         String?
+  country       String?
+  postalCode    String? @map("postal_code")
+  street1       String?
+  street2       String?
   // Five distinct phone-ish fields, matching the legacy "Edit Customer" contact-info
   // layout exactly (Private Number / Cell Phone / Work Phone / Home Phone / Fax) — this
   // replaces an earlier, less faithful `phone1`/`phone2`/`phone3` naming from before this
@@ -222,9 +222,9 @@ model Address {
 // Seeded once via prisma/seed-message-types.ts (bun run db:seed), not user-editable yet
 // (no bema screen manages this list — it's a fixed reference table for now).
 model MessageType {
-  key       String  @id
+  key       String @id
   label     String
-  sortOrder Int     @map("sort_order")
+  sortOrder Int    @map("sort_order")
 
   users User[] @relation("UserNotificationPreferences")
 
@@ -285,12 +285,12 @@ model CustomerPricingRule {
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
   updatedBy String?  @map("updated_by")
 
-  @@map("customer_pricing_rules")
   @@index([userId])
+  @@map("customer_pricing_rules")
 }
 
 model Receiver {
-  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   // Legacy `receivers.isgecitizen`. Decides which name pair the parcel form requires (the
   // Georgian-script one rather than the Latin one) and is printed on customs paperwork, so
   // it is a fact about the person, not something to infer: a Georgian citizen whose name
@@ -306,15 +306,15 @@ model Receiver {
   // confirms ReceiverId/AddressId) — inferred so "my receivers" can be scoped per sender.
   // Verify against the legacy `receivers` table before the ETL backfill in
   // docs/migrations/05-data-migration-strategy.md relies on it.
-  userId    String? @map("user_id") @db.Uuid
-  user      User?   @relation(fields: [userId], references: [id])
-  addressId String  @map("address_id") @db.Uuid
-  address   Address @relation(fields: [addressId], references: [id])
+  userId      String? @map("user_id") @db.Uuid
+  user        User?   @relation(fields: [userId], references: [id])
+  addressId   String  @map("address_id") @db.Uuid
+  address     Address @relation(fields: [addressId], references: [id])
 
   parcels Parcel[]
 
-  @@map("receivers")
   @@index([userId])
+  @@map("receivers")
 }
 
 model DeliveryOffice {
@@ -331,19 +331,19 @@ model DeliveryOffice {
 }
 
 model ParcelOffice {
-  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id       String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   // One current office assignment per parcel — matches the legacy `TOP 1` lookup in
   // docs/migrations/02-parcels-domain-analysis.md §2.2. History of prior office
   // reassignments is not tracked, same as the legacy system.
-  parcelId String   @unique @map("parcel_id") @db.Uuid
-  parcel   Parcel   @relation(fields: [parcelId], references: [id])
-  officeId String   @map("office_id") @db.Uuid
+  parcelId String         @unique @map("parcel_id") @db.Uuid
+  parcel   Parcel         @relation(fields: [parcelId], references: [id])
+  officeId String         @map("office_id") @db.Uuid
   office   DeliveryOffice @relation(fields: [officeId], references: [id])
 
   assignedAt DateTime @default(now()) @map("assigned_at") @db.Timestamptz(6)
 
-  @@map("parceloffice")
   @@index([officeId])
+  @@map("parceloffice")
 }
 
 model Invoice {
@@ -352,11 +352,11 @@ model Invoice {
   user        User     @relation(fields: [userId], references: [id])
   invoiceDate DateTime @map("invoice_date") @db.Timestamptz(6)
 
-  items         InvoiceItem[]
-  invoicedOnParcels Parcel[]  @relation("ParcelInvoice")
+  items             InvoiceItem[]
+  invoicedOnParcels Parcel[]      @relation("ParcelInvoice")
 
-  @@map("invoices")
   @@index([userId, invoiceDate])
+  @@map("invoices")
 }
 
 model InvoiceItem {
@@ -367,9 +367,9 @@ model InvoiceItem {
   parcel    Parcel  @relation(fields: [parcelId], references: [id])
   amount    Decimal @db.Decimal(12, 2)
 
-  @@map("invoices_items")
   @@index([parcelId])
   @@index([invoiceId])
+  @@map("invoices_items")
 }
 
 model Payment {
@@ -383,8 +383,8 @@ model Payment {
   // docs/migrations/02-parcels-domain-analysis.md §2.2).
   paymentMethodId String   @map("payment_method_id")
 
-  @@map("payments")
   @@index([userId, paymentDate])
+  @@map("payments")
 }
 
 // Single-row operational settings table (legacy `config`) — a cross-cutting dependency for
@@ -407,6 +407,36 @@ model Config {
   // carried over); the legacy `config` table has both.
   expAwb        String?   @map("exp_awb")
   regAwb        String?   @map("reg_awb")
+
+  // Cargo Services shipping dates (bema "Site Settings" screen, legacy `dtCargoShip`/
+  // `dtCargoEst` columns). Cargo has no AWB code column of its own in legacy either — only
+  // Regular/Express do (`regAwb`/`expAwb` above) — so there's no `cargoAwb` field to add.
+  dtCargoShip DateTime? @map("dt_cargo_ship") @db.Timestamptz(6)
+  dtCargoEst  DateTime? @map("dt_cargo_est") @db.Timestamptz(6)
+
+  // The air-cargo manifest header fields ("Export Airway" on the parcels list reads these —
+  // see `src/app/api/bema/parcels/export-airway/route.ts`). `airwayBill` and `consignee` are
+  // legacy `AirwayBill`/`Consignee`; distinct from `regAwb`/`expAwb` above, which are the
+  // *trip* AWB codes, not this manifest's own bill number.
+  airwayBill String?   @map("airway_bill")
+  airwayDate DateTime? @map("airway_date") @db.Timestamptz(6)
+  consignee  String?   @map("consignee")
+
+  // Bema "Site Settings" → "Header Site Message" textarea (legacy `SiteMessage`). Only ever
+  // displayed by legacy's `views/layouts/default.html` (the `error.cfm` page's layout) — this
+  // app has no equivalent custom error-page layout, so the field is editable here for parity
+  // with the legacy screen but currently has no display consumer. See docs/findings.md.
+  // `SiteMessage2` is NOT modeled: confirmed write-only and never rendered by any legacy view
+  // (not even `vwSettings.cfm` has an input for it) — see docs/findings.md.
+  siteMessage String? @map("site_message")
+
+  // "Price for parcels" section — legacy `declaredPrice`/`nonDeclaredPrice`, read by
+  // `lytBema.cfm`'s `dbConfig` and used client-side in `parcels-online-add-2.js`'s declared-
+  // vs-non-declared pricing toggle. That toggle isn't ported yet (out of scope for this
+  // change, tracked in docs/findings.md); stored here so the settings screen itself is
+  // complete and the values are ready for that future consumer.
+  declaredPrice    String? @map("declared_price")
+  nonDeclaredPrice String? @map("non_declared_price")
 
   // Site-wide announcement popup (bema "Site Settings" → "Popup" section; legacy `config`
   // table's `ePopup`/`PopupMessageen`/`PopupMessagege` columns, shown via
@@ -458,8 +488,8 @@ model ParcelStatusHistory {
   changedBy String?      @map("changed_by")
   reason    String?
 
-  @@map("parcel_status_history")
   @@index([parcelId, changedAt])
+  @@map("parcel_status_history")
 }
 
 // The legacy `ParcelHistory` table, ported (docs/decisions/0018-parcel-edit-history.md).
@@ -506,12 +536,11 @@ model ParcelHistory {
   payMethod String?  @map("pay_method")
   payAmount Decimal? @map("pay_amount") @db.Decimal(12, 2)
 
-  updaterId String? @map("updater_id") @db.Uuid
-  updater   User?   @relation("ParcelHistoryUpdater", fields: [updaterId], references: [id])
+  updaterId   String? @map("updater_id") @db.Uuid
+  updater     User?   @relation("ParcelHistoryUpdater", fields: [updaterId], references: [id])
   /// Legacy's denormalized display string — see the model comment for why it survives.
   updaterName String? @map("updater_name")
 
-  @@map("parcel_history")
   /// Payment events in a date window — the Total Sale / Payment Colected / Remain Payment
   /// tables and the "Paid transactions" tab all start here.
   @@index([valueName, editDateTime])
@@ -519,6 +548,7 @@ model ParcelHistory {
   @@index([parcelId, editDateTime])
   /// "Colected In USA"/"Colected In Georgia": group a window's payment events by admin.
   @@index([updaterId, editDateTime])
+  @@map("parcel_history")
 }
 
 // "Money collect" (legacy `bema/parcels/money-collect.cfm` + `MoneyCollectHistory` table) —
@@ -533,7 +563,7 @@ model MoneyCollectHistory {
   user   User     @relation("MoneyCollectAgent", fields: [userId], references: [id])
   /// The calendar day being collected for — matched against `parcel_history.edit_date_time`
   /// by day only, same grouping the report itself uses.
-  cDate DateTime @map("c_date") @db.Timestamptz(6)
+  cDate  DateTime @map("c_date") @db.Timestamptz(6)
 
   aCash         Decimal @default(0) @map("a_cash") @db.Decimal(12, 2)
   aCreditCard   Decimal @default(0) @map("a_credit_card") @db.Decimal(12, 2)
@@ -544,11 +574,11 @@ model MoneyCollectHistory {
   collectorUsername String   @map("collector_username")
   /// The manager-supplied "Date" field on the collect modal — distinct from `cDate` (the day
   /// being collected for) and from `createdAt` (when the record was actually inserted).
-  gDate     DateTime @default(now()) @map("g_date") @db.Timestamptz(6)
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  gDate             DateTime @default(now()) @map("g_date") @db.Timestamptz(6)
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  @@map("money_collect_history")
   @@index([userId, cDate])
+  @@map("money_collect_history")
 }
 
 model Parcel {
@@ -570,9 +600,9 @@ model Parcel {
   contents  String?
   store     String?
   service   String?
-  groupId   String?  @map("group_id")
+  groupId   String? @map("group_id")
   location  String?
-  iLocation String?  @map("i_location")
+  iLocation String? @map("i_location")
   notes     String?
 
   // Source-of-truth hold flags (kept as the underlying facts, same as legacy). `status`
@@ -625,21 +655,21 @@ model Parcel {
   payAmount1 Decimal? @map("pay_amount1") @db.Decimal(12, 2)
   payAmount2 Decimal? @map("pay_amount2") @db.Decimal(12, 2)
 
-  parcelType   String?  @map("parcel_type")
-  bNotify      Boolean  @default(false) @map("b_notify")
-  bNotDeclared Boolean  @default(false) @map("b_not_declared")
+  parcelType   String? @map("parcel_type")
+  bNotify      Boolean @default(false) @map("b_notify")
+  bNotDeclared Boolean @default(false) @map("b_not_declared")
 
   length    Decimal? @db.Decimal(10, 2)
   width     Decimal? @db.Decimal(10, 2)
   high      Decimal? @db.Decimal(10, 2)
   dimWeight Decimal? @map("dim_weight") @db.Decimal(10, 2)
 
-  additionalUsername  String? @map("additional_username")
-  additionalFirstname String? @map("additional_firstname")
-  additionalLastname  String? @map("additional_lastname")
+  additionalUsername  String?  @map("additional_username")
+  additionalFirstname String?  @map("additional_firstname")
+  additionalLastname  String?  @map("additional_lastname")
   buser               String?
-  onlineSource         String? @map("online_source")
-  balanceAdjust        Decimal? @map("balance_adjust") @db.Decimal(12, 2)
+  onlineSource        String?  @map("online_source")
+  balanceAdjust       Decimal? @map("balance_adjust") @db.Decimal(12, 2)
 
   // Every field the bema parcels list's keyword search looks at — the parcel's own tracking
   // numbers/AWB/"additional" names, plus its receiver's name, organization, city, state and
@@ -671,7 +701,6 @@ model Parcel {
   statusHistory ParcelStatusHistory[]
   editHistory   ParcelHistory[]
 
-  @@map("parcels")
   @@index([tripDate, id], map: "parcels_trip_date_id_idx")
   @@index([status])
   @@index([userId])
@@ -682,6 +711,7 @@ model Parcel {
   // The bema parcels list's "Received By" filter (legacy `eadmin`), which is also the
   // implicit default filter for a BemaAgent and for an unfiltered first page load.
   @@index([trackingReceivedBy])
+  @@map("parcels")
 }
 
 // --- Site Pages CMS (bema "Site Pages" — see docs/decisions/0013-site-pages-cms.md) --------
@@ -700,10 +730,10 @@ model Parcel {
 // (front-end customer-group visibility ACL, always empty — same "out of scope" call as
 // customer discount tiers in docs/decisions/0011-bema-admin.md).
 model Page {
-  id     String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  slug   String
-  locale String  @default("en")
-  name   String
+  id              String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug            String
+  locale          String  @default("en")
+  name            String
   // Legacy `Header` field — present on ~half of real pages but not referenced by the
   // generic `views/static.html` template that renders most of them; its actual display
   // purpose wasn't established from the legacy code (see docs/decisions/0013). Kept for
