@@ -72,6 +72,14 @@ export const routes = {
       params?.dateStart && params?.dateEnd
         ? `/bema/parcels/reports-2?dateStart=${params.dateStart}&dateEnd=${params.dateEnd}`
         : '/bema/parcels/reports-2',
+    // Legacy `bema/parcels/money-collect.cfm` — per-agent/per-day payment totals with a
+    // password-gated "Collect Money" action, distinct from both Parcels Reports screens.
+    moneyCollect: (params?: { dateStart?: string; dateEnd?: string; country?: 'us' | 'ge' }) => {
+      if (!params?.dateStart || !params?.dateEnd) return '/bema/parcels/money-collect';
+      const query = new URLSearchParams({ dateStart: params.dateStart, dateEnd: params.dateEnd });
+      if (params.country) query.set('country', params.country);
+      return `/bema/parcels/money-collect?${query.toString()}`;
+    },
     // "Pricing Rules Administration" — legacy `bema/pricing_global_rules.cfm`, the
     // cross-customer counterpart to the per-customer Pricing Rules section on the customer
     // edit form (which has no route of its own — it's inline on `userEdit()`).

@@ -300,6 +300,7 @@ why).
       `docs/decisions/0019-admin-ui-boundary.md` — commit pending.
 
 - [x] **Standalone Receivers screen** (legacy `bema/parcels/{receivers,receivers-update,
+  receivers-delete}.cfm` + `views/parcels/{vwReceivers,vwReceiversUpdate}.cfm`) — the
 receivers-delete}.cfm` + `views/parcels/{vwReceivers,vwReceiversUpdate}.cfm`) — the
       management screen the parcel form's `ParcelReceiverSection` picker never had: browse/
       search/paginate all receivers (optionally scoped to one customer), add/edit one
@@ -310,6 +311,7 @@ receivers-delete}.cfm` + `views/parcels/{vwReceivers,vwReceiversUpdate}.cfm`) �
       `{ receivers }` shape when called with just `?userId=` (the parcel form's picker,
       untouched), paginated/searchable `{ items, total }` when called with `?page=` (the new
       list screen) — same route, so the two callers can't drift. New `POST`/`PATCH /api/bema/
+  receivers/[id]` (create/update, admin-only per legacy's stricter
 receivers/[id]` (create/update, admin-only per legacy's stricter
       `WEBSITE_ADMINISTRATOR,ADMINISTRATOR` gate on writes vs. the broader browse/picker
       access) and `DELETE` (soft delete, sets `active=false`) reuse `upsertReceiver()` from
@@ -349,6 +351,7 @@ receivers/[id]` (create/update, admin-only per legacy's stricter
       harmless at runtime, just never applied).
 
 - [x] **Parcel edit screen** (`bema/parcels/parcels-update.cfm` + `views/parcels/
+  vwParcelsUpdate.cfm`, ~1,900 lines between them — the item flagged as "the big one" in
 vwParcelsUpdate.cfm`, ~1,900 lines between them — the item flagged as "the big one" in
       the parcels follow-ups below). Full field set in legacy's own five groupings, each its
       own component: `ParcelDetailsSection` (tracking #s with the live duplicate check,
@@ -363,6 +366,7 @@ vwParcelsUpdate.cfm`, ~1,900 lines between them — the item flagged as "the big
       does — parcel, receiver (created when "< New Receiver >"), the sender's name and
       billing address, delivery-office assignment, then a `paid`/`unpaid` operation — but
       the first four are one transaction. New: `src/lib/services/{parcelUpdate,parcelDetail}
+  .ts`, `src/lib/parcels/{form,pricing}.ts`, `src/lib/validation/zodErrors.ts`,
 .ts`, `src/lib/parcels/{form,pricing}.ts`, `src/lib/validation/zodErrors.ts`,
       `GET`/`PATCH` on `/api/bema/parcels/[id]`, plus `/api/bema/parcels/[id]/clear-hold`,
       `/api/bema/parcels/check-tracking`, `/api/bema/receivers`,
@@ -395,6 +399,7 @@ vwParcelsUpdate.cfm`, ~1,900 lines between them — the item flagged as "the big
       field from both tables into one trigger-maintained column with a GIN trigram index (new
       migration `20260731210000_parcels_search_and_indexes`); **milestone date filters**
       (1971ms → 1ms) — ten partial indexes, one per tracking milestone, `WHERE col IS NOT
+  NULL`; **the exact row count** (200-525ms → 3ms) — capped at 10,000 (`totalIsExact` in
 NULL`; **the exact row count** (200-525ms → 3ms) — capped at 10,000 (`totalIsExact` in
       the response, rendered as "10,000+" past the cap; legacy always computed the exact
       count and paid for it on every page load); and, found along the way, **the sender
@@ -436,6 +441,7 @@ NULL`; **the exact row count** (200-525ms → 3ms) — capped at 10,000 (`totalI
       → argon2id via `hash-wasm`. Not a portability preference — a real outage: `next dev`/
       `next start` run route handlers under **Node** even when the server is launched with
       `bun`, so `Bun` was undefined there and every login 500'd with `ReferenceError: Bun is
+  not defined`. bema auth did not work at all outside a Bun-native server. Chose pure
 not defined`. bema auth did not work at all outside a Bun-native server. Chose pure
       WASM over a native addon (`@node-rs/argon2`) because `hash-wasm` inlines its WASM as
       base64 inside plain JS — nothing to mark external to the bundler, no per-platform
@@ -461,6 +467,8 @@ not defined`. bema auth did not work at all outside a Bun-native server. Chose p
       slice with its Buser column and assign-and-send-out shortcut, and the agent-role
       restrictions (own parcels only, no operations toolbar) now enforced server-side.
       Layout: `src/components/admin/parcels/{ParcelListPage,ParcelFilters,ParcelExtraFilters,
+  ParcelOperationsBar,ParcelGroupCard,ParcelRow,ParcelTrackingCell,ParcelPaymentCell,
+  ParcelRowActions}`, `src/lib/parcels/{constants,types,format,groupParcels}.ts`,
 ParcelOperationsBar,ParcelGroupCard,ParcelRow,ParcelTrackingCell,ParcelPaymentCell,
 ParcelRowActions}`, `src/lib/parcels/{constants,types,format,groupParcels}.ts`,
       `src/lib/services/{parcelQuery,parcelOperations}.ts`,
@@ -740,12 +748,14 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       legacy's own version never populates any rows (confirmed against the running site) — the
       port reproduces that as a static two-line file (title + column headers), not a real
       per-parcel manifest. See docs/findings.md. Also fixed the filter bar (`ParcelFilters
+  .module.css`) so all 12 fields (including "Debt") always stay on one line — legacy's
 .module.css`) so all 12 fields (including "Debt") always stay on one line — legacy's
       search bar is a fixed-width, non-responsive row; `flex-wrap` was reflowing it onto a
       second line on an ordinary window width instead, so it's `nowrap` + horizontal scroll now.
 - [x] "Add Parcel" (batch) visual-parity pass against the live legacy screen (no source exists
       to diff against, see above): `ParcelDraftTable`'s columns now match legacy's actual set/
       order (`First Name, Last Name, Cell Phone, Group, Weight, Value, Tracking #, Phone,
+  Ubany, City, Street, Actions`, "Ubany"/"Phone" being `street2`/`phone2`, cross-checked
 Ubany, City, Street, Actions`, "Ubany"/"Phone" being `street2`/`phone2`, cross-checked
       against the CSV export's own column mapping), and the Customer/Payment sections lost
       their bordered-panel look (never a documented legacy behaviour, just this codebase's own
@@ -922,6 +932,7 @@ Ubany, City, Street, Actions`, "Ubany"/"Phone" being `street2`/`phone2`, cross-c
       into its own module) rather than porting the rule a second time. New AGENTS.md rule:
       "Pages are thin."
 - [x] **`Input` component now owns its own CSS** (client-flagged: `.input-group
+  input[type=text]` still sat in `style.css`): split into `src/components/ui/Input.css`
 input[type=text]` still sat in `style.css`): split into `src/components/ui/Input.css`
       (the `input[type=...]`/`.datepicker`/`textarea` element styling — same already-decided
       pattern as `Select.css`, see docs/decisions/0002-select-library.md) and
@@ -996,6 +1007,7 @@ input[type=text]` still sat in `style.css`): split into `src/components/ui/Input
       `components/ui/` (already had 3 callers; this is the 4th) with an added optional
       "Clear" affordance for filter-bar use.
 - [x] **Parcels Reports** (`bema/parcels/parcels-reports.cfm` + `views/parcels/
+  vwParcelsReports.cfm`) ported **in full**: date-range filter, Total Sale, Payment
 vwParcelsReports.cfm`) ported **in full**: date-range filter, Total Sale, Payment
       Colected, Remain Payment, "Colected In USA"/"Colected In Georgia", and the
       "Paid transactions"/"History" tabs (`routes.bema.parcelsReports()`,
@@ -1024,9 +1036,27 @@ vwParcelsReports.cfm`) ported **in full**: date-range filter, Total Sale, Paymen
       documented in `docs/findings.md` — the "Colected In Georgia" total crediting
       `totalAmountUS` (verified: GE rows sum 70, GE total 20, US total inflated to 120), and
       `Remain Payment` dropping NULL-`payMethod2` parcels via NULL-propagating `!=`.
-- [ ] `money-collect.cfm`'s pre-2018-04 history backfill (`INSERT … SELECT`) — a data-repair
-      job belonging to the not-yet-built Money Collect screen, not application behaviour.
+- [x] **Money Collect** (`bema/parcels/money-collect.cfm` + `views/parcels/vwMoneyCollect.cfm` + `bema/ajax/moneyCollect.cfm`) ported: per-(agent, day) payment totals grouped from
+      `parcel_history` (`routes.bema.moneyCollect()`, `MoneyCollectPage`,
+      `GET /api/bema/parcels/money-collect`, `src/lib/services/moneyCollect.ts`), plus the
+      password-gated "Collect Money" write action (`POST
+/api/bema/parcels/money-collect/collect`) backed by a new `MoneyCollectHistory` table
+      (migration `20260801080853_add_money_collect_history`). Not portable: the pre-2018-04
+      online-payment history backfill (`INSERT … SELECT` joining `payments`/`invoices` on
+      `transactionid`) — the redesigned `Payment`/`Invoice` models have no `transactionId` to
+      join on at all, so this is a genuinely open question, not an oversight (see
+      `docs/findings.md`). Two deliberate deviations from legacy, both documented: the collect
+      endpoint now requires a valid bema session (legacy's ajax target has none at all — a real
+      unauthenticated-write gap, not reproduced), and the password re-auth reuses
+      `loginBemaUser` (matches legacy's actual runtime behavior — `validateLogin`'s
+      `WEBSITE_ADMINISTRATOR`-only check is dead code there). Five more legacy quirks
+      documented and reproduced (the single combined Cash/Cash-GE bucket, `getUsers()`
+      returning inactive managers too, the Agents-Name deep link simplification). Verified
+      end-to-end against a real Postgres: Debt-financed rows and NULL-updater rows correctly
+      excluded from totals, wrong-password rejection, and a successful collect immediately
+      reflected in the next report fetch.
 - [x] **Parcels Reports 2** (`bema/parcels/parcels-reports-2-v2.cfm` + `views/parcels/
+  vwParcelsReports2-v2.cfm`) ported **in full**, including the legacy DataTables UI
 vwParcelsReports2-v2.cfm`) ported **in full**, including the legacy DataTables UI
       (global search, a filter per column — two of them selects — sortable columns, the
       "created out of selected dates" toggle, and Excel/PDF/Print export) rather than numbers
