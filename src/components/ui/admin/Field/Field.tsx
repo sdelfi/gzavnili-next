@@ -15,6 +15,7 @@ export function Field({
   width = 'md',
   hint,
   inline = false,
+  className,
   children,
 }: {
   label: ReactNode;
@@ -24,10 +25,11 @@ export function Field({
   /** Label sits to the left of the control on one line, like legacy's own form rows, instead
    *  of stacked above it. */
   inline?: boolean;
+  className?: string;
   children: ReactNode;
 }) {
   return (
-    <div className={cn(s.field, s[width], { [s.inline]: inline })}>
+    <div className={cn(s.field, s[width], className, { [s.inline]: inline })}>
       <label className={s.label} htmlFor={htmlFor}>
         {label}
       </label>

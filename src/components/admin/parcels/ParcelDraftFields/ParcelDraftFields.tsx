@@ -65,7 +65,7 @@ export function ParcelDraftFields({
 
   return (
     <div className={s.grid}>
-      <Field label="Delivery:" width="lg">
+      <Field className={s.delivery} label="Delivery:" width="lg">
         <RadioGroup
           name="draft-delivery"
           options={DELIVERY_OPTIONS}
@@ -73,7 +73,7 @@ export function ParcelDraftFields({
           onChange={(v) => set('delivery', v as DraftParcelFormState['delivery'])}
         />
       </Field>
-      <Field label="Service:" width="lg">
+      <Field className={s.service} label="Service:" width="lg">
         <RadioGroup
           name="draft-service"
           options={SERVICE_OPTIONS}
@@ -82,7 +82,28 @@ export function ParcelDraftFields({
         />
       </Field>
 
-      <Field label="Tracking #:" htmlFor="draft-trackingnum">
+      <Field className={s.contents} label="Parcel Content:" width="lg">
+        <Select
+          instanceId="draft-contents"
+          size="sm"
+          isSearchable
+          isClearable
+          portal
+          placeholder="—"
+          options={PARCEL_CONTENTS.map((item) => ({ value: item, label: item }))}
+          value={PARCEL_CONTENTS.includes(draft.contents) ? draft.contents : ''}
+          onChange={(value) => set('contents', value)}
+        />
+      </Field>
+
+      <Field className={s.contentsOtherField} label="or other:">
+        <Input
+          value={PARCEL_CONTENTS.includes(draft.contents) ? '' : draft.contents}
+          onChange={(e) => set('contents', e.target.value)}
+        />
+      </Field>
+
+      <Field className={s.tracking} label="Tracking #:" htmlFor="draft-trackingnum">
         <div className={s.trackingnum}>
           <span className={s.prefix}>{prefix}</span>
           <Input
@@ -95,7 +116,7 @@ export function ParcelDraftFields({
         </div>
       </Field>
 
-      <Field label="Weight:" htmlFor="draft-weight" width="sm">
+      <Field className={s.weight} label="Weight:" htmlFor="draft-weight" width="sm">
         <Input
           id="draft-weight"
           value={draft.weight}
@@ -104,7 +125,7 @@ export function ParcelDraftFields({
           error={errors.weight}
         />
       </Field>
-      <Field label="Value:" htmlFor="draft-value" width="sm">
+      <Field className={s.value} label="Value:" htmlFor="draft-value" width="sm">
         <Input
           id="draft-value"
           value={draft.value}
@@ -113,7 +134,13 @@ export function ParcelDraftFields({
           error={errors.value}
         />
       </Field>
-      <Field label="Group:" htmlFor="draft-group" width="sm" hint="Same delivery + service required within a group.">
+      <Field
+        className={s.group}
+        label="Group:"
+        htmlFor="draft-group"
+        width="sm"
+        hint="Same delivery + service required within a group."
+      >
         <Input
           id="draft-group"
           value={draft.groupId}
@@ -122,27 +149,7 @@ export function ParcelDraftFields({
         />
       </Field>
 
-      <Field label="Parcel Content:" width="lg">
-        <Select
-          instanceId="draft-contents"
-          size="sm"
-          isSearchable
-          isClearable
-          portal
-          placeholder="—"
-          options={PARCEL_CONTENTS.map((item) => ({ value: item, label: item }))}
-          value={PARCEL_CONTENTS.includes(draft.contents) ? draft.contents : ''}
-          onChange={(value) => set('contents', value)}
-        />
-        <Input
-          className={s.contentsOther}
-          value={draft.contents}
-          placeholder="or type it"
-          onChange={(e) => set('contents', e.target.value)}
-        />
-      </Field>
-
-      <Field label="Received:" htmlFor="draft-received">
+      <Field className={s.received} label="Received:" htmlFor="draft-received">
         <Input
           id="draft-received"
           type="date"
@@ -150,7 +157,7 @@ export function ParcelDraftFields({
           onChange={(e) => set('trackingReceived', e.target.value)}
         />
       </Field>
-      <Field label="Received by:" width="lg">
+      <Field className={s.receivedBy} label="Received by:" width="lg">
         <Select
           instanceId="draft-receivedby"
           size="sm"
@@ -162,11 +169,11 @@ export function ParcelDraftFields({
         />
       </Field>
 
-      <Field label=" " width="lg">
+      <Field className={s.notify} label=" " width="lg">
         <Checkbox label="Notify" checked={draft.notify} onChange={(e) => set('notify', e.target.checked)} />
       </Field>
 
-      <Field label="Note:" htmlFor="draft-notes" width="lg">
+      <Field className={s.note} label="Note:" htmlFor="draft-notes" width="lg">
         <Textarea id="draft-notes" rows={3} value={draft.notes} onChange={(e) => set('notes', e.target.value)} />
       </Field>
     </div>

@@ -822,7 +822,9 @@ Ubany, City, Street, Actions`, "Ubany"/"Phone" being `street2`/`phone2`, cross-c
       existed only for the incorrect all-flat guess and had zero callers once corrected. Also
       dropped `ParcelAddPage.module.css`'s `max-width: 1100px`, which had no legacy basis and
       made the page narrower than the rest of bema. See `docs/decisions/0017-bema-add-parcel.md`
-      ("Visual-parity pass" / "Corrected layout").
+      ("Visual-parity pass" / "Corrected layout"). Follow-up: the draft modal's top parcel
+      fields now use explicit grid areas so the desktop row order is fixed to legacy's separate
+      Weight/Value/Group row instead of depending on auto-placement (commit pending).
 - [x] Shared `ui/PageHeading` — every bema admin page's `<h1>` (Browse Parcels/Delivery
       Requests, Edit Parcel, Add Parcel, Customers/BEMA Users, Site Pages, Add/Edit Page,
       Add/Edit User, Site Settings, the statement stub) had drifted into two or three

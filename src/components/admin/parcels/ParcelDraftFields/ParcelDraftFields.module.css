@@ -1,8 +1,60 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-areas:
+    "delivery service contents contentsOther tracking note"
+    "weight value group . . note"
+    "received receivedBy notify . . .";
   gap: 12px 16px;
   align-items: start;
+}
+
+.delivery {
+  grid-area: delivery;
+}
+
+.service {
+  grid-area: service;
+}
+
+.tracking {
+  grid-area: tracking;
+}
+
+.weight {
+  grid-area: weight;
+}
+
+.value {
+  grid-area: value;
+}
+
+.group {
+  grid-area: group;
+}
+
+.contents {
+  grid-area: contents;
+}
+
+.contentsOtherField {
+  grid-area: contentsOther;
+}
+
+.received {
+  grid-area: received;
+}
+
+.receivedBy {
+  grid-area: receivedBy;
+}
+
+.notify {
+  grid-area: notify;
+}
+
+.note {
+  grid-area: note;
 }
 
 .trackingnum {
@@ -19,18 +71,31 @@
   font-size: 13px;
 }
 
-.contentsOther {
-  margin-top: 6px;
-}
-
 @media (max-width: 1100px) {
   .grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-areas:
+      "delivery service tracking"
+      "contents contentsOther note"
+      "weight value group"
+      "received receivedBy notify";
   }
 }
 
 @media (max-width: 700px) {
   .grid {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "delivery"
+      "service"
+      "tracking"
+      "weight"
+      "value"
+      "group"
+      "contents"
+      "received"
+      "receivedBy"
+      "notify"
+      "note";
   }
 }
