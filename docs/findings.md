@@ -389,6 +389,110 @@ decision:** both branches key off hardcoded legacy MSSQL customer GUIDs
 (`58133650-…`/`581ACE56-…`) which cannot exist in this schema until the ETL runs. Both rows
 still render (always 0), matching the legacy layout.
 
+## Parcels Reports 2 (`parcels-reports-2-v2.cfm`) — 2026-08-01
+
+Ported the `-v2` controller/view pair specifically (`parcels-reports-2-v2.cfm` +
+`vwParcelsReports2-v2.cfm`), not the plain `parcels-reports-2.cfm`/`vwParcelsReports2.cfm` —
+see "Two unreachable branches" below for why.
+
+### The chicago/NULL exclusion via `ur.username not like '%chicago%'`
+
+**Found:** `parcels-reports-2-v2.cfm:181`. `ur` is `parcels.tracking_received_by` LEFT
+JOINed to `users`. When a parcel has no `tracking_received_by` set, `ur.username` is NULL,
+and `NULL NOT LIKE '%chicago%'` is NULL — not true — so the row is dropped by the WHERE
+clause. The visible effect: **this report only ever shows parcels that have a
+"received by" admin recorded**, and that admin's identity is exactly what the "Received by"
+column renders — a parcel processed without one (or by the literal `chicago` test/branch
+account) never appears here at all, regardless of how it was paid.
+
+**Ported as-is** (`parcelSalesReport.ts`: `parcel: { trackingReceivedBy: { not: null, notIn:
+chicagoAdminIds } }`). Verified end-to-end: a seeded parcel with `trackingReceivedBy = NULL`
+and a seeded parcel whose receiving admin's username contains `chicago` were both correctly
+absent from the API response, while an otherwise-identical parcel with a normal receiving
+admin appeared.
+
+### `ph.updaterID NOT IN (excludeAgentIds)` also drops every NULL-updater row
+
+**Found:** `exclude-agents.cfm`'s single hardcoded id (`26259424-…`, "Exclude MR from
+financial reports due to role change") is applied via `NOT IN`, which is NULL — not true —
+for any row whose `updaterID` is itself NULL. Unlike the sibling "Parcels Reports" screen
+(which needs `NOT: { updater: { adminRole: 'BemaAgent' } }` specifically so it *keeps*
+NULL-updater rows, e.g. `money-collect.cfm`'s "Online" backfill), this report's own filter
+requires the opposite: a bare `updaterId: { not: EXCLUDED_AGENT_ID }`, which correctly
+excludes both the one hardcoded id and every NULL. Verified: a seeded payment event with
+`updaterId = NULL` did not appear in the API response.
+
+**Ported as-is.** The hardcoded id itself matches nothing yet (no legacy user data has been
+imported), same status as the sibling report's `UNKNOWN_CUSTOMER_ID`/`LINOLI_CUSTOMER_ID`.
+
+### Column "Paid" vs column "Debt": two different sentinels for the same Debt-financed slot
+
+**Found:** `vwParcelsReports2-v2.cfm`'s "Paid" column (~line 319) sets a Debt-financed
+`payamount1`/`payamount2` to `""` (empty string), while the "Debt" column (~line 355) sets
+the *same condition* to `0`. Because `""` is falsy-for-presence and `0` is not, the "Paid"
+column's blank/debt-fallback branch is reachable (a fully debt-financed "Paid" parcel shows
+its `debt` figure instead of a blank), while the "Debt" column's equivalent fallback branches
+are dead — the `tpayamount1 neq ""` check is always true once the slot is zeroed rather than
+blanked, so `debtR = debt - tpayamount1 - tpayamount2` is the only branch that ever runs.
+
+**Ported as-is**, deliberately keeping the two sentinels distinct (`computeRowDisplay` in
+`parcelSalesReport.ts` uses `null` for column "Paid" and `0` for column "Debt") rather than
+unifying them — see the test file's two dedicated cases for exactly this distinction.
+
+### PayPal is only captured via `OnlineSource`, never via a literal "PayPal" `payMethod`
+
+**Found:** `getTotals()`'s `data.Paypal` bucket is populated **only** by the
+`tt.OnlineSource eq "PayPal"` branch. `sortPayments()` (the fallback for every other payment
+method) checks for `"card"`/`"cash"`/`"check"` substrings but has no PayPal branch — a
+payment event whose `payMethod` is literally `"PayPal"` without `OnlineSource` set
+contributes to no total bucket at all and is silently dropped from `ttl`/`tbt`.
+
+**Ported as-is** (`sortPayments`'s comment and the matching test — "drops a method matching
+no bucket … silently"). The client-side live-recalc ("count2") totals happen to catch this
+case anyway, since they bucket by substring match against the Payment Type text directly
+(no `OnlineSource` dispatch) — a difference between the two totals sources that is itself
+inherited from legacy (`getTotals()` vs `getFilteredSum()` are two independently-written
+mechanisms there too, not a shared implementation).
+
+### Service type filter dropdown is missing "Cargo"
+
+**Found:** `vwParcelsReports2-v2.cfm`'s Service type `<select>` offers exactly `Express` /
+`Regular` / `Unknown` / `Linoli` — `Cargo` (a real `parcels.service` value) has no option, so
+a Cargo parcel is simply unselectable via that particular filter (still visible/unfiltered
+otherwise; the "Unknown"/"Linoli" options don't match anything either, since `service` never
+literally holds those strings — they're customer-bucket labels borrowed from the sibling
+report's Total Sale block, not real service values).
+
+**Ported as-is** (`SERVICE_OPTIONS` in `ParcelsSalesReportPage.tsx`, four options, no Cargo).
+
+### Two unreachable branches: the plain (non-`-v2`) screen, and `fromMC=0`
+
+**Found:** `lytBema.cfm`'s "Parcels Reports 2" nav entry links only to
+`parcels-reports-2-v2.cfm` with no query string; every other in-app link to this screen
+(the commented-out "Received by" link in the view, `vwMoneyCollect.cfm`'s link) also always
+passes `fromMC=1`. Two consequences: (1) the plain `parcels-reports-2.cfm`/
+`vwParcelsReports2.cfm` pair (no `exclude-agents.cfm`, no `updaterID NOT IN` filter) has no
+live entry point and was not ported; (2) within the `-v2` controller itself, the `fromMC eq
+1` branch is the only one ever exercised — the `fromMC neq 1` branch (a different `FROM
+parcels p LEFT JOIN ParcelHistory …` query shape that also selects `updaterr.typeId`) is
+dead code.
+
+**Not reachable, nothing to port** for both. A consequence of (2) worth calling out
+separately below.
+
+### The `isDefined('typeId')` branch inside `pmshow`'s condition is always false
+
+**Found:** `pmshow`'s derivation is `isDefined('paymethod') AND (payMethod eq "balance" OR
+(isDefined('typeId') && FindNoCase('card', paymethod1_t) AND (typeId neq 1 OR paymethod eq
+"Authorize.net")))`. `typeId` (`updaterr.typeId`) is only ever selected in the `fromMC neq 1`
+query branch — see above — so on the only reachable path, `isDefined('typeId')` is always
+false and the whole second OR-arm can never be true. `pmshow` therefore collapses to: the
+event's own `payMethod` when it equals `"balance"`, else the parcel's `payMethod1`
+(`OnlineSource`-overridden for Authorize.net/PayPal collections).
+
+**Ported the collapsed form** (`computeRowDisplay`'s `pmshow`), with the reasoning recorded
+in a code comment rather than transcribing the always-false branch literally.
+
 ---
 
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not

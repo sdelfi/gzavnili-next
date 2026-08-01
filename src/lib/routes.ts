@@ -60,11 +60,18 @@ export const routes = {
     deliveryRequests: () => '/bema/parcels?deliveryRequest=1',
     // Legacy `bema/parcels/parcels-reports.cfm` — date-range Total Sale/Payment
     // Collected/Remain Payment report, distinct from the separate "Parcels Reports 2"
-    // screen (`parcels-reports-2-v2.cfm`, not yet ported).
+    // screen (`parcelsReports2()` below).
     parcelsReports: (params?: { dateStart?: string; dateEnd?: string }) =>
       params?.dateStart && params?.dateEnd
         ? `/bema/parcels/reports?dateStart=${params.dateStart}&dateEnd=${params.dateEnd}`
         : '/bema/parcels/reports',
+    // Legacy `bema/parcels/parcels-reports-2-v2.cfm` — the per-payment-event DataTables
+    // report (the `-v2` suffix is the version actually linked from the sidebar; the plain
+    // `parcels-reports-2.cfm` has no live link and was not ported, see docs/findings.md).
+    parcelsReports2: (params?: { dateStart?: string; dateEnd?: string }) =>
+      params?.dateStart && params?.dateEnd
+        ? `/bema/parcels/reports-2?dateStart=${params.dateStart}&dateEnd=${params.dateEnd}`
+        : '/bema/parcels/reports-2',
     // "Pricing Rules Administration" — legacy `bema/pricing_global_rules.cfm`, the
     // cross-customer counterpart to the per-customer Pricing Rules section on the customer
     // edit form (which has no route of its own — it's inline on `userEdit()`).

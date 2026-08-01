@@ -1005,8 +1005,29 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       `Remain Payment` dropping NULL-`payMethod2` parcels via NULL-propagating `!=`.
 - [ ] `money-collect.cfm`'s pre-2018-04 history backfill (`INSERT … SELECT`) — a data-repair
       job belonging to the not-yet-built Money Collect screen, not application behaviour.
-- [ ] "Parcels Reports 2" (`parcels-reports-2-v2.cfm`) — separate legacy screen/sidebar entry,
-      still a placeholder in the nav.
+- [x] **Parcels Reports 2** (`bema/parcels/parcels-reports-2-v2.cfm` + `views/parcels/
+      vwParcelsReports2-v2.cfm`) ported **in full**, including the legacy DataTables UI
+      (global search, a filter per column — two of them selects — sortable columns, the
+      "created out of selected dates" toggle, and Excel/PDF/Print export) rather than numbers
+      only (`routes.bema.parcelsReports2()`, `ParcelsSalesReportPage`,
+      `GET /api/bema/parcels/reports-2`, `src/lib/services/parcelSalesReport.ts`), gated
+      `BemaStandard`/`BemaAdministrator` same as the sibling report. Reads the same
+      `parcel_history` table as "Parcels Reports" but with its own, independent filter set —
+      notably `ur.username not like '%chicago%'` (a NULL-propagating filter that means this
+      report only shows parcels with a "received by" admin recorded at all) and its own
+      per-row Payment Type/Paid/Debt derivation. Client-side interactivity (search/filter/
+      sort/live-recalculated totals/export) reproduced with no new runtime table/DataTables
+      library — plain array filter+sort over the one API response, same idiom the rest of
+      this app's admin lists use; `xlsx`/`jspdf`/`jspdf-autotable` added (dynamically
+      imported, so they don't weigh down the page's initial bundle) for the Excel/PDF export
+      buttons specifically, since no existing dependency covered that. Six legacy quirks
+      found and reproduced, documented in `docs/findings.md` (the chicago/NULL exclusion, the
+      exclude-agent NOT-IN NULL exclusion, the "Paid"-vs-"Debt" column Debt-blanking sentinel
+      mismatch, PayPal only captured via `OnlineSource`, the Service filter's missing
+      "Cargo" option, and the two unreachable branches — the plain non-`-v2` screen and
+      `fromMC=0`). Verified end-to-end against a real Postgres: chicago/NULL-receiver
+      exclusion, NULL-updater exclusion, and the Debt-financed Paid/Debt column figures all
+      confirmed correct on seeded data.
 
 ## Not started
 

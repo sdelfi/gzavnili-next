@@ -1,0 +1,1 @@
+export { ParcelsSalesReportPage } from './ParcelsSalesReportPage';

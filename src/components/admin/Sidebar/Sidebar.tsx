@@ -54,7 +54,11 @@ const NAV_GROUPS: NavGroup[] = [
         href: routes.bema.parcelsReports(),
         isActive: (pathname) => pathname.startsWith('/bema/parcels/reports'),
       },
-      { label: 'Parcels Reports 2' },
+      {
+        label: 'Parcels Reports 2',
+        href: routes.bema.parcelsReports2(),
+        isActive: (pathname) => pathname.startsWith('/bema/parcels/reports-2'),
+      },
       {
         // Legacy's `parcels.cfm?delreq=1` — its own nav entry there too, but the same screen
         // with an extra filter and an extra column, not a separate page.

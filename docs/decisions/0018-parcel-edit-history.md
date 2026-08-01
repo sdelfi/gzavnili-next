@@ -101,6 +101,13 @@ Two details that look like nits and are not:
   Index choice is deliberately conservative (three, not one per predicate): this is a
   write-heavy table — a row per field change — so each index is paid for on every parcel edit.
 
+**Second consumer:** "Parcels Reports 2" (`parcels-reports-2-v2.cfm`, see
+`src/lib/services/parcelSalesReport.ts` and `docs/findings.md`'s matching entry) reads this
+same table too, with its own independent query and filter set — the two reports are not
+variants of each other in legacy and aren't treated as such here. Both existing regardless of
+what either one needs is exactly why the table was restored as a general edit log rather than
+bolted onto one report's query.
+
 ## What the reports now do that they could not before
 
 - **"Colected In USA" / "Colected In Georgia"** render, grouped per admin.
