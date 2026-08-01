@@ -93,5 +93,9 @@ export const routes = {
     // Payment Preferences (docs/decisions/0020-payment-config.md) — legacy
     // `bema/config/payment.cfm`.
     paymentConfig: () => '/bema/payment',
+    // Messages / SMS list (docs/decisions/0021-bema-messages.md) — legacy
+    // `bema/messages/messages.cfm` / `sms.cfm`, one shared `messages` table.
+    messages: () => '/bema/messages',
+    smsList: () => '/bema/sms',
   },
 };

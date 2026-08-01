@@ -94,9 +94,17 @@ const NAV_GROUPS: NavGroup[] = [
       { label: 'Send SMS Custom' },
       { label: 'Send Bulk SMS' },
       { label: 'Send SMS' },
-      { label: 'SMS list' },
+      {
+        label: 'SMS list',
+        href: routes.bema.smsList(),
+        isActive: (pathname) => pathname.startsWith('/bema/sms'),
+      },
       { label: 'Send message' },
-      { label: 'Messages' },
+      {
+        label: 'Messages',
+        href: routes.bema.messages(),
+        isActive: (pathname) => pathname.startsWith('/bema/messages'),
+      },
     ],
   },
   {

@@ -163,6 +163,11 @@ model User {
   // wants to be notified for, independent of the mail/SMS channel toggles above.
   notificationMessageTypes MessageType[] @relation("UserNotificationPreferences")
 
+  // bema "Messages"/"SMS list" (docs/decisions/0021-bema-messages.md) — legacy `messages`
+  // table, shared by internal admin↔customer messages and outbound SMS.
+  messagesReceived Message[] @relation("MessageRecipient")
+  messagesSent     Message[] @relation("MessageSender")
+
   @@index([accountType])
   @@map("users")
 }
@@ -226,9 +231,51 @@ model MessageType {
   label     String
   sortOrder Int    @map("sort_order")
 
-  users User[] @relation("UserNotificationPreferences")
+  users    User[]    @relation("UserNotificationPreferences")
+  messages Message[]
 
   @@map("message_types")
+}
+
+// Bema "Messages"/"SMS list" (`bema/messages/messages.cfm`/`sms.cfm`) — a single legacy
+// `messages` table shared by internal admin↔customer messages and outbound SMS, split by
+// `isSms`. See docs/decisions/0021-bema-messages.md.
+model Message {
+  id             Int          @id @default(autoincrement()) @map("message_id")
+  userId         String?      @map("user_id") @db.Uuid
+  user           User?        @relation("MessageRecipient", fields: [userId], references: [id])
+  senderId       String?      @map("sender_id") @db.Uuid
+  sender         User?        @relation("MessageSender", fields: [senderId], references: [id])
+  parcelId       String?      @map("parcel_id") @db.Uuid
+  parcel         Parcel?      @relation(fields: [parcelId], references: [id])
+  messageTypeKey String?      @map("message_type_key")
+  messageType    MessageType? @relation(fields: [messageTypeKey], references: [key])
+
+  // Threading — legacy `chain`/`replytoID`, display-only in the ported browse list (no
+  // reply/view screen is built yet, see docs/decisions/0021-bema-messages.md).
+  chain     Int?
+  replyToId Int? @map("reply_to_id")
+
+  subject String?
+  // Legacy `Message` column — the actual body text. Note the browse list's own "Message"
+  // column never displays this (see docs/findings.md's "Messages" section for the display
+  // bug this reproduces).
+  body    String?
+
+  active Boolean @default(true) @map("status")
+  read   Boolean @default(false) @map("b_read")
+
+  isSms   Boolean @default(false) @map("b_sms")
+  smsTo   String? @map("sms_to")
+  smsBody String? @map("sms_body")
+
+  createdAt DateTime  @default(now()) @map("dt_create") @db.Timestamptz(6)
+  openedAt  DateTime? @map("dt_open") @db.Timestamptz(6)
+
+  @@index([isSms, createdAt])
+  @@index([userId])
+  @@index([chain])
+  @@map("messages")
 }
 
 enum ServiceType {
@@ -714,6 +761,7 @@ model Parcel {
   parcelOffice  ParcelOffice?
   statusHistory ParcelStatusHistory[]
   editHistory   ParcelHistory[]
+  messages      Message[]
 
   @@index([tripDate, id], map: "parcels_trip_date_id_idx")
   @@index([status])

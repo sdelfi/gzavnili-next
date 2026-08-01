@@ -749,6 +749,55 @@ table/consumer exists yet in this schema. Not modeled.
 
 ---
 
+## Messages / SMS list (`bema/messages/messages.cfm` / `sms.cfm`) — 2026-08-01
+
+See docs/decisions/0021-bema-messages.md for the full picture; the individual findings below.
+
+### The "Message" column shows the message *type* label, not the message body
+
+**Found:** `views/messages/messages.cfm`'s browse table has a column headed "Message"
+(`<th ...>Message</th>`), but the row template renders `#enName#` in that cell
+(`<td>#enName#</td>`) — `enName` is `MessageTypes.enName`, the category label ("We just got
+your parcel(s)", "Payment Reminder", ...) from the `LEFT JOIN MessageTypes`, not `Message`,
+the column actually holding the body text (which is selected by the query but never displayed
+anywhere on this screen). Every row's "Message" cell shows its type label instead of any of
+its actual content — the real message text is only visible via `message_view.cfm`, not built
+here (see docs/decisions/0021-bema-messages.md).
+
+**Ported as-is**: the "Message" column in `MessagesListPage` renders `messageTypeLabel`
+(joined from `MessageType.label`), not `body` — reproducing legacy's actual displayed output,
+not what the header name implies it should show.
+
+### Four `url` params are declared but never applied to either query
+
+**Found:** both `messages.cfm` and `sms.cfm` declare `url.active` (default `"1"`), `url.sort`
+(default `"Username"`), `url.dir` (default `"desc"`), and `url.grp` (default `""`) via
+`cfparam`, but none of the four ever appears in either screen's SQL `WHERE`/`ORDER BY` — both
+queries always order by `dtCreate desc` with no status filter, regardless of what these
+params hold. Almost certainly leftover boilerplate copied from the Parcels list screen (which
+does use `active`/`sort`/`dir` for real).
+
+**Not reachable, nothing to port.** No filter/sort controls for these are exposed in
+`MessagesListPage`/`SmsListPage`; both list endpoints always order by `createdAt desc` and
+never filter by an active/status flag.
+
+### Messages search matches `messageFormatted`, a column absent from the list's own `SELECT`
+
+**Found:** `messages.cfm`'s search clause is `subject LIKE ... OR messageFormatted LIKE ...`,
+but the query's `SELECT` list has no `messageFormatted` column — only `Message` (aliased
+nowhere, selected as-is) is fetched. Whatever `messageFormatted` actually is in the legacy
+`messages` table (a pre-stripped/formatted copy of `Message`, presumably, but not confirmed —
+no DDL for this table was available to check) isn't visible in this screen's own output at
+all, dead-code-adjacent from the browse list's perspective even though the filter it drives is
+live.
+
+**Approximated, not literally ported**: `GET /api/bema/messages`'s search matches `subject`
+and `body` (`Message`'s equivalent) — the closest available proxy, since `messageFormatted`
+isn't modeled (no confirmed source column to port it from) and `Message`/`body` is the only
+message-text column this screen's query actually returns.
+
+---
+
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not
 being a real FK, `isGeCitizen` being inferred rather than stored — are recorded in their
 respective decision docs and PROGRESS.md instead; not backfilled here.)*
