@@ -1053,6 +1053,71 @@ inserted and "successfully sent" shown to the operator).
 
 ---
 
+---
+
+## Send Bulk SMS (`bema/messages/sms_add_bulk.cfm`) — 2026-08-01
+
+See docs/decisions/0025-bema-send-bulk-sms.md for the full picture; the individual findings
+below.
+
+### A GE receiver phone is queued with `phoneType = "US"` — a copy-paste bug
+
+**Found:** the composer's per-candidate loop has two near-identical blocks for the receiver
+leg — a `GE` branch and a `US` branch, each formatting the phone for its own country and
+appending `{phone, text, type}` to the queue payload. The `US` branch correctly writes
+`type="US"`. The `GE` branch also writes `type="US"` — literally the same string as the branch
+below it, not `"GE"`. The parallel *customer* leg gets this right (its `GE` branch writes
+`type="GE"`), so this is specifically a copy-paste of the customer block that never got the
+one literal fixed.
+
+**Ported as-is**: `resolveBulkSmsTargets()` reproduces the mismatch exactly — a GE receiver's
+queue row comes out `phoneType: 'US'`. Practically this doesn't misroute the eventual send
+(the cron drain's `sendsms()` re-derives GE from the phone's own `995` prefix regardless of
+the `type` it's called with), but it does mean that row skips the drain's bulk GE-grouping
+optimization (joining same-text sends into one gateway call) and goes out through the
+per-row `US` branch instead — see `cron/processSMSQueue.cfm`, still not built (Phase 6).
+
+### The "select at least one filter" error names filters the actual check doesn't use
+
+**Found:** the POST handler's gate is `ArrayLen(form.sendTo) gt 0 and form.message neq ""` —
+only "Send to" and the message body. The `<cfelse>` branch's flash message is "Please select
+at least one filter (country or status)" — text that describes a *different*, wider condition
+(`... and (form.status neq "" or form.country neq "")`) still visible, commented out, directly
+above the live one. The condition was simplified at some point; the error text wasn't updated
+to match.
+
+**Ported as-is**: `POST /api/bema/sms/bulk` checks `sendTo`/`message` and returns that exact
+(now-misleading) text on failure.
+
+### Reusing `Parcel.status` for this screen's filter diverges from its own inline CASE by one case
+
+**Found:** the bulk composer's inline `CASE` (not_on_hold → on_hold → delivered →
+out_delivery → region → office → **custom** → delay → shipped → received → awaiting → new)
+has no branch for `TrackingProcessingCustom` at all — a parcel with that field set still
+falls through to the `custom` branch here (since only `TrackingCustom` is checked). The
+trigger-maintained `Parcel.status` column checks `tracking_processing_custom` *before*
+`tracking_custom` (`fn_recompute_parcel_status`), so a parcel with both fields set is
+`processing_custom` there, not `custom`.
+
+**Ported as-is, with one acknowledged divergence**: `smsBulkQueue.ts` reuses `Parcel.status`
+directly (`BULK_SMS_STATUS_FILTER`) rather than adding a fourth slightly-different inline
+status computation to the codebase — the same call already made for `getParcel.cfm` in
+`parcelOnlineLookup.ts` (see that entry above). The practical effect: filtering by "Process
+Custom Clearance" here will not include a parcel that's specifically mid-processing-custom,
+where legacy's own CASE would have included it.
+
+### The "Paid" status filter option always yields zero candidates
+
+**Found:** `vwSmsAddBulk.cfm`'s status dropdown includes `<option value="paid">Paid</option>`,
+but the composer's own inline `CASE` never produces `'paid'` as a status value — there's no
+branch for it. Selecting "Paid" filters against a value the query can never return.
+
+**Ported as-is**: kept as a dropdown option (`BULK_SMS_STATUS_FILTER` has no entry for
+`"paid"`, and `findBulkSmsCandidates()` returns no candidates at all when it's selected) —
+UI parity without inventing a real filter legacy never had.
+
+---
+
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not
 being a real FK, `isGeCitizen` being inferred rather than stored — are recorded in their
 respective decision docs and PROGRESS.md instead; not backfilled here.)*

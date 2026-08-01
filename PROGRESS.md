@@ -1211,6 +1211,27 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
       phone format rejection, and a successful send (confirmed the `Messages` row's
       `userId`/`parcelId`/`senderId` all null, `smsTo`/`smsBody` correct) all confirmed
       correct.
+- [x] **Send Bulk SMS** (`bema/messages/sms_add_bulk.cfm`) ported — see
+      docs/decisions/0025-bema-send-bulk-sms.md. Filter (status/customer-billing-country) →
+      resolve customer/receiver phone numbers → enqueue to a new `sms_queue` table
+      (`SmsQueueEntry` model, `smsBulkQueue.ts` porting `messages/queue.cfc`'s bulk-insert/
+      count/get/clean). Status filter reuses the trigger-maintained `Parcel.status` column
+      (third reuse, after `getParcel.cfm`'s lookup and the parcels list) rather than a fourth
+      inline CASE — one acknowledged divergence in docs/findings.md. Reuses `formatPhone()`
+      from "Send SMS"'s gateway service. `GET`/`POST`/`DELETE /api/bema/sms/bulk`;
+      `SmsBulkPage` at `/bema/sms/bulk`, wired to the pre-existing "Send Bulk SMS" Sidebar
+      placeholder. Found and reproduced: a GE receiver phone gets queued tagged
+      `phoneType: "US"` (copy-paste bug, doesn't misroute the eventual send since the gateway
+      re-derives GE from the phone's own prefix, but does skip the drain's bulk-grouping
+      optimization for that row), the "select at least one filter" error message naming
+      "country or status" when the actual check is `sendTo`/`message`, and the "Paid" status
+      filter option always yielding zero candidates (no CASE branch produces it) — all in
+      docs/findings.md. **The queue-draining scheduler (`cron/processSMSQueue.cfm`) is not
+      built** — this screen queues real rows with real queue-state display, but nothing yet
+      sends them (Phase 6 per docs/decisions/0004-scheduled-jobs.md). Verified end-to-end
+      against a real Postgres: status+notifyViaSms-gated candidate resolution, dedup across
+      customer/receiver, the phoneType bug, the queue preview table, and Empty Queue all
+      confirmed correct.
 
 ## Not started
 
@@ -1224,10 +1245,12 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
   taxes)**: not modeled — legacy's only write path destructively wipes them on every Payment
   Preferences save (see docs/decisions/0020-payment-config.md, docs/findings.md). Needs a
   product decision once a checkout/orders domain is actually designed.
-- **Message compose/reply/view** (`message_add.cfm`/`message_view.cfm`) and the **bulk SMS
-  composers + send queue** (`sms_add_batch.cfm`/`sms_add_bulk.cfm`/`sms_add_user.cfm`,
-  `sms_queue` table, `messages/queue.cfc`'s bulk-insert/`cron/processSMSQueue.cfm`'s
-  queue-draining scheduler): not built — see docs/decisions/0021-bema-messages.md and
-  docs/decisions/0024-bema-send-sms.md (single-SMS send, and the `messages.cfc` gateway
-  integration those bulk composers would also use, are now built). The "Send SMS by Trip
-  Date"/"Send SMS Custom"/"Send Bulk SMS"/"Send message" Sidebar placeholders remain unwired.
+- **Message compose/reply/view** (`message_add.cfm`/`message_view.cfm`) and the **other bulk/
+  scheduled SMS composers** (`sms_add_batch.cfm`/`sms_add_user.cfm`, one of which drives the
+  "Send SMS by Trip Date" nav item): not built — see docs/decisions/0021-bema-messages.md. The
+  "Send SMS by Trip Date"/"Send SMS Custom"/"Send message" Sidebar placeholders remain
+  unwired.
+- **`cron/processSMSQueue.cfm`** (the `sms_queue`-draining scheduler that actually sends what
+  "Send Bulk SMS" enqueues — see docs/decisions/0025-bema-send-bulk-sms.md): not built. Phase
+  6 (cron migration, docs/decisions/0004-scheduled-jobs.md) hasn't started; rows queued via
+  `/bema/sms/bulk` today accumulate with nothing draining them until this exists.

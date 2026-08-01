@@ -63,3 +63,28 @@ export function listSms(params: ListSmsParams) {
 export function sendSms(payload: { phone1: string; message: string }) {
   return apiPost<{ id: number }>('/api/bema/sms', payload);
 }
+
+export type SmsQueueEntryDTO = { id: number; phone: string; text: string; phoneType: string; createdAt: string };
+
+export type SmsQueuePreview = {
+  count: number;
+  queue: SmsQueueEntryDTO[];
+  queueFirst: SmsQueueEntryDTO[] | null;
+};
+
+export function getSmsQueuePreview() {
+  return apiGet<SmsQueuePreview>('/api/bema/sms/bulk');
+}
+
+export function sendBulkSms(payload: {
+  status: string;
+  country: 'GE' | 'US' | '';
+  sendTo: ('customer' | 'receiver')[];
+  message: string;
+}) {
+  return apiPost<{ found: number; inserted: number }>('/api/bema/sms/bulk', payload);
+}
+
+export function cleanSmsQueue() {
+  return apiDelete<{ cleared: number }>('/api/bema/sms/bulk');
+}

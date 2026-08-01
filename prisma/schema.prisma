@@ -284,6 +284,26 @@ model Message {
   @@map("messages")
 }
 
+// Bulk-SMS outbound queue (`bema/messages/sms_add_bulk.cfm`'s target, `messages/queue.cfc`) —
+// see docs/decisions/0025-bema-send-bulk-sms.md. A separate table from `Message`: this one is
+// the not-yet-sent queue a bulk composer bulk-inserts into; a queue-draining scheduler (not
+// built — Phase 6 per docs/decisions/0004-scheduled-jobs.md) would be what actually sends each
+// row and, on success, writes the corresponding `Message` row the same way `sms_add.cfm`'s
+// single-send path does.
+model SmsQueueEntry {
+  id        Int      @id @default(autoincrement()) @map("sms_queue_id")
+  phone     String
+  text      String
+  // Legacy free-text `varchar`, always "GE" or "US" in practice (including a legacy bug where
+  // a receiver-country-GE row is tagged "US" — see docs/findings.md). Kept as a plain string
+  // rather than reusing `smsGateway.ts`'s `SmsCountry` type at the schema level, matching
+  // legacy's own untyped column.
+  phoneType String   @map("phone_type")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("sms_queue")
+}
+
 enum ServiceType {
   Regular @map("regular")
   Express @map("express")

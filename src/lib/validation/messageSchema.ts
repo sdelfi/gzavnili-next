@@ -30,3 +30,14 @@ export const sendSmsSchema = z.object({
   phone1: z.string().min(1),
   message: z.string(),
 });
+
+// bema "Send Bulk SMS" (legacy `bema/messages/sms_add_bulk.cfm`) — see
+// docs/decisions/0025-bema-send-bulk-sms.md. `status` is left a free string rather than a
+// `ParcelStatus` enum: legacy's own dropdown includes `"paid"`, which the route resolves to
+// "no candidates" rather than rejecting (see `smsBulkQueue.ts`'s `BULK_SMS_STATUS_FILTER`).
+export const sendBulkSmsSchema = z.object({
+  status: z.string().optional().default(''),
+  country: z.enum(['GE', 'US', '']).optional().default(''),
+  sendTo: z.array(z.enum(['customer', 'receiver'])).default([]),
+  message: z.string(),
+});

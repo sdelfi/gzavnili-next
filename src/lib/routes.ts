@@ -106,5 +106,8 @@ export const routes = {
     smsList: () => '/bema/sms',
     // Send SMS (docs/decisions/0024-bema-send-sms.md) — legacy `bema/messages/sms_add.cfm`.
     smsAdd: () => '/bema/sms/add',
+    // Send Bulk SMS (docs/decisions/0025-bema-send-bulk-sms.md) — legacy
+    // `bema/messages/sms_add_bulk.cfm`.
+    smsBulk: () => '/bema/sms/bulk',
   },
 };

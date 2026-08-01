@@ -16,14 +16,14 @@ GET link, handled inline at the top of `messages.cfm` before the query runs).
 
 **Scope**: only these two browse lists. Not built (see below): `message_add.cfm`/
 `message_view.cfm` (compose/reply/view a message thread), `sms_add_batch.cfm`/
-`sms_add_bulk.cfm`/`sms_add_user.cfm` (the bulk/scheduled SMS composers, one of which drives
-the "Send SMS by Trip Date" nav item), and the `sms_queue`-table-backed outbound sender
-(`messages/queue.cfc`, `cron/processSMSQueue.cfm`) those bulk composers write to — a
-materially different, much larger feature (bulk-insert queue processing, a draining
-scheduler) than a browse list, and out of scope for this change. The Sidebar's "Send SMS by
-Trip Date"/"Send SMS Custom"/"Send Bulk SMS"/"Send message" placeholders are left unwired.
-(`sms_add.cfm` — plain single-SMS "Send SMS" — was out of scope here too at the time, but has
-since been built; see docs/decisions/0024-bema-send-sms.md.)
+`sms_add_user.cfm` (the other bulk/scheduled SMS composers, one of which drives the "Send SMS
+by Trip Date" nav item), and the `cron/processSMSQueue.cfm` queue-draining scheduler — a
+materially different, much larger feature (a draining scheduler, Phase 6 per
+docs/decisions/0004-scheduled-jobs.md) than a browse list, and out of scope for this change.
+The Sidebar's "Send SMS by Trip Date"/"Send SMS Custom"/"Send message" placeholders are left
+unwired. (`sms_add.cfm`/`sms_add_bulk.cfm` — "Send SMS"/"Send Bulk SMS" — were out of scope
+here too at the time, but have since been built; see docs/decisions/0024-bema-send-sms.md and
+docs/decisions/0025-bema-send-bulk-sms.md.)
 
 ## Implementation
 
@@ -58,10 +58,13 @@ since been built; see docs/decisions/0024-bema-send-sms.md.)
   (`docs/findings.md`). (Send SMS itself was in this same "no target screen" state at the time
   this change was made; since built — see docs/decisions/0024-bema-send-sms.md.)
 - **`sms_queue` / bulk SMS sending** (`messages/queue.cfc`, `cron/processSMSQueue.cfm`): a
-  separate outbound-queue table and draining scheduler, not the `messages` table this change
-  covers at all. Still out of scope — the gateway integration itself (`messages.cfc`'s
-  `sendsms()`, hitting Clickatell/smsoffice.ge) those bulk composers would also use is now
-  built (`src/lib/services/smsGateway.ts`, docs/decisions/0024-bema-send-sms.md).
+  separate outbound-queue table, not the `messages` table this change covers at all. Still out
+  of scope at the time this change was made; the queue table and `queue.cfc`'s own CRUD have
+  since been built as part of "Send Bulk SMS" (`src/lib/services/smsBulkQueue.ts`,
+  docs/decisions/0025-bema-send-bulk-sms.md), and the gateway integration
+  (`messages.cfc`'s `sendsms()`) as part of "Send SMS" (`src/lib/services/smsGateway.ts`,
+  docs/decisions/0024-bema-send-sms.md) — only `cron/processSMSQueue.cfm`'s actual draining
+  scheduler remains unbuilt (Phase 6).
 - Two dead-code findings from the legacy view/query are documented in `docs/findings.md`
   rather than reproduced: the "Message" column showing the message-type label instead of the
   body text, and four `url` params (`sort`/`dir`/`active`/`grp`) that are declared but never
