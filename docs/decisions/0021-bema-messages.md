@@ -15,13 +15,15 @@ Delete action, both self-contained on that screen (a `?action=active|inactive|de
 GET link, handled inline at the top of `messages.cfm` before the query runs).
 
 **Scope**: only these two browse lists. Not built (see below): `message_add.cfm`/
-`message_view.cfm` (compose/reply/view a message thread), `sms_add.cfm`/`sms_add_batch.cfm`/
-`sms_add_bulk.cfm`/`sms_add_user.cfm` (SMS composers, one of which drives the "Send SMS by
-Trip Date" nav item), and the `sms_queue`-table-backed outbound sender (`messages/queue.cfc`)
-that those composers write to — a materially different, much larger feature (SMS gateway
-integration, bulk-insert queue processing) than a browse list, and out of scope for this
-change. The Sidebar's "Send SMS by Trip Date"/"Send SMS Custom"/"Send Bulk SMS"/"Send SMS"/
-"Send message" placeholders are left unwired.
+`message_view.cfm` (compose/reply/view a message thread), `sms_add_batch.cfm`/
+`sms_add_bulk.cfm`/`sms_add_user.cfm` (the bulk/scheduled SMS composers, one of which drives
+the "Send SMS by Trip Date" nav item), and the `sms_queue`-table-backed outbound sender
+(`messages/queue.cfc`, `cron/processSMSQueue.cfm`) those bulk composers write to — a
+materially different, much larger feature (bulk-insert queue processing, a draining
+scheduler) than a browse list, and out of scope for this change. The Sidebar's "Send SMS by
+Trip Date"/"Send SMS Custom"/"Send Bulk SMS"/"Send message" placeholders are left unwired.
+(`sms_add.cfm` — plain single-SMS "Send SMS" — was out of scope here too at the time, but has
+since been built; see docs/decisions/0024-bema-send-sms.md.)
 
 ## Implementation
 
@@ -50,13 +52,16 @@ change. The Sidebar's "Send SMS by Trip Date"/"Send SMS Custom"/"Send Bulk SMS"/
 
 ## What wasn't ported, and why
 
-- **Reply/View, Send Message, Send SMS** (`message_view.cfm`/`message_add.cfm`/`sms_add*.cfm`):
-  no target screen exists yet, so those links/actions aren't rendered — same "not fully
-  ported, action omitted rather than dead-linked" treatment as the Money Collect report's
-  Agents Name deep link (`docs/findings.md`).
-- **`sms_queue` / bulk SMS sending** (`messages/queue.cfc`): a separate outbound-queue table
-  and gateway-integration mechanism (`messages.cfc`'s `sendsms()`, hitting Clickatell/
-  smsoffice.ge), not the `messages` table this change covers at all. Out of scope.
+- **Reply/View, Send Message** (`message_view.cfm`/`message_add.cfm`): no target screen exists
+  yet, so those links/actions aren't rendered — same "not fully ported, action omitted rather
+  than dead-linked" treatment as the Money Collect report's Agents Name deep link
+  (`docs/findings.md`). (Send SMS itself was in this same "no target screen" state at the time
+  this change was made; since built — see docs/decisions/0024-bema-send-sms.md.)
+- **`sms_queue` / bulk SMS sending** (`messages/queue.cfc`, `cron/processSMSQueue.cfm`): a
+  separate outbound-queue table and draining scheduler, not the `messages` table this change
+  covers at all. Still out of scope — the gateway integration itself (`messages.cfc`'s
+  `sendsms()`, hitting Clickatell/smsoffice.ge) those bulk composers would also use is now
+  built (`src/lib/services/smsGateway.ts`, docs/decisions/0024-bema-send-sms.md).
 - Two dead-code findings from the legacy view/query are documented in `docs/findings.md`
   rather than reproduced: the "Message" column showing the message-type label instead of the
   body text, and four `url` params (`sort`/`dir`/`active`/`grp`) that are declared but never

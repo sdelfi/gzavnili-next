@@ -1,4 +1,4 @@
-import { apiDelete, apiGet, apiPatch } from '../http';
+import { apiDelete, apiGet, apiPatch, apiPost } from '../http';
 
 export type ListMessagesParams = {
   page: number;
@@ -58,4 +58,8 @@ export function listSms(params: ListSmsParams) {
   if (params.search) qs.set('search', params.search);
   if (params.userId) qs.set('userId', params.userId);
   return apiGet<{ items: SmsListItem[]; total: number }>(`/api/bema/sms?${qs.toString()}`);
+}
+
+export function sendSms(payload: { phone1: string; message: string }) {
+  return apiPost<{ id: number }>('/api/bema/sms', payload);
 }

@@ -104,5 +104,7 @@ export const routes = {
     // `bema/messages/messages.cfm` / `sms.cfm`, one shared `messages` table.
     messages: () => '/bema/messages',
     smsList: () => '/bema/sms',
+    // Send SMS (docs/decisions/0024-bema-send-sms.md) — legacy `bema/messages/sms_add.cfm`.
+    smsAdd: () => '/bema/sms/add',
   },
 };

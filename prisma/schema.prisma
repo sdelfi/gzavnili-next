@@ -70,13 +70,19 @@ enum AccountType {
 }
 
 // WEBSITE_ADMINISTRATOR / ADMINISTRATOR / AGENT_ADMINISTRATOR in the legacy `User.cfc`
-// GROUPS constant. `STANDARD`/`CONTENT_ONLY`/`SALES_MANAGER` legacy roles were never
-// observed actually gating any bema screen in the current codebase and are not carried
-// forward — add them back explicitly if a real use is found.
+// GROUPS constant, plus CONTENT_ONLY — added back per the note below the moment a real use
+// showed up: `bema/messages/sms_add.cfm`'s own `require.cfm` gate is
+// `WEBSITE_ADMINISTRATOR,CONTENT_ONLY,ADMINISTRATOR,AGENT_ADMINISTRATOR`, wider than every
+// other bema screen ported so far (all of which only ever used
+// `WEBSITE_ADMINISTRATOR,ADMINISTRATOR`) — see docs/decisions/0024-bema-send-sms.md.
+// `STANDARD`/`SALES_MANAGER` legacy roles were still never observed actually gating any bema
+// screen in the current codebase and are still not carried forward — add them back
+// explicitly if a real use is found.
 enum AdminRole {
   BemaStandard      @map("bema_standard")
   BemaAdministrator @map("bema_administrator")
   BemaAgent         @map("bema_agent")
+  BemaContentOnly   @map("bema_content_only")
 
   @@map("admin_role")
 }

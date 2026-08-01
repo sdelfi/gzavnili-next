@@ -1190,6 +1190,27 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
       its own). Verified end-to-end against a real Postgres: status change, office set/clear,
       buser+location combined write, and "Paid" with no payment method (invoices correctly,
       leaves payMethod1/payAmount1 untouched) all confirmed correct.
+- [x] **Send SMS** (`bema/messages/sms_add.cfm`) ported — see
+      docs/decisions/0024-bema-send-sms.md. Single-SMS composer, sends synchronously inline
+      (doesn't touch `sms_queue`/the bulk composers, still out of scope). `AdminRole` gained
+      `BemaContentOnly` — the first real use found for legacy's `CONTENT_ONLY` role, since
+      this screen's own gate is wider than every other bema screen ported so far. Reuses the
+      tracking-number lookup a third time, generalized with an exact-match (`cut=0`) mode.
+      `formatPhone()`/`sendSms()` (`src/lib/services/smsGateway.ts`) port `messages.cfc`'s
+      gateway integration (Clickatell/smsoffice.ge), API keys moved to env vars instead of
+      hardcoded in source, degrading to console logging when unconfigured (same precedent as
+      `sendEmail.ts`). `POST /api/bema/sms`; `SmsAddPage` at `/bema/sms/add`, wired to the
+      pre-existing "Send SMS" Sidebar placeholder and each parcel row's own "Send SMS" action.
+      Found and reproduced three combined bugs that mean this screen never actually links a
+      sent SMS to the parcel/customer it looks up (a JSON key-casing bug leaves `#parcelid`
+      always blank, `#userid` is wired to nothing, and `sender` gets the destination phone
+      number rather than an admin id — doesn't fit this schema's `senderId` UUID FK anyway),
+      plus the "Tracking number not found" alert being unreachable dead code — all in
+      docs/findings.md. Verified end-to-end against a real Postgres, including with the SMS
+      gateway unconfigured (dev-fallback logging path): lookup, receiver autofill, invalid
+      phone format rejection, and a successful send (confirmed the `Messages` row's
+      `userId`/`parcelId`/`senderId` all null, `smsTo`/`smsBody` correct) all confirmed
+      correct.
 
 ## Not started
 
@@ -1203,8 +1224,10 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
   taxes)**: not modeled — legacy's only write path destructively wipes them on every Payment
   Preferences save (see docs/decisions/0020-payment-config.md, docs/findings.md). Needs a
   product decision once a checkout/orders domain is actually designed.
-- **Message compose/reply/view** (`message_add.cfm`/`message_view.cfm`) and **SMS composers +
-  bulk-send queue** (`sms_add*.cfm`, `sms_queue` table, `messages/queue.cfc`'s Clickatell/
-  smsoffice.ge gateway integration): not built — see docs/decisions/0021-bema-messages.md.
-  The "Send SMS by Trip Date"/"Send SMS Custom"/"Send Bulk SMS"/"Send SMS"/"Send message"
-  Sidebar placeholders remain unwired.
+- **Message compose/reply/view** (`message_add.cfm`/`message_view.cfm`) and the **bulk SMS
+  composers + send queue** (`sms_add_batch.cfm`/`sms_add_bulk.cfm`/`sms_add_user.cfm`,
+  `sms_queue` table, `messages/queue.cfc`'s bulk-insert/`cron/processSMSQueue.cfm`'s
+  queue-draining scheduler): not built — see docs/decisions/0021-bema-messages.md and
+  docs/decisions/0024-bema-send-sms.md (single-SMS send, and the `messages.cfc` gateway
+  integration those bulk composers would also use, are now built). The "Send SMS by Trip
+  Date"/"Send SMS Custom"/"Send Bulk SMS"/"Send message" Sidebar placeholders remain unwired.

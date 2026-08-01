@@ -20,3 +20,13 @@ export const listSmsQuerySchema = z.object({
   search: z.string().optional(),
   userId: z.string().uuid().optional(),
 });
+
+// bema "Send SMS" (legacy `bema/messages/sms_add.cfm`) — see
+// docs/decisions/0024-bema-send-sms.md. `phone1` is the raw (unformatted) destination number;
+// the route runs it through `formatPhone()` itself. `message` has no `required` counterpart in
+// legacy's own form (only the readonly receiver-name field is `required`), so an empty body is
+// accepted here too.
+export const sendSmsSchema = z.object({
+  phone1: z.string().min(1),
+  message: z.string(),
+});

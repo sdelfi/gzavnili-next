@@ -10,11 +10,12 @@ import s from './ParcelRowActions.module.css';
 // The per-row action list (legacy's `» Edit / View / Print / Delete / View Invoice / View
 // History / Send SMS / Resend SMS` column).
 //
-// Edit, Delete and the public tracking popup are wired. The rest target bema screens that
-// have not been ported yet (parcel view/print, the statements module's invoice and history
-// popups, the messages module's SMS forms); they are rendered inert with a title rather than
-// dropped, so the row shows the actions this screen is supposed to have and nothing silently
-// 404s — the same convention the sidebar uses for not-yet-built pages.
+// Edit, Delete, Send SMS (docs/decisions/0024-bema-send-sms.md), and the public tracking
+// popup are wired. The rest target bema screens that have not been ported yet (parcel
+// view/print, the statements module's invoice and history popups, the Resend SMS composer);
+// they are rendered inert with a title rather than dropped, so the row shows the actions this
+// screen is supposed to have and nothing silently 404s — the same convention the sidebar uses
+// for not-yet-built pages.
 const PENDING_TITLE = 'Not implemented yet';
 
 function PendingAction({ label }: { label: string }) {
@@ -48,7 +49,16 @@ export function ParcelRowActions({
       </Button>
       {parcel.invoiceId && <PendingAction label="View Invoice" />}
       <PendingAction label="View History" />
-      <PendingAction label="Send SMS" />
+      <Link
+        className={s.action}
+        href={
+          parcel.trackingNum
+            ? `${routes.bema.smsAdd()}?trackingnum=${encodeURIComponent(parcel.trackingNum)}`
+            : routes.bema.smsAdd()
+        }
+      >
+        Send SMS
+      </Link>
       <PendingAction label="Resend SMS" />
       {parcel.trackingNum && (
         <a

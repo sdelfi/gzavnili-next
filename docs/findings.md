@@ -953,6 +953,106 @@ built) rather than being hardcoded to one screen's params.
 
 ---
 
+---
+
+## Send SMS (`bema/messages/sms_add.cfm`) — 2026-08-01
+
+See docs/decisions/0024-bema-send-sms.md for the full picture; the individual findings below.
+
+### The tracking-lookup's `#parcelid` field is never actually set — a JSON key-casing bug
+
+**Found:** `getParcel.cfm` serializes its response with `serializeJSON()`, which uppercases
+every struct key regardless of how the CFML source wrote it — confirmed independently by
+`parcels-online-add-2.js` (the same endpoint's other caller), which reads
+`data.PARCELID`/`data.TRACKINGNUM`/`data.USERID`/`data.STATUS`, all uppercase, against the
+exact same `data` struct `getParcel.cfm` builds. `sms-add.js`'s `byTrackingNumber()`, however,
+reads `data.parcelId` (mixed case) — that key doesn't exist on the parsed response, so it's
+always `undefined`. jQuery's `.val(undefined)` treats a `null`-ish argument as `""` (its
+`val == null` branch), so `#parcelid` is explicitly set to an **empty string** on every
+successful lookup, never the real id. `#receiverid` (read as `data.RECEIVERID`, correctly
+uppercase) has no such bug.
+
+**Ported as-is**: the port's tracking-number lookup only ever populates the receiver's
+name/phone display, never a `parcelId` to submit — `SmsAddPage` has no `parcelId` state at
+all. See the `sender`/`UserID`/`ParcelID` finding below for the combined effect.
+
+### `#userid` is a hidden field that nothing ever sets
+
+**Found:** `vwSmsAdd.cfm`'s `#userid` hidden input only ever gets its value from
+`#form.userid#` (a GET-time echo of whatever was last submitted, `""` on a fresh page load) —
+no `url.userid` param exists to seed it, and no line in `sms-add.js` (or anywhere else in the
+file) ever calls `jQuery('#userid').val(...)`. Through the only reachable UI path (typing/
+scanning a tracking number and pressing Enter), this field is permanently blank.
+
+**Ported as-is**: no `userId` is collected or sent by `SmsAddPage`/`POST /api/bema/sms`.
+
+### Every SMS sent through this screen has a blank `UserID`/`ParcelID`, despite the columns existing
+
+**Found:** combining the two findings above — the tracking-number lookup that resolves a
+receiver's name and phone for the operator never actually threads the matched parcel or its
+owning customer through to the submitted form at all. The `Messages` row this screen inserts
+always has blank `UserID`/`ParcelID`, even though the screen visually looks like it's linking
+the SMS to a specific parcel.
+
+**Ported as-is**: `POST /api/bema/sms` always creates the `Message` row with `userId: null`,
+`parcelId: null` — not a placeholder for a follow-up, this is the actual observed legacy
+behavior, confirmed by exercising the real flow end-to-end locally.
+
+### The `sender` column holds the destination phone number for SMS, not the sending admin
+
+**Found:** `sms_add.cfm`'s INSERT writes `form.phone1` (the receiver's phone) into the
+`sender` column — compare `message_add.cfm`'s INSERT for regular messages, which writes
+`form.sender` (defaulting to `session.buser.getId()`, the actual admin's user id) into the
+same column. `sms_add.cfm` even declares an unused `form.sender` cfparam with that same
+`session.buser.getId()` default, never referenced again in the file — an apparent copy-paste
+of the pattern that just never got wired to the right variable. Neither `messages.cfm` nor
+`sms.cfm`'s browse view ever displays `sender`/`sender_username` for SMS rows, so this has no
+visible effect in legacy either.
+
+**Not reachable as a literal port**: this schema's `Message.senderId` is a `Uuid` FK to
+`User`, which can't hold a phone-number string at all (and legacy's own value here isn't a
+real sender identity regardless — see the finding above). `POST /api/bema/sms` leaves
+`senderId` null; the phone number is already captured correctly in `smsTo`.
+
+### The "Tracking number not found" alert is dead code — both failure cases show the same message
+
+**Found:** `byTrackingNumber()` checks `if (!response.DATA)` for the "not found" case, but
+`getParcel.cfm` always returns a populated struct (every field `cfparam`-defaulted to `""`),
+so `response.DATA` is truthy even when zero rows matched — that branch can never run. The
+`else if (response.DATA.RECEIVERID == '')` branch catches both "no parcel matched" and
+"parcel matched but has no receiver" identically, always showing "This tracking number do not
+have receiver".
+
+**Ported as-is**: `SmsAddPage`'s lookup shows that one alert for both cases; no separate
+"not found" message exists.
+
+### `CONTENT_ONLY` legacy role — the first real use found for it
+
+**Found:** `sms_add.cfm`'s own `require.cfm` gate is
+`WEBSITE_ADMINISTRATOR,CONTENT_ONLY,ADMINISTRATOR,AGENT_ADMINISTRATOR` — wider than every
+other bema screen ported so far (`WEBSITE_ADMINISTRATOR,ADMINISTRATOR` only). `AdminRole`'s
+own schema comment already anticipated this ("`CONTENT_ONLY`... never observed actually
+gating any bema screen... add them back explicitly if a real use is found").
+
+**Ported as-is**: added `BemaContentOnly` to the `AdminRole` enum (migration
+`20260801201051_add_bema_content_only_role`) and widened this screen's own gate, the shared
+tracking-lookup endpoint, and the receiver-read endpoint to include it. See
+docs/decisions/0024-bema-send-sms.md.
+
+### Gateway API keys are hardcoded in legacy source — moved to env vars in the port
+
+**Found:** `messages.cfc`'s `sendsms()` has the Clickatell (US) and smsoffice.ge (GE) API
+keys/sender ids written directly into the CFML source.
+
+**Deliberate deviation, not a port of this specific detail**: `src/lib/services/smsGateway.ts`
+reads `SMS_GATEWAY_GE_KEY`/`SMS_GATEWAY_US_KEY`/`SMS_GATEWAY_US_FROM` from the environment
+instead — secrets don't belong in source control. The request shape/URL/params sent to each
+gateway are otherwise reproduced exactly, including legacy's total lack of error handling
+around the HTTP call (a failed/unreachable gateway still results in the `Messages` row being
+inserted and "successfully sent" shown to the operator).
+
+---
+
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not
 being a real FK, `isGeCitizen` being inferred rather than stored — are recorded in their
 respective decision docs and PROGRESS.md instead; not backfilled here.)*

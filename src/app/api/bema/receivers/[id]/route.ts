@@ -6,6 +6,12 @@ import { upsertReceiver } from '@/lib/services/parcelShared';
 import { toReceiverDTO } from '@/lib/services/receiverDto';
 
 const RECEIVER_ROLES = ['BemaStandard', 'BemaAdministrator', 'BemaAgent'] as const;
+// Legacy's own `bema/ajax/receiver.cfm` (the single-receiver read this GET reproduces) has no
+// role gate of its own at all. `BemaContentOnly` is added here on top of `RECEIVER_ROLES`
+// specifically for "Send SMS" (docs/decisions/0024-bema-send-sms.md), which reads a receiver
+// this way to autofill the recipient's name/phone — not widened generally, since every other
+// caller of this route is already covered by `RECEIVER_ROLES`.
+const GET_ROLES = [...RECEIVER_ROLES, 'BemaContentOnly'] as const;
 // Legacy `receivers-update.cfm`/`receivers-delete.cfm` — add/edit/delete is
 // `WEBSITE_ADMINISTRATOR,ADMINISTRATOR` only, narrower than the browse/picker access.
 const WRITE_ROLES = ['BemaAdministrator'] as const;
@@ -16,7 +22,7 @@ const RECEIVER_INCLUDE = {
 } as const;
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const auth = await requireBemaSession(request, [...RECEIVER_ROLES]);
+  const auth = await requireBemaSession(request, [...GET_ROLES]);
   if (auth.response) return auth.response;
 
   const { id } = await params;

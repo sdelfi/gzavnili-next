@@ -1,17 +1,26 @@
+import type { Prisma } from '@/generated/prisma/client';
 import { db } from '@/lib/db';
 import { PHONE1 } from '@/lib/services/parcelQuery';
 
-// The tracking-number lookup shared by "Add Online Parcel" and "Change Parcel status" —
-// ported from `bema/ajax/getParcel.cfm`. Both screens call it with different query params,
-// reproduced here as options rather than two copies of the same function:
+// The tracking-number lookup shared by "Add Online Parcel", "Change Parcel status", and
+// "Send SMS" — ported from `bema/ajax/getParcel.cfm`. All three screens call it with
+// different query params, reproduced here as options rather than three copies of the same
+// function:
 //  - Add Online Parcel: `?cut=1&withtrackingnum2=1&trackingnum=...` (the `cutlength` param is
 //    never passed, so legacy's own default of 11 applies) — see
 //    docs/decisions/0022-parcels-online-add.md.
 //  - Change Parcel status: `?cut=1&cutlength=12&trackingnum=...` — a 12-character primary cut,
 //    and `withtrackingnum2` never passed (legacy default `0`, so `TrackingNum2` isn't matched
 //    at all) — see docs/decisions/0023-parcels-change-status.md.
+//  - Send SMS: `?cut=0&trackingnum=...` — an *exact* `TrackingNum` match, no right-cut/fuzzy
+//    fallback at all (`cut: 'exact'` here). Legacy's own `cut=0` branch runs the identical
+//    exact-equality query a second time as its "fallback" (the `cfif url.cut eq 0` condition
+//    evaluates the same way in both query blocks), so there's no second distinct query to
+//    reproduce — a single exact match is the whole of it. `withtrackingnum2` isn't passed
+//    either (legacy default `0`) — see docs/decisions/0024-bema-send-sms.md.
 //
-// Legacy runs two queries in sequence, the second only when the first finds nothing:
+// Legacy runs two queries in sequence for the `cut=1` (right-cut) mode, the second only when
+// the first finds nothing:
 //  1. `RIGHT(TrackingNum, cutlength) = RIGHT(input, cutlength)`, optionally OR
 //     `TrackingNum2 = input`.
 //  2. `TrackingNum LIKE '%' + RIGHT(input, 12) + '%'`, optionally OR `TrackingNum2 = input` —
@@ -40,6 +49,7 @@ export type OnlineParcelLookup = {
   status: string;
   service: string | null;
   userId: string;
+  receiverId: string | null;
   longName: string;
   receiverFirstName: string;
   receiverLastName: string;
@@ -67,15 +77,59 @@ const include = {
   receiver: { select: { address: { select: { firstName: true, lastName: true } } } },
 } as const;
 
+type ParcelWithIncludes = Prisma.ParcelGetPayload<{ include: typeof include }>;
+
+function toLookupResult(parcel: ParcelWithIncludes): OnlineParcelLookup {
+  const billingPhone1 = parcel.user.billingAddress?.[PHONE1] ?? '';
+  const longName = `${parcel.user.lastName ?? ''}, ${parcel.user.firstName ?? ''} / ${parcel.user.username} / ${billingPhone1}`;
+
+  return {
+    parcelId: parcel.id,
+    trackingNum: parcel.trackingNum ?? '',
+    trackingNum2: parcel.trackingNum2 ?? '',
+    status: parcel.status,
+    service: parcel.service,
+    userId: parcel.userId,
+    receiverId: parcel.receiverId,
+    longName,
+    receiverFirstName: parcel.receiver?.address.firstName ?? '',
+    receiverLastName: parcel.receiver?.address.lastName ?? '',
+    parcelName: parcel.parcelName,
+    value: parcel.value?.toString() ?? null,
+    contents: parcel.contents,
+    length: parcel.length?.toString() ?? null,
+    width: parcel.width?.toString() ?? null,
+    high: parcel.high?.toString() ?? null,
+    weight: parcel.weight?.toString() ?? null,
+    dimWeight: parcel.dimWeight?.toString() ?? null,
+    debt: parcel.debt?.toString() ?? null,
+    notes: parcel.notes,
+    bNotify: parcel.bNotify,
+  };
+}
+
 export async function lookupParcelByTrackingNumber(
   trackingNumberRaw: string,
-  options: { cutLength?: number; withTrackingNum2?: boolean } = {},
+  options: { cutLength?: number; withTrackingNum2?: boolean; cut?: 'right' | 'exact' } = {},
 ): Promise<OnlineParcelLookup | null> {
   const trackingNumber = trackingNumberRaw.trim();
   if (!trackingNumber) return null;
 
-  const cutLength = options.cutLength ?? 11;
   const withTrackingNum2 = options.withTrackingNum2 ?? true;
+
+  if (options.cut === 'exact') {
+    const parcel = await db.parcel.findFirst({
+      where: {
+        trackingNum: NOT_DR,
+        OR: [{ trackingNum: trackingNumber }, ...(withTrackingNum2 ? [{ trackingNum2: trackingNumber }] : [])],
+      },
+      include,
+      orderBy: { created: 'desc' },
+    });
+    return parcel ? toLookupResult(parcel) : null;
+  }
+
+  const cutLength = options.cutLength ?? 11;
   const lastCut = trackingNumber.slice(-cutLength);
   const last12 = trackingNumber.slice(-12);
 
@@ -99,31 +153,5 @@ export async function lookupParcelByTrackingNumber(
     });
   }
 
-  if (!parcel) return null;
-
-  const billingPhone1 = parcel.user.billingAddress?.[PHONE1] ?? '';
-  const longName = `${parcel.user.lastName ?? ''}, ${parcel.user.firstName ?? ''} / ${parcel.user.username} / ${billingPhone1}`;
-
-  return {
-    parcelId: parcel.id,
-    trackingNum: parcel.trackingNum ?? '',
-    trackingNum2: parcel.trackingNum2 ?? '',
-    status: parcel.status,
-    service: parcel.service,
-    userId: parcel.userId,
-    longName,
-    receiverFirstName: parcel.receiver?.address.firstName ?? '',
-    receiverLastName: parcel.receiver?.address.lastName ?? '',
-    parcelName: parcel.parcelName,
-    value: parcel.value?.toString() ?? null,
-    contents: parcel.contents,
-    length: parcel.length?.toString() ?? null,
-    width: parcel.width?.toString() ?? null,
-    high: parcel.high?.toString() ?? null,
-    weight: parcel.weight?.toString() ?? null,
-    dimWeight: parcel.dimWeight?.toString() ?? null,
-    debt: parcel.debt?.toString() ?? null,
-    notes: parcel.notes,
-    bNotify: parcel.bNotify,
-  };
+  return parcel ? toLookupResult(parcel) : null;
 }

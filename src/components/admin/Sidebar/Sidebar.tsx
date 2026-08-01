@@ -101,11 +101,15 @@ const NAV_GROUPS: NavGroup[] = [
       { label: 'Send SMS by Trip Date' },
       { label: 'Send SMS Custom' },
       { label: 'Send Bulk SMS' },
-      { label: 'Send SMS' },
+      {
+        label: 'Send SMS',
+        href: routes.bema.smsAdd(),
+        isActive: (pathname) => pathname.startsWith('/bema/sms/add'),
+      },
       {
         label: 'SMS list',
         href: routes.bema.smsList(),
-        isActive: (pathname) => pathname.startsWith('/bema/sms'),
+        isActive: (pathname) => pathname === '/bema/sms',
       },
       { label: 'Send message' },
       {

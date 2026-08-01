@@ -222,10 +222,14 @@ export function createParcelsBatch(payload: AddParcelBatchPayload) {
 
 /** Legacy `bema/ajax/getParcel.cfm` — the tracking-number-driven lookup this screen's whole
  *  flow hinges on. `null` when nothing matches. */
-export function lookupOnlineParcel(trackingNum: string, options?: { cutLength?: number; withTrackingNum2?: boolean }) {
+export function lookupOnlineParcel(
+  trackingNum: string,
+  options?: { cutLength?: number; withTrackingNum2?: boolean; cut?: 'exact' },
+) {
   const qs = new URLSearchParams({ trackingNum });
   if (options?.cutLength !== undefined) qs.set('cutLength', String(options.cutLength));
   if (options?.withTrackingNum2 !== undefined) qs.set('withTrackingNum2', options.withTrackingNum2 ? '1' : '0');
+  if (options?.cut !== undefined) qs.set('cut', options.cut);
   return apiGet<{ parcel: OnlineParcelLookup | null }>(`/api/bema/parcels/online-lookup?${qs.toString()}`);
 }
 

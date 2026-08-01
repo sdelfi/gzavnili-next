@@ -20,6 +20,7 @@ const ROLE_OPTIONS: { value: AdminRole; label: string }[] = [
   { value: 'BemaStandard', label: 'BEMA Standard User' },
   { value: 'BemaAdministrator', label: 'BEMA Administrator' },
   { value: 'BemaAgent', label: 'BEMA Agent' },
+  { value: 'BemaContentOnly', label: 'BEMA Content Only' },
 ];
 
 const LANGUAGE_OPTIONS = [
