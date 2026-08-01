@@ -9,6 +9,7 @@ import { routes } from '@/lib/routes';
 import { useBemaAuth } from '@/components/admin/AuthProvider';
 import { login } from '@/lib/api/bema/auth';
 import { ApiError } from '@/lib/api/http';
+import { takeBemaReturnPath } from '@/lib/auth/bemaReturnPath';
 import s from './login.module.css';
 
 export default function BemaLoginPage() {
@@ -26,7 +27,7 @@ export default function BemaLoginPage() {
     try {
       await login(username, password);
       await refresh();
-      router.push(routes.bema.users());
+      router.replace(takeBemaReturnPath() ?? routes.bema.users());
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Login failed.');
     } finally {

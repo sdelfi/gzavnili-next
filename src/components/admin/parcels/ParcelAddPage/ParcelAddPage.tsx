@@ -32,6 +32,11 @@ import type { PricingRule } from '@/lib/parcels/pricing';
 import type { AddParcelBatchPayload } from '@/lib/validation/parcelBatchSchema';
 import { routes } from '@/lib/routes';
 
+const FIELD_LABELS: Record<string, string> = {
+  paymentMethod1: 'Payment method 1',
+  paymentMethod2: 'Payment method 2',
+};
+
 // The batch "Add Parcel" screen — `bema/parcels/parcels-add.cfm` + `views/parcels/
 // vwParcelsAdd.cfm`. Distinct from the single-parcel edit screen (`ParcelEditPage`): one
 // customer, several draft parcels (each its own receiver) held in memory and created
@@ -180,7 +185,7 @@ export function ParcelAddPage() {
       await createParcelsBatch(payload);
       router.push(returnTo);
     } catch (err) {
-      if (err instanceof ApiError) setErrors(extractErrorMessages(err.body));
+      if (err instanceof ApiError) setErrors(extractErrorMessages(err.body, FIELD_LABELS));
       else setErrors([err instanceof Error ? err.message : 'Save failed.']);
     } finally {
       setSaving(false);

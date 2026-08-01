@@ -7,7 +7,11 @@ export class ApiError extends Error {
     public status: number,
     public body: unknown,
   ) {
-    super(typeof (body as { error?: unknown } | null)?.error === 'string' ? (body as { error: string }).error : `Request failed (${status}).`);
+    super(
+      typeof (body as { error?: unknown } | null)?.error === 'string'
+        ? (body as { error: string }).error
+        : `Request failed (${status}).`,
+    );
   }
 }
 
@@ -35,7 +39,10 @@ export const apiDelete = <T = void>(path: string) => apiFetch<T>(path, { method:
 
 // Every bema form's zod-validation-error response has the same `{ error: { formErrors,
 // fieldErrors } }` shape (see any `/api/bema/*` route's `parsed.error.flatten()`) — shared
-// so `UserForm`/`PageForm`/etc. don't each reimplement this flattening.
+// so `UserForm`/`PageForm`/etc. don't each reimplement this flattening. Never expose an
+// unknown schema path as a fallback label: dotted implementation keys such as
+// `draftParcels.0.receiver.postalCode` are not useful to an operator, while the validation
+// message itself already names the field.
 export function extractErrorMessages(body: unknown, fieldLabels: Record<string, string> = {}): string[] {
   const b = body as { error?: { formErrors?: string[]; fieldErrors?: Record<string, string[]> } | string } | null;
   const errorField = b?.error;
@@ -44,7 +51,7 @@ export function extractErrorMessages(body: unknown, fieldLabels: Record<string, 
   const formErrors = errorField?.formErrors ?? [];
   const fieldErrors = errorField?.fieldErrors
     ? Object.entries(errorField.fieldErrors).flatMap(([field, messages]) =>
-        messages.map((message) => `${fieldLabels[field] ?? field}: ${message}`),
+        messages.map((message) => (fieldLabels[field] ? `${fieldLabels[field]}: ${message}` : message)),
       )
     : [];
   const combined = [...formErrors, ...fieldErrors];

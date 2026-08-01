@@ -79,7 +79,7 @@ export const addParcelBatchSchema = z
 
     draftParcels: z.array(draftParcelSchema).min(1, 'Add at least one parcel.'),
   })
-  .refine((d) => d.paymentAmount2 === 0 || d.paymentMethod2 !== '', {
+  .refine((d) => (d.paymentAmount2 ?? 0) === 0 || d.paymentMethod2 !== '', {
     message: 'Select payment method for the second payment',
     path: ['paymentMethod2'],
   })
@@ -99,7 +99,11 @@ export const addParcelBatchSchema = z
 
     d.draftParcels.forEach((draft, index) => {
       for (const issue of receiverIssues(draft.receiver)) {
-        ctx.addIssue({ code: 'custom', message: issue.message, path: ['draftParcels', index, 'receiver', ...issue.path] });
+        ctx.addIssue({
+          code: 'custom',
+          message: issue.message,
+          path: ['draftParcels', index, 'receiver', ...issue.path],
+        });
       }
     });
   });

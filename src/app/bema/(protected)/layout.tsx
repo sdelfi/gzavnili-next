@@ -7,6 +7,7 @@ import { Sidebar } from '@/components/admin/Sidebar';
 import { TopBar } from '@/components/admin/TopBar';
 import { IdleModal } from '@/components/admin/IdleModal';
 import { routes } from '@/lib/routes';
+import { rememberBemaReturnPath } from '@/lib/auth/bemaReturnPath';
 import s from './protected.module.css';
 
 // Client-side auth guard for every route under this group — CSR-only, per
@@ -20,6 +21,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     if (!loading && !user) {
+      rememberBemaReturnPath(`${window.location.pathname}${window.location.search}${window.location.hash}`);
       router.replace(routes.bema.login());
     }
   }, [loading, user, router]);

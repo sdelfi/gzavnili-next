@@ -70,14 +70,13 @@ payment split at all (a `paymentSplit()` function existed briefly and was remove
 was confirmed — keeping a function that computes a number nothing consumes would be actively
 misleading).
 
-**Open, and it's a product call, not a technical one**: the "Payment method 2" / two "Amount"
-fields in `ParcelAddPaymentSection` are still in the form, matching what the legacy screen
-actually renders (`#paymentAmount`/`#paymentAmount2`/`#paymentMethod2`, `#paymentAmount`
-even marked `required="true"`) — but they are now confirmed to have **zero effect** on what
-gets invoiced, in legacy today, same as here. Whether to leave them in (faithful to the
-screen operators already use) or remove them (they're dead weight that could read as "this
-records a $30 payment via check" when it does nothing of the kind) hasn't been decided; ask
-before doing either.
+The "Payment method 2" / two "Amount" fields in `ParcelAddPaymentSection` remain in the form,
+matching what the legacy screen actually renders (`#paymentAmount`/`#paymentAmount2`/
+`#paymentMethod2`, `#paymentAmount` even marked `required="true"`) — but they are confirmed
+to have **zero effect** on what gets invoiced, in legacy today, same as here. For behavioral
+fidelity, payment method 2 is optional while its amount is blank or zero and is required only
+when a non-zero second amount is entered. This resolves the UI decision in favor of retaining
+the legacy fields without making the untouched second method artificially mandatory.
 
 ## What's intentionally not ported, and why
 

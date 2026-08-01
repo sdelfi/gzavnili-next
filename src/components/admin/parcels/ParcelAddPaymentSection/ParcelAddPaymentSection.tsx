@@ -81,6 +81,9 @@ export function ParcelAddPaymentSection({
           <Select
             instanceId="batch-paymethod1"
             size="sm"
+            portal
+            menuPlacement="auto"
+            menuShouldScrollIntoView={false}
             options={payMethodOptions(adminCountry).concat([{ value: 'Debt', label: 'Debt' }])}
             value={form.paymentMethod1}
             onChange={(v) => set('paymentMethod1', v)}
@@ -100,6 +103,9 @@ export function ParcelAddPaymentSection({
           <Select
             instanceId="batch-paymethod2"
             size="sm"
+            portal
+            menuPlacement="auto"
+            menuShouldScrollIntoView={false}
             options={payMethodOptions(adminCountry)}
             value={form.paymentMethod2}
             onChange={(v) => set('paymentMethod2', v)}

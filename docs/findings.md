@@ -158,12 +158,14 @@ actually does today; an earlier draft of this port had instead implemented the *
 which was the actual deviation. See `docs/decisions/0017-bema-add-parcel.md` for the full
 trace.
 
-**Open — needs a decision:** the "Payment method 2" / two "Amount" input fields are still
-rendered in `ParcelAddPaymentSection`, matching what legacy's screen actually shows
-operators (including `#paymentAmount` being marked `required="true"` even though nothing
-reads it meaningfully). Keep them (faithful to the actual screen, warts included — the
-"port bugs, don't fix them" rule argues for this) or remove them (they're confirmed inert
-and could read as recording a payment that isn't). Not decided.
+**Resolved for UI fidelity:** the "Payment method 2" / two "Amount" input fields remain in
+`ParcelAddPaymentSection`, matching what legacy's screen actually shows operators (including
+`#paymentAmount` being marked `required="true"` even though nothing reads it meaningfully).
+The second method itself is optional when the second amount is blank or zero; it is only
+required when an operator enters a non-zero second amount. The new schema intended to model
+that condition, but its blank-money transform produces `null` and the original refinement
+only accepted numeric `0`, accidentally making the method mandatory for an untouched blank
+field. The refinement now treats `null` as zero.
 
 ### The `$5` minimum charge stacks with the delivery fee, doesn't replace it
 

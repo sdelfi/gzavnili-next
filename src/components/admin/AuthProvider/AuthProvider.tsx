@@ -49,11 +49,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
-    fetchMe().then((nextUser) => {
+    async function restoreSession() {
+      let nextUser = await fetchMe();
+      if (!nextUser) {
+        try {
+          await refreshSession();
+          nextUser = await fetchMe();
+        } catch {
+          nextUser = null;
+        }
+      }
       if (cancelled) return;
       setUser(nextUser);
       setLoading(false);
-    });
+    }
+    void restoreSession();
     return () => {
       cancelled = true;
     };
