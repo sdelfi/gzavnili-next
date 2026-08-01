@@ -89,7 +89,9 @@ export const routes = {
     pageNew: () => '/bema/pages/new',
     pageEdit: (id: string) => `/bema/pages/${id}`,
     // Site Settings (docs/decisions/0014-site-popup.md) — legacy `bema/config/settings.cfm`.
-    // Only the "Popup" section is built so far; scoped narrower than the legacy mega-form.
     settings: () => '/bema/settings',
+    // Payment Preferences (docs/decisions/0020-payment-config.md) — legacy
+    // `bema/config/payment.cfm`.
+    paymentConfig: () => '/bema/payment',
   },
 };

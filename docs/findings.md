@@ -675,6 +675,80 @@ inventing a mechanism the existing ported screen's legacy counterpart never had.
 
 ---
 
+## Payment Preferences (`bema/config/payment.cfm` / `vwPaymentConfigForm.cfm`) — 2026-08-01
+
+See docs/decisions/0020-payment-config.md for the full picture; the individual findings below.
+
+### Most of the payment settings screen is HTML-commented-out — not live
+
+**Found:** `vwPaymentConfigForm.cfm`'s Gateway `<select>` has exactly one `<option>`
+(`authorizenet`); the PayPal/PayFlowPro/Sage merchant-credential blocks are one HTML comment;
+and everything from Cybersource onward — Payment Methods checklist, Credit Card Types
+checklist, a duplicate "Paypal Express Checkout" enable toggle, State Taxes, Fees — is a second,
+much longer HTML comment running to just above the Save button. Four hidden inputs
+(`payment_methods=CREDITCARD`, `card_types=VISA,MASTERCARD,DISCOVER,AMEX`, `fee_amount=0`,
+`fee_type=$`, `paypal_enabled=true`) submit fixed constants in place of all of that.
+
+**Ported as-is**: only the Gateway select (rendered disabled, one option — matches "no live way
+to change it"), the two Authorize.Net fields, and the four live Paypal Express Checkout fields
+are built (`PaymentConfigForm`). The hidden-constant fields are written server-side on every
+save (`gateway: "authorizenet"` in the PATCH handler) rather than round-tripped through the API,
+since they can never actually vary — see the next two findings for why the rest isn't modeled
+at all.
+
+### `GatewayPassword`/`GatewayOther` are read back and rewritten unchanged — no live path sets them
+
+**Found:** `payment.cfm`'s POST handler only calls `paymentConfig.setMerchantPassword(...)`/
+`setMerchantOther(...)` inside the `paypal`/`payflowpro` branches of its `if (form.gateway eq
+...)` chain — never inside the `authorizenet` branch, the only one any real request through this
+UI ever takes. Since `paymentConfig` is loaded from the DB first
+(`paymentDAO.retrievePaymentConfig()`) and only selectively overwritten per branch, these two
+columns just get read back and written to the same value they already held, forever — a no-op,
+not data loss, but also nothing an admin can ever actually set through this screen.
+
+**Not reachable, nothing to port.** Not added to the `Config` model.
+
+### Every "Save" on this screen destructively wipes the `paymentmethods` table
+
+**Found:** `MSSQLPaymentDAO.updatePaymentConfig()` does an unconditional `DELETE FROM
+paymentmethods` (no `WHERE`) inside the same transaction as the `config` row update, then
+re-`INSERT`s only from `paymentConfig.getPaymentMethods()`/`getCreditCardTypes()` — the two
+lists the hidden inputs always fix to `[CREDITCARD]`/`[VISA,MASTERCARD,DISCOVER,AMEX]`. Any
+`paymentmethods` row for a `PaymentMethodId` outside those two fixed lists — including any
+`TypeId=1` payment method other than `CREDITCARD` that might have existed — is permanently
+deleted on every save and never comes back, since nothing in this screen can submit anything
+else.
+
+Compounding this: `payment.cfm` also loops `for key in paymentMethods: paymentDAO.
+updatePaymentDescription(key, form['pay_#key#'] ?? '')` to save each payment method's
+`CheckoutDescription` — but the `pay_#key#` textareas that would supply that value live inside
+the same commented-out block as the Payment Methods checklist. Since no `pay_#key#` field is
+ever actually submitted, this loop writes `''` for every key, every time. Combined with the
+DELETE above (which drops `CheckoutDescription` to its column default/NULL on re-insert
+regardless), **every single "Save" click on this screen permanently blanks all payment-method
+checkout descriptions**, in addition to deleting any non-`CREDITCARD` payment method row.
+
+**Open — needs a decision.** This is a real, severe legacy bug (silent data loss on routine use
+of an admin screen), but nothing in `gzavnili-next` reads a `paymentmethods`/checkout-
+description table yet — no checkout/orders domain exists in this schema at all. Building a
+relational table here solely to reproduce a mechanism whose only observable effect is deleting
+whatever was in it isn't ported; flagged for whenever the checkout/orders domain is actually
+designed, at which point this needs an explicit call (reproduce the wipe for fidelity, or treat
+it as the bug it is).
+
+### State Taxes: hidden input always submits `[]` — every save deletes all tax rows
+
+**Found:** the live form has `<input type="hidden" name="taxes" id="taxes" value="[]" />`; the
+JS that would ever populate it (`addTaxRow`, wired to `btnAddItem`) lives entirely inside the
+same dead HTML comment as the State Taxes table itself. `updatePaymentConfig()` then diffs the
+submitted (always-empty) tax list against the DB's `taxes` table and deletes every row not in
+it — i.e., every row, every time.
+
+**Open — needs a decision**, same reasoning as the `paymentmethods` finding above: no `taxes`
+table/consumer exists yet in this schema. Not modeled.
+
+---
+
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not
 being a real FK, `isGeCitizen` being inferred rather than stored — are recorded in their
 respective decision docs and PROGRESS.md instead; not backfilled here.)*

@@ -438,6 +438,20 @@ model Config {
   declaredPrice    String? @map("declared_price")
   nonDeclaredPrice String? @map("non_declared_price")
 
+  // Payment Preferences (bema `bema/config/payment.cfm`) — the only gateway/PayPal fields
+  // that a real, non-commented-out control on that screen ever writes. `gateway` is always
+  // `"authorizenet"` in practice (the `<select>` has exactly one `<option>`); PayPal/
+  // PayFlowPro/Sage gateway branches, `GatewayPassword`/`GatewayOther`, payment methods/
+  // credit card types/state taxes/fees are all either unreachable UI or a purely destructive
+  // reset-to-constant on every save — not modeled, see docs/decisions/0020-payment-config.md.
+  gateway              String? @map("gateway")
+  gatewayLogin         String? @map("gateway_login")
+  gatewayTransKey      String? @map("gateway_trans_key")
+  paypalUserId         String? @map("paypal_user_id")
+  paypalPassword       String? @map("paypal_password")
+  paypalTransactionKey String? @map("paypal_transaction_key")
+  paypalEmail          String? @map("paypal_email")
+
   // Site-wide announcement popup (bema "Site Settings" → "Popup" section; legacy `config`
   // table's `ePopup`/`PopupMessageen`/`PopupMessagege` columns, shown via
   // `views/layouts/new.html`'s `.message-popup` on every page unless a `showpopup` cookie is
