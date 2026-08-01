@@ -128,6 +128,7 @@ export function ParcelDraftFields({
           size="sm"
           isSearchable
           isClearable
+          portal
           placeholder="—"
           options={PARCEL_CONTENTS.map((item) => ({ value: item, label: item }))}
           value={PARCEL_CONTENTS.includes(draft.contents) ? draft.contents : ''}
@@ -154,6 +155,7 @@ export function ParcelDraftFields({
           instanceId="draft-receivedby"
           size="sm"
           isSearchable
+          portal
           options={adminOptions}
           value={draft.trackingReceivedBy}
           onChange={(value) => set('trackingReceivedBy', value)}

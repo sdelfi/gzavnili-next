@@ -29,6 +29,10 @@
   max-width: 1280px;
 }
 
+.xl {
+  max-width: 1900px;
+}
+
 .header {
   display: flex;
   align-items: center;

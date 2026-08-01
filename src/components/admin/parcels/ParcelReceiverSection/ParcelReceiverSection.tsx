@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import cn from 'classnames';
 import { Field } from '@/components/ui/admin/Field';
 import { Input } from '@/components/ui/admin/Input';
 import { Select } from '@/components/ui/admin/Select';
@@ -28,11 +29,15 @@ export function ParcelReceiverSection({
   setReceiver,
   set,
   errors,
+  layout = 'default',
+  portalSelects = false,
 }: {
   form: Pick<ParcelFormState, 'userId' | 'officeId' | 'receiver'>;
   setReceiver: <K extends keyof ParcelFormState['receiver']>(key: K, value: ParcelFormState['receiver'][K]) => void;
   set: (key: 'officeId', value: string) => void;
   errors: Record<string, string>;
+  layout?: 'default' | 'batch';
+  portalSelects?: boolean;
 }) {
   // Stored together with the customer they were loaded for, and read back only when that
   // still matches — so switching customer shows an empty list immediately rather than the
@@ -95,12 +100,13 @@ export function ParcelReceiverSection({
     <fieldset className={s.section}>
       <legend className={s.legend}>Receiver Info</legend>
 
-      <div className={s.grid}>
+      <div className={cn(s.grid, { [s.batchGrid]: layout === 'batch' })}>
         <Field label="Receiver:" width="lg">
           <Select
             instanceId="parcel-receiver"
             size="sm"
             isSearchable
+            portal={portalSelects}
             options={receiverOptions}
             value={form.receiver.receiverId}
             onChange={chooseReceiver}
@@ -239,6 +245,7 @@ export function ParcelReceiverSection({
             size="sm"
             isSearchable
             isClearable
+            portal={portalSelects}
             placeholder="Select option"
             options={offices.map((office) => ({ value: office.id, label: office.label }))}
             value={form.officeId}

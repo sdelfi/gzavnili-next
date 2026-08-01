@@ -22,7 +22,7 @@ export function Dialog({
   onClose: () => void;
   title: ReactNode;
   footer?: ReactNode;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   children: ReactNode;
 }) {
   useEffect(() => {

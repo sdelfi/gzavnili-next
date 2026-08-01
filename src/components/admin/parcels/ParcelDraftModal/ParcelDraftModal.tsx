@@ -78,6 +78,7 @@ export function ParcelDraftModal({
       open={open}
       onClose={onClose}
       title={isEdit ? 'Edit parcel' : 'Add parcel'}
+      size="xl"
       footer={
         <>
           <Button type="button" variant="secondary" onClick={onClose}>
@@ -99,6 +100,8 @@ export function ParcelDraftModal({
           setReceiver={setReceiver}
           set={(key, value) => set(key, value)}
           errors={receiverErrors}
+          layout="batch"
+          portalSelects
         />
       </div>
     </Dialog>

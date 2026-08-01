@@ -764,8 +764,10 @@ Ubany, City, Street, Actions`, "Ubany"/"Phone" being `street2`/`phone2`, cross-c
       incidental convention, hand-rolled twice) in favor of the new shared `ui/FormSection`.
       See `docs/decisions/0017-bema-add-parcel.md`'s "Visual-parity pass" section, which also
       flags — but doesn't resolve — that bema admin has no single documented layout convention
-      across screens (field density, borders, grid vs. row); worth a real style pass before
-      more screens are built.
+      across screens (field density, borders, grid vs. row). Follow-up: the Add/Edit Parcel
+      modal now uses the shared extra-wide Dialog size and explicit legacy field placement —
+      six columns for Parcel Information and a 16-column Receiver Info grid with matching
+      row spans; modal selects use the shared portal mode — commit pending.
 - [x] Follow-up round on the same two screens, per explicit client pushback against unrequested
       additions: **removed the "Showing parcels you received…" banner and its `allReceivers=1`
       opt-out entirely** — both were an earlier pass's addition, not legacy behaviour (see the
