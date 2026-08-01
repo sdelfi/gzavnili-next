@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import cn from 'classnames';
 import { Field } from '@/components/ui/admin/Field';
 import { Input } from '@/components/ui/admin/Input';
@@ -31,6 +31,7 @@ export function ParcelReceiverSection({
   errors,
   layout = 'default',
   portalSelects = false,
+  afterFields,
 }: {
   form: Pick<ParcelFormState, 'userId' | 'officeId' | 'receiver'>;
   setReceiver: <K extends keyof ParcelFormState['receiver']>(key: K, value: ParcelFormState['receiver'][K]) => void;
@@ -38,6 +39,7 @@ export function ParcelReceiverSection({
   errors: Record<string, string>;
   layout?: 'default' | 'batch';
   portalSelects?: boolean;
+  afterFields?: ReactNode;
 }) {
   // Stored together with the customer they were loaded for, and read back only when that
   // still matches — so switching customer shows an empty list immediately rather than the
@@ -252,6 +254,8 @@ export function ParcelReceiverSection({
             onChange={(value) => set('officeId', value)}
           />
         </Field>
+
+        {afterFields}
       </div>
     </fieldset>
   );

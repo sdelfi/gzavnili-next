@@ -4,7 +4,6 @@ import { Field } from '@/components/ui/admin/Field';
 import { Input } from '@/components/ui/admin/Input';
 import { Select } from '@/components/ui/admin/Select';
 import { RadioGroup } from '@/components/ui/admin/RadioGroup';
-import { Checkbox } from '@/components/ui/admin/Checkbox';
 import { Textarea } from '@/components/ui/admin/Textarea';
 import { PARCEL_CONTENTS } from '@/lib/parcels/constants';
 import type { DraftParcelFormState } from '@/lib/parcels/batchForm';
@@ -52,16 +51,13 @@ export function defaultTrackingCore(now = new Date()): string {
 export function ParcelDraftFields({
   draft,
   set,
-  admins,
   errors,
 }: {
   draft: DraftParcelFormState;
   set: <K extends keyof DraftParcelFormState>(key: K, value: DraftParcelFormState[K]) => void;
-  admins: { id: string; name: string }[];
   errors: Record<string, string>;
 }) {
   const prefix = trackingPrefix(draft.delivery, draft.service);
-  const adminOptions = [{ value: '', label: '—' }, ...admins.map((a) => ({ value: a.id, label: a.name }))];
 
   return (
     <div className={s.grid}>
@@ -147,30 +143,6 @@ export function ParcelDraftFields({
           onChange={(e) => set('groupId', e.target.value)}
           error={errors.groupId}
         />
-      </Field>
-
-      <Field className={s.received} label="Received:" htmlFor="draft-received">
-        <Input
-          id="draft-received"
-          type="date"
-          value={draft.trackingReceived}
-          onChange={(e) => set('trackingReceived', e.target.value)}
-        />
-      </Field>
-      <Field className={s.receivedBy} label="Received by:" width="lg">
-        <Select
-          instanceId="draft-receivedby"
-          size="sm"
-          isSearchable
-          portal
-          options={adminOptions}
-          value={draft.trackingReceivedBy}
-          onChange={(value) => set('trackingReceivedBy', value)}
-        />
-      </Field>
-
-      <Field className={s.notify} label=" " width="lg">
-        <Checkbox label="Notify" checked={draft.notify} onChange={(e) => set('notify', e.target.checked)} />
       </Field>
 
       <Field className={s.note} label="Note:" htmlFor="draft-notes" width="lg">

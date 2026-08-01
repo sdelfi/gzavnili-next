@@ -3,6 +3,10 @@
 import { useState } from 'react';
 import { Dialog } from '@/components/ui/admin/Dialog';
 import { Button } from '@/components/ui/admin/Button';
+import { Checkbox } from '@/components/ui/admin/Checkbox';
+import { Field } from '@/components/ui/admin/Field';
+import { Input } from '@/components/ui/admin/Input';
+import { Select } from '@/components/ui/admin/Select';
 import { ParcelDraftFields } from '@/components/admin/parcels/ParcelDraftFields';
 import { ParcelReceiverSection } from '@/components/admin/parcels/ParcelReceiverSection';
 import type { DraftParcelFormState } from '@/lib/parcels/batchForm';
@@ -72,6 +76,7 @@ export function ParcelDraftModal({
       .filter(([key]) => key.startsWith('receiver.'))
       .map(([key, value]) => [key.replace('receiver.', ''), value]),
   );
+  const adminOptions = [{ value: '', label: '—' }, ...admins.map((a) => ({ value: a.id, label: a.name }))];
 
   return (
     <Dialog
@@ -94,7 +99,7 @@ export function ParcelDraftModal({
       }
     >
       <div className={s.sections}>
-        <ParcelDraftFields draft={working} set={set} admins={admins} errors={errors} />
+        <ParcelDraftFields draft={working} set={set} errors={errors} />
         <ParcelReceiverSection
           form={{ userId, officeId: working.officeId, receiver: working.receiver }}
           setReceiver={setReceiver}
@@ -102,7 +107,33 @@ export function ParcelDraftModal({
           errors={receiverErrors}
           layout="batch"
           portalSelects
+          afterFields={
+            <>
+              <Field label="Received:" htmlFor="draft-received">
+                <Input
+                  id="draft-received"
+                  type="date"
+                  value={working.trackingReceived}
+                  onChange={(e) => set('trackingReceived', e.target.value)}
+                />
+              </Field>
+              <Field label="Received by:" width="lg">
+                <Select
+                  instanceId="draft-receivedby"
+                  size="sm"
+                  isSearchable
+                  portal
+                  options={adminOptions}
+                  value={working.trackingReceivedBy}
+                  onChange={(value) => set('trackingReceivedBy', value)}
+                />
+              </Field>
+            </>
+          }
         />
+        <div className={s.notifyRow}>
+          <Checkbox label="Notify" checked={working.notify} onChange={(e) => set('notify', e.target.checked)} />
+        </div>
       </div>
     </Dialog>
   );

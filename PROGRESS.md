@@ -824,8 +824,8 @@ Ubany, City, Street, Actions`, "Ubany"/"Phone" being `street2`/`phone2`, cross-c
       made the page narrower than the rest of bema. See `docs/decisions/0017-bema-add-parcel.md`
       ("Visual-parity pass" / "Corrected layout"). Follow-up: the draft modal's top parcel
       fields now use explicit grid areas so the desktop row order is fixed to legacy's separate
-      Weight/Value/Group row, with Received/Received by held in the parcel-info block before
-      Receiver Info, instead of depending on auto-placement (commit pending).
+      Weight/Value/Group row; Received/Received by live with the receiver fields and Notify
+      sits below the receiver panel instead of floating between sections (commit pending).
 - [x] Shared `ui/PageHeading` — every bema admin page's `<h1>` (Browse Parcels/Delivery
       Requests, Edit Parcel, Add Parcel, Customers/BEMA Users, Site Pages, Add/Edit Page,
       Add/Edit User, Site Settings, the statement stub) had drifted into two or three

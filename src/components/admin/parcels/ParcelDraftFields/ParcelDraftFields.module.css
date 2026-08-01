@@ -3,8 +3,7 @@
   grid-template-columns: repeat(6, minmax(0, 1fr));
   grid-template-areas:
     "delivery service contents contentsOther tracking note"
-    "weight value group . . note"
-    "received receivedBy notify . . .";
+    "weight value group . . note";
   gap: 12px 16px;
   align-items: start;
 }
@@ -41,18 +40,6 @@
   grid-area: contentsOther;
 }
 
-.received {
-  grid-area: received;
-}
-
-.receivedBy {
-  grid-area: receivedBy;
-}
-
-.notify {
-  grid-area: notify;
-}
-
 .note {
   grid-area: note;
 }
@@ -77,9 +64,7 @@
     grid-template-areas:
       "delivery service tracking"
       "contents contentsOther note"
-      "weight value group"
-      "received receivedBy ."
-      "notify . .";
+      "weight value group";
   }
 }
 
@@ -94,9 +79,6 @@
       "value"
       "group"
       "contents"
-      "received"
-      "receivedBy"
-      "notify"
       "note";
   }
 }
