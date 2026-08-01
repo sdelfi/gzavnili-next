@@ -908,6 +908,51 @@ POST handler — not part of `parcel.init(...)` in either branch.
 
 ---
 
+## Change Parcel status (`bema/parcels/parcels-change-status.cfm`) — 2026-08-01
+
+See docs/decisions/0023-parcels-change-status.md for the full picture; the individual
+findings below.
+
+### `applyPaidOperation()` always overwrote `payMethod1`/`payAmount1`, even blank — legacy doesn't
+
+**Found:** `MSSQLParcelDAO.cfc`'s `doOperation('paid')` only sets `payMethod1`/`payAmount1` in
+its `UPDATE parcels` when `arguments.payMethod1 neq ""` — the `bPaidDelivery = 1` half of the
+same `SET` clause, and the invoice/payment raised right after, happen unconditionally
+regardless. Every caller of this project's own `applyPaidOperation()` before "Change Parcel
+status" always supplied a real payment method (the list toolbar's own zod schema requires
+one), so this discrepancy had never been exercised — but "Change Parcel status" has no
+payment-method field at all and calls it with `payMethod1: ''`, the first caller to actually
+hit the blank case.
+
+**Fixed to match legacy** (not left as a newly-introduced deviation): `applyPaidOperation()`
+in `src/lib/services/parcelOperations.ts` now only writes `payMethod1`/`payAmount1` when
+`payMethod1 !== ''`, same as legacy's conditional SQL. `bPaidDelivery`, the invoice, and the
+payment are still written unconditionally either way.
+
+### The Bema User field is silently dropped unless Location is also filled in
+
+**Found:** `parcels-change-status.cfm`'s POST handler only writes `buser` inside the block
+gated on `form.iLocation neq ""` (`parcel.init(buser = form.buser, Location = form.iLocation)`)
+— there is no separate write path for `buser` alone. Selecting a Bema User with Location left
+blank saves nothing; the selection is silently discarded.
+
+**Ported as-is**: `applyParcelStatusChange()`'s `buser` write is gated on `iLocation`, not on
+`buser` itself.
+
+### `getParcel.cfm`'s two callers pass different `cutlength`/`withtrackingnum2` params
+
+**Found:** "Add Online Parcel" calls `?cut=1&withtrackingnum2=1&trackingnum=...` (no
+`cutlength`, so legacy's own default of 11 applies). "Change Parcel status" calls
+`?cut=1&cutlength=12&trackingnum=...` (no `withtrackingnum2`, so legacy's default of `0`
+applies — `TrackingNum2` is never matched at all for this screen). Two different effective
+matching rules from the same ajax endpoint.
+
+**Ported as-is**: `lookupParcelByTrackingNumber()` takes `cutLength`/`withTrackingNum2` as
+options (defaulting to 11/`true`, matching the "Add Online Parcel" caller — the first one
+built) rather than being hardcoded to one screen's params.
+
+---
+
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not
 being a real FK, `isGeCitizen` being inferred rather than stored — are recorded in their
 respective decision docs and PROGRESS.md instead; not backfilled here.)*

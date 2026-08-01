@@ -1,21 +1,30 @@
 import { db } from '@/lib/db';
 import { PHONE1 } from '@/lib/services/parcelQuery';
 
-// "Add Online Parcel"'s tracking-number lookup — ported from `bema/ajax/getParcel.cfm`
-// (`?cut=1&withtrackingnum2=1&trackingnum=...`, the only way the page ever calls it). See
-// docs/decisions/0022-parcels-online-add.md.
+// The tracking-number lookup shared by "Add Online Parcel" and "Change Parcel status" —
+// ported from `bema/ajax/getParcel.cfm`. Both screens call it with different query params,
+// reproduced here as options rather than two copies of the same function:
+//  - Add Online Parcel: `?cut=1&withtrackingnum2=1&trackingnum=...` (the `cutlength` param is
+//    never passed, so legacy's own default of 11 applies) — see
+//    docs/decisions/0022-parcels-online-add.md.
+//  - Change Parcel status: `?cut=1&cutlength=12&trackingnum=...` — a 12-character primary cut,
+//    and `withtrackingnum2` never passed (legacy default `0`, so `TrackingNum2` isn't matched
+//    at all) — see docs/decisions/0023-parcels-change-status.md.
 //
 // Legacy runs two queries in sequence, the second only when the first finds nothing:
-//  1. `RIGHT(TrackingNum, 11) = RIGHT(input, 11)` OR `TrackingNum2 = input`.
-//  2. `TrackingNum LIKE '%' + RIGHT(input, 12) + '%'` OR `TrackingNum2 = input` — note the
-//     *fallback* cuts to the last **12** characters, not 11; a genuine off-by-one between the
-//     two queries, reproduced here rather than unified.
+//  1. `RIGHT(TrackingNum, cutlength) = RIGHT(input, cutlength)`, optionally OR
+//     `TrackingNum2 = input`.
+//  2. `TrackingNum LIKE '%' + RIGHT(input, 12) + '%'`, optionally OR `TrackingNum2 = input` —
+//     the *fallback* always cuts to the last **12** characters, regardless of what `cutlength`
+//     the primary query used; a genuine off-by-one whenever a caller passes a different
+//     `cutlength` (as "Change Parcel status" does not, but as a generalization this function
+//     now supports), reproduced rather than unified.
 // Both exclude `TrackingNum LIKE 'dr-%'` (Delivery Request placeholder rows).
 //
 // `RIGHT(x, n) = RIGHT(y, n)` is reproduced as `endsWith` against the *input's* last-n
 // characters (the input is a literal, not a column, so this is exact for any real tracking
 // number — every one in this system is well over 11 characters; it only diverges from the
-// literal SQL for an input shorter than 11 characters, which no real tracking number is).
+// literal SQL for an input shorter than the cut length, which no real tracking number is).
 //
 // Also not reproduced: the `status` this ajax endpoint computes with its own inline `CASE`
 // (which checks `delivered` *before* the hold flags — the same non-standard ordering already
@@ -58,17 +67,22 @@ const include = {
   receiver: { select: { address: { select: { firstName: true, lastName: true } } } },
 } as const;
 
-export async function lookupParcelByTrackingNumber(trackingNumberRaw: string): Promise<OnlineParcelLookup | null> {
+export async function lookupParcelByTrackingNumber(
+  trackingNumberRaw: string,
+  options: { cutLength?: number; withTrackingNum2?: boolean } = {},
+): Promise<OnlineParcelLookup | null> {
   const trackingNumber = trackingNumberRaw.trim();
   if (!trackingNumber) return null;
 
-  const last11 = trackingNumber.slice(-11);
+  const cutLength = options.cutLength ?? 11;
+  const withTrackingNum2 = options.withTrackingNum2 ?? true;
+  const lastCut = trackingNumber.slice(-cutLength);
   const last12 = trackingNumber.slice(-12);
 
   let parcel = await db.parcel.findFirst({
     where: {
       trackingNum: NOT_DR,
-      OR: [{ trackingNum: { endsWith: last11 } }, { trackingNum2: trackingNumber }],
+      OR: [{ trackingNum: { endsWith: lastCut } }, ...(withTrackingNum2 ? [{ trackingNum2: trackingNumber }] : [])],
     },
     include,
     orderBy: { created: 'desc' },
@@ -78,7 +92,7 @@ export async function lookupParcelByTrackingNumber(trackingNumberRaw: string): P
     parcel = await db.parcel.findFirst({
       where: {
         trackingNum: NOT_DR,
-        OR: [{ trackingNum: { contains: last12 } }, { trackingNum2: trackingNumber }],
+        OR: [{ trackingNum: { contains: last12 } }, ...(withTrackingNum2 ? [{ trackingNum2: trackingNumber }] : [])],
       },
       include,
       orderBy: { created: 'desc' },

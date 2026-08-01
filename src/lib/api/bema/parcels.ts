@@ -7,6 +7,7 @@ import type { DraftParcelResult } from '@/lib/services/parcelBatchAdd';
 import type { ParcelOperation } from '@/lib/parcels/constants';
 import type { OnlineParcelLookup } from '@/lib/services/parcelOnlineLookup';
 import type { CreateOnlineParcelPayload, UpdateOnlineParcelPayload } from '@/lib/validation/parcelOnlineAddSchema';
+import type { ChangeParcelStatusPayload } from '@/lib/validation/parcelChangeStatusSchema';
 
 // Typed client for /api/bema/parcels/* — see AGENTS.md's "API calls go through a service
 // layer". `ParcelFiltersState` is the single source of truth for what the list screen can
@@ -221,10 +222,11 @@ export function createParcelsBatch(payload: AddParcelBatchPayload) {
 
 /** Legacy `bema/ajax/getParcel.cfm` — the tracking-number-driven lookup this screen's whole
  *  flow hinges on. `null` when nothing matches. */
-export function lookupOnlineParcel(trackingNum: string) {
-  return apiGet<{ parcel: OnlineParcelLookup | null }>(
-    `/api/bema/parcels/online-lookup?trackingNum=${encodeURIComponent(trackingNum)}`,
-  );
+export function lookupOnlineParcel(trackingNum: string, options?: { cutLength?: number; withTrackingNum2?: boolean }) {
+  const qs = new URLSearchParams({ trackingNum });
+  if (options?.cutLength !== undefined) qs.set('cutLength', String(options.cutLength));
+  if (options?.withTrackingNum2 !== undefined) qs.set('withTrackingNum2', options.withTrackingNum2 ? '1' : '0');
+  return apiGet<{ parcel: OnlineParcelLookup | null }>(`/api/bema/parcels/online-lookup?${qs.toString()}`);
 }
 
 export function createOnlineParcel(payload: CreateOnlineParcelPayload) {
@@ -233,4 +235,10 @@ export function createOnlineParcel(payload: CreateOnlineParcelPayload) {
 
 export function updateOnlineParcel(id: string, payload: UpdateOnlineParcelPayload) {
   return apiPatch<{ parcel: { id: string } }>(`/api/bema/parcels/online-add/${id}`, payload);
+}
+
+// --- "Change Parcel status" ---------------------------------------------------------------
+
+export function changeParcelStatus(id: string, payload: ChangeParcelStatusPayload) {
+  return apiPatch<{ ok: true }>(`/api/bema/parcels/${id}/change-status`, payload);
 }

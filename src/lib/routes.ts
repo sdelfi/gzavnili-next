@@ -61,6 +61,9 @@ export const routes = {
     // parcel screen, distinct from both `parcelAdd()` (batch) and `parcelEdit()` (existing
     // parcel by id). See docs/decisions/0022-parcels-online-add.md.
     parcelOnlineAdd: () => '/bema/parcels/add-online',
+    // Legacy `bema/parcels/parcels-change-status.cfm` — a tracking-number-scan-driven bulk
+    // status/office/location updater. See docs/decisions/0023-parcels-change-status.md.
+    parcelChangeStatus: () => '/bema/parcels/change-status',
     deliveryRequests: () => '/bema/parcels?deliveryRequest=1',
     // Legacy `bema/parcels/parcels-reports.cfm` — date-range Total Sale/Payment
     // Collected/Remain Payment report, distinct from the separate "Parcels Reports 2"

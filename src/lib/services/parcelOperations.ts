@@ -196,9 +196,15 @@ async function applyPaidOperation(
       });
       // `isPaid`/`isInvoiced`/`invoiceId`/`invoiceAmount` are all trigger-maintained off the
       // invoice above — never written here, per the schema's own note on those columns.
+      // `payMethod1`/`payAmount1` are legacy's `<cfif arguments.payMethod1 neq "">` — only
+      // written when a method was actually supplied. Every existing caller of this operation
+      // requires one (the list toolbar's own zod schema), but "Change Parcel status"
+      // (docs/decisions/0023) calls `doOperation('paid')` with none at all — the parcel still
+      // gets invoiced/marked paid, its `payMethod1`/`payAmount1` columns just stay untouched,
+      // same as legacy.
       await tx.parcel.update({
         where: { id: parcel.id },
-        data: { bPaidDelivery: true, payMethod1, payAmount1: amount },
+        data: { bPaidDelivery: true, ...(payMethod1 !== '' ? { payMethod1, payAmount1: amount } : {}) },
       });
       // The row every money table on the Parcels Reports screen is built from: `valueName =
       // 'Paid'`, carrying the method and amount *as taken now* — legacy's
@@ -221,10 +227,7 @@ async function applyPaidOperation(
 
 /** Reverses `paid`: drops this parcel's invoice line, and the whole invoice plus its payment
  *  when it was the only line on it. */
-async function applyUnpaidOperation(
-  parcelIds: string[],
-  acting: ActingUser | null,
-): Promise<ParcelOperationResult> {
+async function applyUnpaidOperation(parcelIds: string[], acting: ActingUser | null): Promise<ParcelOperationResult> {
   let affected = 0;
 
   for (const parcelId of parcelIds) {

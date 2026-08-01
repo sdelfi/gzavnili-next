@@ -78,7 +78,11 @@ const NAV_GROUPS: NavGroup[] = [
         isActive: (pathname) => pathname.startsWith('/bema/parcels/add-online'),
       },
       { label: 'Check on hold' },
-      { label: 'Change Parcel status' },
+      {
+        label: 'Change Parcel status',
+        href: routes.bema.parcelChangeStatus(),
+        isActive: (pathname) => pathname.startsWith('/bema/parcels/change-status'),
+      },
       {
         label: 'Money collect',
         href: routes.bema.moneyCollect(),

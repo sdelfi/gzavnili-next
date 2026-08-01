@@ -1160,7 +1160,7 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
       fields were waiting on. `Parcel` gained `parcelName`; two placeholder shipper accounts
       (`GZ20000`/`GZ20001`, `scripts/seed-parcel-shippers.ts`, wired into `bun run db:seed`)
       replace legacy's two hardcoded, non-portable MSSQL GUIDs. `GET /api/bema/parcels/
-    online-lookup`, `POST .../online-add`, `PATCH .../online-add/:id`;
+  online-lookup`, `POST .../online-add`, `PATCH .../online-add/:id`;
       `ParcelOnlineAddPage` at `/bema/parcels/add-online`, wired to the pre-existing "Add
       Online Parcel" Sidebar placeholder. Also fixed `CustomerPicker` importing the public
       `ui/Input` instead of `ui/admin/Input` (a UI-boundary-rule violation found while
@@ -1173,6 +1173,23 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
       on every save through this screen — all in docs/findings.md. Verified end-to-end
       against a real Postgres: lookup, create (all three shipper tabs), update, duplicate-
       tracking rejection, and missing-customer rejection all confirmed correct.
+- [x] **Change Parcel status** (`bema/parcels/parcels-change-status.cfm`) ported — see
+      docs/decisions/0023-parcels-change-status.md. A scan-driven bulk updater: pick a
+      delivery office/bema user/status/location once, then scan several tracking numbers in a
+      row, each getting the same settings applied — no status gating on the found parcel at
+      all, unlike "Add Online Parcel". Reuses that screen's tracking-number lookup, generalized
+      to take `cutLength`/`withTrackingNum2` (this screen calls the same `getParcel.cfm`
+      endpoint with different params — 12-char cut, no `TrackingNum2` match). `PATCH
+    /api/bema/parcels/:id/change-status`; `ParcelChangeStatusPage` at
+      `/bema/parcels/change-status`, wired to the pre-existing Sidebar placeholder. Fixed a
+      real bug this surfaced in the already-shipped `applyPaidOperation()`: it always
+      overwrote `payMethod1`/`payAmount1` even when blank, where legacy only writes them when
+      a method was actually supplied — never exercised before since every earlier caller
+      required a real method. Also found and reproduced: the Bema User field being silently
+      discarded unless Location is also filled in (same `if` gate as the location write, not
+      its own). Verified end-to-end against a real Postgres: status change, office set/clear,
+      buser+location combined write, and "Paid" with no payment method (invoices correctly,
+      leaves payMethod1/payAmount1 untouched) all confirmed correct.
 
 ## Not started
 
