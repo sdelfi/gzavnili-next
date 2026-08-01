@@ -280,9 +280,11 @@ why).
       table density and content-sized parcel Tracking/Debt/Actions columns; made an empty
       Reports 2 response explain its payment-history/legacy-filter inputs. Extended
       `scripts/benchmark-parcels.ts` to populate and validate Reports 2 fixtures, benchmark
-      both report endpoints, and preserve the administrator named by `BEMA_SEED_USERNAME`
-      (including linked addresses, balance, and notification preferences) during `--reset`
-      — commit pending.
+      both report endpoints, distribute Received By across all active BEMA users, and
+      preserve the administrator named by `BEMA_SEED_USERNAME` (including linked addresses,
+      balance, and notification preferences) during `--reset`. All Parcels Reports money
+      tables now format Amount and Total to two decimals instead of exposing floating-point
+      artifacts — commit pending.
 - [x] **Fixed double-active Parcel Reports navigation** (2026-08-01): the first report used
       a prefix match, so `/bema/parcels/reports-2` activated both report links. Both entries
       now compare their exact paths through `routes.bema` — commit pending.
@@ -1054,7 +1056,12 @@ vwParcelsReports.cfm`) ported **in full**: date-range filter, Total Sale, Paymen
       returning inactive managers too, the Agents-Name deep link simplification). Verified
       end-to-end against a real Postgres: Debt-financed rows and NULL-updater rows correctly
       excluded from totals, wrong-password rejection, and a successful collect immediately
-      reflected in the next report fetch.
+      reflected in the next report fetch. Follow-up: the country selector now labels its
+      blank legacy value as `All`; missing and explicit-empty country parameters both mean no
+      country restriction, while `us`/`ge` are normalized to the database's `US`/`GE` values.
+      The Money Transfer dialog now uses the shared medium Dialog size, legacy's
+      compact amount-row/three-column layout, reusable `$`-prefixed admin inputs, and a
+      formatted collection date — commit pending.
 - [x] **Parcels Reports 2** (`bema/parcels/parcels-reports-2-v2.cfm` + `views/parcels/
   vwParcelsReports2-v2.cfm`) ported **in full**, including the legacy DataTables UI
 vwParcelsReports2-v2.cfm`) ported **in full**, including the legacy DataTables UI

@@ -6,7 +6,9 @@ import { z } from 'zod';
 export const moneyCollectQuerySchema = z.object({
   dateStart: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   dateEnd: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  country: z.enum(['us', 'ge']).optional(),
+  // Legacy submits the first option as `country=`. Treat that exactly like a missing query
+  // parameter so both the UI and direct API callers can request all countries.
+  country: z.preprocess((value) => (value === '' ? undefined : value), z.enum(['us', 'ge']).optional()),
 });
 
 export type MoneyCollectQuery = z.infer<typeof moneyCollectQuerySchema>;

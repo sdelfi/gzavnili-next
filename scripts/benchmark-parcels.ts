@@ -279,11 +279,10 @@ async function seed() {
       WITH pair AS (
         SELECT r.id AS receiver_id, r.user_id, row_number() OVER (ORDER BY r.id) - 1 AS n
         FROM receivers r JOIN users u ON u.id = r.user_id WHERE u.username LIKE 'BENCH%'
-      ), admin1 AS (
-        SELECT id FROM users
-        WHERE account_type = 'bema_user' AND active = true AND admin_role != 'bema_agent'
-        ORDER BY (admin_role = 'bema_administrator') DESC, username
-        LIMIT 1
+      ), received_admins AS (
+        SELECT id, row_number() OVER (ORDER BY username) - 1 AS n, count(*) OVER () AS total
+        FROM users
+        WHERE account_type = 'bema_user' AND active = true
       )
       INSERT INTO parcels (
         id, user_id, receiver_id, tracking_num, tracking_num2, awb, pcode, group_id, service,
@@ -311,10 +310,11 @@ async function seed() {
         CASE WHEN i % 20 > 3 THEN now() - ((i % 1800) || ' days')::interval + interval '9 days' END,
         CASE WHEN i % 20 > 5 THEN now() - ((i % 1800) || ' days')::interval + interval '10 days' END,
         CASE WHEN i % 20 > 6 THEN now() - ((i % 1800) || ' days')::interval + interval '11 days' END,
-        CASE WHEN i % 3 = 0 THEN (SELECT id FROM admin1) END,
+        received_admins.id,
         false, false
       FROM generate_series(1, ${scale}) i
-      JOIN pair ON pair.n = i % GREATEST(${customerCount}, 1);
+      JOIN pair ON pair.n = i % GREATEST(${customerCount}, 1)
+      JOIN received_admins ON received_admins.n = (i - 1) % received_admins.total;
     `,
     );
 

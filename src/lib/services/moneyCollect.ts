@@ -155,7 +155,7 @@ export async function getMoneyCollectReport(
         { parcel: { payMethod1: { contains: 'PayPal' } } },
         { parcel: { payMethod1: { contains: 'Authorize' } } },
       ],
-      ...(country ? { updater: { billingAddress: { country } } } : {}),
+      ...(country ? { updater: { billingAddress: { country: country.toUpperCase() } } } : {}),
     },
     select: {
       payAmount: true,

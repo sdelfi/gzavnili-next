@@ -181,7 +181,7 @@ export function MoneyCollectPage() {
             value={country}
             onChange={(value) => setCountry(value as '' | 'us' | 'ge')}
             options={[
-              { value: '', label: '' },
+              { value: '', label: 'All' },
               { value: 'us', label: 'US' },
               { value: 'ge', label: 'GE' },
             ]}
@@ -298,6 +298,7 @@ export function MoneyCollectPage() {
         open={!!modal}
         onClose={() => setModal(null)}
         title="Money Transfer"
+        size="md"
         footer={
           modal?.mode === 'collect' ? (
             <>
@@ -316,65 +317,72 @@ export function MoneyCollectPage() {
         }
       >
         {modal && (
-          <form id="collect-money-form" onSubmit={handleCollectSubmit}>
-            <p>
+          <form id="collect-money-form" className={s.modalForm} onSubmit={handleCollectSubmit}>
+            <p className={s.collectFrom}>
               <b>Collect from</b>{' '}
               <span>
-                {modal.group.updaterDisplayName} ({modal.group.dateKey})
+                {modal.group.updaterDisplayName} ({formatDate(`${modal.group.dateKey}T00:00:00.000Z`)})
               </span>
             </p>
-            <Field label="Cash" htmlFor="aCash">
-              <Input
-                id="aCash"
-                type="number"
-                step="0.01"
-                value={modalFields.aCash}
-                readOnly={modal.mode === 'detail'}
-                onChange={(e) => setModalFields((prev) => ({ ...prev, aCash: Number(e.target.value) }))}
-              />
-            </Field>
-            <Field label="Credit Card" htmlFor="aCreditCard">
-              <Input
-                id="aCreditCard"
-                type="number"
-                step="0.01"
-                value={modalFields.aCreditCard}
-                readOnly={modal.mode === 'detail'}
-                onChange={(e) => setModalFields((prev) => ({ ...prev, aCreditCard: Number(e.target.value) }))}
-              />
-            </Field>
-            <Field label="Bank Deposit" htmlFor="aBankDeposit">
-              <Input
-                id="aBankDeposit"
-                type="number"
-                step="0.01"
-                value={modalFields.aBankDeposit}
-                readOnly={modal.mode === 'detail'}
-                onChange={(e) => setModalFields((prev) => ({ ...prev, aBankDeposit: Number(e.target.value) }))}
-              />
-            </Field>
-            <Field label="Wire Transfer" htmlFor="aWireTransfer">
-              <Input
-                id="aWireTransfer"
-                type="number"
-                step="0.01"
-                value={modalFields.aWireTransfer}
-                readOnly={modal.mode === 'detail'}
-                onChange={(e) => setModalFields((prev) => ({ ...prev, aWireTransfer: Number(e.target.value) }))}
-              />
-            </Field>
-            <Field label="Total" htmlFor="aTotal">
-              <Input
-                id="aTotal"
-                type="number"
-                step="0.01"
-                value={modal.mode === 'detail' ? (modal.group.collected ?? 0) : modalTotal}
-                readOnly
-              />
-            </Field>
+            <div className={s.amountFields}>
+              <Field label="Cash" htmlFor="aCash" inline>
+                <Input
+                  id="aCash"
+                  type="number"
+                  step="0.01"
+                  prefix="$"
+                  value={modalFields.aCash}
+                  readOnly={modal.mode === 'detail'}
+                  onChange={(e) => setModalFields((prev) => ({ ...prev, aCash: Number(e.target.value) }))}
+                />
+              </Field>
+              <Field label="Credit Card" htmlFor="aCreditCard" inline>
+                <Input
+                  id="aCreditCard"
+                  type="number"
+                  step="0.01"
+                  prefix="$"
+                  value={modalFields.aCreditCard}
+                  readOnly={modal.mode === 'detail'}
+                  onChange={(e) => setModalFields((prev) => ({ ...prev, aCreditCard: Number(e.target.value) }))}
+                />
+              </Field>
+              <Field label="Bank Deposit" htmlFor="aBankDeposit" inline>
+                <Input
+                  id="aBankDeposit"
+                  type="number"
+                  step="0.01"
+                  prefix="$"
+                  value={modalFields.aBankDeposit}
+                  readOnly={modal.mode === 'detail'}
+                  onChange={(e) => setModalFields((prev) => ({ ...prev, aBankDeposit: Number(e.target.value) }))}
+                />
+              </Field>
+              <Field label="Wire Transfer" htmlFor="aWireTransfer" inline>
+                <Input
+                  id="aWireTransfer"
+                  type="number"
+                  step="0.01"
+                  prefix="$"
+                  value={modalFields.aWireTransfer}
+                  readOnly={modal.mode === 'detail'}
+                  onChange={(e) => setModalFields((prev) => ({ ...prev, aWireTransfer: Number(e.target.value) }))}
+                />
+              </Field>
+              <Field label="Total" htmlFor="aTotal" inline>
+                <Input
+                  id="aTotal"
+                  type="number"
+                  step="0.01"
+                  prefix="$"
+                  value={modal.mode === 'detail' ? (modal.group.collected ?? 0) : modalTotal}
+                  readOnly
+                />
+              </Field>
+            </div>
 
             {modal.mode === 'collect' && (
-              <>
+              <div className={s.collectMeta}>
                 <Field label="Manager" htmlFor="collectorId">
                   <Select
                     instanceId="money-collect-manager"
@@ -398,7 +406,7 @@ export function MoneyCollectPage() {
                     required
                   />
                 </Field>
-              </>
+              </div>
             )}
           </form>
         )}

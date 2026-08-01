@@ -168,7 +168,6 @@ function ParcelsReportsPageInner() {
                     title="Colected In USA"
                     rows={report.collectedUs}
                     total={report.collectedUsTotal}
-                    format="raw"
                   />
                 </div>
               )}
@@ -178,7 +177,6 @@ function ParcelsReportsPageInner() {
                     title="Colected In Georgia"
                     rows={report.collectedGe}
                     total={report.collectedGeTotal}
-                    format="raw"
                   />
                 </div>
               )}

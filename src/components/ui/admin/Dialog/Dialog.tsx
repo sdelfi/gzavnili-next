@@ -2,6 +2,7 @@
 
 import { useEffect, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import cn from 'classnames';
 import s from './Dialog.module.css';
 
 // A generic modal dialog for the bema admin panel — the batch "Add Parcel" screen's per-
@@ -14,12 +15,14 @@ export function Dialog({
   onClose,
   title,
   footer,
+  size = 'lg',
   children,
 }: {
   open: boolean;
   onClose: () => void;
   title: ReactNode;
   footer?: ReactNode;
+  size?: 'sm' | 'md' | 'lg';
   children: ReactNode;
 }) {
   useEffect(() => {
@@ -35,7 +38,7 @@ export function Dialog({
 
   return createPortal(
     <div className={s.overlay} role="dialog" aria-modal="true">
-      <div className={s.dialog}>
+      <div className={cn(s.dialog, s[size])}>
         <div className={s.header}>
           <h4 className={s.title}>{title}</h4>
           <button type="button" className={s.close} onClick={onClose} aria-label="Close">

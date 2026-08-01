@@ -35,3 +35,62 @@
   color: #777;
   padding: 20px;
 }
+
+.modalForm {
+  min-height: 0;
+}
+
+.collectFrom {
+  margin: 0 0 18px;
+  font-size: 14px;
+}
+
+.amountFields {
+  display: grid;
+  gap: 10px;
+  max-width: 570px;
+  margin: 0 auto;
+
+  > div {
+    gap: 14px;
+  }
+
+  > div > label {
+    flex: 0 0 150px;
+    text-align: right;
+  }
+
+  > div > div {
+    flex: 1 1 auto;
+  }
+
+  > div:last-child {
+    margin-top: 6px;
+  }
+}
+
+.collectMeta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+@media (max-width: 700px) {
+  .amountFields {
+    > div {
+      align-items: stretch;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    > div > label {
+      flex-basis: auto;
+      text-align: left;
+    }
+  }
+
+  .collectMeta {
+    grid-template-columns: 1fr;
+  }
+}
