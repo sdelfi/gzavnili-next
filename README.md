@@ -33,6 +33,39 @@ hand-written SQL) and the migration safety policy. Summary:
 - **Never** run `prisma migrate reset` or `prisma db push` against production. There is no
   `db:reset`/`db:push` script in `package.json`, intentionally.
 
+## Parcels performance benchmark
+
+[`scripts/benchmark-parcels.ts`](scripts/benchmark-parcels.ts) seeds a realistic parcels
+dataset and measures the real parcels list, Parcels Reports, and Parcels Reports 2 API
+endpoints. Run it only against a disposable local or benchmark database, never production.
+
+First ensure `.env` contains the target `DATABASE_URL`. When using `--reset`, it must also
+contain `BEMA_SEED_USERNAME`: that administrator and its linked profile data are preserved
+while the benchmark tables are cleared. The database name passed to `--confirm` must exactly
+match the database name at the end of `DATABASE_URL`.
+
+```bash
+# Destructively clear benchmark tables, preserve BEMA_SEED_USERNAME, then seed 200k parcels.
+bun scripts/benchmark-parcels.ts --reset --seed --confirm=gzavnili
+
+# For a quicker local run, reduce the dataset (the default is 200000; the full test is 1M).
+bun scripts/benchmark-parcels.ts --reset --seed --scale=50000 --confirm=gzavnili
+
+# Start the application in another terminal, then measure the real HTTP endpoints.
+bun dev
+bun scripts/benchmark-parcels.ts --bench
+
+# Optionally save machine-readable results for comparison.
+bun scripts/benchmark-parcels.ts --bench --json=benchmark-results.json
+
+# Clear benchmark data without reseeding; BEMA_SEED_USERNAME is still preserved.
+bun scripts/benchmark-parcels.ts --reset --confirm=gzavnili
+```
+
+`--seed` validates that it created eligible report rows and fails instead of leaving an
+empty Reports 2 fixture. More detail and the baseline measurements are recorded in
+[`docs/decisions/0016-parcels-performance.md`](docs/decisions/0016-parcels-performance.md).
+
 ## Production
 
 - App runtime: managed via HestiaCP's Node.js app proxy (reverse-proxied) + PM2, not Docker.
