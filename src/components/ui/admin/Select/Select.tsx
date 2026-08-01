@@ -16,6 +16,7 @@ export function Select<T extends string = string>({
   placeholder,
   isSearchable = false,
   size = 'md',
+  portal = false,
   error,
   ...props
 }: {
@@ -25,6 +26,9 @@ export function Select<T extends string = string>({
   onChange: (value: T) => void;
   placeholder?: string;
   size?: 'sm' | 'md';
+  /** Render the options menu under document.body. Use inside dialogs so opening a long menu
+   *  does not enlarge or scroll the dialog body. */
+  portal?: boolean;
   error?: string;
 } & Omit<ReactSelectProps<SelectOption<T>, false>, 'options' | 'value' | 'onChange' | 'placeholder' | 'instanceId'>) {
   const selected = flatten(options).find((option) => option.value === value) ?? null;
@@ -38,6 +42,22 @@ export function Select<T extends string = string>({
           unstyled
           isSearchable={isSearchable}
           classNamePrefix="admin-select"
+          menuPortalTarget={portal && typeof document !== 'undefined' ? document.body : undefined}
+          menuPosition={portal ? 'fixed' : undefined}
+          classNames={
+            portal
+              ? {
+                  menuPortal: () => s.portal,
+                  menu: () => s.portalMenu,
+                  menuList: () => s.portalMenuList,
+                  option: ({ isFocused, isSelected }) =>
+                    cn(s.portalOption, {
+                      [s.portalOptionFocused]: isFocused,
+                      [s.portalOptionSelected]: isSelected,
+                    }),
+                }
+              : undefined
+          }
           placeholder={placeholder}
           options={options}
           value={selected}

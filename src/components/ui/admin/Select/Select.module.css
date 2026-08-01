@@ -87,3 +87,34 @@
   color: #b3261e;
   font-size: 12px;
 }
+
+.portal {
+  z-index: 1100;
+}
+
+.portalMenu {
+  margin-top: 2px;
+  border: 1px solid #bfbfbf;
+  border-radius: 2px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 15%);
+}
+
+.portalMenuList {
+  padding: 0;
+}
+
+.portalOption {
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.portalOptionFocused {
+  background: #3fa3f0;
+  color: #fff;
+}
+
+.portalOptionSelected {
+  background: #20599d;
+  color: #fff;
+}

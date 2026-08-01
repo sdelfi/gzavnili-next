@@ -47,7 +47,7 @@
 
 .amountFields {
   display: grid;
-  gap: 10px;
+  gap: 16px;
   max-width: 570px;
   margin: 0 auto;
 
@@ -65,15 +65,15 @@
   }
 
   > div:last-child {
-    margin-top: 6px;
+    margin-top: 8px;
   }
 }
 
 .collectMeta {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: 20px;
+  gap: 24px;
+  margin-top: 28px;
 }
 
 @media (max-width: 700px) {

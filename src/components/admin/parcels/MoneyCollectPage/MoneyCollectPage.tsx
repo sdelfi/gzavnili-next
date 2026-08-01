@@ -298,7 +298,7 @@ export function MoneyCollectPage() {
         open={!!modal}
         onClose={() => setModal(null)}
         title="Money Transfer"
-        size="md"
+        size="sm"
         footer={
           modal?.mode === 'collect' ? (
             <>
@@ -386,6 +386,7 @@ export function MoneyCollectPage() {
                 <Field label="Manager" htmlFor="collectorId">
                   <Select
                     instanceId="money-collect-manager"
+                    portal
                     value={collectorUsername}
                     onChange={(value) => setCollectorUsername(value)}
                     options={[
