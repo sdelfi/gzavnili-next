@@ -8,6 +8,7 @@ import { Field } from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
+import { ReportAmountTable } from '@/components/admin/parcels/ReportAmountTable';
 import { routes } from '@/lib/routes';
 import { formatAmount, formatDate, formatDateTime } from '@/lib/parcels/format';
 import { getParcelsReport, type ParcelsReport } from '@/lib/api/bema/parcelReports';
@@ -20,12 +21,15 @@ function today(): string {
 const TOTAL_SALE_ROWS = ['Express', 'Regular', 'Cargo', 'Linoli', 'Unknown'] as const;
 
 // "Parcel Reports" — legacy `bema/parcels/parcels-reports.cfm` +
-// `views/parcels/vwParcelsReports.cfm`. Date-range filter form + Total Sale / Payment
-// Collected / Remain Payment summary tables, plus a "Paid transactions" / "History" tab pair.
-// Legacy's "Colected In USA"/"Colected In Georgia" (grouped by which admin processed each
-// payment) is not reproduced — this schema has no equivalent "who processed this" field on
-// invoices/payments; see docs/findings.md's "Parcels Reports" entry for the full trace of
-// what could and couldn't be carried over from `ParcelHistory`.
+// `views/parcels/vwParcelsReports.cfm`, in full: date-range filter, Total Sale / Payment
+// Colected / Remain Payment, the two per-admin "Colected In …" tables, and the
+// "Paid transactions" / "History" tab pair. Every figure comes from the restored
+// `parcel_history` edit log (docs/decisions/0018-parcel-edit-history.md), the same table
+// legacy reads, so the numbers are the legacy numbers — including the "Colected In Georgia"
+// total's known legacy bug, reproduced deliberately (see docs/findings.md).
+//
+// Headings keep legacy's own spelling ("Colected") — operators know these blocks by name and
+// this is a port, not a copy edit.
 export function ParcelsReportsPage() {
   const searchParams = useSearchParams();
   // Remounted (via `key`) whenever the URL's dateStart/dateEnd change, so the fetch effect
@@ -131,57 +135,48 @@ function ParcelsReportsPageInner() {
             </div>
 
             <div className={s.summaryCol}>
-              <h2>Payment Colected</h2>
-              <table className={s.table}>
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {report.paymentCollected.map((row) => (
-                    <tr key={row.key}>
-                      <td>{row.key}</td>
-                      <td>{formatAmount(row.amount)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <th>Total</th>
-                    <td>{formatAmount(report.paymentCollectedTotal)}</td>
-                  </tr>
-                </tfoot>
-              </table>
+              <ReportAmountTable
+                title="Payment Colected"
+                rows={report.paymentCollected}
+                total={report.paymentCollectedTotal}
+              />
             </div>
 
             <div className={s.summaryCol}>
-              <h2>Remain Payment</h2>
-              <table className={s.table}>
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {report.remainPayment.map((row) => (
-                    <tr key={row.key}>
-                      <td>{row.key}</td>
-                      <td>{formatAmount(row.amount)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <th>Total</th>
-                    <td>{formatAmount(report.remainPaymentTotal)}</td>
-                  </tr>
-                </tfoot>
-              </table>
+              <ReportAmountTable
+                title="Remain Payment"
+                rows={report.remainPayment}
+                total={report.remainPaymentTotal}
+              />
             </div>
           </div>
+
+          {/* Legacy renders each of these only when it has at least one row
+              (`StructCount(...) gt 0`). */}
+          {(report.collectedUs.length > 0 || report.collectedGe.length > 0) && (
+            <div className={s.summaryRow}>
+              {report.collectedUs.length > 0 && (
+                <div className={s.summaryCol}>
+                  <ReportAmountTable
+                    title="Colected In USA"
+                    rows={report.collectedUs}
+                    total={report.collectedUsTotal}
+                    format="raw"
+                  />
+                </div>
+              )}
+              {report.collectedGe.length > 0 && (
+                <div className={s.summaryCol}>
+                  <ReportAmountTable
+                    title="Colected In Georgia"
+                    rows={report.collectedGe}
+                    total={report.collectedGeTotal}
+                    format="raw"
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
           <div className={s.tabs}>
             <button
@@ -229,9 +224,7 @@ function ParcelsReportsPageInner() {
                     <td>{formatAmount(row.payAmount)}</td>
                     <td>{row.payMethod}</td>
                     <td>{formatAmount(row.debt)}</td>
-                    {/* Legacy shows the processing admin's name here — unavailable, see
-                        docs/findings.md. */}
-                    <td></td>
+                    <td>{row.receivedBy}</td>
                     <td>{formatDate(row.editDateTime)}</td>
                   </tr>
                 ))}
@@ -268,18 +261,15 @@ function ParcelsReportsPageInner() {
                 </tr>
               </thead>
               <tbody>
-                {report.statusHistory.map((row) => (
+                {report.history.map((row) => (
                   <tr key={row.id}>
-                    <td>{formatDateTime(row.changedAt)}</td>
-                    <td>{row.status}</td>
-                    {/* Legacy's Old/New/PayMethod/PayAmount come from a generic field-diff
-                        log this schema doesn't keep — only the status transition itself is
-                        available here, see docs/findings.md. */}
-                    <td></td>
-                    <td>{row.status}</td>
-                    <td>Status</td>
-                    <td></td>
-                    <td></td>
+                    <td>{formatDateTime(row.editDateTime)}</td>
+                    <td>{row.editStatus}</td>
+                    <td>{row.oldValue}</td>
+                    <td>{row.newValue}</td>
+                    <td>{row.valueName}</td>
+                    <td>{row.payMethod}</td>
+                    <td>{formatAmount(row.payAmount)}</td>
                   </tr>
                 ))}
               </tbody>

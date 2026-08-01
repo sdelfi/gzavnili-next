@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
 import { runParcelOperation } from '@/lib/services/parcelOperations';
 import { orNull, upsertCustomer, upsertReceiver } from '@/lib/services/parcelShared';
+import { diffEntry, recordParcelHistory, type ActingUser, type ParcelHistoryEntry } from '@/lib/services/parcelHistory';
 import type { UpdateParcelInput } from '@/lib/validation/parcelSchema';
 
 // Saving the parcel edit form, ported from `bema/parcels/parcels-update.cfm`'s POST branch.
@@ -33,7 +34,21 @@ function toDate(value: string): Date | null {
 
 export type ParcelSaveResult = { id: string; receiverId: string | null };
 
-export async function saveParcel(parcelId: string, input: UpdateParcelInput): Promise<ParcelSaveResult> {
+export async function saveParcel(
+  parcelId: string,
+  input: UpdateParcelInput,
+  /** The BEMA operator saving the form — stamped on the edit-log rows below. */
+  acting: ActingUser | null = null,
+): Promise<ParcelSaveResult> {
+  // Read the pre-save values the edit log diffs against. Legacy carried these into the POST
+  // as hidden `t*` form fields (`form.tstore`/`tcontents`/`tvalue`/`tdebt`/`tstatus`) and
+  // trusted whatever the browser sent back; reading them from the row instead can't be
+  // spoofed and can't go stale between render and submit.
+  const before = await db.parcel.findUnique({
+    where: { id: parcelId },
+    select: { store: true, contents: true, value: true, debt: true, status: true },
+  });
+
   const receiverId = await db.$transaction(async (tx) => {
     // --- Receiver ---------------------------------------------------------------------
     const nextReceiverId = await upsertReceiver(tx, input.userId, input.receiver);
@@ -103,6 +118,34 @@ export async function saveParcel(parcelId: string, input: UpdateParcelInput): Pr
       await tx.parcelOffice.create({ data: { parcelId, officeId: input.officeId } });
     }
 
+    // --- Edit log ---------------------------------------------------------------------
+    // Legacy writes one `ParcelHistory` row per changed field, and only for these four —
+    // tracking number, service, weight, dates and the rest are edited without leaving a
+    // trace. Ported as-is (the reports' History tab shows exactly this set).
+    if (before) {
+      const editStatus = before.status;
+      const entries = [
+        diffEntry(parcelId, editStatus, 'Merchant', before.store ?? '', input.store),
+        diffEntry(parcelId, editStatus, 'Content', before.contents ?? '', input.contents),
+        diffEntry(parcelId, editStatus, 'Value', before.value?.toString() ?? '', String(input.value ?? '')),
+        diffEntry(parcelId, editStatus, 'Debt', before.debt?.toString() ?? '', String(input.debt ?? '')),
+      ].filter((entry): entry is ParcelHistoryEntry => entry !== null);
+
+      // The "Partial Paid" row from `parcels-update.cfm`: written whenever this save records
+      // a second payment amount, carrying method 2 / amount 2 as taken.
+      if (input.payAmount2) {
+        entries.push({
+          parcelId,
+          editStatus,
+          valueName: 'Partial Paid',
+          payMethod: input.payMethod2,
+          payAmount: input.payAmount2,
+        });
+      }
+
+      await recordParcelHistory(tx, acting, entries);
+    }
+
     return nextReceiverId;
   });
 
@@ -110,23 +153,15 @@ export async function saveParcel(parcelId: string, input: UpdateParcelInput): Pr
   // Outside the transaction above, and mutually exclusive: legacy checks `unpaynow` first,
   // and the form only ever offers whichever one applies to the parcel's current state.
   if (input.markUnpaid) {
-    await runParcelOperation({
-      operation: 'unpaid',
-      parcelIds: [parcelId],
-      payMethod1: '',
-      pCode: '',
-      awb: '',
-      buser: '',
-    });
+    await runParcelOperation(
+      { operation: 'unpaid', parcelIds: [parcelId], payMethod1: '', pCode: '', awb: '', buser: '' },
+      acting,
+    );
   } else if (input.markPaid) {
-    await runParcelOperation({
-      operation: 'paid',
-      parcelIds: [parcelId],
-      payMethod1: input.payMethod1,
-      pCode: '',
-      awb: '',
-      buser: '',
-    });
+    await runParcelOperation(
+      { operation: 'paid', parcelIds: [parcelId], payMethod1: input.payMethod1, pCode: '', awb: '', buser: '' },
+      acting,
+    );
   }
 
   return { id: parcelId, receiverId };

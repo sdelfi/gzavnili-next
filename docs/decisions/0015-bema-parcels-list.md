@@ -30,9 +30,14 @@ dead earlier in this migration (see `PROGRESS.md`).
   `bema/include/agent-prefix-map.cfm` (a hard-coded map of three user ids to `CH`/`MR`), and
   passed in by the controller — but never referenced by a single line of the query body.
   Dead; porting it would port a no-op.
-- **`operations` / `ParcelHistory` audit inserts.** Replaced by the `parcel_status_history`
-  trigger from the initial migration, which records changes regardless of which code path
-  made them. Legacy only recorded changes that happened to go through `doOperation()`.
+- **`operations` audit inserts.** Replaced by the `parcel_status_history` trigger from the
+  initial migration, which records changes regardless of which code path made them. Legacy
+  only recorded changes that happened to go through `doOperation()`.
+  - **Correction (2026-08-01):** this bullet originally read "`operations` / `ParcelHistory`
+    audit inserts", treating the two as one thing. They are not, and `ParcelHistory` is **not**
+    replaced by `parcel_status_history` — it has since been ported as `parcel_history`, and
+    `doOperation()`'s inserts into it are reproduced in `parcelOperations.ts`. See
+    [0018-parcel-edit-history.md](0018-parcel-edit-history.md).
 - **The 1000-id chunking loop** in `doOperation()`, which existed to keep a generated
   `WHERE (1=2) OR ParcelId=… OR …` under SQL Server's expression limit. A parameterised `IN`
   list has no such limit.

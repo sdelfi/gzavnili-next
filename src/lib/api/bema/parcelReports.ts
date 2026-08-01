@@ -13,18 +13,26 @@ export type PaidTransactionRow = {
   payAmount: number | null;
   payMethod: string | null;
   debt: number | null;
+  receivedBy: string;
   editDateTime: string;
 };
 
-export type TotalSaleBuckets = Record<'Express' | 'Regular' | 'Cargo' | 'Linoli' | 'Unknown' | 'Total', { weight: number; cost: number }>;
+export type TotalSaleBuckets = Record<
+  'Express' | 'Regular' | 'Cargo' | 'Linoli' | 'Unknown' | 'Total',
+  { weight: number; cost: number }
+>;
 
 export type KeyedAmount = { key: string; amount: number };
 
-export type StatusHistoryRow = {
+export type HistoryRow = {
   id: string;
-  changedAt: string;
-  status: string;
-  changedBy: string | null;
+  editDateTime: string;
+  editStatus: string | null;
+  oldValue: string | null;
+  newValue: string | null;
+  valueName: string | null;
+  payMethod: string | null;
+  payAmount: number | null;
 };
 
 export type ParcelsReport = {
@@ -35,7 +43,11 @@ export type ParcelsReport = {
   paymentCollectedTotal: number;
   remainPayment: KeyedAmount[];
   remainPaymentTotal: number;
-  statusHistory: StatusHistoryRow[];
+  collectedUs: KeyedAmount[];
+  collectedUsTotal: number;
+  collectedGe: KeyedAmount[];
+  collectedGeTotal: number;
+  history: HistoryRow[];
 };
 
 export function getParcelsReport(query: ParcelsReportQuery) {

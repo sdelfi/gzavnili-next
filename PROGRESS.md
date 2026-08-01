@@ -975,27 +975,38 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       `components/ui/` (already had 3 callers; this is the 4th) with an added optional
       "Clear" affordance for filter-bar use.
 - [x] **Parcels Reports** (`bema/parcels/parcels-reports.cfm` + `views/parcels/
-      vwParcelsReports.cfm`) ported: date-range filter, Total Sale (Express/Regular/Cargo/
-      Linoli/Unknown/Total), Payment Colected, Remain Payment, and a "Paid transactions" /
-      "History" tab pair (`routes.bema.parcelsReports()`, `ParcelsReportsPage`,
-      `GET /api/bema/parcels/reports`, `src/lib/services/parcelReports.ts`), `BemaStandard`/
-      `BemaAdministrator`-gated (same mapping as the Customers list, for legacy's
-      `WEBSITE_ADMINISTRATOR,ADMINISTRATOR`). Legacy drives this whole screen off
-      `ParcelHistory`, a generic per-edit audit log this schema doesn't have (an already-made
-      architecture decision, not discovered here — see `docs/migrations/
-      04-postgres-schema-design.md` §1); ported via a mechanism substitution
-      (`invoices`/`invoices_items` + parcels' own live `pay_method1`/`pay_amount1`/etc. fields
-      for the money tables, `parcel_status_history` for a best-effort History tab) documented
-      in full in `docs/findings.md`'s "Parcels Reports" entry, including two legacy bugs found
-      along the way (`Payment Colected`'s unordered `cfloop group` silently undercounts;
-      Total Sale's `cfloop group="PARCELID"` can double-count) that weren't reproducible in a
-      meaningful way and were implemented correctly instead, flagged rather than silently
-      fixed. **Not ported, open — needs a decision:** "Colected In USA"/"Colected In Georgia"
-      (grouped by which admin processed each payment) and the "Received by" column — nothing
-      in this schema records which admin performed a payment/edit at all; would need a new
-      `Payment`/`Invoice` column plus wiring the acting session through
-      `applyPaidOperation` and friends. "Parcels Reports 2" (`parcels-reports-2-v2.cfm`) is a
-      separate legacy screen/sidebar entry, not part of this pass.
+      vwParcelsReports.cfm`) ported **in full**: date-range filter, Total Sale, Payment
+      Colected, Remain Payment, "Colected In USA"/"Colected In Georgia", and the
+      "Paid transactions"/"History" tabs (`routes.bema.parcelsReports()`,
+      `ParcelsReportsPage`, `ReportAmountTable`, `GET /api/bema/parcels/reports`,
+      `src/lib/services/parcelReports.ts`), gated `BemaStandard`/`BemaAdministrator` for
+      legacy's `WEBSITE_ADMINISTRATOR,ADMINISTRATOR`.
+- [x] **Restored the legacy `ParcelHistory` edit log** — `parcel_history`, migration
+      `20260801062224_add_parcel_edit_history` (docs/decisions/0018-parcel-edit-history.md).
+      A first pass at the reports had rebuilt them on substitute sources because an earlier
+      phase recorded that this schema "deliberately has no equivalent" of that table. Checking
+      the basis for that: `02-parcels-domain-analysis.md` §4's table inventory never mentions
+      `ParcelHistory` at all, and `04-postgres-schema-design.md` §1 then claimed legacy "lacks"
+      an audit trail on the strength of its absence — the table was missed in the audit, not
+      weighed and rejected. Without it the screen genuinely worked differently (no per-admin
+      "Colected In …" tables, no "Received by", 2 of 7 History columns, money read from
+      overwritable current columns instead of the payment event), so it is now ported.
+      `parcel_status_history` stays alongside it — trigger-written status timeline vs.
+      application-written business detail, different jobs. Writes wired into every legacy
+      write site (`parcelBatchAdd`/`parcelUpdate`/`parcelOperations` — `Added`, field diffs,
+      `Partial Paid`, `Paid`, `Unpaid`, `Set AWB`, `Operation changed`), with the acting
+      operator threaded through from the session. **Optimization:** legacy has no indexes at
+      all (02 §5); three composite indexes added, chosen per query shape — the reports' main
+      query plans as an `Index Scan` (4 buffer hits, ~0.06 ms on 200k rows) instead of a seq
+      scan. Verified end-to-end against a real Postgres: history rows written, BEMA-agent edits
+      excluded from every figure, per-admin attribution correct. Legacy bugs reproduced and
+      documented in `docs/findings.md` — the "Colected In Georgia" total crediting
+      `totalAmountUS` (verified: GE rows sum 70, GE total 20, US total inflated to 120), and
+      `Remain Payment` dropping NULL-`payMethod2` parcels via NULL-propagating `!=`.
+- [ ] `money-collect.cfm`'s pre-2018-04 history backfill (`INSERT … SELECT`) — a data-repair
+      job belonging to the not-yet-built Money Collect screen, not application behaviour.
+- [ ] "Parcels Reports 2" (`parcels-reports-2-v2.cfm`) — separate legacy screen/sidebar entry,
+      still a placeholder in the nav.
 
 ## Not started
 

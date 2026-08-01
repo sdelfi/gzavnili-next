@@ -147,6 +147,8 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   parcels   Parcel[]     @relation("ParcelUser")
+  /// Edit-log rows this account authored — the reports' "which admin collected this".
+  parcelEdits ParcelHistory[] @relation("ParcelHistoryUpdater")
   receivers Receiver[]
   invoices  Invoice[]
   payments  Payment[]
@@ -436,9 +438,14 @@ model UserBalance {
   @@map("user_balances")
 }
 
-// New in this schema: append-only audit trail the legacy system lacks outside the
-// write-only `operations` table (docs/migrations/04-postgres-schema-design.md §1).
-// Written by the same trigger/function that maintains `parcels.status`.
+// Trigger-maintained projection of `parcels.status` transitions — every status change,
+// whatever code path caused it (docs/migrations/04-postgres-schema-design.md §1). This is a
+// *status* timeline, deliberately narrow: it answers "when did this parcel become Shipped".
+// It is NOT the general edit log — that's `ParcelHistory` below, which records field-level
+// edits with old/new values, payment details and the acting admin. The two coexist on
+// purpose: this one is written automatically by a DB trigger and can never be forgotten by a
+// caller; that one carries the business detail a trigger can't know (who was logged in, which
+// payment method was taken). See docs/decisions/0018-parcel-edit-history.md.
 model ParcelStatusHistory {
   id        String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   parcelId  String       @map("parcel_id") @db.Uuid
@@ -450,6 +457,65 @@ model ParcelStatusHistory {
 
   @@map("parcel_status_history")
   @@index([parcelId, changedAt])
+}
+
+// The legacy `ParcelHistory` table, ported (docs/decisions/0018-parcel-edit-history.md).
+//
+// An earlier phase of this migration dropped it on the mistaken premise that legacy had no
+// audit trail "outside the write-only `operations` table" — it does, and every table on the
+// bema "Parcels Reports" screen is built on it. Restored here because the reports genuinely
+// cannot work without it: it is the only record of *what a payment was at the moment it was
+// taken* (`payMethod`/`payAmount` per event, not the parcel's current overwritable columns)
+// and of *which admin* did it.
+//
+// Column names/semantics mirror legacy 1:1 so the ETL import is a straight copy and the
+// report queries port literally. Two deliberate storage improvements that change nothing
+// observable:
+//   * `updaterId` is a real FK to `users` (legacy stored a bare unindexed GUID string), so
+//     the reports' "which admin collected this" join is a normal indexed join.
+//   * `updater` — legacy's denormalized "First Last (username)" display string — is kept
+//     because it is NOT always derivable from `updaterId`: `money-collect.cfm`'s backfill
+//     writes `updater = 'Online'` with a NULL `updaterid` for payments that had no operator
+//     at all. Dropping it would lose that distinction.
+//
+// Indexes: legacy has none anywhere (docs/migrations/02-parcels-domain-analysis.md §5) and
+// the reports are correspondingly slow. The three below are chosen for this screen's actual
+// query shapes — equality column first, then the range column, so each is a single index
+// scan rather than a full-table scan plus filter.
+model ParcelHistory {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  parcelId     String   @map("parcel_id") @db.Uuid
+  parcel       Parcel   @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+  editDateTime DateTime @default(now()) @map("edit_date_time") @db.Timestamptz(6)
+
+  /// Legacy `EditStatus`: the parcel's status at edit time, or a literal marker for the
+  /// events that aren't field edits (`Added`, `Set AWB`, `Unpaid`, `Operation changed`).
+  editStatus String? @map("edit_status")
+  /// Which field changed (`Merchant`/`Content`/`Value`/`Debt`/`Paid`/`Partial Paid`/`amount`),
+  /// blank for the whole-record events. The reports key off this: `valueName = 'Paid'` is
+  /// what makes a row a payment event.
+  valueName  String? @map("value_name")
+  oldValue   String? @map("old_value")
+  newValue   String? @map("new_value")
+
+  /// Payment method/amount **as taken at this moment** — the whole reason this table can't be
+  /// reconstructed from `parcels.pay_method1`/`pay_amount1`, which later edits overwrite.
+  payMethod String?  @map("pay_method")
+  payAmount Decimal? @map("pay_amount") @db.Decimal(12, 2)
+
+  updaterId String? @map("updater_id") @db.Uuid
+  updater   User?   @relation("ParcelHistoryUpdater", fields: [updaterId], references: [id])
+  /// Legacy's denormalized display string — see the model comment for why it survives.
+  updaterName String? @map("updater_name")
+
+  @@map("parcel_history")
+  /// Payment events in a date window — the Total Sale / Payment Colected / Remain Payment
+  /// tables and the "Paid transactions" tab all start here.
+  @@index([valueName, editDateTime])
+  /// One parcel's timeline, and the reports' per-parcel dedupe.
+  @@index([parcelId, editDateTime])
+  /// "Colected In USA"/"Colected In Georgia": group a window's payment events by admin.
+  @@index([updaterId, editDateTime])
 }
 
 model Parcel {
@@ -570,6 +636,7 @@ model Parcel {
   invoiceItems  InvoiceItem[]
   parcelOffice  ParcelOffice?
   statusHistory ParcelStatusHistory[]
+  editHistory   ParcelHistory[]
 
   @@map("parcels")
   @@index([tripDate, id], map: "parcels_trip_date_id_idx")

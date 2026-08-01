@@ -302,93 +302,92 @@ note that `AdminRole` collapsed several legacy admin groups into one enum, not c
 against legacy group data directly.
 
 ---
+## Parcels Reports (`parcels-reports.cfm`) — 2026-08-01, superseded same day
 
-## Parcels Reports (`parcels-reports.cfm`) — 2026-08-01
+**First pass (wrong premise, now corrected).** This entry originally recorded that the whole
+screen had to be rebuilt on substitute data sources because "this schema deliberately has no
+equivalent" of legacy's `ParcelHistory` edit log, and listed the per-admin "Colected In USA"/
+"Colected In Georgia" tables, the "Received by" column and five of the History tab's seven
+columns as *open — needs a decision*, on the grounds that adding the table would be a change
+"bigger than this report screen".
 
-**Found:** every table on this screen (`views/parcels/vwParcelsReports.cfm`) is driven off
-`ParcelHistory`, a generic append-only edit log — one row per field change, carrying
-`EditStatus`/`OldValue`/`NewValue`/`ValueName`/`PayMethod`/`PayAmount`/`updaterID` (which admin
-made the edit). This schema deliberately has no equivalent of that table — a decision already
-made in an earlier phase of this project, not discovered here:
-`docs/migrations/04-postgres-schema-design.md` §1 replaces it with `parcel_status_history`
-(status transitions only: `status`/`changed_at`/`changed_by`/`reason`, no old/new diff, no
-payment fields) plus `invoices`/`invoices_items`/`payments` for money — explicitly described
-there as "a real audit trail — something the legacy system lacks outside the write-only
-`operations` table", i.e. a deliberate *improvement*, not a like-for-like carry-over. Neither
-`invoices`/`invoices_items`/`payments` nor `parcel_status_history` records *who* (which admin)
-performed an action.
+**That was the wrong call, and the premise behind it was false.** `ParcelHistory` was never
+weighed and rejected — it was missed during the audit phase
+(`docs/migrations/02-parcels-domain-analysis.md` §4 inventories the parcels tables and does
+not mention it), and `04-postgres-schema-design.md` §1 then asserted legacy "lacks" an audit
+trail on the strength of its absence. Legacy has one, and it is richer than the
+`parcel_status_history` table introduced to replace it.
 
-This affects three distinct things on the legacy page:
+**Verdict: the table is ported** (`parcel_history`, migration
+`20260801062224_add_parcel_edit_history`) and every figure on the screen now comes from the
+same rows legacy reads. Full reasoning, the schema, the index choices and the measured effect
+are in `docs/decisions/0018-parcel-edit-history.md`. Nothing about this screen is "open — needs
+a decision" any more.
 
-1. **Total Sale / Payment Colected / Remain Payment / "Paid transactions" tab.** Legacy scopes
-   these to a date range via `ph.editdatetime` on `valuename = 'Paid'` (Total
-   Sale/Payment Colected) or any edit with a non-Debt `paymethod2` (Remain Payment) rows, and
-   reads `ph.payamount`/`ph.paymethod` (the value *at that specific edit*) alongside the
-   *current* `parcels.weight`/`debt` (read live, not historically — confirmed by reading the
-   view, not just the query: Total Sale sums `weight`/`debt` off the joined `parcels` row,
-   never off `ph`).
-2. **"Colected In USA"/"Colected In Georgia"** — grouped by `ph.updaterID`, cross-referenced
-   against two hardcoded username lists (`BemaGE`/`BemaUS`) or the updater's own billing
-   country, to attribute each `PayAmount1` to the admin who collected it.
-3. **"History" tab** — every `ParcelHistory` row in range whose `EditStatus` isn't
-   `Added`/`Paid` (i.e. mostly status-transition edits, with full `OldValue`/`NewValue`) plus
-   `ph.updaterID` again on the excluded-groups filter every one of these queries applies
-   (`updaterrGroup.groupid IS NULL`, excluding edits made by group-15 admins from every count).
+The genuine legacy quirks found while doing it, all **ported as-is**:
 
-**Verdict — partial port, with the gap documented rather than silently patched over:**
+### "Colected In Georgia" credits the table but not the total
 
-- **(1) ported via a mechanism substitution.** `src/lib/services/parcelReports.ts` scopes the
-  date range off `invoices.invoice_date` (the moment `applyPaidOperation` — "Set Status -
-  Paid" — actually runs; the closest available analog to a `valuename='Paid'` `ParcelHistory`
-  row's `editdatetime`) joined to `invoices_items` for the per-parcel paid amount, and reads
-  `parcels.pay_method1`/`pay_amount1`/`pay_method2`/`pay_amount2`/`debt`/`weight` live off the
-  current parcel row — same as legacy's own live reads for Total Sale/Remain Payment. This can
-  drift from the true value at the moment of payment if `payMethod1` is edited again
-  afterward, which legacy's history-row approach wouldn't have — a real, accepted limitation of
-  the substitution, not an attempt to hide it.
-  - **Also found while doing this:** `vwParcelsReports.cfm`'s Payment Colected block loops
-    `TotalSalesParcels` with `<cfloop query group="paymethod">` over a query that has **no
-    `ORDER BY`** (commented out entirely) — a `group` loop only groups correctly over rows
-    already sorted by that field, and both the running total (`PaymentColectedTotal
-    += payamount`) and the inner (bare, single-pass) `<cfloop>` accumulation only fire once per
-    *contiguous run* of a value, not once per matching row. On unsorted data this means the
-    on-screen totals silently undercount whenever the same `paymethod` appears in
-    non-adjacent rows — a real bug, but one whose *exact* wrong number depends on whatever
-    physical row order the legacy MSSQL query happened to return, which has no meaningful
-    equivalent to reproduce on this stack (same reasoning as the "Received By: Any" entry
-    above — porting the accident, not the observable behavior). Implemented as a correct full
-    sum over every qualifying row instead; flagged rather than silently "fixed" without a note.
-  - Total Sale's `cfloop group="PARCELID"` has the same unsorted-`group` shape and could
-    likewise double-count a parcel paid twice inside the window across non-adjacent rows;
-    ported as a straightforward dedupe-by-`parcelId` instead (`getParcelsReport`'s
-    `seenParcelIds`), for the same reason.
-  - Legacy's Unknown/Linoli branches (`userid eq "58133650-..."` / `"581ACE56-..."`, two
-    hardcoded legacy MSSQL customer GUIDs) are **unreachable, nothing to port** — no legacy
-    customer data has been imported yet (ETL not started), so those specific ids can't exist
-    in this Postgres schema (fresh `gen_random_uuid()`s). Both rows are still rendered in the
-    Total Sale/Remain Payment tables (always 0), matching legacy's layout.
-- **(2) and the "Received by" column in the "Paid transactions" tab (which legacy fills with
-  the *processing admin's* name, not the parcel's receiver) — open, needs a decision.**
-  Neither `invoices`/`invoices_items`/`payments` records which admin performed the action, and
-  nothing else in the current session/request flow threads that identity into
-  `applyPaidOperation` (`src/lib/services/parcelOperations.ts`) today either. Reconstructing
-  this would mean adding a `processedBy`/similar column to `Payment` (or `Invoice`) and
-  wiring the acting bema session into every write path that creates one — a schema and
-  call-site change bigger than this report screen, and one with its own tradeoffs (e.g.
-  whether it backfills for historical rows at all). Not implemented here; the "Colected In
-  USA"/"Colected In Georgia" tables are omitted entirely (not rendered) rather than shown
-  empty/wrong, and the "Received by" column renders blank.
-- **(3) partially ported via a mechanism substitution.** The History tab reads
-  `parcel_status_history` for the date range (`ParcelsReportsPage`'s History tab) — Date and
-  Status are real; Old/New/ValueName/PayMethod/PayAmount are not reconstructable (no diff, no
-  payment fields on that table) and render blank/placeholder (`ValueName` always shows the
-  literal `"Status"`, matching what the transition actually represents). The group-15-admin
-  exclusion from item (1)/(3) above isn't applied anywhere in this port, for the same reason
-  as (2) — there's no updater identity anywhere to filter on.
+**Found:** `vwParcelsReports.cfm:267-273`. The four-branch attribution loop is:
 
-`docs/findings.md`'s usual three-way verdict doesn't fit this entry cleanly since different
-parts of the same page landed in different buckets — recorded that way explicitly above
-instead of forcing one verdict for the whole page.
+```
+if      ListFindNoCase(BemaGE, updaterUserName) -> CollectedGE[k] += …;  totalAmountGE += …
+elseif  ListFindNoCase(BemaUS, updaterUserName) -> CollectedUS[k] += …;  totalAmountUS += …
+elseif  updaterCountry eq "GE"                  -> CollectedGE[k] += …;  totalAmountUS += …   <-- here
+elseif  updaterCountry eq "US"                  -> CollectedUS[k] += …;  totalAmountUS += …
+```
+
+The third branch credits the amount to the **Georgia** per-person table but adds it to the
+**USA** total. So for any operator who is billed in Georgia but is not on the hardcoded
+`BemaGE` username list, the "Colected In Georgia" rows do not sum to the "Colected In Georgia"
+total, and the "Colected In USA" total is inflated by that amount. The two username-list
+branches and the `US` branch are all self-consistent; only this one is not.
+
+**Ported verbatim** (`parcelReports.ts`'s `collected…` loop, with the offending line
+explicitly commented so a future cleanup pass can't mistake it for a typo). Reproduced rather
+than corrected because these two tables are used to reconcile physical cash against what each
+office collected — a silent correction would show numbers that disagree with the old system on
+the same data, which is a real financial discrepancy, not a fix. Verified end-to-end against a
+real database: one GE-billed off-list operator collecting 50 yields GE rows summing to 70, a
+GE total of 20, and a US total inflated to 120.
+
+### `Remain Payment` silently drops parcels with no second payment method
+
+**Found:** `parcels-reports.cfm:44` — `AND p.paymethod2 != 'Dept' AND p.paymethod2 != 'Depth'
+AND p.paymethod2 != 'Debt'`. These are three NULL-propagating comparisons, so a parcel whose
+`payMethod2` was never set is **excluded from the Remain Payment table entirely** — the
+opposite of the natural reading ("no debt method set, so include it"). Almost every parcel that
+never took a partial payment falls in this hole.
+
+**Ported as-is.** Prisma's `{ not: … }` compiles to a bare `<> $1` (verified against Postgres),
+so the three-valued behaviour matches MSSQL's without a special case. An earlier draft of this
+port had "helpfully" included the NULLs, which would have made the table disagree with legacy
+on nearly every window.
+
+### `'Kote '` — a list entry that can never match
+
+**Found:** `vwParcelsReports.cfm:248` — `BemaUS = 'Kote,gzavnili,Kote ,Datunia,Badri'`. The
+third element has a trailing space, making it a distinct list element from `Kote` that
+`ListFindNoCase` can never match against a real username.
+
+**Ported as-is** (kept in `BEMA_US_USERNAMES`). Harmless, but removing it would be editing
+legacy data under the guise of porting it.
+
+### `CreditCard GEO` relabel that matches nothing
+
+**Found:** the Payment Colected block remaps `CreditCard GEO` -> `Credit Card GE`, but no
+screen in the legacy app stores that spelling — every payment-method dropdown writes
+`CreditCard GE`. The branch is dead against data this app produces.
+
+**Ported as-is**, since legacy-imported rows may well carry the old spelling and the branch
+costs nothing.
+
+### The `Unknown`/`Linoli` customer buckets remain unreachable
+
+**Unchanged from the first pass, and this one really is a data-availability limit, not a
+decision:** both branches key off hardcoded legacy MSSQL customer GUIDs
+(`58133650-…`/`581ACE56-…`) which cannot exist in this schema until the ETL runs. Both rows
+still render (always 0), matching the legacy layout.
 
 ---
 

@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { computeDraftParcelTotals, finalDebt, priceOverrideScale, resolveAgentFlatRate } from '@/lib/parcels/batchPricing';
 import type { PricingRule } from '@/lib/parcels/pricing';
 import { runParcelOperation } from '@/lib/services/parcelOperations';
+import { recordParcelHistory, resolveActingUser } from '@/lib/services/parcelHistory';
 import { orNull, upsertCustomer, upsertReceiver } from '@/lib/services/parcelShared';
 import type { AddParcelBatchInput } from '@/lib/validation/parcelBatchSchema';
 
@@ -80,6 +81,7 @@ export async function saveParcelBatch(
     where: { id: actingUser.id },
     select: { username: true, agentPrice: true },
   });
+  const actingHistoryUser = await resolveActingUser(actingUser.id);
   const agentFlatRate = resolveAgentFlatRate({
     isAgent: actingUser.role === 'BemaAgent',
     agentPrice: acting?.agentPrice ? Number(acting.agentPrice) : null,
@@ -137,6 +139,11 @@ export async function saveParcelBatch(
         await tx.parcelOffice.create({ data: { parcelId: parcel.id, officeId: draft.officeId } });
       }
 
+      // Legacy's `MSSQLParcelDAO.create()` opens every parcel's edit log with an 'Added' row.
+      await recordParcelHistory(tx, actingHistoryUser, [
+        { parcelId: parcel.id, editStatus: 'Added', valueName: '' },
+      ]);
+
       created.push({ trackingNum: parcel.trackingNum ?? draft.trackingNum, parcelId: parcel.id });
     }
 
@@ -144,14 +151,17 @@ export async function saveParcelBatch(
   });
 
   if (isPaid) {
-    await runParcelOperation({
-      operation: 'paid',
-      parcelIds: results.map((r) => r.parcelId),
-      payMethod1: input.paymentMethod1,
-      pCode: '',
-      awb: '',
-      buser: '',
-    });
+    await runParcelOperation(
+      {
+        operation: 'paid',
+        parcelIds: results.map((r) => r.parcelId),
+        payMethod1: input.paymentMethod1,
+        pCode: '',
+        awb: '',
+        buser: '',
+      },
+      actingHistoryUser,
+    );
   }
 
   return { parcels: results };

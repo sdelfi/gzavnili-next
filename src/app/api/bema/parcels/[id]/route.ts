@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { requireBemaSession } from '@/lib/auth/session';
 import { runParcelOperation } from '@/lib/services/parcelOperations';
 import { saveParcel, trackingNumExists } from '@/lib/services/parcelUpdate';
+import { resolveActingUser } from '@/lib/services/parcelHistory';
 import { PARCEL_DETAIL_INCLUDE, toParcelDetail } from '@/lib/services/parcelDetail';
 import { updateParcelSchema } from '@/lib/validation/parcelSchema';
 import { flattenIssues } from '@/lib/validation/zodErrors';
@@ -49,7 +50,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     );
   }
 
-  await saveParcel(id, parsed.data);
+  await saveParcel(id, parsed.data, await resolveActingUser(auth.session.sub));
 
   const parcel = await db.parcel.findUnique({ where: { id }, include: PARCEL_DETAIL_INCLUDE });
   return NextResponse.json({ parcel: parcel && toParcelDetail(parcel) });
@@ -66,14 +67,10 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   // Same code path as the bulk "Delete" operation, so the two can't clean up different
   // things — legacy had `parcels-delete.cfm` call `ParcelDAO.delete()` while the bulk
   // operation issued its own `delete from parcels`.
-  await runParcelOperation({
-    operation: 'delete',
-    parcelIds: [id],
-    payMethod1: '',
-    pCode: '',
-    awb: '',
-    buser: '',
-  });
+  await runParcelOperation(
+    { operation: 'delete', parcelIds: [id], payMethod1: '', pCode: '', awb: '', buser: '' },
+    await resolveActingUser(auth.session.sub),
+  );
 
   return new NextResponse(null, { status: 204 });
 }
