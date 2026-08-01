@@ -1,10 +1,11 @@
 #!/usr/bin/env bun
 // Reproducible version of the manual benchmark behind docs/decisions/0016-parcels-
-// performance.md: point it at a disposable database, it seeds a realistic volume of parcels
-// (plus the invoices/payments/receivers/offices the list's joins touch), then drives the
-// *real* /api/bema/parcels endpoints over HTTP and reports timings — so re-running this after
-// a schema or query change answers "did it get faster or slower" without redoing the manual
-// work by hand.
+// performance.md and docs/decisions/0018-parcel-edit-history.md: point it at a disposable
+// database, it seeds a realistic volume of parcels (plus the invoices/payments/receivers/
+// offices/parcel_history rows the list and reports' joins touch), then drives the *real*
+// /api/bema/parcels and /api/bema/parcels/reports endpoints over HTTP and reports timings —
+// so re-running this after a schema or query change answers "did it get faster or slower"
+// without redoing the manual work by hand.
 //
 // Usage:
 //   bun scripts/benchmark-parcels.ts --seed --bench --confirm=<db name from DATABASE_URL>
@@ -28,7 +29,19 @@
 //
 // What it seeds, at --scale=N: N parcels, N/20 receivers, N/20 customers, N/50 addresses,
 // invoices+items+payments for ~65% of parcels (the delivered ones), office assignments for
-// ~1 in 5 with a tracking_office date. Same shape as the manual seed in 0016, parameterised.
+// ~1 in 5 with a tracking_office date, and — for the Parcels Reports screen
+// (docs/decisions/0018-parcel-edit-history.md) — a `parcel_history` edit log: one 'Paid' row
+// per delivered parcel (the same population the invoice/payment step covers), plus 1-2
+// non-payment edit rows per parcel, for a combined history table on the order of 2-3x the
+// parcel count — comparable to the 200k-row scale that decision doc's own measurements were
+// taken against. Same shape as the manual seed in 0016, parameterised.
+//
+// A handful of synthetic BEMA admin accounts (`RPTADM-*`, plus `tornikero`/`gzavnili` — two
+// real entries of `BEMA_GE_USERNAMES`/`BEMA_US_USERNAMES`, see parcelReports.ts) are seeded as
+// the `parcel_history.updater_id` population, spanning every branch the reports' per-admin
+// attribution takes: on-list GE, on-list US, off-list GE (the branch with the reproduced
+// legacy total-crediting bug), off-list US, a `BemaAgent` (excluded from every figure), and a
+// `NULL` updater with `updater_name = 'Online'` (money-collect.cfm's backfill shape).
 //
 // Safety: this is direct SQL against whatever DATABASE_URL points at — not routed through
 // Prisma's migration tooling, and not subject to guard-local-db.mjs (which only wraps the
@@ -104,7 +117,7 @@ async function reset() {
   await withClient((client) =>
     client.query(`
       TRUNCATE TABLE
-        parcel_status_history, invoices_items, payments, invoices, parceloffice,
+        parcel_history, parcel_status_history, invoices_items, payments, invoices, parceloffice,
         parcels, receivers, users, addressbook
       RESTART IDENTITY CASCADE;
     `),
@@ -161,6 +174,41 @@ async function seed() {
              (SELECT id FROM addressbook OFFSET (i % ${addressCount}) LIMIT 1),
              'customer', true, true, now()
       FROM generate_series(1, ${customerCount}) i;
+    `,
+    );
+
+    await step(
+      'bema admins (parcel_history.updater_id population for the reports screen)',
+      `
+      SET synchronous_commit = off;
+      -- Deliberately NOT prefixed 'BENCH' — several steps below scope themselves to
+      -- "username LIKE 'BENCH%'" meaning *customers*; these must stay outside that filter.
+      -- 'tornikero'/'gzavnili' are real entries of BEMA_GE_USERNAMES/BEMA_US_USERNAMES
+      -- (src/lib/services/parcelReports.ts) — reusing them here exercises the reports'
+      -- on-list attribution branch, not just the off-list/country-only ones.
+      INSERT INTO users (id, username, email, first_name, last_name, billing_address_id,
+                          account_type, admin_role, active, confirmed, updated_at)
+      VALUES
+        (gen_random_uuid(), 'tornikero', 'bench-admin-ge-onlist@example.com', 'Torn', 'Ikero',
+         (SELECT id FROM addressbook WHERE country = 'GE' ORDER BY random() LIMIT 1),
+         'bema_user', 'bema_standard', true, true, now()),
+        (gen_random_uuid(), 'gzavnili', 'bench-admin-us-onlist@example.com', 'Gza', 'Vnili',
+         (SELECT id FROM addressbook WHERE country = 'US' ORDER BY random() LIMIT 1),
+         'bema_user', 'bema_standard', true, true, now()),
+        -- Off-list, billed in Georgia: the branch carrying the reproduced legacy bug
+        -- (credits the "Colected In Georgia" table but the "Colected In USA" total —
+        -- see parcelReports.ts / docs/findings.md).
+        (gen_random_uuid(), 'RPTADM-GE-OFFLIST', 'bench-admin-ge-offlist@example.com', 'Ge', 'Offlist',
+         (SELECT id FROM addressbook WHERE country = 'GE' ORDER BY random() LIMIT 1),
+         'bema_user', 'bema_standard', true, true, now()),
+        (gen_random_uuid(), 'RPTADM-US-OFFLIST', 'bench-admin-us-offlist@example.com', 'Us', 'Offlist',
+         (SELECT id FROM addressbook WHERE country = 'US' ORDER BY random() LIMIT 1),
+         'bema_user', 'bema_standard', true, true, now()),
+        -- BemaAgent: every figure on the reports screen must exclude edits this account made.
+        (gen_random_uuid(), 'RPTADM-AGENT', 'bench-admin-agent@example.com', 'Agent', 'Bench',
+         (SELECT id FROM addressbook WHERE country = 'US' ORDER BY random() LIMIT 1),
+         'bema_user', 'bema_agent', true, true, now())
+      ON CONFLICT (username) DO NOTHING;
     `,
     );
 
@@ -263,6 +311,63 @@ async function seed() {
     );
 
     await step(
+      "parcel history — payment events ('Paid', same population as invoices/payments)",
+      `
+      SET synchronous_commit = off;
+      WITH admins AS (
+        SELECT id, row_number() OVER (ORDER BY username) - 1 AS n
+        FROM users WHERE username IN ('tornikero', 'gzavnili', 'RPTADM-GE-OFFLIST', 'RPTADM-US-OFFLIST', 'RPTADM-AGENT')
+      ), delivered AS (
+        SELECT p.id AS parcel_id, p.debt, p.tracking_delivered_signed AS paid_at,
+               row_number() OVER (ORDER BY p.id) AS n
+        FROM parcels p WHERE p.tracking_delivered_signed IS NOT NULL AND p.tracking_num LIKE 'BENCH%'
+      )
+      INSERT INTO parcel_history (
+        id, parcel_id, edit_date_time, edit_status, value_name, old_value, new_value,
+        pay_method, pay_amount, updater_id, updater_name
+      )
+      SELECT
+        gen_random_uuid(), delivered.parcel_id, delivered.paid_at, 'delivered', 'Paid', '', '',
+        -- Includes 'Debt', which the reports' payMethod != 'Debt' filter must exclude —
+        -- roughly 1 in 6 rows here exist specifically to exercise that.
+        (ARRAY['Cash GE', 'CreditCard GE', 'Cash', 'CreditCard', 'PayPal', 'Debt'])[1 + (delivered.n % 6)],
+        coalesce(delivered.debt, 0),
+        -- ~1 in 17 rows: no operator at all — money-collect.cfm's 'Online' backfill shape
+        -- (NULL updater_id, updater_name = 'Online'), which the reports must still include.
+        CASE WHEN delivered.n % 17 = 0 THEN NULL ELSE admins.id END,
+        CASE WHEN delivered.n % 17 = 0 THEN 'Online' ELSE NULL END
+      FROM delivered
+      LEFT JOIN admins ON admins.n = delivered.n % 5;
+    `,
+    );
+
+    await step(
+      'parcel history — non-payment edit rows (History tab volume, 2 per parcel)',
+      `
+      SET synchronous_commit = off;
+      WITH admins AS (
+        SELECT id, row_number() OVER (ORDER BY username) - 1 AS n
+        FROM users WHERE username IN ('tornikero', 'gzavnili', 'RPTADM-GE-OFFLIST', 'RPTADM-US-OFFLIST', 'RPTADM-AGENT')
+      ), src AS (
+        SELECT p.id AS parcel_id, p.created, row_number() OVER (ORDER BY p.id) AS n
+        FROM parcels p WHERE p.tracking_num LIKE 'BENCH%'
+      ), reps AS (SELECT generate_series(1, 2) AS rep)
+      INSERT INTO parcel_history (
+        id, parcel_id, edit_date_time, edit_status, value_name, old_value, new_value, updater_id
+      )
+      SELECT
+        gen_random_uuid(), src.parcel_id, src.created + (interval '1 hour' * ((src.n + reps.rep) % 48)),
+        (ARRAY['awaiting', 'received', 'shipped', 'office', 'delivered'])[1 + ((src.n + reps.rep) % 5)],
+        (ARRAY['Content', 'Value', 'Debt', 'Merchant'])[1 + ((src.n + reps.rep) % 4)],
+        'old-' || src.n || '-' || reps.rep, 'new-' || src.n || '-' || reps.rep,
+        admins.id
+      FROM src
+      CROSS JOIN reps
+      LEFT JOIN admins ON admins.n = (src.n + reps.rep) % 5;
+    `,
+    );
+
+    await step(
       'delivery office + office assignments (~1 in 5 parcels)',
       `
       SET synchronous_commit = off;
@@ -335,6 +440,41 @@ async function buildScenarios(client: Client): Promise<Scenario[]> {
   ];
 }
 
+// The Parcels Reports screen (docs/decisions/0018-parcel-edit-history.md) — a handful of
+// date-range windows against the same ~5-year spread the parcels/parcel_history seed uses
+// (`now() - (i % 1800 days)`), so each one lands somewhere meaningfully different in that
+// distribution rather than all hitting the same slice.
+type ReportScenario = { label: string; query: Record<string, string> };
+
+function ymd(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+function daysAgo(days: number): Date {
+  return new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+}
+
+function buildReportScenarios(): ReportScenario[] {
+  return [
+    {
+      label: 'reports: full ~5yr range',
+      query: { dateStart: ymd(daysAgo(1800)), dateEnd: ymd(daysAgo(0)) },
+    },
+    {
+      label: 'reports: one-month window (mid-range)',
+      query: { dateStart: ymd(daysAgo(430)), dateEnd: ymd(daysAgo(400)) },
+    },
+    {
+      label: 'reports: last 24h (narrow, index-selective)',
+      query: { dateStart: ymd(daysAgo(1)), dateEnd: ymd(daysAgo(0)) },
+    },
+    {
+      label: 'reports: no results (future window)',
+      query: { dateStart: ymd(daysAgo(-30)), dateEnd: ymd(daysAgo(-1)) },
+    },
+  ];
+}
+
 // `admin_role` in the database holds the `@map`-ed value ('bema_administrator'), not the
 // Prisma enum key (`BemaAdministrator`) `signAccessToken`/`hasRole` expect — see the
 // `AdminRole` enum in prisma/schema.prisma.
@@ -345,12 +485,18 @@ const ADMIN_ROLE_FROM_DB: Record<string, 'BemaStandard' | 'BemaAdministrator' | 
 };
 
 async function mintToken(client: Client): Promise<string> {
+  // Excludes BemaAgent deliberately: /api/bema/parcels/reports is BemaStandard/
+  // BemaAdministrator-only (narrower than the parcels list's 3-role gate — see
+  // src/app/api/bema/parcels/reports/route.ts), and this one token drives both benchmarks.
   const { rows } = await client.query(
-    `SELECT id, admin_role FROM users WHERE account_type = 'bema_user' AND active = true LIMIT 1`,
+    `SELECT id, admin_role FROM users
+     WHERE account_type = 'bema_user' AND active = true AND admin_role != 'bema_agent'
+     ORDER BY (admin_role = 'bema_administrator') DESC LIMIT 1`,
   );
   if (rows.length === 0) {
     throw new Error(
-      'No BemaUser account exists in this database — run `bun scripts/seed-admin.ts` first (see its own env vars).',
+      'No non-agent BemaUser account exists in this database — run `bun scripts/seed-admin.ts` first ' +
+        '(see its own env vars).',
     );
   }
   const role = ADMIN_ROLE_FROM_DB[rows[0].admin_role as string];
@@ -369,9 +515,33 @@ async function timeRequest(url: string, cookie: string): Promise<{ ms: number; t
   return { ms, total, status: res.status };
 }
 
+// The reports endpoint isn't paginated, so there's no `total` to report — the row counts
+// across its several sections stand in for it instead, as a sanity signal that the query
+// actually found the seeded data (not just "responded fast because it found nothing").
+async function timeReportRequest(
+  url: string,
+  cookie: string,
+): Promise<{ ms: number; status: number; rows: string }> {
+  const start = performance.now();
+  const res = await fetch(url, { headers: { Cookie: cookie } });
+  const ms = performance.now() - start;
+  if (!res.ok) return { ms, status: res.status, rows: '?' };
+  const body = (await res.json()) as {
+    transactions?: unknown[];
+    history?: unknown[];
+    collectedUs?: unknown[];
+    collectedGe?: unknown[];
+  };
+  const rows =
+    `txn=${body.transactions?.length ?? '?'} hist=${body.history?.length ?? '?'} ` +
+    `us=${body.collectedUs?.length ?? '?'} ge=${body.collectedGe?.length ?? '?'}`;
+  return { ms, status: res.status, rows };
+}
+
 async function bench() {
   const results = await withClient(async (client) => {
     const scenarios = await buildScenarios(client);
+    const reportScenarios = buildReportScenarios();
     const token = await mintToken(client);
     const cookie = `bema_access_token=${token}`;
 
@@ -386,6 +556,15 @@ async function bench() {
       }
       const total = last.total === null ? '?' : last.total < 0 ? `${-last.total}+` : String(last.total);
       rows.push({ label: scenario.label, ms: last.ms, status: last.status, total });
+    }
+
+    for (const scenario of reportScenarios) {
+      const url = `${apiBase}/api/bema/parcels/reports?${new URLSearchParams(scenario.query).toString()}`;
+      let last = { ms: 0, status: 0, rows: '?' };
+      for (let i = 0; i < 4; i++) {
+        last = await timeReportRequest(url, cookie);
+      }
+      rows.push({ label: scenario.label, ms: last.ms, status: last.status, total: last.rows });
     }
     return rows;
   });
