@@ -493,6 +493,92 @@ event's own `payMethod` when it equals `"balance"`, else the parcel's `payMethod
 **Ported the collapsed form** (`computeRowDisplay`'s `pmshow`), with the reasoning recorded
 in a code comment rather than transcribing the always-false branch literally.
 
+## Money Collect (`money-collect.cfm` / `bema/ajax/moneyCollect.cfm`) — 2026-08-01
+
+### The online-payment backfill INSERT is not portable — no `transactionId` link in the redesigned schema
+
+**Found:** `money-collect.cfm`'s POST branch runs an INSERT before the report query, backfilling
+`parcelhistory` "Paid" events from online payments that have never had any non-blank-`paymethod`
+history row: `FROM payments p, invoices i, invoices_items ii, parcels pp WHERE ... AND
+i.transactionid = p.transactionid AND ... AND ii.ParcelId not in (select parcelid from
+parcelhistory where paymethod is not null and paymethod != '')`. The join key between `payments`
+and `invoices` is `transactionid`. The redesigned schema (`prisma/schema.prisma`, per
+`docs/migrations/04-postgres-schema-design.md`) has no `transactionId` on either `Payment` or
+`Invoice` — `Payment` only carries `userId`/`paymentDate`/`amount`/`paymentMethodId`, correlated
+to `Invoice` only loosely through the owning user, not a per-transaction key.
+
+**Open, needs a decision if it matters going forward** — there is no way to reproduce this
+backfill's join in the current schema at all, so it was not implemented (`moneyCollect.ts`'s
+`getMoneyCollectReport` reads `parcel_history` as-is, same as the sibling reports, with no
+backfill step). If online payments still need to land in `parcel_history` as "Paid" events for
+this report to see them, that has to happen at write time when a payment is recorded (wherever
+`Payment` rows are created in this codebase), not as a report-time backfill — a `transactionId`
+column would need to be added to `Payment`/`Invoice` first if the legacy backfill's exact
+per-transaction matching semantics are wanted.
+
+### `validateLogin`'s group-membership check is dead code — the modal's password re-auth accepts any bema admin, not just `WEBSITE_ADMINISTRATOR`
+
+**Found:** `bema/ajax/moneyCollect.cfm` calls `userDAO.validateLogin(form.collectorId,
+form.password, GROUPS.WEBSITE_ADMINISTRATOR)`. `MSSQLUserDAO.cfc`'s `validateLogin` accepts a
+`groupId` argument, but the actual membership check against it is commented out
+(`<!--- <cfelseif qryLoginUser.MaxGroupId lt arguments.GroupId> ... --->`). At runtime this means
+the re-auth step accepts *any* active bema admin account's credentials, regardless of role — not
+specifically `WEBSITE_ADMINISTRATOR`.
+
+**Ported as-is, matching the real runtime behavior rather than the misleading call site**: the
+collect API route (`api/bema/parcels/money-collect/collect/route.ts`) re-authenticates via
+`loginBemaUser` — the same function the login screen itself uses — which only requires
+`adminRole` to be set, not a specific one, matching what `validateLogin` actually does today.
+
+### `bema/ajax/moneyCollect.cfm` has no session/role gate at all — deliberately hardened, not ported
+
+**Found:** unlike every other bema screen/ajax endpoint, `money-collect.cfm`'s ajax write target
+has no `<cfmodule template="/custom_tags/require.cfm" ...>` call — the endpoint accepts a POST
+from anyone, gated only by the inline password re-auth described above.
+
+**Deliberately not ported** — this is a real unauthenticated-write-endpoint gap in legacy, not a
+business-logic quirk, and reproducing it would be introducing a genuine security vulnerability
+into the new codebase rather than faithfully replicating one. The port's collect route requires a
+valid bema session (`requireBemaSession`, same `BemaStandard`/`BemaAdministrator` roles as the
+report page) in addition to the password re-auth. See the route file's own comment.
+
+### `getUsers(typeId=1)` with no `active` argument returns inactive accounts too
+
+**Found:** the "Manager" select's source, `userDAO.getUsers(recordsPerPage=99999, currentPage=1,
+orderBy="LastName,FirstName", typeId=1)`, is called with no `active` argument.
+`MSSQLUserDAO.cfc`'s `getUsers()` defaults `active` to `""`, and only adds the `Active` filter
+when that argument is non-blank — so this call returns **both active and inactive** BEMA
+accounts, unlike the sibling "Parcels Reports 2" screen's `bemaUsers` list (which does filter
+`active=1`).
+
+**Ported as-is** (`getMoneyCollectReport`'s `managers` query has no `active` filter — see its doc
+comment).
+
+### The "Agents Name" deep link to a per-agent report was simplified
+
+**Found:** the report's Agents Name cell links to
+`/bema/parcels/parcels-reports-2.cfm?fromMC=1&username=<agent>&datestart=...&dateend=...` — the
+**plain**, non-`-v2` report (not the one actually ported as "Parcels Reports 2", which is `-v2`).
+The plain variant differs from `-v2` only by omitting the `exclude-agents.cfm` filter (so it can
+show even the one hardcoded excluded agent's own report) and using an older view template
+(`vwParcelsReports2.cfm`, not `-v2`); it otherwise supports the same `url.username` filter that
+`-v2` also implements (`updaterr.username = url.username`).
+
+**Simplified, not fully ported**: building a third report variant purely to bypass one hardcoded
+agent's exclusion filter was judged out of scope for this port. The "Agents Name" cell currently
+renders as plain text (not a link) rather than linking anywhere; a future pass could wire it to
+the already-ported `/bema/parcels/reports-2` with a `username` filter added to that service/route
+if this drill-down is actually used in practice.
+
+### Only one "Cash" bucket — no separate "Cash GE" total, even though "Cash GE" is a real `payMethod`
+
+**Found:** `vwMoneyCollect.cfm`'s bucketing (`totals2`) has a single `Cash` key populated by
+`findnocase('Cash', key)` — a `payMethod` of `"Cash GE"` matches this same branch (checked before
+`Card`/`Card GE`, which are the only two buckets legacy splits US/GE), so US and Georgia cash are
+combined into one column, unlike Credit Card which does get a GE-specific bucket.
+
+**Ported as-is** (`bucketPayMethod`'s `cash` branch has no GE variant; see its test coverage).
+
 ---
 
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not

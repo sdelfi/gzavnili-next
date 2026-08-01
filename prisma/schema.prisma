@@ -149,6 +149,9 @@ model User {
   parcels   Parcel[]     @relation("ParcelUser")
   /// Edit-log rows this account authored — the reports' "which admin collected this".
   parcelEdits ParcelHistory[] @relation("ParcelHistoryUpdater")
+  /// Money-collect records where this account is the *agent being collected from* — see
+  /// `MoneyCollectHistory`'s comment for why the collecting manager isn't a second relation.
+  moneyCollected MoneyCollectHistory[] @relation("MoneyCollectAgent")
   receivers Receiver[]
   invoices  Invoice[]
   payments  Payment[]
@@ -516,6 +519,36 @@ model ParcelHistory {
   @@index([parcelId, editDateTime])
   /// "Colected In USA"/"Colected In Georgia": group a window's payment events by admin.
   @@index([updaterId, editDateTime])
+}
+
+// "Money collect" (legacy `bema/parcels/money-collect.cfm` + `MoneyCollectHistory` table) —
+// records that a manager physically collected an agent's accumulated cash/card/deposit/wire
+// takings for one calendar day. A new table for this port (not an ETL target), so it's named
+// for what it actually holds rather than mirroring legacy's misleading `CollectorId` column
+// (which in legacy stores the collecting manager's *username*, joined via `users.username`,
+// not a real foreign key — see docs/findings.md).
+model MoneyCollectHistory {
+  id     String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId String   @map("user_id") @db.Uuid
+  user   User     @relation("MoneyCollectAgent", fields: [userId], references: [id])
+  /// The calendar day being collected for — matched against `parcel_history.edit_date_time`
+  /// by day only, same grouping the report itself uses.
+  cDate DateTime @map("c_date") @db.Timestamptz(6)
+
+  aCash         Decimal @default(0) @map("a_cash") @db.Decimal(12, 2)
+  aCreditCard   Decimal @default(0) @map("a_credit_card") @db.Decimal(12, 2)
+  aBankDeposit  Decimal @default(0) @map("a_bank_deposit") @db.Decimal(12, 2)
+  aWireTransfer Decimal @default(0) @map("a_wire_transfer") @db.Decimal(12, 2)
+  collected     Decimal @db.Decimal(12, 2)
+
+  collectorUsername String   @map("collector_username")
+  /// The manager-supplied "Date" field on the collect modal — distinct from `cDate` (the day
+  /// being collected for) and from `createdAt` (when the record was actually inserted).
+  gDate     DateTime @default(now()) @map("g_date") @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("money_collect_history")
+  @@index([userId, cDate])
 }
 
 model Parcel {

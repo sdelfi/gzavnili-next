@@ -108,6 +108,13 @@ variants of each other in legacy and aren't treated as such here. Both existing 
 what either one needs is exactly why the table was restored as a general edit log rather than
 bolted onto one report's query.
 
+**Third consumer:** "Money Collect" (`money-collect.cfm`, see
+`src/lib/services/moneyCollect.ts` and `docs/findings.md`'s matching entry) also reads this
+table independently, grouping payment events per (agent, day) rather than per parcel. It adds
+its own `MoneyCollectHistory` table (migration `20260801080853_add_money_collect_history`) to
+record when a manager physically collects an agent's accumulated cash — a separate concern
+from `parcel_history`, which only records that a payment event happened.
+
 ## What the reports now do that they could not before
 
 - **"Colected In USA" / "Colected In Georgia"** render, grouped per admin.
