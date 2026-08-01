@@ -70,7 +70,7 @@ function ParcelsReportsPageInner() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    router.push(`${routes.bema.parcelsReports()}?dateStart=${dateStart}&dateEnd=${dateEnd}`);
+    router.push(routes.bema.parcelsReports({ dateStart, dateEnd }));
   }
 
   return (
