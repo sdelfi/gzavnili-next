@@ -12,9 +12,7 @@
 }
 
 .table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
+  table-layout: auto;
 }
 
 :where(.table th),
@@ -120,35 +118,48 @@
   text-align: center;
 }
 
-.colTracking {
-  min-width: 125px;
+.selectColumn {
+  width: 30px;
 }
 
-.colSpecs {
-  min-width: 130px;
+.groupColumn {
+  width: 34px;
+}
+
+.trackingColumn,
+.debtColumn,
+.actionsColumn {
+  width: 1%;
+}
+
+.specsColumn {
+  width: 115px;
+}
+
+.receiverColumn {
+  width: 105px;
+}
+
+.timelineColumn {
+  width: 190px;
+}
+
+.contentColumn,
+.noteColumn,
+.buserColumn {
+  width: 85px;
+}
+
+.trackingColumn {
+  white-space: nowrap;
+}
+
+.colTracking,
+.colDebt,
+.colActions {
+  white-space: nowrap;
 }
 
 .colDebt {
-  min-width: 90px;
   text-align: right;
-}
-
-.colReceiver {
-  min-width: 130px;
-}
-
-.colTimeline {
-  min-width: 170px;
-}
-
-.colContent {
-  min-width: 110px;
-}
-
-.colNote {
-  min-width: 110px;
-}
-
-.colActions {
-  min-width: 80px;
 }

@@ -67,13 +67,16 @@ the subset that has reached that stage.
 
 Count for the same filter: 191ms → 0.9ms.
 
-### 3. The exact row count: 200–525ms → 3ms
+### 3. Row-count follow-up: exact result restored
 
 The page of 25 rows was already milliseconds; `count(*)` over a 650k-row filtered slice was
-the entire remaining cost, paid on every page load. Counting is now capped at 10,000 — exact
-below that, `"10,000+"` above, with `totalIsExact: false` in the response so the UI and the
-pager can say so honestly rather than pretending the last page has been reached. Legacy
-computed the exact count every time, and it is a large part of why the screen was slow.
+the entire remaining cost, paid on every page load. The initial optimization capped the count
+at 10,000 and displayed `"10,000+"`, but this removed operationally important information:
+staff use the exact match count for selection and reconciliation (legacy displayed values such
+as `"Select all 68 items"`). The API therefore computes the exact count again and returns
+`totalIsExact: true`. This knowingly restores the measured 200–525ms count cost on broad
+million-row filters; if that becomes unacceptable, preserve the exact result and move the
+count to an asynchronous/cached path rather than replacing it with a cap.
 
 ### Bonus: the sender filter, 5.5s → 0.13s
 
@@ -118,9 +121,8 @@ means dropping out of Prisma into raw SQL for one report-shaped case. A month of
 in half a second is not the pain point this migration is about — the day/shift-sized windows
 the Extra Search form is designed for run in 14ms. Revisit if a real operator complains.
 
-**Two filters in the 0.2s range** (`status=awaiting`, `city=Tbilisi`): the capped count still
-has to find 10,000 matches through a predicate that is not index-ordered. Acceptable, and the
-cap is what keeps them from being 10× worse.
+**Broad exact counts** can take 0.2–0.5s (`status=awaiting`, `city=Tbilisi`, and similar
+high-cardinality filters). This is the deliberate accuracy tradeoff described above.
 
 ## Cost of the fix
 
@@ -139,9 +141,11 @@ milliseconds in production. Re-run against a restored production dump before cut
 ## Re-running this benchmark
 
 `scripts/benchmark-parcels.ts` reproduces the whole thing against any database you point
-`DATABASE_URL` at — seed, then drive the real `/api/bema/parcels` endpoints over HTTP and
-report timings, so a future schema or query change can be checked the same way instead of by
-hand again:
+`DATABASE_URL` at — seed, then drive the real `/api/bema/parcels`, `/reports`, and
+`/reports-2` endpoints over HTTP and report timings, so a future schema or query change can
+be checked the same way instead of by hand again. The seed includes payment-history events,
+current payment fields, and received-by assignments required by Reports 2, and refuses to
+finish if it produced no eligible report rows:
 
 ```
 DATABASE_URL=postgresql://.../bench_db bun scripts/benchmark-parcels.ts --seed --scale=1000000 --confirm=bench_db
@@ -155,7 +159,9 @@ DATABASE_URL=postgresql://.../bench_db bun scripts/benchmark-parcels.ts --reset 
 and requires `localhost`) so a stray `.env` can't seed or truncate the wrong database; a
 benchmark run is not always against `localhost`. `--scale` defaults to 200,000 (seconds, not
 minutes, to seed) — pass `--scale=1000000` to reproduce the exact figures in this document.
-It needs a `BemaUser` account to mint a session against (`bun scripts/seed-admin.ts` first if
-the target database has none), and finds its own sample search terms/tracking numbers/
-usernames from whatever is actually in the database rather than hard-coding this session's
+`--reset` additionally requires `BEMA_SEED_USERNAME`: it snapshots that bootstrap admin and
+its linked addresses, balance, and notification preferences before truncation, restores them
+inside the same transaction, and aborts unless the variable identifies exactly one user. It
+never leaves the local test administrator deleted. The benchmark finds its own sample search
+terms/tracking numbers/usernames from the target database rather than hard-coding one run's
 values.

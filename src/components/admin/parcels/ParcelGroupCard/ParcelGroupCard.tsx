@@ -71,7 +71,20 @@ export function ParcelGroupCard({
 
   return (
     <div className={cn(s.card, { [s.pinned]: group.topFlag })}>
-      <TableSurface className={s.table}>
+      <TableSurface className={s.table} density="condensed">
+        <colgroup>
+          <col className={s.selectColumn} />
+          <col className={s.groupColumn} />
+          <col className={s.trackingColumn} />
+          <col className={s.specsColumn} />
+          <col className={s.debtColumn} />
+          <col className={s.receiverColumn} />
+          <col className={s.timelineColumn} />
+          <col className={s.contentColumn} />
+          <col className={s.noteColumn} />
+          {showBuser && <col className={s.buserColumn} />}
+          <col className={s.actionsColumn} />
+        </colgroup>
         <thead>
           <tr className={s.headerRow}>
             <th colSpan={3} className={s.senderCell}>
@@ -180,13 +193,13 @@ export function ParcelGroupCard({
             </th>
             <th className={s.center}>Grp</th>
             <th className={s.colTracking}>Tracking #</th>
-            <th className={s.colSpecs}>Specifications</th>
+            <th>Specifications</th>
             <th className={s.colDebt}>Debt</th>
-            <th className={s.colReceiver}>Receiver</th>
-            <th className={s.colTimeline}>Tracking</th>
-            <th className={s.colContent}>Parcel Content</th>
-            <th className={s.colNote}>Note</th>
-            {showBuser && <th className={s.colNote}>Buser</th>}
+            <th>Receiver</th>
+            <th>Tracking</th>
+            <th>Parcel Content</th>
+            <th>Note</th>
+            {showBuser && <th>Buser</th>}
             <th className={s.colActions}>Actions</th>
           </tr>
         </thead>

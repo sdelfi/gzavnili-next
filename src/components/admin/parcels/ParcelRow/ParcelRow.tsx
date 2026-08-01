@@ -99,7 +99,7 @@ export function ParcelRow({
       </td>
       <td className={s.center}>{parcel.groupId}</td>
 
-      <td>
+      <td className={s.trackingCell}>
         <span className={s.tracking}>{parcel.trackingNum}</span>
         {parcel.trackingNum2 && <div className={s.muted}>{parcel.trackingNum2}</div>}
         {parcel.trackingReceived && <div className={s.muted}>Received: {formatDateTime(parcel.trackingReceived)}</div>}

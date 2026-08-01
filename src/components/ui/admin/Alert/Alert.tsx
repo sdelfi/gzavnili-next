@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import cn from 'classnames';
 import s from './Alert.module.css';
 
-export function Alert({ variant, children }: { variant: 'success' | 'error'; children: ReactNode }) {
+export function Alert({ variant, children }: { variant: 'success' | 'error' | 'warning'; children: ReactNode }) {
   return <div className={cn(s.alert, s[variant])}>{children}</div>;
 }
 

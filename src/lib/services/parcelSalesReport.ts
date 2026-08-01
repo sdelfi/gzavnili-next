@@ -74,6 +74,13 @@ export type BemaUserOption = { username: string; firstName: string | null; lastN
 
 export type ParcelsSalesReportResult = {
   rows: SalesReportRow[];
+  diagnostics: {
+    /** Paid/Unpaid, non-Debt history events in the selected period before the legacy
+     *  updater/received-by/chicago exclusions are applied. */
+    paymentEventsInRange: number;
+    /** Events left after every legacy Reports 2 exclusion. */
+    eligibleEvents: number;
+  };
   /** Totals for the payment events whose *parcel* was created inside the selected date
    *  range — legacy's `TotalSalesParcels`. */
   ttl: SalesTotals;
@@ -255,6 +262,20 @@ export async function getParcelsSalesReport(range: ParcelsSalesReportRange): Pro
     orderBy: { editDateTime: 'asc' },
   });
 
+  // Only pay for the diagnostic count when the report is empty. It distinguishes "there is
+  // no payment history for this period" from "payment history exists, but the legacy
+  // received-by/updater exclusions removed it all" without slowing normal report loads.
+  const paymentEventsInRange =
+    historyRows.length > 0
+      ? historyRows.length
+      : await db.parcelHistory.count({
+          where: {
+            editDateTime: { gt: range.start, lte: range.end },
+            valueName: { in: ['Paid', 'Unpaid'] },
+            payMethod: { not: 'Debt' },
+          },
+        });
+
   // Legacy's per-parcel `(SELECT TOP 1 valuename FROM ParcelHistory WHERE ... ORDER BY
   // editdatetime DESC)` — unlike the main filter, this looks across the parcel's *entire*
   // history, not just the selected date window, and it is what column "Paid"'s debt-fallback
@@ -343,6 +364,7 @@ export async function getParcelsSalesReport(range: ParcelsSalesReportRange): Pro
 
   return {
     rows,
+    diagnostics: { paymentEventsInRange, eligibleEvents: historyRows.length },
     ttl: accumulateTotals(ttlRows, latestValueNameByParcel),
     tbt: accumulateTotals(tbtRows, latestValueNameByParcel),
     bemaUsers,

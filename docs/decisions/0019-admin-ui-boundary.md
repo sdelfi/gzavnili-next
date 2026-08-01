@@ -36,6 +36,11 @@ and root typography/background; it no longer reaches into individual controls.
   grouped rows, or nested cells cannot be represented by flat column definitions. It still
   centralizes scrolling, typography, cell spacing, borders, and footer styling.
 
+Both layers expose `density="normal" | "compact" | "condensed"`. `condensed` is the shared
+admin-table mode for wide legacy datasets: 11px type with 2×3px cell padding. Feature tables
+may define semantic column widths through a `colgroup`, but must not reimplement density or
+base table chrome locally.
+
 This keeps specialized parcel markup possible without copying the table's visual system.
 
 ## Audit result

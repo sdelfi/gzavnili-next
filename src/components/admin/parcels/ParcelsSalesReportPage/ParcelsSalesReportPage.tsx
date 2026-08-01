@@ -312,7 +312,7 @@ function ParcelsSalesReportPageInner() {
         <Field label="Date end:" htmlFor="dateend">
           <Input id="dateend" type="date" value={dateEnd} onChange={(e) => setDateEnd(e.target.value)} required />
         </Field>
-        <div className={s.submitField}>
+        <div>
           <Button type="submit">Go</Button>
         </div>
         <Field label="Search:" htmlFor="q">
@@ -353,6 +353,13 @@ function ParcelsSalesReportPageInner() {
 
       {error && <Alert variant="error">{error}</Alert>}
       {loading && <p>Loading…</p>}
+      {report && report.rows.length === 0 && (
+        <Alert variant="warning">
+          Reports 2 reads Paid/Unpaid events from parcel history, not the current parcels list. Payment events in this
+          period: {report.diagnostics.paymentEventsInRange}; rows after the legacy Received By, excluded-agent, and
+          Chicago filters: {report.diagnostics.eligibleEvents}.
+        </Alert>
+      )}
 
       {report && (
         <>
@@ -367,7 +374,7 @@ function ParcelsSalesReportPageInner() {
             ))}
           </div>
 
-          <TableSurface className={s.table} wrapperClassName={s.tableWrapper} density="compact">
+          <TableSurface density="condensed">
             <thead>
               <tr>
                 {COLUMNS.map((col) => (

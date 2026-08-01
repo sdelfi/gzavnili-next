@@ -15,10 +15,6 @@
   margin: 0 0 10px;
 }
 
-.submitField {
-  padding-bottom: 2px;
-}
-
 .summaryRow {
   display: flex;
   flex-wrap: wrap;

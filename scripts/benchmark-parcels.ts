@@ -3,7 +3,7 @@
 // performance.md and docs/decisions/0018-parcel-edit-history.md: point it at a disposable
 // database, it seeds a realistic volume of parcels (plus the invoices/payments/receivers/
 // offices/parcel_history rows the list and reports' joins touch), then drives the *real*
-// /api/bema/parcels and /api/bema/parcels/reports endpoints over HTTP and reports timings —
+// /api/bema/parcels and both parcel-report endpoints over HTTP and reports timings —
 // so re-running this after a schema or query change answers "did it get faster or slower"
 // without redoing the manual work by hand.
 //
@@ -15,7 +15,8 @@
 // Flags:
 //   --seed              Populate the database (see --scale).
 //   --bench             Run the timed scenarios against a running `next dev`/`next start`.
-//   --reset             Truncate every table this script writes to, then exit.
+//   --reset             Truncate every table this script writes to, preserving the bootstrap
+//                        admin identified by BEMA_SEED_USERNAME, then exit.
 //   --scale=<n>          Parcel count to seed. Default 200000 — big enough to see the same
 //                        planner behaviour as 1M without a multi-minute run every time; pass
 //                        1000000 to reproduce the exact numbers in the decision doc.
@@ -71,6 +72,7 @@ const scale = Number(option('scale', '200000'));
 const apiBase = option('api-base', 'http://localhost:3000')!;
 const jsonOut = option('json');
 const confirm = option('confirm');
+const seedAdminUsername = process.env.BEMA_SEED_USERNAME;
 
 if (!doSeed && !doBench && !doReset) {
   console.error('Nothing to do — pass at least one of --seed, --bench, --reset. See the file header for usage.');
@@ -90,6 +92,11 @@ if ((doSeed || doReset) && confirm !== targetDbName) {
       `the "${targetDbName}" database (from DATABASE_URL). This is a deliberate extra step — there is no\n` +
       'default target, and the wrong database here means real data loss.',
   );
+  process.exit(1);
+}
+
+if (doReset && !seedAdminUsername) {
+  console.error('BEMA_SEED_USERNAME is required for --reset so the bootstrap administrator can be preserved.');
   process.exit(1);
 }
 
@@ -113,15 +120,56 @@ async function withClient<T>(fn: (client: Client) => Promise<T>): Promise<T> {
 // --- Reset ----------------------------------------------------------------------------------
 
 async function reset() {
-  console.log(`Truncating benchmark tables in "${targetDbName}"…`);
-  await withClient((client) =>
-    client.query(`
+  console.log(`Truncating benchmark tables in "${targetDbName}" (preserving "${seedAdminUsername}")…`);
+  await withClient(async (client) => {
+    await client.query('BEGIN');
+    try {
+      await client.query(
+        `CREATE TEMP TABLE preserved_bema_user ON COMMIT DROP AS
+         SELECT * FROM users WHERE username = $1`,
+        [seedAdminUsername],
+      );
+      const preserved = await client.query<{ count: string }>(
+        'SELECT count(*)::text AS count FROM preserved_bema_user',
+      );
+      if (preserved.rows[0]?.count !== '1') {
+        throw new Error(
+          `BEMA_SEED_USERNAME "${seedAdminUsername}" does not identify exactly one user; refusing to reset.`,
+        );
+      }
+
+      await client.query(`
+        CREATE TEMP TABLE preserved_bema_addresses ON COMMIT DROP AS
+        SELECT a.* FROM addressbook a
+        WHERE a.id IN (
+          SELECT billing_address_id FROM preserved_bema_user WHERE billing_address_id IS NOT NULL
+          UNION
+          SELECT shipping_address_id FROM preserved_bema_user WHERE shipping_address_id IS NOT NULL
+        );
+        CREATE TEMP TABLE preserved_bema_balance ON COMMIT DROP AS
+        SELECT b.* FROM user_balances b JOIN preserved_bema_user u ON u.id = b.user_id;
+        CREATE TEMP TABLE preserved_bema_notifications ON COMMIT DROP AS
+        SELECT p.* FROM "_UserNotificationPreferences" p JOIN preserved_bema_user u ON u.id = p."B";
+      `);
+
+      await client.query(`
       TRUNCATE TABLE
         parcel_history, parcel_status_history, invoices_items, payments, invoices, parceloffice,
         parcels, receivers, users, addressbook
       RESTART IDENTITY CASCADE;
-    `),
-  );
+      `);
+      await client.query(`
+        INSERT INTO addressbook SELECT * FROM preserved_bema_addresses;
+        INSERT INTO users SELECT * FROM preserved_bema_user;
+        INSERT INTO user_balances SELECT * FROM preserved_bema_balance;
+        INSERT INTO "_UserNotificationPreferences" SELECT * FROM preserved_bema_notifications;
+      `);
+      await client.query('COMMIT');
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    }
+  });
   console.log('Done.');
 }
 
@@ -231,7 +279,12 @@ async function seed() {
       WITH pair AS (
         SELECT r.id AS receiver_id, r.user_id, row_number() OVER (ORDER BY r.id) - 1 AS n
         FROM receivers r JOIN users u ON u.id = r.user_id WHERE u.username LIKE 'BENCH%'
-      ), admin1 AS (SELECT id FROM users WHERE account_type = 'bema_user' LIMIT 1)
+      ), admin1 AS (
+        SELECT id FROM users
+        WHERE account_type = 'bema_user' AND active = true AND admin_role != 'bema_agent'
+        ORDER BY (admin_role = 'bema_administrator') DESC, username
+        LIMIT 1
+      )
       INSERT INTO parcels (
         id, user_id, receiver_id, tracking_num, tracking_num2, awb, pcode, group_id, service,
         parcel_type, contents, store, notes, created, trip_date, weight, value, debt,
@@ -315,8 +368,8 @@ async function seed() {
       `
       SET synchronous_commit = off;
       WITH admins AS (
-        SELECT id, row_number() OVER (ORDER BY username) - 1 AS n
-        FROM users WHERE username IN ('tornikero', 'gzavnili', 'RPTADM-GE-OFFLIST', 'RPTADM-US-OFFLIST', 'RPTADM-AGENT')
+        SELECT id, row_number() OVER (ORDER BY username) - 1 AS n, count(*) OVER () AS total
+        FROM users WHERE account_type = 'bema_user' AND active = true
       ), delivered AS (
         SELECT p.id AS parcel_id, p.debt, p.tracking_delivered_signed AS paid_at,
                row_number() OVER (ORDER BY p.id) AS n
@@ -337,7 +390,14 @@ async function seed() {
         CASE WHEN delivered.n % 17 = 0 THEN NULL ELSE admins.id END,
         CASE WHEN delivered.n % 17 = 0 THEN 'Online' ELSE NULL END
       FROM delivered
-      LEFT JOIN admins ON admins.n = delivered.n % 5;
+      LEFT JOIN admins ON admins.n = delivered.n % admins.total;
+
+      -- Reports 2 renders the parcel's current payment fields alongside the history event.
+      -- Keep them aligned so the seeded report contains meaningful Payment Type/Paid data,
+      -- not merely rows that pass the history WHERE clause.
+      UPDATE parcels p SET pay_method1 = ph.pay_method, pay_amount1 = ph.pay_amount
+      FROM parcel_history ph
+      WHERE ph.parcel_id = p.id AND ph.value_name = 'Paid' AND p.tracking_num LIKE 'BENCH%';
     `,
     );
 
@@ -346,8 +406,8 @@ async function seed() {
       `
       SET synchronous_commit = off;
       WITH admins AS (
-        SELECT id, row_number() OVER (ORDER BY username) - 1 AS n
-        FROM users WHERE username IN ('tornikero', 'gzavnili', 'RPTADM-GE-OFFLIST', 'RPTADM-US-OFFLIST', 'RPTADM-AGENT')
+        SELECT id, row_number() OVER (ORDER BY username) - 1 AS n, count(*) OVER () AS total
+        FROM users WHERE account_type = 'bema_user' AND active = true
       ), src AS (
         SELECT p.id AS parcel_id, p.created, row_number() OVER (ORDER BY p.id) AS n
         FROM parcels p WHERE p.tracking_num LIKE 'BENCH%'
@@ -363,8 +423,33 @@ async function seed() {
         admins.id
       FROM src
       CROSS JOIN reps
-      LEFT JOIN admins ON admins.n = (src.n + reps.rep) % 5;
+      LEFT JOIN admins ON admins.n = (src.n + reps.rep) % admins.total;
     `,
+    );
+
+    const reportFixtures = await client.query<{ payment_events: string; reports_2_rows: string }>(`
+      SELECT
+        count(*) FILTER (WHERE ph.value_name IN ('Paid', 'Unpaid') AND ph.pay_method != 'Debt')::text
+          AS payment_events,
+        count(*) FILTER (
+          WHERE ph.value_name IN ('Paid', 'Unpaid')
+            AND ph.pay_method != 'Debt'
+            AND ph.updater_id IS NOT NULL
+            AND p.tracking_received_by IS NOT NULL
+        )::text AS reports_2_rows
+      FROM parcel_history ph
+      JOIN parcels p ON p.id = ph.parcel_id
+      WHERE p.tracking_num LIKE 'BENCH%';
+    `);
+    const fixtureCounts = reportFixtures.rows[0];
+    if (!fixtureCounts || Number(fixtureCounts.payment_events) === 0 || Number(fixtureCounts.reports_2_rows) === 0) {
+      throw new Error(
+        'Benchmark seed produced no eligible parcel-report rows; refusing to leave an invalid fixture set.',
+      );
+    }
+    console.log(
+      `  report fixtures: ${Number(fixtureCounts.payment_events).toLocaleString()} payment events, ` +
+        `${Number(fixtureCounts.reports_2_rows).toLocaleString()} Reports 2 rows`,
     );
 
     await step(
@@ -518,20 +603,19 @@ async function timeRequest(url: string, cookie: string): Promise<{ ms: number; t
 // The reports endpoint isn't paginated, so there's no `total` to report — the row counts
 // across its several sections stand in for it instead, as a sanity signal that the query
 // actually found the seeded data (not just "responded fast because it found nothing").
-async function timeReportRequest(
-  url: string,
-  cookie: string,
-): Promise<{ ms: number; status: number; rows: string }> {
+async function timeReportRequest(url: string, cookie: string): Promise<{ ms: number; status: number; rows: string }> {
   const start = performance.now();
   const res = await fetch(url, { headers: { Cookie: cookie } });
   const ms = performance.now() - start;
   if (!res.ok) return { ms, status: res.status, rows: '?' };
   const body = (await res.json()) as {
+    rows?: unknown[];
     transactions?: unknown[];
     history?: unknown[];
     collectedUs?: unknown[];
     collectedGe?: unknown[];
   };
+  if (body.rows) return { ms, status: res.status, rows: `rows=${body.rows.length}` };
   const rows =
     `txn=${body.transactions?.length ?? '?'} hist=${body.history?.length ?? '?'} ` +
     `us=${body.collectedUs?.length ?? '?'} ge=${body.collectedGe?.length ?? '?'}`;
@@ -559,12 +643,19 @@ async function bench() {
     }
 
     for (const scenario of reportScenarios) {
-      const url = `${apiBase}/api/bema/parcels/reports?${new URLSearchParams(scenario.query).toString()}`;
-      let last = { ms: 0, status: 0, rows: '?' };
-      for (let i = 0; i < 4; i++) {
-        last = await timeReportRequest(url, cookie);
+      for (const reportPath of ['reports', 'reports-2']) {
+        const url = `${apiBase}/api/bema/parcels/${reportPath}?${new URLSearchParams(scenario.query).toString()}`;
+        let last = { ms: 0, status: 0, rows: '?' };
+        for (let i = 0; i < 4; i++) {
+          last = await timeReportRequest(url, cookie);
+        }
+        rows.push({
+          label: scenario.label.replace('reports:', `${reportPath}:`),
+          ms: last.ms,
+          status: last.status,
+          total: last.rows,
+        });
       }
-      rows.push({ label: scenario.label, ms: last.ms, status: last.status, total: last.rows });
     }
     return rows;
   });

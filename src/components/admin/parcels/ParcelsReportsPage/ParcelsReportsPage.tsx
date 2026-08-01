@@ -114,7 +114,7 @@ function ParcelsReportsPageInner() {
         <Field label="Date end:" htmlFor="dateend">
           <Input id="dateend" type="date" value={dateEnd} onChange={(e) => setDateEnd(e.target.value)} required />
         </Field>
-        <div className={s.submitField}>
+        <div>
           <Button type="submit">Submit</Button>
         </div>
       </form>

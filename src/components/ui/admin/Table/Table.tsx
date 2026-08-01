@@ -13,7 +13,7 @@ export function TableSurface({
   children: ReactNode;
   className?: string;
   wrapperClassName?: string;
-  density?: 'normal' | 'compact';
+  density?: 'normal' | 'compact' | 'condensed';
   scrollable?: boolean;
 }) {
   const table = <table className={cn(s.table, s[density], className)}>{children}</table>;
@@ -41,7 +41,7 @@ export function Table<T>({
   getRowKey: (row: T) => string;
   emptyMessage?: ReactNode | null;
   footer?: ReactNode;
-  density?: 'normal' | 'compact';
+  density?: 'normal' | 'compact' | 'condensed';
 }) {
   return (
     <TableSurface density={density}>

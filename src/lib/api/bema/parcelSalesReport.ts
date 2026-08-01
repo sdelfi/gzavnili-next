@@ -37,6 +37,7 @@ export type BemaUserOption = { username: string; firstName: string | null; lastN
 
 export type ParcelsSalesReport = {
   rows: SalesReportRow[];
+  diagnostics: { paymentEventsInRange: number; eligibleEvents: number };
   ttl: SalesTotals;
   tbt: SalesTotals;
   bemaUsers: BemaUserOption[];

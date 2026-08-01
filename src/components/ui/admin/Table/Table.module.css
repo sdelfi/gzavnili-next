@@ -49,6 +49,16 @@
   }
 }
 
+.condensed {
+  font-size: 11px;
+  line-height: 1.2;
+
+  th,
+  td {
+    padding: 2px 3px;
+  }
+}
+
 .sortButton {
   background: none;
   border: none;

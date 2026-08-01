@@ -113,9 +113,9 @@ export type ParcelGroup = {
 
 export type ParcelListResponse = {
   items: ParcelListItem[];
-  /** Capped — see `COUNT_CAP` in the list route. When `totalIsExact` is false this is the cap,
-   *  not the real number, and the UI renders it as "10,000+". */
+  /** Exact number of parcels matching the applied filters. */
   total: number;
+  /** Kept in the shared pagination contract; the parcels endpoint now always returns true. */
   totalIsExact: boolean;
   page: number;
   perPage: number;

@@ -53,12 +53,12 @@ const NAV_GROUPS: NavGroup[] = [
       {
         label: 'Parcels Reports',
         href: routes.bema.parcelsReports(),
-        isActive: (pathname) => pathname.startsWith('/bema/parcels/reports'),
+        isActive: (pathname) => pathname === routes.bema.parcelsReports(),
       },
       {
         label: 'Parcels Reports 2',
         href: routes.bema.parcelsReports2(),
-        isActive: (pathname) => pathname.startsWith('/bema/parcels/reports-2'),
+        isActive: (pathname) => pathname === routes.bema.parcelsReports2(),
       },
       {
         // Legacy's `parcels.cfm?delreq=1` — its own nav entry there too, but the same screen
@@ -168,7 +168,11 @@ export function Sidebar({ user, onLogout }: { user: { username: string }; onLogo
   return (
     <nav className={cn(s.sidebar, { [s.collapsed]: collapsed })}>
       <div className={s.header}>
-        {!collapsed && <span className={s.brand}>GZAVNILI</span>}
+        {!collapsed && (
+          <Link className={s.brand} href={routes.home()}>
+            GZAVNILI
+          </Link>
+        )}
         <Button
           type="button"
           variant="plain"
