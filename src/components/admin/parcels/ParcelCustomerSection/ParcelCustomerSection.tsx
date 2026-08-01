@@ -1,7 +1,7 @@
 'use client';
 
-import { Field } from '@/components/ui/Field';
-import { Input } from '@/components/ui/Input';
+import { Field } from '@/components/ui/admin/Field';
+import { Input } from '@/components/ui/admin/Input';
 import type { ParcelFormState } from '@/lib/parcels/form';
 import s from './ParcelCustomerSection.module.css';
 

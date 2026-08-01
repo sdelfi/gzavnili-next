@@ -2,13 +2,14 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { PageHeading } from '@/components/ui/PageHeading';
-import { Field } from '@/components/ui/Field';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { Checkbox } from '@/components/ui/Checkbox';
-import { Button } from '@/components/ui/Button';
-import { Alert } from '@/components/ui/Alert';
+import { PageHeading } from '@/components/ui/admin/PageHeading';
+import { Field } from '@/components/ui/admin/Field';
+import { Input } from '@/components/ui/admin/Input';
+import { Select } from '@/components/ui/admin/Select';
+import { Checkbox } from '@/components/ui/admin/Checkbox';
+import { Button } from '@/components/ui/admin/Button';
+import { Alert } from '@/components/ui/admin/Alert';
+import { TableSurface } from '@/components/ui/admin/Table';
 import { routes } from '@/lib/routes';
 import { formatAmount, formatDateTime } from '@/lib/parcels/format';
 import {
@@ -366,89 +367,84 @@ function ParcelsSalesReportPageInner() {
             ))}
           </div>
 
-          <div className={s.tableWrapper}>
-            <table className={s.table}>
-              <thead>
+          <TableSurface className={s.table} wrapperClassName={s.tableWrapper} density="compact">
+            <thead>
+              <tr>
+                {COLUMNS.map((col) => (
+                  <th key={col.key}>
+                    {col.kind === 'text' && (
+                      <Input
+                        className={s.filterInput}
+                        value={filters[col.key]}
+                        onChange={(e) => setFilter(col.key, e.target.value)}
+                      />
+                    )}
+                    {col.kind === 'select-service' && (
+                      <Select
+                        instanceId="reports2-service-filter"
+                        size="sm"
+                        value={serviceFilter as '' | (typeof SERVICE_OPTIONS)[number]}
+                        onChange={(value) => setServiceFilter(value)}
+                        options={[{ value: '', label: 'All' }, ...SERVICE_OPTIONS.map((o) => ({ value: o, label: o }))]}
+                      />
+                    )}
+                    {col.kind === 'select-receivedBy' && (
+                      <Select
+                        instanceId="reports2-received-by-filter"
+                        size="sm"
+                        value={receivedByFilter}
+                        onChange={(value) => setReceivedByFilter(value)}
+                        options={[
+                          { value: '', label: 'All' },
+                          ...report.bemaUsers.map((u) => ({
+                            value: u.username,
+                            label: `${u.firstName ?? ''} ${u.lastName ?? ''} (${u.username})`,
+                          })),
+                        ]}
+                      />
+                    )}
+                  </th>
+                ))}
+              </tr>
+              <tr>
+                {COLUMNS.map((col) => (
+                  <th key={col.key}>
+                    <Button type="button" variant="plain" className={s.sortButton} onClick={() => toggleSort(col.key)}>
+                      {col.label}
+                      {sort?.key === col.key && <span>{sort.dir === 'asc' ? ' ▲' : ' ▼'}</span>}
+                    </Button>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filteredRows.length === 0 ? (
                 <tr>
-                  {COLUMNS.map((col) => (
-                    <th key={col.key}>
-                      {col.kind === 'text' && (
-                        <Input
-                          className={s.filterInput}
-                          value={filters[col.key]}
-                          onChange={(e) => setFilter(col.key, e.target.value)}
-                        />
-                      )}
-                      {col.kind === 'select-service' && (
-                        <Select
-                          instanceId="reports2-service-filter"
-                          size="sm"
-                          value={serviceFilter as '' | (typeof SERVICE_OPTIONS)[number]}
-                          onChange={(value) => setServiceFilter(value)}
-                          options={[
-                            { value: '', label: 'All' },
-                            ...SERVICE_OPTIONS.map((o) => ({ value: o, label: o })),
-                          ]}
-                        />
-                      )}
-                      {col.kind === 'select-receivedBy' && (
-                        <Select
-                          instanceId="reports2-received-by-filter"
-                          size="sm"
-                          value={receivedByFilter}
-                          onChange={(value) => setReceivedByFilter(value)}
-                          options={[
-                            { value: '', label: 'All' },
-                            ...report.bemaUsers.map((u) => ({
-                              value: u.username,
-                              label: `${u.firstName ?? ''} ${u.lastName ?? ''} (${u.username})`,
-                            })),
-                          ]}
-                        />
-                      )}
-                    </th>
-                  ))}
+                  <td colSpan={COLUMNS.length} className={s.empty}>
+                    No records found.
+                  </td>
                 </tr>
-                <tr>
-                  {COLUMNS.map((col) => (
-                    <th key={col.key}>
-                      <button type="button" className={s.sortButton} onClick={() => toggleSort(col.key)}>
-                        {col.label}
-                        {sort?.key === col.key && <span>{sort.dir === 'asc' ? ' ▲' : ' ▼'}</span>}
-                      </button>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filteredRows.length === 0 ? (
-                  <tr>
-                    <td colSpan={COLUMNS.length} className={s.empty}>
-                      No records found.
-                    </td>
+              ) : (
+                filteredRows.map((row) => (
+                  <tr key={row.id}>
+                    <td>{row.accNum}</td>
+                    <td>{row.notes}</td>
+                    <td>{row.firstName}</td>
+                    <td>{row.lastName}</td>
+                    <td>{row.trackingNum}</td>
+                    <td>{row.service}</td>
+                    <td>{row.weight ?? ''}</td>
+                    <td>{row.paidAmount == null ? '' : formatAmount(row.paidAmount)}</td>
+                    <td>{row.paymentType}</td>
+                    <td>{formatAmount(row.debt)}</td>
+                    <td>{row.received}</td>
+                    <td>{row.receivedBy}</td>
+                    <td>{formatDateTime(row.created)}</td>
                   </tr>
-                ) : (
-                  filteredRows.map((row) => (
-                    <tr key={row.id}>
-                      <td>{row.accNum}</td>
-                      <td>{row.notes}</td>
-                      <td>{row.firstName}</td>
-                      <td>{row.lastName}</td>
-                      <td>{row.trackingNum}</td>
-                      <td>{row.service}</td>
-                      <td>{row.weight ?? ''}</td>
-                      <td>{row.paidAmount == null ? '' : formatAmount(row.paidAmount)}</td>
-                      <td>{row.paymentType}</td>
-                      <td>{formatAmount(row.debt)}</td>
-                      <td>{row.received}</td>
-                      <td>{row.receivedBy}</td>
-                      <td>{formatDateTime(row.created)}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                ))
+              )}
+            </tbody>
+          </TableSurface>
         </>
       )}
     </div>

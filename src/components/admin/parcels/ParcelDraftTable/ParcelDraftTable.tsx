@@ -1,7 +1,8 @@
 'use client';
 
 import { Fragment } from 'react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/admin/Button';
+import { TableSurface } from '@/components/ui/admin/Table';
 import { computeDraftParcelTotals } from '@/lib/parcels/batchPricing';
 import type { PricingRule } from '@/lib/parcels/pricing';
 import type { DraftParcelFormState } from '@/lib/parcels/batchForm';
@@ -37,7 +38,13 @@ export function ParcelDraftTable({
   onRemove: (clientId: string) => void;
 }) {
   const calc = computeDraftParcelTotals(
-    drafts.map((d) => ({ id: d.clientId, groupId: d.groupId, delivery: d.delivery, service: d.service, weight: num(d.weight) })),
+    drafts.map((d) => ({
+      id: d.clientId,
+      groupId: d.groupId,
+      delivery: d.delivery,
+      service: d.service,
+      weight: num(d.weight),
+    })),
     rules,
     agentFlatRate,
   );
@@ -47,7 +54,7 @@ export function ParcelDraftTable({
 
   return (
     <div className={s.wrapper}>
-      <table className={s.table}>
+      <TableSurface className={s.table}>
         <thead>
           <tr>
             <th>First Name</th>
@@ -85,7 +92,10 @@ export function ParcelDraftTable({
                     <td>{draft.groupId}</td>
                     <td>{draft.weight}</td>
                     <td>{draft.value}</td>
-                    <td>{trackingPrefix(draft.delivery, draft.service)}{draft.trackingNum.replace(trackingPrefix(draft.delivery, draft.service), '')}</td>
+                    <td>
+                      {trackingPrefix(draft.delivery, draft.service)}
+                      {draft.trackingNum.replace(trackingPrefix(draft.delivery, draft.service), '')}
+                    </td>
                     <td>{draft.receiver.phone2}</td>
                     <td>{draft.receiver.street2}</td>
                     <td>{draft.receiver.city}</td>
@@ -114,11 +124,12 @@ export function ParcelDraftTable({
             );
           })}
         </tbody>
-      </table>
+      </TableSurface>
 
       {drafts.length > 0 && (
         <p className={s.grandTotal}>
-          <b>Total Weight:</b> {calc.grandTotal.weight} KG &nbsp; <b>Price Total:</b> {calc.grandTotal.amount.toFixed(2)} USD
+          <b>Total Weight:</b> {calc.grandTotal.weight} KG &nbsp; <b>Price Total:</b>{' '}
+          {calc.grandTotal.amount.toFixed(2)} USD
         </p>
       )}
     </div>

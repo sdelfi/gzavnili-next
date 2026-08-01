@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Alert } from '@/components/ui/Alert';
-import { Button } from '@/components/ui/Button';
-import { Pagination } from '@/components/ui/Pagination';
-import { PageHeading } from '@/components/ui/PageHeading';
+import { Alert } from '@/components/ui/admin/Alert';
+import { Button } from '@/components/ui/admin/Button';
+import { Pagination } from '@/components/ui/admin/Pagination';
+import { PageHeading } from '@/components/ui/admin/PageHeading';
 import { useBemaAuth } from '@/components/admin/AuthProvider';
 import { ParcelFilters } from '@/components/admin/parcels/ParcelFilters';
 import { ParcelExtraFilters } from '@/components/admin/parcels/ParcelExtraFilters';
@@ -248,7 +248,9 @@ export function ParcelListPage() {
           // it lands, so the select shows the truth of what's actually applied (legacy's own
           // behavior — see the `effectiveReceivedBy` comment on the API route).
           key={`${filterKey}#${effectiveReceivedBy ?? ''}`}
-          filters={filters.receivedBy || !effectiveReceivedBy ? filters : { ...filters, receivedBy: effectiveReceivedBy }}
+          filters={
+            filters.receivedBy || !effectiveReceivedBy ? filters : { ...filters, receivedBy: effectiveReceivedBy }
+          }
           onApply={applyFilters}
           admins={admins}
         />

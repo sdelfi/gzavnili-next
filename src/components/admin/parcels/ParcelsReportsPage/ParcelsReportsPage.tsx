@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import cn from 'classnames';
-import { PageHeading } from '@/components/ui/PageHeading';
-import { Field } from '@/components/ui/Field';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
-import { Alert } from '@/components/ui/Alert';
+import { PageHeading } from '@/components/ui/admin/PageHeading';
+import { Field } from '@/components/ui/admin/Field';
+import { Input } from '@/components/ui/admin/Input';
+import { Button } from '@/components/ui/admin/Button';
+import { Alert } from '@/components/ui/admin/Alert';
+import { Table, type Column } from '@/components/ui/admin/Table';
+import { Tabs } from '@/components/ui/admin/Tabs';
 import { ReportAmountTable } from '@/components/admin/parcels/ReportAmountTable';
 import { routes } from '@/lib/routes';
 import { formatAmount, formatDate, formatDateTime } from '@/lib/parcels/format';
@@ -19,6 +20,7 @@ function today(): string {
 }
 
 const TOTAL_SALE_ROWS = ['Express', 'Regular', 'Cargo', 'Linoli', 'Unknown'] as const;
+type TotalSaleKey = (typeof TOTAL_SALE_ROWS)[number];
 
 // "Parcel Reports" — legacy `bema/parcels/parcels-reports.cfm` +
 // `views/parcels/vwParcelsReports.cfm`, in full: date-range filter, Total Sale / Payment
@@ -77,19 +79,37 @@ function ParcelsReportsPageInner() {
     router.push(routes.bema.parcelsReports({ dateStart, dateEnd }));
   }
 
+  const transactionColumns: Column<NonNullable<typeof report>['transactions'][number]>[] = [
+    { key: 'username', label: 'ACC #' },
+    { key: 'firstName', label: 'FIRST NAME' },
+    { key: 'lastName', label: 'LAST NAME' },
+    { key: 'trackingNum', label: 'TRACKING #' },
+    { key: 'service', label: 'Service Type' },
+    { key: 'weight', label: 'WEIGHT', render: (row) => row.weight ?? '' },
+    { key: 'payAmount', label: 'PAID', render: (row) => formatAmount(row.payAmount) },
+    { key: 'payMethod', label: 'Payment Type' },
+    { key: 'debt', label: 'DEBT', render: (row) => formatAmount(row.debt) },
+    { key: 'receivedBy', label: 'Received by' },
+    { key: 'editDateTime', label: 'Date/Time', render: (row) => formatDate(row.editDateTime) },
+  ];
+
+  const historyColumns: Column<NonNullable<typeof report>['history'][number]>[] = [
+    { key: 'editDateTime', label: 'Date', render: (row) => formatDateTime(row.editDateTime) },
+    { key: 'editStatus', label: 'Status' },
+    { key: 'oldValue', label: 'Old' },
+    { key: 'newValue', label: 'New' },
+    { key: 'valueName', label: 'ValueName' },
+    { key: 'payMethod', label: 'PayMethod' },
+    { key: 'payAmount', label: 'PayAmount', render: (row) => formatAmount(row.payAmount) },
+  ];
+
   return (
     <div>
       <PageHeading>Parcel Reports</PageHeading>
 
       <form onSubmit={handleSubmit} className={s.filterRow}>
         <Field label="Date start:" htmlFor="datestart">
-          <Input
-            id="datestart"
-            type="date"
-            value={dateStart}
-            onChange={(e) => setDateStart(e.target.value)}
-            required
-          />
+          <Input id="datestart" type="date" value={dateStart} onChange={(e) => setDateStart(e.target.value)} required />
         </Field>
         <Field label="Date end:" htmlFor="dateend">
           <Input id="dateend" type="date" value={dateEnd} onChange={(e) => setDateEnd(e.target.value)} required />
@@ -106,32 +126,23 @@ function ParcelsReportsPageInner() {
         <>
           <div className={s.summaryRow}>
             <div className={s.summaryCol}>
-              <h2>Total Sale</h2>
-              <table className={s.table}>
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Weight</th>
-                    <th>Cost</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {TOTAL_SALE_ROWS.map((key) => (
-                    <tr key={key}>
-                      <td>{key}</td>
-                      <td>{formatAmount(report.totalSale[key].weight)}</td>
-                      <td>{formatAmount(report.totalSale[key].cost)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-                <tfoot>
+              <h2 className={s.heading}>Total Sale</h2>
+              <Table<TotalSaleKey>
+                columns={[
+                  { key: 'type', label: 'Type', render: (key) => key },
+                  { key: 'weight', label: 'Weight', render: (key) => formatAmount(report.totalSale[key].weight) },
+                  { key: 'cost', label: 'Cost', render: (key) => formatAmount(report.totalSale[key].cost) },
+                ]}
+                rows={[...TOTAL_SALE_ROWS]}
+                getRowKey={(key) => key}
+                footer={
                   <tr>
                     <th>Total</th>
                     <td>{formatAmount(report.totalSale.Total.weight)}</td>
                     <td>{formatAmount(report.totalSale.Total.cost)}</td>
                   </tr>
-                </tfoot>
-              </table>
+                }
+              />
             </div>
 
             <div className={s.summaryCol}>
@@ -143,11 +154,7 @@ function ParcelsReportsPageInner() {
             </div>
 
             <div className={s.summaryCol}>
-              <ReportAmountTable
-                title="Remain Payment"
-                rows={report.remainPayment}
-                total={report.remainPaymentTotal}
-              />
+              <ReportAmountTable title="Remain Payment" rows={report.remainPayment} total={report.remainPaymentTotal} />
             </div>
           </div>
 
@@ -178,58 +185,23 @@ function ParcelsReportsPageInner() {
             </div>
           )}
 
-          <div className={s.tabs}>
-            <button
-              type="button"
-              className={cn(s.tabButton, { [s.tabButtonActive]: tab === 'transactions' })}
-              onClick={() => setTab('transactions')}
-            >
-              Paid transactions
-            </button>
-            <button
-              type="button"
-              className={cn(s.tabButton, { [s.tabButtonActive]: tab === 'history' })}
-              onClick={() => setTab('history')}
-            >
-              History
-            </button>
-          </div>
+          <Tabs
+            ariaLabel="Parcel report details"
+            value={tab}
+            onChange={setTab}
+            options={[
+              { value: 'transactions', label: 'Paid transactions' },
+              { value: 'history', label: 'History' },
+            ]}
+          />
 
           {tab === 'transactions' && (
-            <table className={s.table}>
-              <thead>
-                <tr>
-                  <th>ACC #</th>
-                  <th>FIRST NAME</th>
-                  <th>LAST NAME</th>
-                  <th>TRACKING #</th>
-                  <th>Service Type</th>
-                  <th>WEIGHT</th>
-                  <th>PAID</th>
-                  <th>Payment Type</th>
-                  <th>DEBT</th>
-                  <th>Received by</th>
-                  <th>Date/Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {report.transactions.map((row) => (
-                  <tr key={row.id}>
-                    <td>{row.username}</td>
-                    <td>{row.firstName}</td>
-                    <td>{row.lastName}</td>
-                    <td>{row.trackingNum}</td>
-                    <td>{row.service}</td>
-                    <td>{row.weight ?? ''}</td>
-                    <td>{formatAmount(row.payAmount)}</td>
-                    <td>{row.payMethod}</td>
-                    <td>{formatAmount(row.debt)}</td>
-                    <td>{row.receivedBy}</td>
-                    <td>{formatDate(row.editDateTime)}</td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot>
+            <Table
+              columns={transactionColumns}
+              rows={report.transactions}
+              getRowKey={(row) => row.id}
+              emptyMessage={null}
+              footer={
                 <tr>
                   <th></th>
                   <th></th>
@@ -243,37 +215,12 @@ function ParcelsReportsPageInner() {
                   <th></th>
                   <th></th>
                 </tr>
-              </tfoot>
-            </table>
+              }
+            />
           )}
 
           {tab === 'history' && (
-            <table className={s.table}>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Status</th>
-                  <th>Old</th>
-                  <th>New</th>
-                  <th>ValueName</th>
-                  <th>PayMethod</th>
-                  <th>PayAmount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {report.history.map((row) => (
-                  <tr key={row.id}>
-                    <td>{formatDateTime(row.editDateTime)}</td>
-                    <td>{row.editStatus}</td>
-                    <td>{row.oldValue}</td>
-                    <td>{row.newValue}</td>
-                    <td>{row.valueName}</td>
-                    <td>{row.payMethod}</td>
-                    <td>{formatAmount(row.payAmount)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <Table columns={historyColumns} rows={report.history} getRowKey={(row) => row.id} emptyMessage={null} />
           )}
         </>
       )}

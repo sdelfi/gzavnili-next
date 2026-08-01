@@ -51,12 +51,41 @@ there?
 
 # Shared components
 
-Reusable UI primitives (inputs, selects, buttons, and the like) belong in
-`src/components/ui/`, not hand-rolled inline in whichever page/component
-needs them first. Before writing a new `<input>`/`<select>`/etc., check
-`src/components/ui/` for one that already fits, and extend it rather than
-duplicating markup. If a pattern shows up in a second place, promote it to
-`src/components/ui/` as part of that change.
+Reusable UI primitives (inputs, selects, buttons, tables, dialogs, tabs, and the like)
+must never be hand-rolled inline in whichever page/component needs them first. Before
+writing a native control or a local implementation, check the appropriate UI namespace
+for one that already fits and extend it instead of duplicating markup. If a pattern shows
+up in a second place within the same visual system, promote it to that system's shared UI
+namespace as part of the change.
+
+## Public UI and admin UI are separate — hard boundary
+
+The public/customer-facing site and the bema admin panel are two independent visual
+systems. Their styled UI primitives must remain physically and dependency-wise separate:
+
+- **Public UI:** `src/components/ui/<ComponentName>/` (plus the documented flat
+  `Input.tsx`/`Select.tsx` exceptions below). Components under `src/app/[locale]/`,
+  public auth, and other customer-facing components use this namespace.
+- **Admin UI:** `src/components/ui/admin/<ComponentName>/`. Components under
+  `src/app/bema/` and `src/components/admin/` use this namespace.
+
+Do not import public styled primitives into bema code, and do not import admin styled
+primitives into public code. Similar controls in the two systems may share behavior or
+headless utilities from `src/lib/`, but they must own separate component markup and styles;
+one visual system must not be made to look correct by overriding the other's CSS.
+
+Admin feature components under `src/components/admin/` are composition only, not a second
+UI-primitives directory. They must use `src/components/ui/admin/` for buttons, inputs,
+selects, textareas, checkboxes, radio groups, tables, pagination, dialogs, tabs, headings,
+labelled fields, and other reusable controls. Feature CSS may control layout and genuinely
+feature-specific presentation, but must not recreate a primitive's base border, spacing,
+typography, states, or interaction chrome.
+
+Before completing work in either surface, search the touched feature tree for native
+`<button>`, `<input>`, `<select>`, `<textarea>`, and `<table>` elements. Any occurrence must
+either move into the correct shared UI namespace or have a documented structural reason
+why the existing primitive cannot represent it. For structurally exceptional bema tables,
+use `src/components/ui/admin/Table`'s `TableSurface` rather than rebuilding the table chrome.
 
 # One component, one folder
 

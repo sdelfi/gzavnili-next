@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
-import { Alert } from '@/components/ui/Alert';
+import { Input } from '@/components/ui/admin/Input';
+import { Button } from '@/components/ui/admin/Button';
+import { Alert } from '@/components/ui/admin/Alert';
 import { routes } from '@/lib/routes';
 import { useBemaAuth } from '@/components/admin/AuthProvider';
 import { login } from '@/lib/api/bema/auth';

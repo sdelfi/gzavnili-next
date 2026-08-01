@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Field } from '@/components/ui/Field';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { CustomerPicker } from '@/components/ui/CustomerPicker';
+import { Field } from '@/components/ui/admin/Field';
+import { Input } from '@/components/ui/admin/Input';
+import { Select } from '@/components/ui/admin/Select';
+import { CustomerPicker } from '@/components/ui/admin/CustomerPicker';
 import { PARCEL_CONTENTS, SERVICE_OPTIONS } from '@/lib/parcels/constants';
 import { checkTrackingNum } from '@/lib/api/bema/parcels';
 import type { ParcelFormState } from '@/lib/parcels/form';

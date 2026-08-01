@@ -46,3 +46,5 @@ file or the live site.
 | 0015 | bema Parcels (list + edit): what was ported, and what was deliberately not | [decisions/0015-bema-parcels-list.md](decisions/0015-bema-parcels-list.md) |
 | 0016 | Parcels list performance: measured at 1M rows, fixes, and the repeatable benchmark script | [decisions/0016-parcels-performance.md](decisions/0016-parcels-performance.md) |
 | 0017 | bema Parcels: batch "Add Parcel" (`parcels-add.cfm`) — the group-fee calculation and what wasn't ported | [decisions/0017-bema-add-parcel.md](decisions/0017-bema-add-parcel.md) |
+| 0018 | Parcel edit history and reports | [decisions/0018-parcel-edit-history.md](decisions/0018-parcel-edit-history.md) |
+| 0019 | Separate public and bema UI primitives | [decisions/0019-admin-ui-boundary.md](decisions/0019-admin-ui-boundary.md) |

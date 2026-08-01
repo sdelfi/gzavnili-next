@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Field } from '@/components/ui/Field';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { Checkbox } from '@/components/ui/Checkbox';
+import { Field } from '@/components/ui/admin/Field';
+import { Input } from '@/components/ui/admin/Input';
+import { Select } from '@/components/ui/admin/Select';
+import { Checkbox } from '@/components/ui/admin/Checkbox';
 import { listDeliveryOffices, listReceivers, type ReceiverOption } from '@/lib/api/bema/parcels';
 import type { ParcelFormState } from '@/lib/parcels/form';
 import s from './ParcelReceiverSection.module.css';

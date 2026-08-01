@@ -1,8 +1,8 @@
 'use client';
 
-import { Field } from '@/components/ui/Field';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
+import { Field } from '@/components/ui/admin/Field';
+import { Input } from '@/components/ui/admin/Input';
+import { Select } from '@/components/ui/admin/Select';
 import type { ParcelFormState } from '@/lib/parcels/form';
 import s from './ParcelTrackingDatesSection.module.css';
 

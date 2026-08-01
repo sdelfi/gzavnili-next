@@ -1,7 +1,8 @@
 'use client';
 
 import cn from 'classnames';
-import { Checkbox } from '@/components/ui/Checkbox';
+import { Checkbox } from '@/components/ui/admin/Checkbox';
+import { TableSurface } from '@/components/ui/admin/Table';
 import { ParcelPaymentCell } from '@/components/admin/parcels/ParcelPaymentCell';
 import { ParcelTrackingCell } from '@/components/admin/parcels/ParcelTrackingCell';
 import { ParcelRowActions } from '@/components/admin/parcels/ParcelRowActions';
@@ -36,7 +37,7 @@ function Specifications({ parcel }: { parcel: ParcelListItem }) {
   if (parcel.tripDate) rows.push(['Trip Date:', formatDate(parcel.tripDate)]);
 
   return (
-    <table className={s.specs}>
+    <TableSurface className={s.specs} scrollable={false}>
       <tbody>
         {rows.map(([label, value]) => (
           <tr key={label}>
@@ -45,7 +46,7 @@ function Specifications({ parcel }: { parcel: ParcelListItem }) {
           </tr>
         ))}
       </tbody>
-    </table>
+    </TableSurface>
   );
 }
 

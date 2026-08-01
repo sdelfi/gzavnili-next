@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { Field } from '@/components/ui/Field';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { Button } from '@/components/ui/Button';
+import { Field } from '@/components/ui/admin/Field';
+import { Input } from '@/components/ui/admin/Input';
+import { Select } from '@/components/ui/admin/Select';
+import { Button } from '@/components/ui/admin/Button';
 import { EXTRA_STATUS_FILTER_OPTIONS, HOUR_OPTIONS, MINUTE_OPTIONS, RECEIVED_BY_ANY } from '@/lib/parcels/constants';
 import type { ParcelFiltersState } from '@/lib/api/bema/parcels';
 import s from './ParcelExtraFilters.module.css';

@@ -1,11 +1,11 @@
 'use client';
 
-import { Field } from '@/components/ui/Field';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { RadioGroup } from '@/components/ui/RadioGroup';
-import { Checkbox } from '@/components/ui/Checkbox';
-import { Textarea } from '@/components/ui/Textarea';
+import { Field } from '@/components/ui/admin/Field';
+import { Input } from '@/components/ui/admin/Input';
+import { Select } from '@/components/ui/admin/Select';
+import { RadioGroup } from '@/components/ui/admin/RadioGroup';
+import { Checkbox } from '@/components/ui/admin/Checkbox';
+import { Textarea } from '@/components/ui/admin/Textarea';
 import { PARCEL_CONTENTS } from '@/lib/parcels/constants';
 import type { DraftParcelFormState } from '@/lib/parcels/batchForm';
 import s from './ParcelDraftFields.module.css';
@@ -66,10 +66,20 @@ export function ParcelDraftFields({
   return (
     <div className={s.grid}>
       <Field label="Delivery:" width="lg">
-        <RadioGroup name="draft-delivery" options={DELIVERY_OPTIONS} value={draft.delivery} onChange={(v) => set('delivery', v as DraftParcelFormState['delivery'])} />
+        <RadioGroup
+          name="draft-delivery"
+          options={DELIVERY_OPTIONS}
+          value={draft.delivery}
+          onChange={(v) => set('delivery', v as DraftParcelFormState['delivery'])}
+        />
       </Field>
       <Field label="Service:" width="lg">
-        <RadioGroup name="draft-service" options={SERVICE_OPTIONS} value={draft.service} onChange={(v) => set('service', v as DraftParcelFormState['service'])} />
+        <RadioGroup
+          name="draft-service"
+          options={SERVICE_OPTIONS}
+          value={draft.service}
+          onChange={(v) => set('service', v as DraftParcelFormState['service'])}
+        />
       </Field>
 
       <Field label="Tracking #:" htmlFor="draft-trackingnum">
@@ -86,13 +96,30 @@ export function ParcelDraftFields({
       </Field>
 
       <Field label="Weight:" htmlFor="draft-weight" width="sm">
-        <Input id="draft-weight" value={draft.weight} inputMode="decimal" onChange={(e) => set('weight', e.target.value)} error={errors.weight} />
+        <Input
+          id="draft-weight"
+          value={draft.weight}
+          inputMode="decimal"
+          onChange={(e) => set('weight', e.target.value)}
+          error={errors.weight}
+        />
       </Field>
       <Field label="Value:" htmlFor="draft-value" width="sm">
-        <Input id="draft-value" value={draft.value} inputMode="decimal" onChange={(e) => set('value', e.target.value)} error={errors.value} />
+        <Input
+          id="draft-value"
+          value={draft.value}
+          inputMode="decimal"
+          onChange={(e) => set('value', e.target.value)}
+          error={errors.value}
+        />
       </Field>
       <Field label="Group:" htmlFor="draft-group" width="sm" hint="Same delivery + service required within a group.">
-        <Input id="draft-group" value={draft.groupId} onChange={(e) => set('groupId', e.target.value)} error={errors.groupId} />
+        <Input
+          id="draft-group"
+          value={draft.groupId}
+          onChange={(e) => set('groupId', e.target.value)}
+          error={errors.groupId}
+        />
       </Field>
 
       <Field label="Parcel Content:" width="lg">
@@ -106,11 +133,21 @@ export function ParcelDraftFields({
           value={PARCEL_CONTENTS.includes(draft.contents) ? draft.contents : ''}
           onChange={(value) => set('contents', value)}
         />
-        <Input className={s.contentsOther} value={draft.contents} placeholder="or type it" onChange={(e) => set('contents', e.target.value)} />
+        <Input
+          className={s.contentsOther}
+          value={draft.contents}
+          placeholder="or type it"
+          onChange={(e) => set('contents', e.target.value)}
+        />
       </Field>
 
       <Field label="Received:" htmlFor="draft-received">
-        <Input id="draft-received" type="date" value={draft.trackingReceived} onChange={(e) => set('trackingReceived', e.target.value)} />
+        <Input
+          id="draft-received"
+          type="date"
+          value={draft.trackingReceived}
+          onChange={(e) => set('trackingReceived', e.target.value)}
+        />
       </Field>
       <Field label="Received by:" width="lg">
         <Select

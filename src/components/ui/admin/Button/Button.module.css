@@ -15,6 +15,15 @@
   }
 }
 
+.sm {
+  min-height: 24px;
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+.md {
+}
+
 /* Legacy's admin panel is Bootstrap 3 (`btn-primary`/`btn-default`/`btn-success`) — these match
    its exact shades, not this project's own blue, since operators are used to the old ones. */
 .primary {
@@ -61,4 +70,18 @@
   &:hover:not(:disabled) {
     background: #d6922e;
   }
+}
+
+.link,
+.plain {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+}
+
+.link {
+  color: #337ab7;
+  text-decoration: underline;
 }

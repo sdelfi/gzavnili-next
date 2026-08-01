@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { Button } from '@/components/ui/Button';
-import { ErrorList } from '@/components/ui/Alert';
-import { CollapsibleSection } from '@/components/ui/CollapsibleSection';
+import { Input } from '@/components/ui/admin/Input';
+import { Select } from '@/components/ui/admin/Select';
+import { Button } from '@/components/ui/admin/Button';
+import { ErrorList } from '@/components/ui/admin/Alert';
+import { CollapsibleSection } from '@/components/ui/admin/CollapsibleSection';
+import { Checkbox } from '@/components/ui/admin/Checkbox';
 import { routes } from '@/lib/routes';
 import type { AdminRole } from '@/generated/prisma/client';
 import { createUser, listMessageTypes, updateUser } from '@/lib/api/bema/users';
@@ -194,185 +195,175 @@ export function UserForm({
       <form className={s.form} onSubmit={handleSubmit}>
         <ErrorList errors={errors} />
 
-      <CollapsibleSection title="Account Information">
-        <div className={s.grid}>
-          <label className={s.field}>
-            Username
-            <Input value={values.username} onChange={(e) => set('username', e.target.value)} required />
-          </label>
-          <label className={s.field}>
-            Import Id
-            <Input value={values.importId} onChange={(e) => set('importId', e.target.value)} />
-          </label>
-
-          <label className={s.field}>
-            First Name
-            <Input value={values.firstName} onChange={(e) => set('firstName', e.target.value)} required />
-          </label>
-          <label className={s.field}>
-            Last Name
-            <Input value={values.lastName} onChange={(e) => set('lastName', e.target.value)} required />
-          </label>
-
-          <label className={s.field}>
-            Password
-            <Input
-              type="password"
-              value={values.password}
-              onChange={(e) => set('password', e.target.value)}
-              required={!userId}
-            />
-            {userId && <span className={s.hint}>Leave blank to keep current password</span>}
-          </label>
-          <label className={s.field}>
-            Balance Adjust
-            <Input
-              type="number"
-              step="0.01"
-              value={values.balanceAdjust}
-              onChange={(e) => set('balanceAdjust', e.target.value)}
-            />
-          </label>
-
-          <label className={s.field}>
-            Verify Password
-            <Input type="password" value={passwordVerify} onChange={(e) => setPasswordVerify(e.target.value)} />
-          </label>
-          <div className={s.field}>
-            Email Language
-            <Select
-              instanceId="user-form-language"
-              options={LANGUAGE_OPTIONS}
-              value={values.language}
-              onChange={(v) => set('language', v as 'en' | 'ge')}
-            />
-          </div>
-
-          <label className={s.field}>
-            Email
-            <Input type="email" value={values.email} onChange={(e) => set('email', e.target.value)} required />
-          </label>
-        </div>
-
-        <div className={s.checkboxRow}>
-          <span className={s.groupLabel}>Status:</span>
-          <label className={s.checkbox}>
-            <input type="checkbox" checked={values.active} onChange={(e) => set('active', e.target.checked)} />
-            Active
-          </label>
-          <label className={s.checkbox}>
-            <input type="checkbox" checked={values.confirmed} onChange={(e) => set('confirmed', e.target.checked)} />
-            Email Confirmed
-          </label>
-        </div>
-
-        <div className={s.checkboxRow}>
-          <span className={s.groupLabel}>Notification Type:</span>
-          <label className={s.checkbox}>
-            <input
-              type="checkbox"
-              checked={values.notifyViaMail}
-              onChange={(e) => set('notifyViaMail', e.target.checked)}
-            />
-            Via mail
-          </label>
-          <label className={s.checkbox}>
-            <input
-              type="checkbox"
-              checked={values.notifyViaSms}
-              onChange={(e) => set('notifyViaSms', e.target.checked)}
-            />
-            Via SMS
-          </label>
-        </div>
-
-        <div>
-          <span className={s.groupLabel}>Notification Type:</span>
-          <div className={s.messageTypeGrid}>
-            {messageTypes.map((type) => (
-              <label key={type.key} className={s.checkbox}>
-                <input
-                  type="checkbox"
-                  checked={values.notificationMessageTypeKeys.includes(type.key)}
-                  onChange={() => toggleMessageType(type.key)}
-                />
-                {type.label}
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {accountType === 'BemaUser' && (
+        <CollapsibleSection title="Account Information">
           <div className={s.grid}>
             <label className={s.field}>
-              Suffix
-              <Input value={values.suffix} onChange={(e) => set('suffix', e.target.value)} />
+              Username
+              <Input value={values.username} onChange={(e) => set('username', e.target.value)} required />
             </label>
             <label className={s.field}>
-              Agent Price
+              Import Id
+              <Input value={values.importId} onChange={(e) => set('importId', e.target.value)} />
+            </label>
+
+            <label className={s.field}>
+              First Name
+              <Input value={values.firstName} onChange={(e) => set('firstName', e.target.value)} required />
+            </label>
+            <label className={s.field}>
+              Last Name
+              <Input value={values.lastName} onChange={(e) => set('lastName', e.target.value)} required />
+            </label>
+
+            <label className={s.field}>
+              Password
+              <Input
+                type="password"
+                value={values.password}
+                onChange={(e) => set('password', e.target.value)}
+                required={!userId}
+              />
+              {userId && <span className={s.hint}>Leave blank to keep current password</span>}
+            </label>
+            <label className={s.field}>
+              Balance Adjust
               <Input
                 type="number"
                 step="0.01"
-                value={values.agentPrice}
-                onChange={(e) => set('agentPrice', e.target.value)}
+                value={values.balanceAdjust}
+                onChange={(e) => set('balanceAdjust', e.target.value)}
               />
             </label>
+
+            <label className={s.field}>
+              Verify Password
+              <Input type="password" value={passwordVerify} onChange={(e) => setPasswordVerify(e.target.value)} />
+            </label>
             <div className={s.field}>
-              User Type
+              Email Language
               <Select
-                instanceId="user-form-role"
-                options={ROLE_OPTIONS}
-                value={values.adminRole ?? 'BemaStandard'}
-                onChange={(value) => set('adminRole', value)}
+                instanceId="user-form-language"
+                options={LANGUAGE_OPTIONS}
+                value={values.language}
+                onChange={(v) => set('language', v as 'en' | 'ge')}
               />
             </div>
 
             <label className={s.field}>
-              Short Password
-              <Input
-                type="password"
-                value={values.passwordShort}
-                onChange={(e) => set('passwordShort', e.target.value)}
-                minLength={3}
-                maxLength={15}
-              />
-              <span className={s.hint}>
-                {userId ? 'Leave blank to keep current short password. ' : ''}
-                Used for the idle-lock quick-unlock prompt (3–15 characters).
-              </span>
+              Email
+              <Input type="email" value={values.email} onChange={(e) => set('email', e.target.value)} required />
             </label>
           </div>
-        )}
-      </CollapsibleSection>
 
-      <CollapsibleSection title="Contact Information">
-        <AddressFields
-          heading="Billing Address"
-          instanceIdPrefix="billing"
-          value={values.billingAddress}
-          onChange={(v) => set('billingAddress', v)}
-        />
-        <AddressFields
-          heading="Shipping Address"
-          instanceIdPrefix="shipping"
-          value={values.shippingAddress}
-          onChange={(v) => set('shippingAddress', v)}
-          showEmail
-        />
-      </CollapsibleSection>
+          <div className={s.checkboxRow}>
+            <span className={s.groupLabel}>Status:</span>
+            <Checkbox label="Active" checked={values.active} onChange={(e) => set('active', e.target.checked)} />
+            <Checkbox
+              label="Email Confirmed"
+              checked={values.confirmed}
+              onChange={(e) => set('confirmed', e.target.checked)}
+            />
+          </div>
 
-      <div className={s.actions}>
-        <Button type="submit" disabled={submitting}>
-          {submitting ? 'Saving…' : 'Save'}
-        </Button>
-        <Button
-          type="button"
-          variant="warning"
-          onClick={() => router.push(returnTo || routes.bema.users({ accountType }))}
-        >
-          Cancel
-        </Button>
-      </div>
+          <div className={s.checkboxRow}>
+            <span className={s.groupLabel}>Notification Type:</span>
+            <Checkbox
+              label="Via mail"
+              checked={values.notifyViaMail}
+              onChange={(e) => set('notifyViaMail', e.target.checked)}
+            />
+            <Checkbox
+              label="Via SMS"
+              checked={values.notifyViaSms}
+              onChange={(e) => set('notifyViaSms', e.target.checked)}
+            />
+          </div>
+
+          <div>
+            <span className={s.groupLabel}>Notification Type:</span>
+            <div className={s.messageTypeGrid}>
+              {messageTypes.map((type) => (
+                <Checkbox
+                  key={type.key}
+                  label={type.label}
+                  checked={values.notificationMessageTypeKeys.includes(type.key)}
+                  onChange={() => toggleMessageType(type.key)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {accountType === 'BemaUser' && (
+            <div className={s.grid}>
+              <label className={s.field}>
+                Suffix
+                <Input value={values.suffix} onChange={(e) => set('suffix', e.target.value)} />
+              </label>
+              <label className={s.field}>
+                Agent Price
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={values.agentPrice}
+                  onChange={(e) => set('agentPrice', e.target.value)}
+                />
+              </label>
+              <div className={s.field}>
+                User Type
+                <Select
+                  instanceId="user-form-role"
+                  options={ROLE_OPTIONS}
+                  value={values.adminRole ?? 'BemaStandard'}
+                  onChange={(value) => set('adminRole', value)}
+                />
+              </div>
+
+              <label className={s.field}>
+                Short Password
+                <Input
+                  type="password"
+                  value={values.passwordShort}
+                  onChange={(e) => set('passwordShort', e.target.value)}
+                  minLength={3}
+                  maxLength={15}
+                />
+                <span className={s.hint}>
+                  {userId ? 'Leave blank to keep current short password. ' : ''}
+                  Used for the idle-lock quick-unlock prompt (3–15 characters).
+                </span>
+              </label>
+            </div>
+          )}
+        </CollapsibleSection>
+
+        <CollapsibleSection title="Contact Information">
+          <AddressFields
+            heading="Billing Address"
+            instanceIdPrefix="billing"
+            value={values.billingAddress}
+            onChange={(v) => set('billingAddress', v)}
+          />
+          <AddressFields
+            heading="Shipping Address"
+            instanceIdPrefix="shipping"
+            value={values.shippingAddress}
+            onChange={(v) => set('shippingAddress', v)}
+            showEmail
+          />
+        </CollapsibleSection>
+
+        <div className={s.actions}>
+          <Button type="submit" disabled={submitting}>
+            {submitting ? 'Saving…' : 'Save'}
+          </Button>
+          <Button
+            type="button"
+            variant="warning"
+            onClick={() => router.push(returnTo || routes.bema.users({ accountType }))}
+          >
+            Cancel
+          </Button>
+        </div>
       </form>
 
       {userId && accountType === 'Customer' && <PricingRulesSection userId={userId} />}

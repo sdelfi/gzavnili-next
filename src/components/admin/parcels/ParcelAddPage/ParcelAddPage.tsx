@@ -2,14 +2,18 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Alert } from '@/components/ui/Alert';
-import { PageHeading } from '@/components/ui/PageHeading';
+import { Alert } from '@/components/ui/admin/Alert';
+import { PageHeading } from '@/components/ui/admin/PageHeading';
 import { useBemaAuth } from '@/components/admin/AuthProvider';
 import { ParcelTripInfo } from '@/components/admin/parcels/ParcelTripInfo';
 import { ParcelAddCustomerSection } from '@/components/admin/parcels/ParcelAddCustomerSection';
 import { ParcelDraftTable } from '@/components/admin/parcels/ParcelDraftTable';
 import { ParcelDraftModal } from '@/components/admin/parcels/ParcelDraftModal';
-import { ParcelAddPaymentSection, blankPaymentForm, type PaymentFormState } from '@/components/admin/parcels/ParcelAddPaymentSection';
+import {
+  ParcelAddPaymentSection,
+  blankPaymentForm,
+  type PaymentFormState,
+} from '@/components/admin/parcels/ParcelAddPaymentSection';
 import { defaultTrackingCore, trackingPrefix } from '@/components/admin/parcels/ParcelDraftFields';
 import { createParcelsBatch } from '@/lib/api/bema/parcels';
 import { listUsers } from '@/lib/api/bema/users';
@@ -79,7 +83,9 @@ export function ParcelAddPage() {
     })
       .then((data) => {
         if (cancelled) return;
-        setAdmins(data.items.map((a) => ({ id: a.id, name: `${a.firstName ?? ''} ${a.lastName ?? ''}`.trim() || a.username })));
+        setAdmins(
+          data.items.map((a) => ({ id: a.id, name: `${a.firstName ?? ''} ${a.lastName ?? ''}`.trim() || a.username })),
+        );
       })
       .catch(() => {});
     return () => {
@@ -206,7 +212,12 @@ export function ParcelAddPage() {
         </Alert>
       )}
 
-      <ParcelAddCustomerSection customer={customer} setCustomer={setCustomer} resolvedUserId={resolvedUserId} onResolved={handleResolved} />
+      <ParcelAddCustomerSection
+        customer={customer}
+        setCustomer={setCustomer}
+        resolvedUserId={resolvedUserId}
+        onResolved={handleResolved}
+      />
 
       <ParcelDraftTable
         drafts={drafts}

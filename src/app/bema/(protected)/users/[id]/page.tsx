@@ -2,8 +2,8 @@
 
 import { Suspense, use, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Alert } from '@/components/ui/Alert';
-import { PageHeading } from '@/components/ui/PageHeading';
+import { Alert } from '@/components/ui/admin/Alert';
+import { PageHeading } from '@/components/ui/admin/PageHeading';
 import { UserForm, type UserFormValues } from '@/components/admin/users/UserForm';
 import { EMPTY_ADDRESS, type AddressFormValues } from '@/components/admin/users/AddressFields';
 import type { AdminRole } from '@/generated/prisma/client';

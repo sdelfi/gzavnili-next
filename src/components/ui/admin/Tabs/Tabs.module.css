@@ -1,0 +1,23 @@
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.tab {
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: 4px 4px 0 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+}
+
+.active {
+  margin-bottom: -1px;
+  border-color: #ddd;
+  background: #fff;
+  font-weight: 600;
+}

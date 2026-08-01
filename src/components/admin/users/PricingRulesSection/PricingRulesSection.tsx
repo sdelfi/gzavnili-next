@@ -1,12 +1,17 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Table, type Column } from '@/components/ui/Table';
-import { Select } from '@/components/ui/Select';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
-import { Alert } from '@/components/ui/Alert';
-import { createPricingRule, deletePricingRule, listPricingRules, restorePricingRule } from '@/lib/api/bema/pricingRules';
+import { Table, type Column } from '@/components/ui/admin/Table';
+import { Select } from '@/components/ui/admin/Select';
+import { Input } from '@/components/ui/admin/Input';
+import { Button } from '@/components/ui/admin/Button';
+import { Alert } from '@/components/ui/admin/Alert';
+import {
+  createPricingRule,
+  deletePricingRule,
+  listPricingRules,
+  restorePricingRule,
+} from '@/lib/api/bema/pricingRules';
 import { ApiError } from '@/lib/api/http';
 import s from './PricingRulesSection.module.css';
 
@@ -104,9 +109,11 @@ export function PricingRulesSection({ userId }: { userId: string }) {
       await restorePricingRule(userId, ruleId);
       await load();
     } catch (err) {
-      setError(err instanceof ApiError && typeof err.body === 'object' && (err.body as { error?: string })?.error
-        ? (err.body as { error: string }).error
-        : 'Failed to restore rule.');
+      setError(
+        err instanceof ApiError && typeof err.body === 'object' && (err.body as { error?: string })?.error
+          ? (err.body as { error: string }).error
+          : 'Failed to restore rule.',
+      );
     }
   }
 
@@ -148,11 +155,21 @@ export function PricingRulesSection({ userId }: { userId: string }) {
 
       {error && <Alert variant="error">{error}</Alert>}
 
-      <Button className={s.showAllRules} type="button" variant="secondary" onClick={() => setActiveOnly((prev) => !prev)}>
+      <Button
+        className={s.showAllRules}
+        type="button"
+        variant="secondary"
+        onClick={() => setActiveOnly((prev) => !prev)}
+      >
         {activeOnly ? 'Show All Rules' : 'Showing active rules only'}
       </Button>
 
-      <Table columns={columns} rows={visibleRules} getRowKey={(r) => r.id} emptyMessage="No pricing rules defined yet" />
+      <Table
+        columns={columns}
+        rows={visibleRules}
+        getRowKey={(r) => r.id}
+        emptyMessage="No pricing rules defined yet"
+      />
 
       <form className={s.addForm} onSubmit={handleAddRule}>
         <h4 className={s.addHeading}>Add New Pricing Rule</h4>

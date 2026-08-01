@@ -4,6 +4,7 @@ import Link from 'next/link';
 import cn from 'classnames';
 import { routes } from '@/lib/routes';
 import type { ParcelListItem } from '@/lib/parcels/types';
+import { Button } from '@/components/ui/admin/Button';
 import s from './ParcelRowActions.module.css';
 
 // The per-row action list (legacy's `» Edit / View / Print / Delete / View Invoice / View
@@ -42,9 +43,9 @@ export function ParcelRowActions({
       </Link>
       <PendingAction label="View" />
       <PendingAction label="Print" />
-      <button type="button" className={cn(s.action, s.danger)} onClick={onDelete}>
+      <Button type="button" variant="plain" className={cn(s.action, s.danger)} onClick={onDelete}>
         Delete
-      </button>
+      </Button>
       {parcel.invoiceId && <PendingAction label="View Invoice" />}
       <PendingAction label="View History" />
       <PendingAction label="Send SMS" />

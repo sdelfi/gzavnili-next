@@ -3,15 +3,15 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Table, type Column } from '@/components/ui/Table';
-import { Pagination } from '@/components/ui/Pagination';
-import { Select } from '@/components/ui/Select';
-import { Input } from '@/components/ui/Input';
-import { Checkbox } from '@/components/ui/Checkbox';
-import { Button } from '@/components/ui/Button';
-import { Alert } from '@/components/ui/Alert';
-import { PageHeading } from '@/components/ui/PageHeading';
-import { CustomerPicker } from '@/components/ui/CustomerPicker';
+import { Table, type Column } from '@/components/ui/admin/Table';
+import { Pagination } from '@/components/ui/admin/Pagination';
+import { Select } from '@/components/ui/admin/Select';
+import { Input } from '@/components/ui/admin/Input';
+import { Checkbox } from '@/components/ui/admin/Checkbox';
+import { Button } from '@/components/ui/admin/Button';
+import { Alert } from '@/components/ui/admin/Alert';
+import { PageHeading } from '@/components/ui/admin/PageHeading';
+import { CustomerPicker } from '@/components/ui/admin/CustomerPicker';
 import { routes } from '@/lib/routes';
 import {
   deletePricingRule,
@@ -237,7 +237,9 @@ function PricingRulesAdminPageInner() {
             <CustomerPicker
               value={pending.customerId}
               label={pending.customerLabel}
-              onChange={(customer) => setPending((p) => ({ ...p, customerId: customer.id, customerLabel: customer.label }))}
+              onChange={(customer) =>
+                setPending((p) => ({ ...p, customerId: customer.id, customerLabel: customer.label }))
+              }
               onClear={() => setPending((p) => ({ ...p, customerId: '', customerLabel: '' }))}
             />
           </div>

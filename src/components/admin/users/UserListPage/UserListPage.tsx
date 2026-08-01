@@ -3,14 +3,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Table, type Column } from '@/components/ui/Table';
-import { Pagination } from '@/components/ui/Pagination';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { Button } from '@/components/ui/Button';
-import { Alert } from '@/components/ui/Alert';
-import { IconButton } from '@/components/ui/IconButton';
-import { PageHeading } from '@/components/ui/PageHeading';
+import { Table, type Column } from '@/components/ui/admin/Table';
+import { Pagination } from '@/components/ui/admin/Pagination';
+import { Input } from '@/components/ui/admin/Input';
+import { Select } from '@/components/ui/admin/Select';
+import { Button } from '@/components/ui/admin/Button';
+import { Alert } from '@/components/ui/admin/Alert';
+import { IconButton } from '@/components/ui/admin/IconButton';
+import { PageHeading } from '@/components/ui/admin/PageHeading';
 import { routes } from '@/lib/routes';
 import type { BemaUser } from '@/components/admin/AuthProvider';
 import { listUsers } from '@/lib/api/bema/users';
@@ -157,9 +157,7 @@ export function UserListPage({ accountType }: { accountType: 'BemaUser' | 'Custo
           />
         </div>
         <div className={s.spacer} />
-        <Link
-          href={`${routes.bema.userNew()}?accountType=${accountType}&returnTo=${encodeURIComponent(returnTo)}`}
-        >
+        <Link href={`${routes.bema.userNew()}?accountType=${accountType}&returnTo=${encodeURIComponent(returnTo)}`}>
           <Button type="button">Add {accountType === 'BemaUser' ? 'BEMA User' : 'Customer'}</Button>
         </Link>
       </div>

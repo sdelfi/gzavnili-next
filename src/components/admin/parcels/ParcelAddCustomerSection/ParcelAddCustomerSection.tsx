@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Field } from '@/components/ui/Field';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
-import { Alert } from '@/components/ui/Alert';
+import { Field } from '@/components/ui/admin/Field';
+import { Input } from '@/components/ui/admin/Input';
+import { Button } from '@/components/ui/admin/Button';
+import { Alert } from '@/components/ui/admin/Alert';
 import { getUser, listUsers } from '@/lib/api/bema/users';
 import { saveQuickCustomer } from '@/lib/api/bema/parcels';
-import { customerLabel } from '@/components/ui/CustomerPicker';
+import { customerLabel } from '@/components/ui/admin/CustomerPicker';
 import { ApiError } from '@/lib/api/http';
 import { blankQuickCustomer, quickCustomerToPayload, type QuickCustomerFormState } from '@/lib/parcels/batchForm';
 import s from './ParcelAddCustomerSection.module.css';
@@ -150,9 +150,9 @@ export function ParcelAddCustomerSection({
                 <ul className={s.results}>
                   {visibleResults.map((row) => (
                     <li key={row.id}>
-                      <button type="button" onClick={() => pickExisting(row.id)}>
+                      <Button type="button" variant="plain" onClick={() => pickExisting(row.id)}>
                         {customerLabel(row)}
-                      </button>
+                      </Button>
                     </li>
                   ))}
                 </ul>

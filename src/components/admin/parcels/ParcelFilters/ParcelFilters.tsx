@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { Field } from '@/components/ui/Field';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { Button } from '@/components/ui/Button';
+import { Field } from '@/components/ui/admin/Field';
+import { Input } from '@/components/ui/admin/Input';
+import { Select } from '@/components/ui/admin/Select';
+import { Button } from '@/components/ui/admin/Button';
 import {
   CITY_FILTER_OPTIONS,
   PAID_FILTER_OPTIONS,

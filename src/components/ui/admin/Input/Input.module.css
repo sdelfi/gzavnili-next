@@ -1,0 +1,29 @@
+.input {
+  width: 100%;
+  min-height: 32px;
+  padding: 5px 10px;
+  border: 1px solid #bfbfbf;
+  border-radius: 2px;
+  background: #fff;
+  color: #4c4c4c;
+  font: inherit;
+  font-size: 13px;
+
+  &:focus {
+    outline: none;
+    border-color: #3fa3f0;
+  }
+
+  &:disabled {
+    background: #eee;
+    color: #777;
+    cursor: not-allowed;
+  }
+}
+
+.error {
+  display: block;
+  margin-top: 4px;
+  color: #b3261e;
+  font-size: 12px;
+}

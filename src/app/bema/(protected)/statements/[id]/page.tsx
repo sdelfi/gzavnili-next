@@ -1,5 +1,5 @@
-import { Alert } from '@/components/ui/Alert';
-import { PageHeading } from '@/components/ui/PageHeading';
+import { Alert } from '@/components/ui/admin/Alert';
+import { PageHeading } from '@/components/ui/admin/PageHeading';
 
 // Stub for the legacy "View Statement" icon-link
 // (`http/bema/statements/statement.cfm?userid=...`) — the statements module itself isn't

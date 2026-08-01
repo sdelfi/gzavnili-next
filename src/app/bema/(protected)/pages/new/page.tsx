@@ -3,7 +3,7 @@
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { PageForm } from '@/components/admin/pages/PageForm';
-import { PageHeading } from '@/components/ui/PageHeading';
+import { PageHeading } from '@/components/ui/admin/PageHeading';
 
 function NewPageInner() {
   const searchParams = useSearchParams();

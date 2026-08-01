@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Select } from '@/components/ui/Select';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
+import { Select } from '@/components/ui/admin/Select';
+import { Input } from '@/components/ui/admin/Input';
+import { Button } from '@/components/ui/admin/Button';
 import { DATETIME_OPERATIONS, OPERATION_OPTIONS, payMethodOptions } from '@/lib/parcels/constants';
 import type { ParcelOperation } from '@/lib/parcels/constants';
 import { checkParcelCode, type ParcelOperationPayload } from '@/lib/api/bema/parcels';
