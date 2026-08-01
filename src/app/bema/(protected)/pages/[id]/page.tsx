@@ -2,8 +2,8 @@
 
 import { Suspense, use, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Alert } from '@/components/ui/Alert';
-import { PageHeading } from '@/components/ui/PageHeading';
+import { Alert } from '@/components/ui/admin/Alert';
+import { PageHeading } from '@/components/ui/admin/PageHeading';
 import { PageForm, type PageFormValues } from '@/components/admin/pages/PageForm';
 import { getPage } from '@/lib/api/bema/pages';
 

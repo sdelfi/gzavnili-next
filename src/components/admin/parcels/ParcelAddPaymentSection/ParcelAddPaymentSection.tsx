@@ -1,10 +1,10 @@
 'use client';
 
-import { Field } from '@/components/ui/Field';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { Checkbox } from '@/components/ui/Checkbox';
-import { Button } from '@/components/ui/Button';
+import { Field } from '@/components/ui/admin/Field';
+import { Input } from '@/components/ui/admin/Input';
+import { Select } from '@/components/ui/admin/Select';
+import { Checkbox } from '@/components/ui/admin/Checkbox';
+import { Button } from '@/components/ui/admin/Button';
 import { payMethodOptions } from '@/lib/parcels/constants';
 import s from './ParcelAddPaymentSection.module.css';
 
@@ -35,7 +35,14 @@ export type PaymentFormState = {
 };
 
 export function blankPaymentForm(): PaymentFormState {
-  return { paymentMethod1: '', paymentAmount1: '', paymentMethod2: '', paymentAmount2: '', priceTotal: '', notifications: [] };
+  return {
+    paymentMethod1: '',
+    paymentAmount1: '',
+    paymentMethod2: '',
+    paymentAmount2: '',
+    priceTotal: '',
+    notifications: [],
+  };
 }
 
 export function ParcelAddPaymentSection({

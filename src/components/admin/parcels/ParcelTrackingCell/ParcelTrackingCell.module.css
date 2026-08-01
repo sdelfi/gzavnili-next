@@ -10,16 +10,6 @@
   margin-bottom: 4px;
 }
 
-.confirm {
-  background: none;
-  border: 0;
-  padding: 0;
-  color: #337ab7;
-  font: inherit;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
 .timeline {
   border-collapse: collapse;
   width: 100%;

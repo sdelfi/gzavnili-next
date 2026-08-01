@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { Button } from '@/components/ui/Button';
-import { ErrorList } from '@/components/ui/Alert';
-import { CollapsibleSection } from '@/components/ui/CollapsibleSection';
+import { Input } from '@/components/ui/admin/Input';
+import { Select } from '@/components/ui/admin/Select';
+import { Button } from '@/components/ui/admin/Button';
+import { ErrorList } from '@/components/ui/admin/Alert';
+import { CollapsibleSection } from '@/components/ui/admin/CollapsibleSection';
+import { Textarea } from '@/components/ui/admin/Textarea';
 import { routes } from '@/lib/routes';
 import { createPage, updatePage } from '@/lib/api/bema/pages';
 import { ApiError, extractErrorMessages } from '@/lib/api/http';
@@ -113,7 +114,12 @@ export function PageForm({
 
           <label className={s.field}>
             URL
-            <Input value={values.slug} onChange={(e) => set('slug', e.target.value)} required placeholder="prices.html" />
+            <Input
+              value={values.slug}
+              onChange={(e) => set('slug', e.target.value)}
+              required
+              placeholder="prices.html"
+            />
             <span className={s.hint}>
               Public URL: {values.locale === 'ge' ? '/ge/' : '/'}
               {values.slug || '…'}
@@ -128,7 +134,7 @@ export function PageForm({
 
       <CollapsibleSection title="Content">
         <label className={s.field}>
-          <textarea
+          <Textarea
             className={s.contentArea}
             value={values.content}
             onChange={(e) => set('content', e.target.value)}

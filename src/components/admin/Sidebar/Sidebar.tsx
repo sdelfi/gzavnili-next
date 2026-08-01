@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import cn from 'classnames';
+import { Button } from '@/components/ui/admin/Button';
 import { routes } from '@/lib/routes';
 import s from './Sidebar.module.css';
 
@@ -168,9 +169,15 @@ export function Sidebar({ user, onLogout }: { user: { username: string }; onLogo
     <nav className={cn(s.sidebar, { [s.collapsed]: collapsed })}>
       <div className={s.header}>
         {!collapsed && <span className={s.brand}>GZAVNILI</span>}
-        <button type="button" className={s.toggle} onClick={toggle} title={collapsed ? 'Expand' : 'Collapse'}>
+        <Button
+          type="button"
+          variant="plain"
+          className={s.toggle}
+          onClick={toggle}
+          title={collapsed ? 'Expand' : 'Collapse'}
+        >
           {collapsed ? '»' : '«'}
-        </button>
+        </Button>
       </div>
 
       <div className={s.scrollArea}>
@@ -207,9 +214,9 @@ export function Sidebar({ user, onLogout }: { user: { username: string }; onLogo
 
       <div className={s.footer}>
         {!collapsed && <span className={s.username}>{user.username}</span>}
-        <button type="button" className={s.logoutButton} onClick={onLogout} title="Logout">
+        <Button type="button" variant="plain" className={s.logoutButton} onClick={onLogout} title="Logout">
           {collapsed ? '⏻' : 'Logout'}
-        </button>
+        </Button>
       </div>
     </nav>
   );

@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Alert } from '@/components/ui/Alert';
-import { Button } from '@/components/ui/Button';
-import { PageHeading } from '@/components/ui/PageHeading';
+import { Alert } from '@/components/ui/admin/Alert';
+import { Button } from '@/components/ui/admin/Button';
+import { PageHeading } from '@/components/ui/admin/PageHeading';
 import { useBemaAuth } from '@/components/admin/AuthProvider';
 import { ParcelDetailsSection } from '@/components/admin/parcels/ParcelDetailsSection';
 import { ParcelReceiverSection } from '@/components/admin/parcels/ParcelReceiverSection';

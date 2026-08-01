@@ -2,8 +2,8 @@
 
 import { Suspense, use, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Alert } from '@/components/ui/Alert';
-import { PageHeading } from '@/components/ui/PageHeading';
+import { Alert } from '@/components/ui/admin/Alert';
+import { PageHeading } from '@/components/ui/admin/PageHeading';
 import { ReceiverForm, type ReceiverFormValues } from '@/components/admin/receivers/ReceiverForm';
 import { getReceiver } from '@/lib/api/bema/receivers';
 

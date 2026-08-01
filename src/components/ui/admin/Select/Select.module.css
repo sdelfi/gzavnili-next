@@ -1,0 +1,89 @@
+.root {
+  min-width: 0;
+  font-size: 13px;
+
+  :global(.admin-select__control) {
+    min-height: 32px;
+    border: 1px solid #bfbfbf;
+    border-radius: 2px;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  :global(.admin-select__control--is-focused) {
+    border-color: #3fa3f0;
+  }
+
+  :global(.admin-select__value-container) {
+    padding: 0 10px;
+  }
+
+  :global(.admin-select__placeholder),
+  :global(.admin-select__single-value),
+  :global(.admin-select__input-container) {
+    color: #4c4c4c;
+  }
+
+  :global(.admin-select__indicator-separator) {
+    display: none;
+  }
+
+  :global(.admin-select__dropdown-indicator) {
+    width: 24px;
+    display: flex;
+    justify-content: center;
+  }
+
+  :global(.admin-select__menu) {
+    z-index: 30;
+    margin-top: 2px;
+    border: 1px solid #bfbfbf;
+    border-radius: 2px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 15%);
+  }
+
+  :global(.admin-select__menu-list) {
+    padding: 0;
+  }
+
+  :global(.admin-select__option) {
+    padding: 6px 10px;
+    cursor: pointer;
+  }
+
+  :global(.admin-select__option--is-focused) {
+    background: #3fa3f0;
+    color: #fff;
+  }
+
+  :global(.admin-select__option--is-selected) {
+    background: #20599d;
+    color: #fff;
+  }
+
+  :global(.admin-select__group-heading) {
+    padding: 6px 10px 2px;
+    color: #777;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+}
+
+.small {
+  :global(.admin-select__value-container) {
+    padding: 0 8px;
+  }
+
+  :global(.admin-select__option) {
+    padding: 4px 8px;
+  }
+}
+
+.error {
+  display: block;
+  margin-top: 4px;
+  color: #b3261e;
+  font-size: 12px;
+}

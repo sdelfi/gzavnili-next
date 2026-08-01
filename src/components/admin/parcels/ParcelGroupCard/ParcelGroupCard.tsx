@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import cn from 'classnames';
-import { Checkbox } from '@/components/ui/Checkbox';
-import { Select } from '@/components/ui/Select';
-import { Button } from '@/components/ui/Button';
+import { Checkbox } from '@/components/ui/admin/Checkbox';
+import { Select } from '@/components/ui/admin/Select';
+import { Button } from '@/components/ui/admin/Button';
+import { TableSurface } from '@/components/ui/admin/Table';
 import { ParcelRow } from '@/components/admin/parcels/ParcelRow';
 import { payMethodOptions } from '@/lib/parcels/constants';
 import { formatDate } from '@/lib/parcels/format';
@@ -70,7 +71,7 @@ export function ParcelGroupCard({
 
   return (
     <div className={cn(s.card, { [s.pinned]: group.topFlag })}>
-      <table className={s.table}>
+      <TableSurface className={s.table}>
         <thead>
           <tr className={s.headerRow}>
             <th colSpan={3} className={s.senderCell}>
@@ -206,7 +207,7 @@ export function ParcelGroupCard({
             />
           ))}
         </tbody>
-      </table>
+      </TableSurface>
     </div>
   );
 }

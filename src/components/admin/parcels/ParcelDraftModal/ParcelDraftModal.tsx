@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Dialog } from '@/components/ui/Dialog';
-import { Button } from '@/components/ui/Button';
+import { Dialog } from '@/components/ui/admin/Dialog';
+import { Button } from '@/components/ui/admin/Button';
 import { ParcelDraftFields } from '@/components/admin/parcels/ParcelDraftFields';
 import { ParcelReceiverSection } from '@/components/admin/parcels/ParcelReceiverSection';
 import type { DraftParcelFormState } from '@/lib/parcels/batchForm';
@@ -42,7 +42,10 @@ export function ParcelDraftModal({
   function set<K extends keyof DraftParcelFormState>(key: K, value: DraftParcelFormState[K]) {
     setWorking((prev) => ({ ...prev, [key]: value }));
   }
-  function setReceiver<K extends keyof DraftParcelFormState['receiver']>(key: K, value: DraftParcelFormState['receiver'][K]) {
+  function setReceiver<K extends keyof DraftParcelFormState['receiver']>(
+    key: K,
+    value: DraftParcelFormState['receiver'][K],
+  ) {
     setWorking((prev) => ({ ...prev, receiver: { ...prev.receiver, [key]: value } }));
   }
 

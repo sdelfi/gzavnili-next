@@ -1,4 +1,5 @@
 import { formatAmount } from '@/lib/parcels/format';
+import { Table, type Column } from '@/components/ui/admin/Table';
 import s from './ReportAmountTable.module.css';
 
 export type ReportAmountRow = { key: string; amount: number };
@@ -23,32 +24,26 @@ export function ReportAmountTable({
   format?: 'fixed' | 'raw';
 }) {
   const render = (value: number) => (format === 'fixed' ? formatAmount(value) : String(value));
+  const columns: Column<ReportAmountRow>[] = [
+    { key: 'key', label: 'Type' },
+    { key: 'amount', label: 'Amount', render: (row) => render(row.amount) },
+  ];
 
   return (
     <div>
       <h2 className={s.heading}>{title}</h2>
-      <table className={s.table}>
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr key={row.key}>
-              <td>{row.key}</td>
-              <td>{render(row.amount)}</td>
-            </tr>
-          ))}
-        </tbody>
-        <tfoot>
+      <Table
+        columns={columns}
+        rows={rows}
+        getRowKey={(row) => row.key}
+        emptyMessage={null}
+        footer={
           <tr>
             <th>Total</th>
             <td>{render(total)}</td>
           </tr>
-        </tfoot>
-      </table>
+        }
+      />
     </div>
   );
 }

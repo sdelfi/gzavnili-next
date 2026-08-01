@@ -3,14 +3,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Table, type Column } from '@/components/ui/Table';
-import { Pagination } from '@/components/ui/Pagination';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { Button } from '@/components/ui/Button';
-import { Alert } from '@/components/ui/Alert';
-import { IconButton } from '@/components/ui/IconButton';
-import { PageHeading } from '@/components/ui/PageHeading';
+import { Table, type Column } from '@/components/ui/admin/Table';
+import { Pagination } from '@/components/ui/admin/Pagination';
+import { Input } from '@/components/ui/admin/Input';
+import { Select } from '@/components/ui/admin/Select';
+import { Button } from '@/components/ui/admin/Button';
+import { Alert } from '@/components/ui/admin/Alert';
+import { IconButton } from '@/components/ui/admin/IconButton';
+import { PageHeading } from '@/components/ui/admin/PageHeading';
 import { routes } from '@/lib/routes';
 import { listReceiversAdmin, deleteReceiver } from '@/lib/api/bema/receivers';
 import s from './ReceiverListPage.module.css';
@@ -113,11 +113,7 @@ export function ReceiverListPage() {
           <Link href={`${routes.bema.receiverEdit(r.id)}?returnTo=${encodeURIComponent(returnTo)}`}>
             <IconButton icon="edit" title="Edit" />
           </Link>
-          {r.active && (
-            <button type="button" className={s.iconButtonReset} onClick={() => handleDelete(r.id)}>
-              <IconButton icon="delete" title="Delete" />
-            </button>
-          )}
+          {r.active && <IconButton icon="delete" title="Delete" onClick={() => handleDelete(r.id)} />}
         </div>
       ),
     },

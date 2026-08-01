@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/Button';
-import { ErrorList } from '@/components/ui/Alert';
+import { Button } from '@/components/ui/admin/Button';
+import { ErrorList } from '@/components/ui/admin/Alert';
+import { Checkbox } from '@/components/ui/admin/Checkbox';
+import { Textarea } from '@/components/ui/admin/Textarea';
 import { getPopupConfig, updatePopupConfig, type PopupConfig } from '@/lib/api/bema/config';
 import { ApiError, extractErrorMessages } from '@/lib/api/http';
 import s from './SiteSettingsForm.module.css';
@@ -54,33 +56,22 @@ export function SiteSettingsForm() {
       <ErrorList errors={errors} />
       {saved && <p className={s.saved}>Saved.</p>}
 
-      <label className={s.checkbox}>
-        <input
-          type="checkbox"
+      <div className={s.checkbox}>
+        <Checkbox
+          label="Show site-wide announcement popup"
           checked={values.popupEnabled}
           onChange={(e) => set('popupEnabled', e.target.checked)}
         />
-        Show site-wide announcement popup
-      </label>
+      </div>
 
       <label className={s.field}>
         Message (English)
-        <textarea
-          className={s.textarea}
-          value={values.popupMessageEn}
-          onChange={(e) => set('popupMessageEn', e.target.value)}
-          rows={6}
-        />
+        <Textarea value={values.popupMessageEn} onChange={(e) => set('popupMessageEn', e.target.value)} rows={6} />
       </label>
 
       <label className={s.field}>
         Message (Georgian)
-        <textarea
-          className={s.textarea}
-          value={values.popupMessageGe}
-          onChange={(e) => set('popupMessageGe', e.target.value)}
-          rows={6}
-        />
+        <Textarea value={values.popupMessageGe} onChange={(e) => set('popupMessageGe', e.target.value)} rows={6} />
       </label>
 
       <div className={s.actions}>

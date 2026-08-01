@@ -11,17 +11,6 @@
   margin-bottom: 14px;
 }
 
-.textarea {
-  width: 100%;
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 400;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
 .checkbox {
   display: flex;
   align-items: center;

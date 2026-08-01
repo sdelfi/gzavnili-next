@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/admin/Input';
+import { Button } from '@/components/ui/admin/Button';
 import { useBemaAuth } from '@/components/admin/AuthProvider';
 import { checkPassword, refreshSession } from '@/lib/api/bema/auth';
 import { ApiError } from '@/lib/api/http';
@@ -128,10 +128,11 @@ export function IdleModal() {
         </form>
         {error && <p className={s.error}>{error}</p>}
         <p className={s.switchAccount}>
-          If you are not {[user.firstName, user.lastName].filter(Boolean).join(' ') || user.username} (
-          {user.username}) —{' '}
-          <button
+          If you are not {[user.firstName, user.lastName].filter(Boolean).join(' ') || user.username} ({user.username})
+          —{' '}
+          <Button
             type="button"
+            variant="link"
             className={s.logoutLink}
             onClick={async () => {
               await logout();
@@ -139,7 +140,7 @@ export function IdleModal() {
             }}
           >
             Click here
-          </button>{' '}
+          </Button>{' '}
           to login with your account
         </p>
       </div>

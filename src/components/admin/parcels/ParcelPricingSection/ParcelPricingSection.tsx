@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Field } from '@/components/ui/Field';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { Checkbox } from '@/components/ui/Checkbox';
-import { Textarea } from '@/components/ui/Textarea';
-import { Button } from '@/components/ui/Button';
+import { Field } from '@/components/ui/admin/Field';
+import { Input } from '@/components/ui/admin/Input';
+import { Select } from '@/components/ui/admin/Select';
+import { Checkbox } from '@/components/ui/admin/Checkbox';
+import { Textarea } from '@/components/ui/admin/Textarea';
+import { Button } from '@/components/ui/admin/Button';
 import { payMethodOptions } from '@/lib/parcels/constants';
 import { calculateParcelPrice, dimensionalWeight, type PricingRule } from '@/lib/parcels/pricing';
 import { listPricingRules } from '@/lib/api/bema/pricingRules';

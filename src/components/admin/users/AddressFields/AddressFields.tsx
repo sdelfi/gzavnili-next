@@ -1,5 +1,5 @@
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
+import { Input } from '@/components/ui/admin/Input';
+import { Select } from '@/components/ui/admin/Select';
 import { COUNTRIES } from '@/lib/countries';
 import s from './AddressFields.module.css';
 

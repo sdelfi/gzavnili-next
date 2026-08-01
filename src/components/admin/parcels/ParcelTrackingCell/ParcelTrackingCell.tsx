@@ -1,5 +1,7 @@
 import { formatDate, formatDateTime } from '@/lib/parcels/format';
 import type { ParcelListItem } from '@/lib/parcels/types';
+import { Button } from '@/components/ui/admin/Button';
+import { TableSurface } from '@/components/ui/admin/Table';
 import s from './ParcelTrackingCell.module.css';
 
 // The "Tracking" column: the parcel's milestone timeline, plus the on-hold banner above it.
@@ -36,13 +38,13 @@ export function ParcelTrackingCell({ parcel, onConfirmHold }: { parcel: ParcelLi
           {/* Clears both hold flags so the parcel drops out of the hold queues — legacy's
               `parcels.cfm?rid=…&status=notonhold` link, which ran the UPDATE inline in the
               list page itself. */}
-          <button type="button" className={s.confirm} onClick={onConfirmHold}>
+          <Button type="button" variant="link" size="sm" onClick={onConfirmHold}>
             Confirm
-          </button>
+          </Button>
         </span>
       )}
 
-      <table className={s.timeline}>
+      <TableSurface className={s.timeline} scrollable={false}>
         <tbody>
           {MILESTONES.map(({ key, label, withTime }) => {
             const value = parcel[key] as string | null;
@@ -54,7 +56,7 @@ export function ParcelTrackingCell({ parcel, onConfirmHold }: { parcel: ParcelLi
             );
           })}
         </tbody>
-      </table>
+      </TableSurface>
     </>
   );
 }
