@@ -308,3 +308,17 @@ export async function collectMoney(input: CollectMoneyInput) {
     },
   });
 }
+
+export async function getTodayCollectedTotal(collectorUsername: string, now = new Date()): Promise<number> {
+  const dayKey = now.toISOString().slice(0, 10);
+  const start = new Date(`${dayKey}T00:00:00.000Z`);
+  const end = new Date(`${dayKey}T23:59:59.999Z`);
+  const result = await db.moneyCollectHistory.aggregate({
+    where: {
+      collectorUsername,
+      gDate: { gte: start, lte: end },
+    },
+    _sum: { collected: true },
+  });
+  return Number(result._sum.collected ?? 0);
+}

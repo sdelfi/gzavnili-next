@@ -824,7 +824,8 @@ Ubany, City, Street, Actions`, "Ubany"/"Phone" being `street2`/`phone2`, cross-c
       made the page narrower than the rest of bema. See `docs/decisions/0017-bema-add-parcel.md`
       ("Visual-parity pass" / "Corrected layout"). Follow-up: the draft modal's top parcel
       fields now use explicit grid areas so the desktop row order is fixed to legacy's separate
-      Weight/Value/Group row instead of depending on auto-placement (commit pending).
+      Weight/Value/Group row, with Received/Received by held in the parcel-info block before
+      Receiver Info, instead of depending on auto-placement (commit pending).
 - [x] Shared `ui/PageHeading` — every bema admin page's `<h1>` (Browse Parcels/Delivery
       Requests, Edit Parcel, Add Parcel, Customers/BEMA Users, Site Pages, Add/Edit Page,
       Add/Edit User, Site Settings, the statement stub) had drifted into two or three
@@ -1075,7 +1076,9 @@ vwParcelsReports.cfm`) ported **in full**: date-range filter, Total Sale, Paymen
       formatted collection date. The manager dropdown uses the shared Select portal mode, so
       its menu overlays the dialog instead of changing its height or adding a scrollbar.
       Admin Input explicitly shields text/email/password sizing from the public Input's global
-      type selectors — commit pending.
+      type selectors. The bema top bar now reads the current manager's `MoneyCollectHistory`
+      total for today's manager date and refreshes immediately after a successful Collect
+      Money submit (commit pending).
 - [x] **Parcels Reports 2** (`bema/parcels/parcels-reports-2-v2.cfm` + `views/parcels/
   vwParcelsReports2-v2.cfm`) ported **in full**, including the legacy DataTables UI
 vwParcelsReports2-v2.cfm`) ported **in full**, including the legacy DataTables UI

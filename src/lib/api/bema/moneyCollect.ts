@@ -53,5 +53,12 @@ export type CollectMoneyInput = {
 };
 
 export function collectMoney(input: CollectMoneyInput) {
-  return apiPost<{ ok: true }>('/api/bema/parcels/money-collect/collect', input);
+  return apiPost<{ ok: true }>('/api/bema/parcels/money-collect/collect', input).then((result) => {
+    if (typeof window !== 'undefined') window.dispatchEvent(new Event('bema:money-collected'));
+    return result;
+  });
+}
+
+export function getTodayCollectedTotal() {
+  return apiGet<{ total: number }>('/api/bema/parcels/money-collect/today');
 }
