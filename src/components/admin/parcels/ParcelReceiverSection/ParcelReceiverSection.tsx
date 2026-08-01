@@ -241,6 +241,8 @@ export function ParcelReceiverSection({
           />
         </Field>
 
+        {afterFields}
+
         <Field label="Delivery Office:" width="lg">
           <Select
             instanceId="parcel-office"
@@ -254,8 +256,6 @@ export function ParcelReceiverSection({
             onChange={(value) => set('officeId', value)}
           />
         </Field>
-
-        {afterFields}
       </div>
     </fieldset>
   );

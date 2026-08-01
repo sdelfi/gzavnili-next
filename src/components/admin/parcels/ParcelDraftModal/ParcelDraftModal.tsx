@@ -128,12 +128,12 @@ export function ParcelDraftModal({
                   onChange={(value) => set('trackingReceivedBy', value)}
                 />
               </Field>
+              <Field label=" ">
+                <Checkbox label="Notify" checked={working.notify} onChange={(e) => set('notify', e.target.checked)} />
+              </Field>
             </>
           }
         />
-        <div className={s.notifyRow}>
-          <Checkbox label="Notify" checked={working.notify} onChange={(e) => set('notify', e.target.checked)} />
-        </div>
       </div>
     </Dialog>
   );
