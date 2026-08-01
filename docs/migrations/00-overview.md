@@ -2,7 +2,7 @@
 
 ## Purpose of this document set
 
-This `docs/` folder is a scoping and architecture package prepared for a planned migration of gzavnili.com from its current legacy stack (Adobe ColdFusion/Lucee + MSSQL) to a modern stack (Next.js + Postgres). It is written to be picked up by any AI coding agent (Codex, Gemini, Claude, etc.) or a human engineer, without prior context on this codebase.
+This `docs/` folder is a scoping and architecture package prepared for a planned migration of gzavnili.com from its current legacy stack (Adobe ColdFusion/Lucee + MSSQL) to a modern stack (Next.js + Postgres). It is written to be picked up by any coding agent or human engineer, without prior context on this codebase.
 
 **Status: planning/estimation only.** No migration work, schema changes, or code changes have been made yet. This is the basis for a client work-estimate and phased execution plan.
 
