@@ -303,6 +303,95 @@ against legacy group data directly.
 
 ---
 
+## Parcels Reports (`parcels-reports.cfm`) — 2026-08-01
+
+**Found:** every table on this screen (`views/parcels/vwParcelsReports.cfm`) is driven off
+`ParcelHistory`, a generic append-only edit log — one row per field change, carrying
+`EditStatus`/`OldValue`/`NewValue`/`ValueName`/`PayMethod`/`PayAmount`/`updaterID` (which admin
+made the edit). This schema deliberately has no equivalent of that table — a decision already
+made in an earlier phase of this project, not discovered here:
+`docs/migrations/04-postgres-schema-design.md` §1 replaces it with `parcel_status_history`
+(status transitions only: `status`/`changed_at`/`changed_by`/`reason`, no old/new diff, no
+payment fields) plus `invoices`/`invoices_items`/`payments` for money — explicitly described
+there as "a real audit trail — something the legacy system lacks outside the write-only
+`operations` table", i.e. a deliberate *improvement*, not a like-for-like carry-over. Neither
+`invoices`/`invoices_items`/`payments` nor `parcel_status_history` records *who* (which admin)
+performed an action.
+
+This affects three distinct things on the legacy page:
+
+1. **Total Sale / Payment Colected / Remain Payment / "Paid transactions" tab.** Legacy scopes
+   these to a date range via `ph.editdatetime` on `valuename = 'Paid'` (Total
+   Sale/Payment Colected) or any edit with a non-Debt `paymethod2` (Remain Payment) rows, and
+   reads `ph.payamount`/`ph.paymethod` (the value *at that specific edit*) alongside the
+   *current* `parcels.weight`/`debt` (read live, not historically — confirmed by reading the
+   view, not just the query: Total Sale sums `weight`/`debt` off the joined `parcels` row,
+   never off `ph`).
+2. **"Colected In USA"/"Colected In Georgia"** — grouped by `ph.updaterID`, cross-referenced
+   against two hardcoded username lists (`BemaGE`/`BemaUS`) or the updater's own billing
+   country, to attribute each `PayAmount1` to the admin who collected it.
+3. **"History" tab** — every `ParcelHistory` row in range whose `EditStatus` isn't
+   `Added`/`Paid` (i.e. mostly status-transition edits, with full `OldValue`/`NewValue`) plus
+   `ph.updaterID` again on the excluded-groups filter every one of these queries applies
+   (`updaterrGroup.groupid IS NULL`, excluding edits made by group-15 admins from every count).
+
+**Verdict — partial port, with the gap documented rather than silently patched over:**
+
+- **(1) ported via a mechanism substitution.** `src/lib/services/parcelReports.ts` scopes the
+  date range off `invoices.invoice_date` (the moment `applyPaidOperation` — "Set Status -
+  Paid" — actually runs; the closest available analog to a `valuename='Paid'` `ParcelHistory`
+  row's `editdatetime`) joined to `invoices_items` for the per-parcel paid amount, and reads
+  `parcels.pay_method1`/`pay_amount1`/`pay_method2`/`pay_amount2`/`debt`/`weight` live off the
+  current parcel row — same as legacy's own live reads for Total Sale/Remain Payment. This can
+  drift from the true value at the moment of payment if `payMethod1` is edited again
+  afterward, which legacy's history-row approach wouldn't have — a real, accepted limitation of
+  the substitution, not an attempt to hide it.
+  - **Also found while doing this:** `vwParcelsReports.cfm`'s Payment Colected block loops
+    `TotalSalesParcels` with `<cfloop query group="paymethod">` over a query that has **no
+    `ORDER BY`** (commented out entirely) — a `group` loop only groups correctly over rows
+    already sorted by that field, and both the running total (`PaymentColectedTotal
+    += payamount`) and the inner (bare, single-pass) `<cfloop>` accumulation only fire once per
+    *contiguous run* of a value, not once per matching row. On unsorted data this means the
+    on-screen totals silently undercount whenever the same `paymethod` appears in
+    non-adjacent rows — a real bug, but one whose *exact* wrong number depends on whatever
+    physical row order the legacy MSSQL query happened to return, which has no meaningful
+    equivalent to reproduce on this stack (same reasoning as the "Received By: Any" entry
+    above — porting the accident, not the observable behavior). Implemented as a correct full
+    sum over every qualifying row instead; flagged rather than silently "fixed" without a note.
+  - Total Sale's `cfloop group="PARCELID"` has the same unsorted-`group` shape and could
+    likewise double-count a parcel paid twice inside the window across non-adjacent rows;
+    ported as a straightforward dedupe-by-`parcelId` instead (`getParcelsReport`'s
+    `seenParcelIds`), for the same reason.
+  - Legacy's Unknown/Linoli branches (`userid eq "58133650-..."` / `"581ACE56-..."`, two
+    hardcoded legacy MSSQL customer GUIDs) are **unreachable, nothing to port** — no legacy
+    customer data has been imported yet (ETL not started), so those specific ids can't exist
+    in this Postgres schema (fresh `gen_random_uuid()`s). Both rows are still rendered in the
+    Total Sale/Remain Payment tables (always 0), matching legacy's layout.
+- **(2) and the "Received by" column in the "Paid transactions" tab (which legacy fills with
+  the *processing admin's* name, not the parcel's receiver) — open, needs a decision.**
+  Neither `invoices`/`invoices_items`/`payments` records which admin performed the action, and
+  nothing else in the current session/request flow threads that identity into
+  `applyPaidOperation` (`src/lib/services/parcelOperations.ts`) today either. Reconstructing
+  this would mean adding a `processedBy`/similar column to `Payment` (or `Invoice`) and
+  wiring the acting bema session into every write path that creates one — a schema and
+  call-site change bigger than this report screen, and one with its own tradeoffs (e.g.
+  whether it backfills for historical rows at all). Not implemented here; the "Colected In
+  USA"/"Colected In Georgia" tables are omitted entirely (not rendered) rather than shown
+  empty/wrong, and the "Received by" column renders blank.
+- **(3) partially ported via a mechanism substitution.** The History tab reads
+  `parcel_status_history` for the date range (`ParcelsReportsPage`'s History tab) — Date and
+  Status are real; Old/New/ValueName/PayMethod/PayAmount are not reconstructable (no diff, no
+  payment fields on that table) and render blank/placeholder (`ValueName` always shows the
+  literal `"Status"`, matching what the transition actually represents). The group-15-admin
+  exclusion from item (1)/(3) above isn't applied anywhere in this port, for the same reason
+  as (2) — there's no updater identity anywhere to filter on.
+
+`docs/findings.md`'s usual three-way verdict doesn't fit this entry cleanly since different
+parts of the same page landed in different buckets — recorded that way explicitly above
+instead of forcing one verdict for the whole page.
+
+---
+
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not
 being a real FK, `isGeCitizen` being inferred rather than stored — are recorded in their
 respective decision docs and PROGRESS.md instead; not backfilled here.)*

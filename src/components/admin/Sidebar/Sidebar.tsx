@@ -49,7 +49,11 @@ const NAV_GROUPS: NavGroup[] = [
         href: routes.bema.parcels(),
         isActive: (pathname, search) => pathname === '/bema/parcels' && search.get('deliveryRequest') !== '1',
       },
-      { label: 'Parcels Reports' },
+      {
+        label: 'Parcels Reports',
+        href: routes.bema.parcelsReports(),
+        isActive: (pathname) => pathname.startsWith('/bema/parcels/reports'),
+      },
       { label: 'Parcels Reports 2' },
       {
         // Legacy's `parcels.cfm?delreq=1` — its own nav entry there too, but the same screen

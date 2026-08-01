@@ -974,6 +974,28 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       to legacy's `groupId 10`). `CustomerPicker` promoted from `admin/parcels/` to
       `components/ui/` (already had 3 callers; this is the 4th) with an added optional
       "Clear" affordance for filter-bar use.
+- [x] **Parcels Reports** (`bema/parcels/parcels-reports.cfm` + `views/parcels/
+      vwParcelsReports.cfm`) ported: date-range filter, Total Sale (Express/Regular/Cargo/
+      Linoli/Unknown/Total), Payment Colected, Remain Payment, and a "Paid transactions" /
+      "History" tab pair (`routes.bema.parcelsReports()`, `ParcelsReportsPage`,
+      `GET /api/bema/parcels/reports`, `src/lib/services/parcelReports.ts`), `BemaStandard`/
+      `BemaAdministrator`-gated (same mapping as the Customers list, for legacy's
+      `WEBSITE_ADMINISTRATOR,ADMINISTRATOR`). Legacy drives this whole screen off
+      `ParcelHistory`, a generic per-edit audit log this schema doesn't have (an already-made
+      architecture decision, not discovered here — see `docs/migrations/
+      04-postgres-schema-design.md` §1); ported via a mechanism substitution
+      (`invoices`/`invoices_items` + parcels' own live `pay_method1`/`pay_amount1`/etc. fields
+      for the money tables, `parcel_status_history` for a best-effort History tab) documented
+      in full in `docs/findings.md`'s "Parcels Reports" entry, including two legacy bugs found
+      along the way (`Payment Colected`'s unordered `cfloop group` silently undercounts;
+      Total Sale's `cfloop group="PARCELID"` can double-count) that weren't reproducible in a
+      meaningful way and were implemented correctly instead, flagged rather than silently
+      fixed. **Not ported, open — needs a decision:** "Colected In USA"/"Colected In Georgia"
+      (grouped by which admin processed each payment) and the "Received by" column — nothing
+      in this schema records which admin performed a payment/edit at all; would need a new
+      `Payment`/`Invoice` column plus wiring the acting session through
+      `applyPaidOperation` and friends. "Parcels Reports 2" (`parcels-reports-2-v2.cfm`) is a
+      separate legacy screen/sidebar entry, not part of this pass.
 
 ## Not started
 

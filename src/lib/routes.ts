@@ -58,6 +58,13 @@ export const routes = {
     // `parcelEdit()`'s single-parcel form.
     parcelAdd: () => '/bema/parcels/add',
     deliveryRequests: () => '/bema/parcels?deliveryRequest=1',
+    // Legacy `bema/parcels/parcels-reports.cfm` — date-range Total Sale/Payment
+    // Collected/Remain Payment report, distinct from the separate "Parcels Reports 2"
+    // screen (`parcels-reports-2-v2.cfm`, not yet ported).
+    parcelsReports: (params?: { dateStart?: string; dateEnd?: string }) =>
+      params?.dateStart && params?.dateEnd
+        ? `/bema/parcels/reports?dateStart=${params.dateStart}&dateEnd=${params.dateEnd}`
+        : '/bema/parcels/reports',
     // "Pricing Rules Administration" — legacy `bema/pricing_global_rules.cfm`, the
     // cross-customer counterpart to the per-customer Pricing Rules section on the customer
     // edit form (which has no route of its own — it's inline on `userEdit()`).
