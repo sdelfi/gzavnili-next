@@ -1232,12 +1232,45 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
       against a real Postgres: status+notifyViaSms-gated candidate resolution, dedup across
       customer/receiver, the phoneType bug, the queue preview table, and Empty Queue all
       confirmed correct.
+- [x] **Phase 6 (cron) started** — foundation + first three jobs ported, see
+      docs/decisions/0026-cron-phase6.md. Infra: `docker-compose.yml`'s `redis` service,
+      `bullmq`/`ioredis`, `JobRun` (`job_runs`, observability per
+      docs/decisions/0004-scheduled-jobs.md) and a minimal `Operation` (`operations`) model,
+      `src/lib/jobs/runJob.ts`, `src/lib/queue/connection.ts`. Simple sweeps
+      (`scripts/cron/onhold.ts` ← `cron/onhold.cfm`, `scripts/cron/change-parcel-status.ts` ←
+      `cron/changeParcelStatus.cfm`) meant for a VDS crontab entry. The `sms_queue` drain
+      (`cron/processSMSQueue.cfm` — the job that actually sends what "Send Bulk SMS" enqueues)
+      as a BullMQ repeatable job (`src/lib/services/smsQueueDrain.ts` +
+      `src/lib/queue/smsQueueWorker.ts`, `scripts/worker.ts` process entrypoint), since
+      legacy's own 180-second interval put it in 0004's "needs retries/backpressure" category
+      rather than a simple sweep. Reproduces the GE-rows-grouped-by-text/US-rows-sent-
+      individually split and the "every row gets a Messages insert regardless of send
+      outcome" behavior. Two acknowledged `Parcel.status`-reuse divergences and two fully
+      deferred jobs (`updatePcode.cfm` — missing schema; `cleanTmpParcels.cfm` — nothing to
+      clean, its producer was never built) in docs/findings.md. Verified end-to-end against
+      real Postgres + a native `redis-server`: `onhold.ts`'s on-hold rule and Delivery
+      Request paid-flag propagation, `change-parcel-status.ts`'s Received→Shipped transition
+      plus `Operation` row, and the full BullMQ pipeline (worker process, repeatable job
+      registered in Redis, a manually-triggered run correctly grouping/sending/clearing a
+      seeded queue) all confirmed correct.
 
 ## Not started
 
-- Phase 0 (audit), Phase 3 (authorized zone), Phase 5 (mobile API), Phase 6 (cron), Phase 7
-  (cutover) — see the rollout plan. Phase 1 is in progress (schema/triggers done, ETL/
-  backfill not started). Phase 4 (bema admin) is in progress — see above.
+- Phase 0 (audit), Phase 3 (authorized zone), Phase 5 (mobile API), Phase 7 (cutover) — see
+  the rollout plan. Phase 1 is in progress (schema/triggers done, ETL/backfill not started).
+  Phase 4 (bema admin) is in progress — see above. Phase 6 (cron) is in progress — see above;
+  most of it remains (see the cron-specific bullets below).
+- **The automated customer-notification cron cluster** (`cron/sendMessages.cfm` — 609 lines,
+  event-driven, per-type message templates, `operations` table read-side tracking —
+  `sendCustomerSMS.cfm`/`sendOnholdSMS.cfm`/`sendLinoli.cfm`, narrower and possibly-superseded
+  predecessors): not started. A materially larger, separate piece of work from the rest of
+  Phase 6 — see docs/decisions/0026-cron-phase6.md.
+- **`updatePcode.cfm`**: needs schema this migration doesn't have yet (`pcode2`,
+  `payments.transactionid`, `invoices.TransactionId`) — a modeling decision, not ported. See
+  docs/findings.md.
+- **`cleanTmpParcels.cfm`**: nothing to clean until/unless `bema/ajax/tmpTracking.cfm`'s
+  concurrent-tracking-number-entry warning (never built) exists. See docs/findings.md.
+- **`getCoupons.cfm`/`getStores.cfm`**: coupons module, already out of scope.
 - **Export Airway manifest body**: `airway.cfm`'s per-receiver data rows and NO. OF PIECES/
   TOTAL ACTUAL WEIGHT/TOTAL Value totals (queried live at export time) are not ported — the
   export still always emits an empty data-row table. See docs/findings.md.

@@ -11,15 +11,12 @@ services:
     volumes:
       - ./docker/data/postgres:/var/lib/postgresql/data
 
-  # Uncomment when the app needs caching/queues/sessions.
-  # redis:
-  #   image: redis:7-alpine
-  #   restart: unless-stopped
-  #   ports:
-  #     - "6379:6379"
-  #   volumes:
-  #     - redis_data:/data
-
-# volumes:
-# postgres_data:
-# redis_data:
+  # BullMQ (docs/decisions/0004-scheduled-jobs.md) — job queue for the Phase 6 cron
+  # migration's "needs retries/backpressure" jobs (SMS sends). Plain redis:7, no modules.
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - ./docker/data/redis:/data

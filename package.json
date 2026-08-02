@@ -20,13 +20,18 @@
     "db:seed": "bun scripts/seed-admin.ts && bun scripts/seed-message-types.ts && bun scripts/seed-delivery-offices.ts && bun scripts/seed-parcel-shippers.ts",
     "import:legacy-pages": "bun scripts/guard-local-db.mjs && bun scripts/import-legacy-pages.ts",
     "test": "bun test",
-    "benchmark:parcels": "bun scripts/benchmark-parcels.ts"
+    "benchmark:parcels": "bun scripts/benchmark-parcels.ts",
+    "worker": "bun scripts/worker.ts",
+    "cron:onhold": "bun scripts/cron/onhold.ts",
+    "cron:change-parcel-status": "bun scripts/cron/change-parcel-status.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
+    "bullmq": "^6.0.5",
     "classnames": "^2.5.1",
     "hash-wasm": "^4.12.0",
+    "ioredis": "^6.0.0",
     "jose": "^6.2.5",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.8",

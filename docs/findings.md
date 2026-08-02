@@ -1118,6 +1118,58 @@ UI parity without inventing a real filter legacy never had.
 
 ---
 
+---
+
+## Phase 6 cron foundation (`onhold.cfm`, `changeParcelStatus.cfm`, `processSMSQueue.cfm`) — 2026-08-02
+
+See docs/decisions/0026-cron-phase6.md for the full picture; the individual findings below.
+
+### `changeParcelStatus.cfm`'s own status CASE diverges from the trigger's `Parcel.status` by two branches
+
+**Found:** the job's inline `CASE` (notOnHold → OnHold → delivered → outdelivery → office →
+Custom → Delay → Shipped → Received → Awaiting → New) has no `TrackingSendRegion` branch and
+no `TrackingProcessingCustom` branch at all — narrower than `fn_recompute_parcel_status`'s
+order (which checks `region` between `out_delivery`/`office`, and `processing_custom` between
+`office`/`custom`). For the specific query this job runs (`WHERE s.status = 'Received'`), a
+parcel with `TrackingSendRegion` set but no later milestone would fall through further down
+this CASE than it would in the trigger; a parcel with `TrackingProcessingCustom` set (and no
+`TrackingCustom`) would read as `'Custom'` here versus `'processing_custom'` in the trigger.
+Neither divergence produces `'Received'` under the trigger's own rule either — the sets of
+parcels this job would fire the Shipped-transition for are the same in the exercised range of
+inputs, just derived by a not-quite-identical rule.
+
+**Ported as-is**: `scripts/cron/change-parcel-status.ts` reuses `Parcel.status === 'Received'`
+directly — the same call already made for `getParcel.cfm` (`parcelOnlineLookup.ts`) and the
+bulk SMS composer's status filter (`smsBulkQueue.ts`) — rather than adding a fifth
+slightly-different inline status computation to the codebase.
+
+### `updatePcode.cfm` depends on schema this migration doesn't have yet — deferred, not ported
+
+**Found:** the pcode-generation statements read `parcels.pcode2` (a `CHECKSUM()`-derived
+staging column, SQL-Server-specific, with a literal `'2147483647'` sentinel for its integer
+overflow case) that this schema never modeled — only the final `pcode` column exists. The
+payment-method backfill statements read `payments.transactionid`/`invoices.TransactionId`,
+neither of which exists on this schema's `Payment`/`Invoice` models.
+
+**Open — needs a decision**: not ported this pass. Reproducing it needs either adding
+`pcode2`/`transactionId` to the schema (a real modeling decision, not a mechanical port) or
+confirming the whole reconciliation is dead weight now that payments flow through this app's
+own `Payment`/`Invoice` models instead of the three-gateway (PayPal/Credit Card GE/
+Authorize.net) transaction-id matching this job does. See docs/decisions/0026-cron-phase6.md.
+
+### `cleanTmpParcels.cfm` has nothing to clean — its producing feature was never built
+
+**Found:** `cleanTmpParcels.cfm` deletes rows from `parcels_tmp` older than 24h. The only
+producer of that table is `bema/ajax/tmpTracking.cfm` — a same-tracking-number-being-entered-
+by-another-admin collision warning for the batch "Add Parcel" flow. `tmpTracking.cfm` was
+never ported (not mentioned in any existing decision doc), so nothing in this app ever writes
+to a `parcels_tmp`-equivalent table; the cleanup job would be a permanent no-op.
+
+**Not reachable, nothing to port** — until/unless the collision-detection feature itself gets
+built as its own piece of work. See docs/decisions/0026-cron-phase6.md.
+
+---
+
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not
 being a real FK, `isGeCitizen` being inferred rather than stored — are recorded in their
 respective decision docs and PROGRESS.md instead; not backfilled here.)*

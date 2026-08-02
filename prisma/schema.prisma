@@ -579,6 +579,26 @@ model ParcelStatusHistory {
   @@map("parcel_status_history")
 }
 
+// Legacy `operations` table — append-only, written by `cron/changeParcelStatus.cfm`'s
+// Received→Shipped auto-transition and, in legacy, read/written extensively by the
+// automated customer-notification cron cluster (`sendMessages.cfm` et al) to track which
+// notifications have already gone out per operation (`bSentNotification`/`BSENTSMS`). Only
+// the write side that cron job needs is modeled here — see docs/decisions/0026-cron-phase6.md
+// for why the notification-engine cluster (and thus the rest of this table's real shape) is
+// its own separate, not-yet-scoped piece of work. Legacy's own `OperationID` is a plain int
+// identity column, kept as such here rather than the UUID convention most other models in
+// this schema use, matching the same "legacy int PK stays an int PK" precedent as `Message`.
+model Operation {
+  id            Int      @id @default(autoincrement()) @map("operation_id")
+  parcelId      String   @map("parcel_id") @db.Uuid
+  parcel        Parcel   @relation(fields: [parcelId], references: [id])
+  operation     String
+  operationTime DateTime @map("operation_time") @db.Timestamptz(6)
+
+  @@index([parcelId])
+  @@map("operations")
+}
+
 // The legacy `ParcelHistory` table, ported (docs/decisions/0018-parcel-edit-history.md).
 //
 // An earlier phase of this migration dropped it on the mistaken premise that legacy had no
@@ -791,6 +811,7 @@ model Parcel {
   statusHistory ParcelStatusHistory[]
   editHistory   ParcelHistory[]
   messages      Message[]
+  operations    Operation[]
 
   @@index([tripDate, id], map: "parcels_trip_date_id_idx")
   @@index([status])
@@ -840,4 +861,29 @@ model Page {
 
   @@unique([locale, slug])
   @@map("pages")
+}
+
+// Observability for the scheduled jobs replacing legacy `http/cron/*.cfm` (Phase 6,
+// docs/decisions/0004-scheduled-jobs.md's "log every run somewhere queryable... the legacy
+// cron jobs currently fail silently in places; don't repeat that"). One row per job
+// invocation, written by `src/lib/jobs/runJob.ts` — see docs/decisions/0026-cron-phase6.md.
+enum JobRunStatus {
+  Running @map("running")
+  Success @map("success")
+  Failed  @map("failed")
+
+  @@map("job_run_status")
+}
+
+model JobRun {
+  id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  jobName    String       @map("job_name")
+  status     JobRunStatus @default(Running)
+  startedAt  DateTime     @default(now()) @map("started_at") @db.Timestamptz(6)
+  finishedAt DateTime?    @map("finished_at") @db.Timestamptz(6)
+  // Freeform result summary (e.g. "cleared 12 rows") or, on failure, the error message.
+  detail     String?
+
+  @@index([jobName, startedAt])
+  @@map("job_runs")
 }
