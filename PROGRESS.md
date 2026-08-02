@@ -1190,6 +1190,24 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
       its own). Verified end-to-end against a real Postgres: status change, office set/clear,
       buser+location combined write, and "Paid" with no payment method (invoices correctly,
       leaves payMethod1/payAmount1 untouched) all confirmed correct.
+- [x] **Check on hold** (`bema/parcels/parcels-check-onhold.cfm`) ported — see
+      docs/decisions/0028-parcels-check-onhold.md. A scan-driven single-parcel resolver: shows
+      the found parcel's service and, based on store/value/contents, either a "Still on hold"
+      button (resets `bSentOnHold` so the on-hold SMS reminder fires again) or a "Remove from
+      on hold" button (clears both hold flags, same write as the parcels-list action). The
+      resolve decision is re-derived server-side from the database, not trusted from which
+      button the client submitted — `resolveOnholdCheck()` in
+      `src/lib/services/parcelCheckOnhold.ts`. `POST /api/bema/parcels/:id/check-onhold`;
+      `ParcelCheckOnholdPage` at `/bema/parcels/check-onhold`, wired to the pre-existing
+      Sidebar placeholder. `OnlineParcelLookup` gained a `store` field. Found and reproduced a
+      real client-vs-server threshold mismatch (`VALUE < 1` client hint vs. `VALUE eq 0`
+      server check) and a redirect target that was already a dead, de-linked legacy page —
+      redirected to the live ported equivalent instead, which required adding `?trackingnum=`
+      auto-lookup support to `ParcelOnlineAddPage` (both in docs/findings.md). Verified
+      end-to-end against a real Postgres + dev server: still-on-hold (missing fields, resets
+      `bSentOnHold`), remove-from-hold (all fields present, clears both flags), tracking-number-
+      not-found, and the no-weight redirect (confirmed the online-add page's auto-lookup fires)
+      all confirmed correct.
 - [x] **Send SMS** (`bema/messages/sms_add.cfm`) ported — see
       docs/decisions/0024-bema-send-sms.md. Single-SMS composer, sends synchronously inline
       (doesn't touch `sms_queue`/the bulk composers, still out of scope). `AdminRole` gained

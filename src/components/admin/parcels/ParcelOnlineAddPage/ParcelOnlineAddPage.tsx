@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { PageHeading } from '@/components/ui/admin/PageHeading';
 import { Field } from '@/components/ui/admin/Field';
 import { Input } from '@/components/ui/admin/Input';
@@ -121,6 +122,7 @@ const emptyReceiver: ReceiverFieldsState = {
 
 export function ParcelOnlineAddPage() {
   const { user } = useBemaAuth();
+  const searchParams = useSearchParams();
 
   const [tripInfo, setTripInfo] = useState<TripInfoResponse | null>(null);
   useEffect(() => {
@@ -142,7 +144,7 @@ export function ParcelOnlineAddPage() {
     localStorage.setItem(NOT_CHECK_STORAGE_KEY, checked ? 'true' : 'false');
   }
 
-  const [trackingNum, setTrackingNum] = useState('');
+  const [trackingNum, setTrackingNum] = useState(() => searchParams.get('trackingnum') ?? '');
   const [trackingNum2, setTrackingNum2] = useState('');
   const [mode, setMode] = useState<Mode>('idle');
   const [blockedStatus, setBlockedStatus] = useState('');
@@ -323,6 +325,15 @@ export function ParcelOnlineAddPage() {
       }
     }
   }
+
+  // Legacy's own JS reads `?trackingnum=` off the URL on load and simulates the Enter
+  // keypress immediately — the entry point "Check on hold" (and others) redirect to when a
+  // scanned parcel has no weight recorded yet. Only the initial (url-supplied) value
+  // auto-runs, same idiom as "Send SMS"'s own url-prefilled lookup.
+  useEffect(() => {
+    if (trackingNum.trim()) Promise.resolve().then(() => handleTrackingSubmit());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function chooseReceiver(id: string) {
     setReceiverId(id);

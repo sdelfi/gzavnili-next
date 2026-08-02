@@ -64,6 +64,10 @@ export const routes = {
     // Legacy `bema/parcels/parcels-change-status.cfm` — a tracking-number-scan-driven bulk
     // status/office/location updater. See docs/decisions/0023-parcels-change-status.md.
     parcelChangeStatus: () => '/bema/parcels/change-status',
+    // Legacy `bema/parcels/parcels-check-onhold.cfm` — a tracking-number-scan-driven screen
+    // for resolving on-hold parcels one at a time. See
+    // docs/decisions/0028-parcels-check-onhold.md.
+    parcelCheckOnhold: () => '/bema/parcels/check-onhold',
     deliveryRequests: () => '/bema/parcels?deliveryRequest=1',
     // Legacy `bema/parcels/parcels-reports.cfm` — date-range Total Sale/Payment
     // Collected/Remain Payment report, distinct from the separate "Parcels Reports 2"

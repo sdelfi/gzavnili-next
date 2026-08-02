@@ -1295,6 +1295,38 @@ export.
 firstName/lastName (falling back to the Georgian name fields already on `Address`) and the
 Linoli account's real username, same as the existing CSV export already does.
 
+## Check on hold (`bema/parcels/parcels-check-onhold.cfm`) — 2026-08-02
+
+### Client-side button hint (`VALUE < 1`) and server-side resolve check (`VALUE eq 0`) disagree
+
+**Found:** the page's own JS (`parcels-check-onhold.js`) decides which button to show using
+`data.VALUE < 1`, but the POST handler's server-side check is `parcel.getValue() eq 0` — a
+different threshold. A parcel with `value = 0.5` shows "Still on hold" client-side, but the
+server check (`eq 0`) would treat it as "remove from on hold" if that decision were made
+independently of which button the client actually submitted. Legacy's own form submit only
+ever carries the `parcelid`, and the server re-derives the decision from the database itself
+(not from which button was clicked), so this never produces a wrong write in the real flow —
+but the two thresholds are genuinely different, not a typo that happens to cancel out.
+
+**Ported as-is**: `ParcelCheckOnholdPage.tsx`'s client hint (`parseFloat(parcel.value) < 1`)
+and `resolveOnholdCheck()`'s server decision (`Number(parcel.value) === 0`) in
+`src/lib/services/parcelCheckOnhold.ts` are kept as two separate checks.
+
+### The "no weight" redirect target is itself a stale, de-linked legacy page
+
+**Found:** when a scanned parcel has no `weight`, `parcels-check-onhold.js` redirects to
+`/bema/parcels/parcels-online-add.cfm?trackingnum=...` — the pre-upgrade "Add Online Parcel"
+variant. `views/layouts/lytBema.cfm`'s own nav has that link commented out in favor of
+`parcels-online-add-2.cfm` (the version this repo already ported as
+`routes.bema.parcelOnlineAdd()`, docs/decisions/0022-parcels-online-add.md). So the redirect
+target was already effectively dead in production before this port — not a deliberate
+distinction between two live screens.
+
+**Ported as the live equivalent, not the literal URL**: the redirect targets
+`routes.bema.parcelOnlineAdd()` with the same `?trackingnum=` query param. See
+docs/decisions/0028-parcels-check-onhold.md for the `?trackingnum=` auto-lookup support this
+required adding to `ParcelOnlineAddPage`.
+
 ---
 
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not

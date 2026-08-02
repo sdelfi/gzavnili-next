@@ -56,6 +56,7 @@ export type OnlineParcelLookup = {
   parcelName: string | null;
   value: string | null;
   contents: string | null;
+  store: string | null;
   length: string | null;
   width: string | null;
   high: string | null;
@@ -97,6 +98,7 @@ function toLookupResult(parcel: ParcelWithIncludes): OnlineParcelLookup {
     parcelName: parcel.parcelName,
     value: parcel.value?.toString() ?? null,
     contents: parcel.contents,
+    store: parcel.store,
     length: parcel.length?.toString() ?? null,
     width: parcel.width?.toString() ?? null,
     high: parcel.high?.toString() ?? null,

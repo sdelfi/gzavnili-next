@@ -246,3 +246,12 @@ export function updateOnlineParcel(id: string, payload: UpdateOnlineParcelPayloa
 export function changeParcelStatus(id: string, payload: ChangeParcelStatusPayload) {
   return apiPatch<{ ok: true }>(`/api/bema/parcels/${id}/change-status`, payload);
 }
+
+// --- "Check on hold" ----------------------------------------------------------------------
+
+/** Resolves one on-hold parcel: server re-derives still-on-hold vs. removed-from-hold from
+ *  the parcel's own store/value/contents, same as legacy re-checks rather than trusting the
+ *  client. Returns the flash message to show. */
+export function resolveParcelOnholdCheck(id: string) {
+  return apiPost<{ message: string }>(`/api/bema/parcels/${id}/check-onhold`);
+}
