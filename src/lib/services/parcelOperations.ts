@@ -10,16 +10,23 @@ import { recordParcelHistory, type ActingUser } from '@/lib/services/parcelHisto
 //
 // Two pieces of the legacy implementation are handled differently here:
 //
-// * The write-only `operations` table is not carried over — `parcels` has an `AFTER INSERT OR
-//   UPDATE` trigger writing `parcel_status_history` (see the initial migration), so the
-//   status timeline is maintained whether a change came from this screen, an API client or a
-//   psql session, where legacy only recorded what went through this one function.
+// * `parcel_status_history` (trigger-maintained, see the initial migration) is written
+//   whether a change came from this screen, an API client, or a psql session, where legacy
+//   only recorded what went through this one function — a strict improvement, not a
+//   divergence to reproduce.
 //   **`ParcelHistory` is a different table and *is* ported** — it carries the per-event
 //   payment detail and acting-admin identity a trigger cannot know, and the bema Parcels
 //   Reports screen is built entirely on it. See docs/decisions/0018-parcel-edit-history.md.
 // * The 1000-id chunking loop. It existed to keep a generated `WHERE (1=2) OR ParcelId=… OR
 //   …` clause under SQL Server's expression limit; a parameterised `IN` list has no such
 //   problem.
+//
+// **`operations` (the `Operation` model) is now written too** — a correction from this file's
+// original pass, which treated it as write-only with no reader and skipped it. It has a real
+// reader: `cron/sendMessages.cfm`'s port (docs/decisions/0027-cron-notifications.md) needs a
+// row per status-changing operation the same way legacy's `doOperation()` unconditionally
+// wrote one (for every branch except `delete`/`change_code`/`awb`, which legacy's own
+// `doOperation()` also never logs there).
 
 /** Milestone column each "Set Status - …" operation stamps. */
 const STATUS_COLUMN: Partial<Record<ParcelOperation, keyof Prisma.ParcelUpdateManyMutationInput>> = {
@@ -95,26 +102,36 @@ export async function runParcelOperation(
     skipped.push(...held.map((p) => ({ id: p.id, reason: 'Held by customs — status not changed.' })));
   }
 
-  const result = await db.parcel.updateMany({
-    where: { id: { in: targetIds } },
-    data: { [column]: operationDate },
+  const result = await db.$transaction(async (tx) => {
+    const updated = await tx.parcel.updateMany({
+      where: { id: { in: targetIds } },
+      data: { [column]: operationDate },
+    });
+
+    // Delivery Request mode also records which admin took the parcels out.
+    if (input.buser) {
+      await tx.parcel.updateMany({ where: { id: { in: targetIds } }, data: { buser: input.buser } });
+    }
+
+    if (targetIds.length) {
+      await tx.operation.createMany({
+        data: targetIds.map((parcelId) => ({ parcelId, operation, operationTime: operationDate })),
+      });
+    }
+
+    await recordParcelHistory(
+      tx,
+      acting,
+      targetIds.map((parcelId) => ({
+        parcelId,
+        editStatus: 'Operation changed',
+        valueName: '',
+        newValue: operation,
+      })),
+    );
+
+    return updated;
   });
-
-  // Delivery Request mode also records which admin took the parcels out.
-  if (input.buser) {
-    await db.parcel.updateMany({ where: { id: { in: targetIds } }, data: { buser: input.buser } });
-  }
-
-  await recordParcelHistory(
-    db,
-    acting,
-    targetIds.map((parcelId) => ({
-      parcelId,
-      editStatus: 'Operation changed',
-      valueName: '',
-      newValue: operation,
-    })),
-  );
 
   return { operation, affected: result.count, skipped };
 }
@@ -206,6 +223,7 @@ async function applyPaidOperation(
         where: { id: parcel.id },
         data: { bPaidDelivery: true, ...(payMethod1 !== '' ? { payMethod1, payAmount1: amount } : {}) },
       });
+      await tx.operation.create({ data: { parcelId: parcel.id, operation: 'paid', operationTime: now } });
       // The row every money table on the Parcels Reports screen is built from: `valueName =
       // 'Paid'`, carrying the method and amount *as taken now* — legacy's
       // `doOperation('paid')` writes exactly this, with the parcel's status as `editStatus`.
@@ -257,6 +275,7 @@ async function applyUnpaidOperation(parcelIds: string[], acting: ActingUser | nu
         where: { id: parcelId },
         data: { bPaidDelivery: false, payMethod1: null, payAmount1: null, payMethod2: null, payAmount2: null },
       });
+      await tx.operation.create({ data: { parcelId, operation: 'unpaid', operationTime: new Date() } });
       // Legacy logs the reversal as `editStatus='Unpaid'`, `valueName='amount'`, with the
       // parcel's debt as the new value — note it records no payMethod/payAmount, so the
       // reports' `valueName='Paid'` tables do not net it off. Ported as-is.

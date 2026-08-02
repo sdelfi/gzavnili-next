@@ -10,6 +10,7 @@ import {
   toParcelListItem,
 } from '@/lib/services/parcelQuery';
 import type { ParcelListItem } from '@/lib/parcels/types';
+import { blankAsSpace, debtCell, formulaCell, paidCell, plainCell } from '@/lib/services/csvCellFormat';
 
 // "Export Parcels" on the bema parcels list — the same filtered set as the screen, as CSV.
 // Column list and per-column fallbacks are ported from `bema/parcels/parcels.cfm`'s
@@ -83,21 +84,7 @@ const COLUMNS = [
 ];
 
 const money = (value: number | null | undefined) => (value == null ? '0.00' : value.toFixed(2));
-/** DEBT/DEBT GEL's own zero formatting — see the file header. */
-const debtCell = (value: number) => (value === 0 ? '0.' : value.toFixed(2));
-/** PAID/PAID GEL's own zero formatting — see the file header. */
-const paidCell = (value: number) => (value === 0 ? '0' : value.toFixed(2));
 const day = (iso: string | null) => (iso ? iso.slice(0, 10) : '');
-
-/** Plain text columns: the delimiter is stripped out, not escaped — legacy never quotes a
- *  field, so a comma inside one would otherwise misalign every column after it. */
-const plainCell = (value: unknown) => String(value ?? '').replace(/,/g, '');
-/** The five receiver/customer columns that render a single space rather than a blank cell
- *  when empty. */
-const blankAsSpace = (value: string | null | undefined) => (value && value.trim() ? plainCell(value) : ' ');
-/** The seven Excel-formula-wrapped columns — see the file header. Not comma-stripped: these
- *  are codes/names legacy trusted not to contain one. */
-const formulaCell = (value: string | null | undefined) => `="${value && value.trim() ? value : ' '}"`;
 
 /** Legacy display fallbacks, in order: the receiver's Georgian name stands in for a missing
  *  Latin one, and the "additional" free-text name stands in for a missing receiver record. */

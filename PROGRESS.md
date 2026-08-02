@@ -1253,6 +1253,33 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
       plus `Operation` row, and the full BullMQ pipeline (worker process, repeatable job
       registered in Redis, a manually-triggered run correctly grouping/sending/clearing a
       seeded queue) all confirmed correct.
+- [x] **Automated customer-notification cron cluster** ported — see
+      docs/decisions/0027-cron-notifications.md. `cron/sendMessages.cfm` (the 609-line,
+      event-driven engine) as `src/lib/notifications/notificationEngine.ts`, a BullMQ
+      repeatable job (`src/lib/queue/notificationEngineWorker.ts`, every 600s, same "queue-
+      worthy" rationale as the SMS drain) registered in `scripts/worker.ts`. Per-run, it walks
+      the oldest unnotified `operations` row, supersedes to the latest still-unnotified
+      operation for that parcel, applies the same to sibling parcels in the sender+trip+group
+      batch, then independently gates a Mail leg (`Message` row, bilingual — `Message` gained
+      `subjectGe`/`bodyGe`, `MessageType` gained `labelGe`) and an SMS leg (GE-bound sends
+      batched and dedup-by-text-flushed once at the very end of the run; US-bound customer
+      sends go out immediately, inline) on two independent one-time flags on `Operation`.
+      `sendOnholdSMS.cfm`/`sendCustomerSMS.cfm`/`sendLinoli.cfm` — genuinely separate,
+      non-superseded jobs, not predecessors of the engine above — ported as `scripts/cron/
+      onhold-sms.ts`, `scripts/cron/customer-received-sms.ts` (a real "TOP 1 per run" sweep,
+      not a batch, per legacy's own unconditional `SELECT TOP 1`), and `scripts/cron/
+      linoli-report.ts` (not an SMS job at all — a daily CSV-attachment email report; extended
+      `sendEmail()` with `cc`/`bcc`/`attachments`, and extracted the "Export Parcels" CSV's
+      cell-formatting quirks into shared `src/lib/services/csvCellFormat.ts` since the Linoli
+      report reuses the exact same DEBT/PAID asymmetric-zero rule). `runParcelOperation()`
+      (docs/decisions/0023) was retroactively fixed to also write `Operation` rows — an
+      earlier deliberate "operations is write-only, skip it" decision there turned out to be
+      wrong once this engine's own read side existed. Several quirks (a real EN/GE `{firstname}`
+      substitution asymmetry, a case-sensitive vs. case-insensitive tracking-prefix check pair,
+      the GE-vs-US send-timing asymmetry, an unresolvable `sender_userid` GUID, unavailable
+      `gename`/"additional_*" DAO fields) all in docs/findings.md. Verified end-to-end against
+      real Postgres: a seeded operation correctly produced a bilingual Message row and a
+      queued receiver SMS with the right `notifyResultCode`.
 
 ## Not started
 
@@ -1260,11 +1287,6 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
   the rollout plan. Phase 1 is in progress (schema/triggers done, ETL/backfill not started).
   Phase 4 (bema admin) is in progress — see above. Phase 6 (cron) is in progress — see above;
   most of it remains (see the cron-specific bullets below).
-- **The automated customer-notification cron cluster** (`cron/sendMessages.cfm` — 609 lines,
-  event-driven, per-type message templates, `operations` table read-side tracking —
-  `sendCustomerSMS.cfm`/`sendOnholdSMS.cfm`/`sendLinoli.cfm`, narrower and possibly-superseded
-  predecessors): not started. A materially larger, separate piece of work from the rest of
-  Phase 6 — see docs/decisions/0026-cron-phase6.md.
 - **`updatePcode.cfm`**: needs schema this migration doesn't have yet (`pcode2`,
   `payments.transactionid`, `invoices.TransactionId`) — a modeling decision, not ported. See
   docs/findings.md.
@@ -1283,7 +1305,3 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
   "Send SMS by Trip Date" nav item): not built — see docs/decisions/0021-bema-messages.md. The
   "Send SMS by Trip Date"/"Send SMS Custom"/"Send message" Sidebar placeholders remain
   unwired.
-- **`cron/processSMSQueue.cfm`** (the `sms_queue`-draining scheduler that actually sends what
-  "Send Bulk SMS" enqueues — see docs/decisions/0025-bema-send-bulk-sms.md): not built. Phase
-  6 (cron migration, docs/decisions/0004-scheduled-jobs.md) hasn't started; rows queued via
-  `/bema/sms/bulk` today accumulate with nothing draining them until this exists.

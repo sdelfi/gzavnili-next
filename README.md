@@ -79,6 +79,35 @@ empty Reports 2 fixture. More detail and the baseline measurements are recorded 
   process. This is the single entrypoint a future GitHub webhook/CI job should call on the
   server; nothing about the deploy flow needs to grow beyond calling this one script.
 
+## Scheduled jobs
+
+See [`docs/decisions/0004-scheduled-jobs.md`](docs/decisions/0004-scheduled-jobs.md) for the
+full rationale and [`docs/decisions/0026-cron-phase6.md`](docs/decisions/0026-cron-phase6.md)/
+[`docs/decisions/0027-cron-notifications.md`](docs/decisions/0027-cron-notifications.md) for
+the ported jobs themselves. Two kinds, and **adding a new one needs a deployment step beyond
+just writing the code**:
+
+- **Simple sweeps** (`scripts/cron/*.ts`) — no queue, no retries, one process per run. Each
+  needs its own **VDS crontab entry** running `bun run scripts/cron/<name>.ts` on legacy's
+  original interval (see the file's own header comment for the source interval). Currently:
+  `onhold.ts`, `change-parcel-status.ts`, `onhold-sms.ts`, `customer-received-sms.ts`,
+  `linoli-report.ts`.
+- **Queue-worthy jobs** (outbound SMS/gateway calls, needing retries/backpressure) — BullMQ,
+  registered in **`scripts/worker.ts`**, one long-running process (managed by `systemd`/`pm2`
+  alongside the Next.js server, not a crontab entry) that schedules and runs every queue-worthy
+  job's worker. Currently: the `sms_queue` drain (every 180s) and the notification engine
+  (`cron/sendMessages.cfm`'s port, every 600s). Adding one means registering its
+  queue/worker/scheduler in `scripts/worker.ts`, not a new crontab line.
+
+Every job (either kind) logs a `JobRun` row via `src/lib/jobs/runJob.ts` — check that table
+first when a scheduled job's behavior is in question, rather than only tailing process logs.
+
+**Checklist for porting a new legacy `cron/*.cfm` file:** decide sweep vs. queue-worthy per
+0004's criteria, write the job under `scripts/cron/` or as a new BullMQ worker, wrap it in
+`runJob(...)`, and then — the step it's easy to forget — either add the VDS crontab entry or
+register it in `scripts/worker.ts`. A job with code but no crontab entry/worker registration
+silently never runs in production.
+
 ## Stack
 
 - Next.js (App Router), TypeScript — no Tailwind; legacy CSS (`http/css/*`) ported as-is,

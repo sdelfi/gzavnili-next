@@ -21,19 +21,34 @@ function getTransporter() {
   return transporter;
 }
 
-export async function sendEmail(options: { to: string; subject: string; html: string }) {
+export type EmailAttachment = { filename: string; content: string | Buffer };
+
+export async function sendEmail(options: {
+  to: string;
+  cc?: string;
+  bcc?: string;
+  from?: string;
+  subject: string;
+  html?: string;
+  text?: string;
+  attachments?: EmailAttachment[];
+}) {
   const transport = getTransporter();
   if (!transport) {
     console.log(`[email:dev-fallback] No SMTP_HOST configured — logging instead of sending.
-To: ${options.to}
+To: ${options.to}${options.cc ? `\nCc: ${options.cc}` : ''}${options.bcc ? `\nBcc: ${options.bcc}` : ''}
 Subject: ${options.subject}
-${options.html}`);
+${options.html ?? options.text ?? ''}${options.attachments ? `\n[${options.attachments.length} attachment(s): ${options.attachments.map((a) => a.filename).join(', ')}]` : ''}`);
     return;
   }
   await transport.sendMail({
-    from: process.env.EMAIL_FROM ?? 'no-reply@gzavnili.com',
+    from: options.from ?? process.env.EMAIL_FROM ?? 'no-reply@gzavnili.com',
     to: options.to,
+    cc: options.cc,
+    bcc: options.bcc,
     subject: options.subject,
     html: options.html,
+    text: options.text,
+    attachments: options.attachments,
   });
 }

@@ -237,6 +237,19 @@ model MessageType {
   label     String
   sortOrder Int    @map("sort_order")
 
+  // Legacy `MessageTypes.operation` — maps an `operations`-table event name ('delivered',
+  // 'office', 'region', ...) to this type, driving `cron/sendMessages.cfm`'s template lookup
+  // (docs/decisions/0027-cron-notifications.md). Not every type has one: 'Just add parcel',
+  // 'Payment Reminder', and 'Damaged Parcel' are only ever chosen manually from
+  // `message_add.cfm` (not ported yet), never routed to from an operation event.
+  operation String? @unique
+
+  // Legacy `MessageTypes.gename` — the Georgian label `cron/sendMessages.cfm` writes as a
+  // Mail-type Message's `gesubject`. No accessible source (no live DB dump) has the real
+  // translations, so this is left unpopulated until legacy data is imported — see
+  // docs/findings.md. The port falls back to `label` (English) for both when null.
+  labelGe String? @map("label_ge")
+
   users    User[]    @relation("UserNotificationPreferences")
   messages Message[]
 
@@ -263,6 +276,13 @@ model Message {
   replyToId Int? @map("reply_to_id")
 
   subject String?
+  // Legacy `MessageTypes`/`sendMessages.cfm` store a Georgian variant of `subject`/`message`
+  // (`gesubject`/`gemessage`) alongside the English one — `views/account/messages.html`
+  // (the customer inbox, not yet ported) picks whichever matches the *viewer's current
+  // session language* at read time, not a fixed per-account language. Modeled here for
+  // fidelity even though no ported screen renders it yet — see docs/decisions/0027.
+  subjectGe String? @map("subject_ge")
+  bodyGe    String? @map("body_ge")
   // Legacy `Message` column — the actual body text. Note the browse list's own "Message"
   // column never displays this (see docs/findings.md's "Messages" section for the display
   // bug this reproduces).
@@ -579,15 +599,20 @@ model ParcelStatusHistory {
   @@map("parcel_status_history")
 }
 
-// Legacy `operations` table — append-only, written by `cron/changeParcelStatus.cfm`'s
-// Received→Shipped auto-transition and, in legacy, read/written extensively by the
-// automated customer-notification cron cluster (`sendMessages.cfm` et al) to track which
-// notifications have already gone out per operation (`bSentNotification`/`BSENTSMS`). Only
-// the write side that cron job needs is modeled here — see docs/decisions/0026-cron-phase6.md
-// for why the notification-engine cluster (and thus the rest of this table's real shape) is
-// its own separate, not-yet-scoped piece of work. Legacy's own `OperationID` is a plain int
-// identity column, kept as such here rather than the UUID convention most other models in
-// this schema use, matching the same "legacy int PK stays an int PK" precedent as `Message`.
+// Legacy `operations` table — append-only, written by every status-changing bema operation
+// (`MSSQLParcelDAO.doOperation()`) and read/written extensively by the automated
+// customer-notification cron cluster (`sendMessages.cfm` et al) to track which notifications
+// have already gone out per operation. See docs/decisions/0027-cron-notifications.md.
+//
+// **Correction to docs/decisions/0023-parcels-change-status.md's original call**: that pass
+// treated this table as write-only (no reader, `parcel_status_history` already covers the
+// status timeline) and didn't wire `runParcelOperation()` to write it. `sendMessages.cfm`
+// turned out to be a real reader with real per-operation bookkeeping needs
+// (`sentNotification`/`sentSms`/etc. below) that `parcel_status_history` — a pure audit log
+// with no "have I notified about this yet" concept — can't stand in for. `runParcelOperation()`
+// now writes both tables. Legacy's own `OperationID` is a plain int identity column, kept as
+// such here rather than the UUID convention most other models in this schema use, matching
+// the same "legacy int PK stays an int PK" precedent as `Message`.
 model Operation {
   id            Int      @id @default(autoincrement()) @map("operation_id")
   parcelId      String   @map("parcel_id") @db.Uuid
@@ -595,7 +620,23 @@ model Operation {
   operation     String
   operationTime DateTime @map("operation_time") @db.Timestamptz(6)
 
+  // Notification-engine bookkeeping (legacy `bSentNotification`/`bSentSMS`/`tPhone*`/`type`/
+  // `receiverId`/`sentTime`) — set once `cron/sendMessages.cfm`'s port has processed this row,
+  // gating whether it (and any operation superseded by it) gets reprocessed. `notifyResultCode`
+  // is legacy's own numeric diagnostic (`ntype`) — see that job's doc comment for what each
+  // value means; not a foreign key to anything.
+  sentNotification       Boolean?  @map("sent_notification")
+  sentSms                Boolean?  @map("sent_sms")
+  notifyResultCode       Int?      @map("notify_result_code")
+  sentAt                 DateTime? @map("sent_at") @db.Timestamptz(6)
+  receiverIdAtSend       String?   @map("receiver_id_at_send") @db.Uuid
+  customerPhoneRaw       String?   @map("customer_phone_raw")
+  customerPhoneFormatted String?   @map("customer_phone_formatted")
+  receiverPhoneRaw       String?   @map("receiver_phone_raw")
+  receiverPhoneFormatted String?   @map("receiver_phone_formatted")
+
   @@index([parcelId])
+  @@index([sentNotification, sentSms, operationTime])
   @@map("operations")
 }
 
@@ -756,6 +797,15 @@ model Parcel {
   // apart from unpaid ones. Distinct from `isPaid`, which is trigger-derived from whether an
   // invoice item exists at all.
   bPaidDelivery Boolean @default(false) @map("b_paid_delivery")
+
+  // One-time "please declare your on-hold parcel" SMS guard (`cron/sendOnholdSMS.cfm`) —
+  // set once that job has messaged this parcel's customer, so it's never sent twice. See
+  // docs/decisions/0027-cron-notifications.md.
+  bSentOnHold Boolean @default(false) @map("b_sent_on_hold")
+
+  // One-time "we received your parcel in the USA" SMS guard, per customer+trip-group
+  // (`cron/sendCustomerSMS.cfm`) — see docs/decisions/0027-cron-notifications.md.
+  bCustomerSms Boolean @default(false) @map("b_customer_sms")
 
   payMethod1 String?  @map("pay_method1")
   payMethod2 String?  @map("pay_method2")

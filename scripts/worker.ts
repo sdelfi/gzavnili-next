@@ -9,6 +9,11 @@ import {
   createSmsQueueDrainWorker,
   scheduleSmsQueueDrain,
 } from '../src/lib/queue/smsQueueWorker';
+import {
+  createNotificationEngineQueue,
+  createNotificationEngineWorker,
+  scheduleNotificationEngine,
+} from '../src/lib/queue/notificationEngineWorker';
 
 async function main() {
   const drainQueue = createSmsQueueDrainQueue();
@@ -19,12 +24,22 @@ async function main() {
     console.error(`[worker] ${job?.name ?? 'sms-queue-drain'} failed:`, err);
   });
 
-  console.log('[worker] sms-queue-drain scheduled every 180s, worker listening');
+  const notificationQueue = createNotificationEngineQueue();
+  await scheduleNotificationEngine(notificationQueue);
+
+  const notificationWorker = createNotificationEngineWorker();
+  notificationWorker.on('failed', (job, err) => {
+    console.error(`[worker] ${job?.name ?? 'notification-engine'} failed:`, err);
+  });
+
+  console.log('[worker] sms-queue-drain scheduled every 180s, notification-engine every 600s, worker listening');
 
   const shutdown = async () => {
     console.log('[worker] shutting down');
     await drainWorker.close();
     await drainQueue.close();
+    await notificationWorker.close();
+    await notificationQueue.close();
     process.exit(0);
   };
   process.on('SIGTERM', shutdown);

@@ -1170,6 +1170,133 @@ built as its own piece of work. See docs/decisions/0026-cron-phase6.md.
 
 ---
 
+## Notification cron cluster (`sendMessages.cfm`/`sendOnholdSMS.cfm`/`sendCustomerSMS.cfm`/`sendLinoli.cfm`) — 2026-08-02
+
+See docs/decisions/0027-cron-notifications.md for the full picture; the individual findings
+below.
+
+### `sender_userid` has no discoverable real-account cross-reference
+
+**Found:** `cron/config.cfm:16` hardcodes `sender_userid = 'ADC882CE-1016-3B1E-DF274792AB7330EA'`,
+written as every Mail-type `Messages` row's `sender` column in `sendMessages.cfm`. Unlike the
+GZ20000/GZ20001 shipper GUIDs (resolved via a comment in `parcels-online-add-2.cfm`) or the
+on-hold exemption GUID (resolved via a comment in `onhold.cfm`), grepping the entire accessible
+legacy source for this exact GUID turns up only its one declaration — no comment, no other
+reference, nothing to resolve it to a real account.
+
+**Ported as observed, left unmapped**: `notificationEngine.ts`'s Mail-type `Message.create()`
+calls always write `senderId: null` — the same call already made for SMS-type `sender` values
+in docs/decisions/0024-bema-send-sms.md (a raw phone number there, not a user id here, but the
+same "doesn't fit this schema's `senderId` FK, and nothing displays it either way" reasoning).
+
+### `MessageTypes.gename` (the Georgian type label) has no accessible source data
+
+**Found:** `sendMessages.cfm` reads `type.gename` (`Evaluate("type.gename")`) live from the
+legacy `MessageTypes` table for a Mail-type row's `gesubject`. That table's actual Georgian
+label text was never available to this port (no DB dump, only `.cfm`/`.cfc` source) — grepping
+`bema/messages/*.cfm` for `gename` only turns up the *field name* in an admin dropdown
+(`vwMessagesAdd.cfm`'s `data-gename="#GENAME#"`), never the values themselves.
+
+**Open — needs a decision.** `MessageType` gained a nullable `labelGe` column
+(`prisma/schema.prisma`) so real translations can be imported later; until then,
+`notificationEngine.ts` falls back to the English `label` for `subjectGe` too. Not a silent
+drop — every Mail-type Message still gets a `subjectGe` value, just not yet a translated one.
+
+### `{service}`/`{servicetransit}` tokens are live, not dead — corrects an earlier wrong read
+
+**Found (first pass, wrong):** while cataloguing `sendMessages.cfm`'s token substitutions, an
+earlier pass in this same work concluded `{service}` and `{servicetransit}` were dead (reasoning:
+a local `service` variable is computed but never used). **That conflated two different things.**
+The unused local `service` var (`"#operation.service# service"`, lines 297-300 of the legacy
+file) genuinely is dead. But two lines later, `Replace(template, "{service}", operation.service,
+'all')` substitutes the *token* directly from `operation.service` — unrelated to that dead
+variable — and both `{service}` and `{servicetransit}` do appear in real, live template content
+(`out_for_delivery`, `parcel_received`, `parcel_departed`, `ready_to_pickup` all contain
+`{service}`; `out_for_delivery` also contains `{servicetransit}`), confirmed by grepping the
+ported `mailTemplates.ts` content directly rather than trusting the earlier prose summary.
+
+**Ported as-is, correcting the earlier assumption**: `notificationEngine.ts` substitutes
+`{service}` with the parcel's raw `service` field unconditionally, and `{servicetransit}` with
+the computed transit-day count *only* when one of the two source date pairs is available —
+matching legacy's own `Replace()` calls only running inside those `cfif` branches. When neither
+date pair exists, the literal `{servicetransit}` token is left in the sent text — a real,
+reproduced legacy quirk, not a bug in this port. `{receiverid}` alone is genuinely dead (appears
+in no template's content).
+
+### Two asymmetric, differently-cased tracking-number-prefix checks, not one
+
+**Found:** `sendMessages.cfm` has two separate tracking-number-prefix guards that look like they
+should be the same rule but aren't. The "silently suppress a ready-to-pickup notification for a
+Region/Delivery-service parcel" check (`REFind('^R.*', operation.TrackingNum) OR
+REFind('^D.*', ...)`) is **case-sensitive** — `REFind` with no case-insensitive flag, so only an
+uppercase `R`/`D` prefix suppresses. The separate "block this SMS entirely" check further down
+(`LEFT(trackingnum,1) eq "D" or eq "d"`, similarly for `R`/`r`) is explicitly
+**case-insensitive**, checking both cases. Nothing in the source explains the difference; reads
+like an accident of two people/times writing similar-looking checks differently, not a
+deliberate rule.
+
+**Ported as-is** — `notificationEngine.ts`'s suppression check uses `/^[RD]/` (case-sensitive);
+the SMS-block check lower-cases the first character before comparing. Deliberately not unified.
+
+### GE-bound SMS is batched and deduped at the end of a run; US-bound customer SMS sends immediately, inline
+
+**Found:** `sendMessages.cfm` declares `GeSmsNumbers`/`GeSmsMessages` arrays once, outside its
+per-operation loop, and only flushes them (dedup-by-exact-text, comma-joined phones, one gateway
+call per unique text) *after* the entire loop closes. But the one customer-SMS branch that
+resolves to the US gateway (`ntype = 9`) calls `sendsms(type="US", ...)` immediately, inline,
+right there in the loop — never touching those arrays at all. A receiver-bound GE SMS and a
+customer-bound GE SMS from *different* operations processed in the same run can end up combined
+into a single gateway call if their text happens to match exactly; a US-bound customer SMS never
+can, since it's already gone by the time the batch is even built.
+
+**Ported as-is**: `runNotificationEngine()` accumulates a `geSms` queue across all iterations of
+one run and flushes it once at the end via `dedupeSmsBatch()`; the US-customer branch inside
+`processNextOperation()` calls `sendSms(..., 'US')` directly instead of queuing.
+
+### `sendCustomerSMS.cfm` processes exactly one parcel per run, not a batch
+
+**Found:** the query's `SELECT TOP` clause is `<cfif isDefined('url.fromParcelsAdd')>4<cfelse>1
+</cfif>` — set *before* the `<cfif parcelid neq "">`/`<cfelse>` branch that the rest of the
+file's debug-vs-batch behavior is usually read from. Since the real scheduled invocation (a
+bare URL hit, no query string) never defines `url.fromParcelsAdd`, the real batch path is
+always `TOP 1` — one eligible parcel messaged per run, relying entirely on the job's own
+120-second interval to drain the backlog over time. The `TOP 4`/debug branch (and the in-loop
+`urlAlready`/re-check dance that exists specifically to dedupe across >1 row) is only reachable
+via a manual `?parcelid=...` request, never from the real cron URL.
+
+**Ported as-is**: `customerReceivedSmsSweep.ts`'s `runCustomerReceivedSmsSweep()` does exactly
+one `findFirst` (no explicit `orderBy`, matching legacy's own unordered `TOP 1`) per invocation.
+The debug-only re-check dance is not reproduced — it has no reachable effect in the real batch
+flow this job actually runs as.
+
+### `sendCustomerSMS.cfm`'s GE branch inserts a Messages row but never actually sends
+
+**Found:** in the `customerCountry eq "GE"` branch, the `formatphone()`/message-building logic
+runs and `addToDB` is set, but the `<cfinvoke ... method="sendsms" type="GE" ...>` call right
+below it is commented out (`<!--- ... --->`). A GE-billed customer who qualifies for this
+message gets a `Messages` row recorded (and `bCustomerSMS` marked handled) but never receives an
+SMS — silent, permanent no-op for that whole country branch. The `US` branch's `sendsms` call, a
+few lines down, is live.
+
+**Ported as-is**: `customerReceivedSmsSweep.ts`'s GE branch builds `message`/creates the
+`Message` row but never calls `sendSms()`; only the US branch does.
+
+### Linoli report's "additional_*" DAO fields and USERNAME rewrite — same known gap as the CSV export
+
+**Found:** `sendLinoli.cfm` falls back to `additional_firstname`/`additional_lastname` for a
+blank receiver name, and rewrites `USERNAME` to `"Linoli " & additional_username` for the
+`GZ20001` account specifically — both sourced from `MSSQLParcelDAO.getParcels()`'s own join,
+which this schema has no equivalent for. This is the exact same gap already found and
+deliberately not ported in the "Export Parcels" CSV (docs/decisions/0015-bema-parcels-list.md's
+"GZ20001 special-case" note) — not a new finding, just the same DAO output feeding a second
+export.
+
+**Not reachable, nothing new to port** — `linoliReport.ts` uses the receiver's own
+firstName/lastName (falling back to the Georgian name fields already on `Address`) and the
+Linoli account's real username, same as the existing CSV export already does.
+
+---
+
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not
 being a real FK, `isGeCitizen` being inferred rather than stored — are recorded in their
 respective decision docs and PROGRESS.md instead; not backfilled here.)*
