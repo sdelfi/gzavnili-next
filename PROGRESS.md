@@ -1280,6 +1280,22 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
       `gename`/"additional_*" DAO fields) all in docs/findings.md. Verified end-to-end against
       real Postgres: a seeded operation correctly produced a bilingual Message row and a
       queued receiver SMS with the right `notifyResultCode`.
+- [x] **Georgian Offices** (`bema/config/offices.cfm`/`office_edit.cfm`) ported — see
+      docs/decisions/0030-georgian-offices.md. Plain CRUD: browse (search+Active/Inactive/All
+      filter+sort+paginate) and add/edit (City/Office Name/Office Name GE/Letter/Active), no
+      delete (none in legacy's own UI either). `DeliveryOffice` gained an `active` column
+      (previously absent — nothing before this needed it). `GET/POST /api/bema/config/offices`
+      + `GET/PATCH .../offices/:id`; `DeliveryOfficeListPage`/`DeliveryOfficeForm` at
+      `/bema/config/offices`, wired to the pre-existing Sidebar placeholder. Found and
+      reproduced two real bugs: every save wipes the office's `searchPatterns` column blank
+      (its own form field is commented out, but the POST handler writes the always-empty
+      value anyway), and the list's keyword search ANDs `city LIKE` with `searchPatterns
+      LIKE` per term — since `searchPatterns` is therefore always blank, the search box can
+      never return a match for anything, a dead feature that looks like it should work (both
+      in docs/findings.md). Letter-uniqueness enforced server-side on save, matching legacy's
+      own `letterExists()` check. Verified end-to-end against a real Postgres + dev server:
+      list shows the seeded "Need delivery" office under the default Active filter, add-office
+      saves and appears in the list, and a duplicate letter is correctly rejected.
 
 ## Not started
 

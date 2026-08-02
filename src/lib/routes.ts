@@ -109,5 +109,10 @@ export const routes = {
     // Send Bulk SMS (docs/decisions/0025-bema-send-bulk-sms.md) — legacy
     // `bema/messages/sms_add_bulk.cfm`.
     smsBulk: () => '/bema/sms/bulk',
+    // Georgian Offices (docs/decisions/0030-georgian-offices.md) — legacy
+    // `bema/config/offices.cfm` / `office_edit.cfm`.
+    deliveryOffices: () => '/bema/config/offices',
+    deliveryOfficeNew: () => '/bema/config/offices/new',
+    deliveryOfficeEdit: (id: string) => `/bema/config/offices/${id}`,
   },
 };

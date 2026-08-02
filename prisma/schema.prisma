@@ -417,6 +417,10 @@ model DeliveryOffice {
   city           String?
   letter         String?
   searchPatterns String? @map("search_patterns")
+  /// bema "Georgian Offices" (`bema/config/offices.cfm`) — new column: legacy's
+  /// `delivery_offices.active` bit, defaulting `true` to match legacy's own
+  /// "Add office" default and its list screen's own default `Status: Active` filter.
+  active         Boolean @default(true)
 
   parcelOffices ParcelOffice[]
 
