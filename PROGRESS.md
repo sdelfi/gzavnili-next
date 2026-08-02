@@ -744,13 +744,11 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
       only requires it for a non-zero second amount), made both payment menus portal/auto-
       positioned so they do not extend the document, and removed internal dotted schema paths
       from user-facing validation messages — commit pending.
-- [ ] Parcel view, parcel print, the statements module's invoice/history popups, and the
-      messages module's Send/Resend SMS. Also the edit form's "Invoice File" upload/preview
-      row, which belongs to the files module. Same set now also pending at the shipment-card
-      (group) header level, not just per-row — `ParcelGroupCard`'s "Generate Invoice"/"View
-      Invoice" and "Print" buttons (2026-08-01) — one statements module and one print/scan
-      module unblocks both the row- and group-level placeholders together, not two separate
-      efforts.
+- [x] Parcel view, parcel print, and the per-row/group "Scan" barcode popup — see
+      docs/decisions/0029-parcels-barcode-print.md. The statements module's invoice/history
+      popups and the messages module's Send/Resend SMS, plus the edit form's "Invoice File"
+      upload/preview row (files module), remain unbuilt — `ParcelRowActions`'/
+      `ParcelGroupCard`'s "View Invoice"/"Generate Invoice" stay pending placeholders.
 - [x] Parcels list "Export Airway" (`export=2` → `airway.cfm`) link and endpoint
       (`src/app/api/bema/parcels/export-airway/route.ts`). No legacy source was recoverable;
       legacy's own version never populates any rows (confirmed against the running site) — the
@@ -1280,6 +1278,26 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
       `gename`/"additional_*" DAO fields) all in docs/findings.md. Verified end-to-end against
       real Postgres: a seeded operation correctly produced a bilingual Message row and a
       queued receiver SMS with the right `notifyResultCode`.
+- [x] **Parcel barcode/QR generation + "View Parcel"/"Print Labels"/"Scan"** ported — see
+      docs/decisions/0029-parcels-barcode-print.md. `src/lib/services/parcelBarcode.ts`
+      (`bwip-js`, Code128 + QR — replaces legacy's separate Java Barbecue/ZXing CFCs) backs two
+      image endpoints (`GET /api/bema/parcels/barcode`, `.../qrcode`). `ParcelViewPage`
+      (`/bema/parcels/view?parcelid=`) — trip/service/tracking+barcode, weight/value/paid-or-
+      debt, sender/receiver, contents, and a new `listParcelHistory()` read
+      (`GET /api/bema/parcels/:id/history`) driving the History table; the delivery-
+      confirmation signature/photo/GPS section is not ported (no schema for it — see
+      docs/findings.md, needs Phase 5/mobile API). `ParcelPrintPage`
+      (`/bema/parcels/print?parcels=id1,id2,...`) — one shipping label per parcel, office-
+      letter badge (delivery-offices route gained a raw `letter` field alongside its combined
+      `label`) + service-letter badge, barcode, QR (reproducing legacy's own Contents-gated-
+      but-TrackingNum-encoded mismatch), departure/receive dates, weight/value/paid-or-debt,
+      auto `window.print()`. `ParcelScanPage` (`/bema/parcels/scan?toscan=`) — bare barcode
+      popup. `ParcelRowActions` gained working View/Print/Scan (previously `PendingAction`
+      placeholders); `ParcelGroupCard`'s "Code — {pcode}" became a working Scan popup link.
+      Verified end-to-end against real Postgres + a running dev server: all three pages render
+      correct data (including a multi-row history log and delivery-office letter), barcode/QR
+      images load and are scannable-format-correct, and the list's View/Print/Scan/Code links
+      all open the right popups.
 
 ## Not started
 
@@ -1293,6 +1311,10 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
 - **`cleanTmpParcels.cfm`**: nothing to clean until/unless `bema/ajax/tmpTracking.cfm`'s
   concurrent-tracking-number-entry warning (never built) exists. See docs/findings.md.
 - **`getCoupons.cfm`/`getStores.cfm`**: coupons module, already out of scope.
+- **Georgian Offices** (`bema/config/offices.cfm`/`office_edit.cfm`) and **System Emails**
+  (`bema/config/emails.cfm`/`email_edit.cfm`): config screens, Sidebar placeholders unwired.
+- **Files** (`bema/content/files.cfm` + `bema/ajax/uploadFiles.cfm`): content module, Sidebar
+  placeholder unwired; also the parcel/statements "Invoice File" upload row depends on this.
 - **Export Airway manifest body**: `airway.cfm`'s per-receiver data rows and NO. OF PIECES/
   TOTAL ACTUAL WEIGHT/TOTAL Value totals (queried live at export time) are not ported — the
   export still always emits an empty data-row table. See docs/findings.md.

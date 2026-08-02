@@ -1,0 +1,1 @@
+export { ParcelPrintPage } from './ParcelPrintPage';

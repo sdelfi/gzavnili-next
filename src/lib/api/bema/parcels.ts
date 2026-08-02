@@ -124,6 +124,31 @@ export function parcelsAirwayExportUrl() {
   return '/api/bema/parcels/export-airway';
 }
 
+// --- Barcode/QR images (View Parcel / Print Labels / Scan) ---------------------------------
+
+export function parcelBarcodeUrl(text: string, height?: number) {
+  const qs = new URLSearchParams({ text, ...(height ? { height: String(height) } : {}) });
+  return `/api/bema/parcels/barcode?${qs.toString()}`;
+}
+
+export function parcelQrCodeUrl(text: string, width?: number) {
+  const qs = new URLSearchParams({ text, ...(width ? { width: String(width) } : {}) });
+  return `/api/bema/parcels/qrcode?${qs.toString()}`;
+}
+
+export type ParcelHistoryRow = {
+  editDateTime: string;
+  editStatus: string;
+  valueName: string;
+  oldValue: string;
+  newValue: string;
+  updaterName: string;
+};
+
+export function getParcelHistory(id: string) {
+  return apiGet<{ history: ParcelHistoryRow[] }>(`/api/bema/parcels/${id}/history`);
+}
+
 export type ParcelOperationPayload = {
   operation: ParcelOperation;
   parcelIds: string[];
@@ -197,7 +222,7 @@ export function listReceivers(userId: string) {
 }
 
 export function listDeliveryOffices() {
-  return apiGet<{ offices: { id: string; label: string }[] }>('/api/bema/delivery-offices');
+  return apiGet<{ offices: { id: string; label: string; letter: string | null }[] }>('/api/bema/delivery-offices');
 }
 
 /** How many other parcels already carry this code — a non-zero count is what the "Change

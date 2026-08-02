@@ -1295,6 +1295,56 @@ export.
 firstName/lastName (falling back to the Georgian name fields already on `Address`) and the
 Linoli account's real username, same as the existing CSV export already does.
 
+## Dead legacy cron file: `cron/sendBulkSMS.cfm` — 2026-08-02
+
+**Found:** the file opens with `<cfabort>` immediately followed by `<!--- Unused --->`, before
+any of its ~200 lines of logic — a near-duplicate of `sendOnholdSMS.cfm`'s on-hold-reminder
+SMS sweep (same `messageGE`/`messageUS` text, same query, same GE-batched/US-deduped send
+pattern), evidently an earlier draft superseded by `sendOnholdSMS.cfm` and left in place,
+unreferenced by any live crontab entry or other file.
+
+**Not reachable, nothing to port** — the `<cfabort>` makes every line below it dead code; no
+port needed, `sendOnholdSMS.cfm`'s already-ported behavior (`onholdSmsSweep.ts`,
+`docs/decisions/0027-cron-notifications.md`) covers the live equivalent.
+
+## Parcel barcode/print/view/scan (`parcels-view.cfm`/`parcels-print.cfm`/`parcels-scan.cfm`) — 2026-08-02
+
+### "Print Labels" QR code is gated on Contents but always encodes the tracking number
+
+**Found:** `vwParcelsPrint.cfm` only renders its QR `<cfimage>` inside
+`<cfif parcel.getContents() neq "">`, but the QR itself is built from
+`parcel.gettrackingnum()`, never `getContents()`. A parcel with contents text gets a QR of its
+tracking number; a parcel with no contents text gets no QR at all, even though the tracking
+number (the thing actually encoded) is unrelated to whether contents was ever typed in. Reads
+as a copy-paste of the barcode block's own real content-based gate that was never updated when
+the QR's payload was switched to the tracking number.
+
+**Ported as-is**: `ParcelPrintPage`'s QR `<img>` is gated on `parcel.contents` being truthy,
+encoding `parcel.trackingNum` — same mismatch, not "fixed" to gate on the tracking number
+instead.
+
+### `vwParcelsView.cfm`'s own QR code is dead — commented out in the source
+
+**Found:** the "View Parcel" template also has a `barcodeQR.createBarcode(text =
+parcel.getContents(), width = 200)` call under "Parcel Contents", but the entire block is
+wrapped in `<!--- ... --->` — legacy's View screen has never actually rendered a QR code, only
+the Print Labels screen does (see the previous finding).
+
+**Not reachable, nothing to port** — `ParcelViewPage` has no QR code at all.
+
+### Delivery office `letter` — already queried but not previously exposed via the API
+
+**Found:** `/api/bema/delivery-offices` (`docs/decisions/0015`) already selected
+`DeliveryOffice.letter` from the database, but only ever folded it into a combined display
+`label` string (`"Office Name (D)"`) for the office-picker dropdown. "Print Labels" needs the
+raw letter on its own, to render as a standalone badge glyph the way legacy's
+`parcel.getDeliveryOffice().getLetter()` does — not something to parse back out of a formatted
+label string.
+
+**Ported as-is, additively** — the route's response gained a `letter: string | null` field
+alongside the existing `label`; the office-picker dropdown (`ParcelChangeStatusPage`) is
+unaffected since it only ever read `label`.
+
 ---
 
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not

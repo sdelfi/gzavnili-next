@@ -64,6 +64,16 @@ export const routes = {
     // Legacy `bema/parcels/parcels-change-status.cfm` — a tracking-number-scan-driven bulk
     // status/office/location updater. See docs/decisions/0023-parcels-change-status.md.
     parcelChangeStatus: () => '/bema/parcels/change-status',
+    // Legacy `bema/parcels/parcels-view.cfm` — a printable single-parcel detail popup
+    // (barcode + history), opened from the parcels list's "View" action. See
+    // docs/decisions/0029-parcels-barcode-print.md.
+    parcelView: (id: string) => `/bema/parcels/view?parcelid=${encodeURIComponent(id)}`,
+    // Legacy `bema/parcels/parcels-print.cfm` — one shipping label per parcel id, comma-
+    // separated, opened in a small popup window that auto-triggers `window.print()`.
+    parcelPrint: (ids: string[]) => `/bema/parcels/print?parcels=${encodeURIComponent(ids.join(','))}`,
+    // Legacy `bema/parcels/parcels-scan.cfm` — a bare barcode-image popup for eyeballing/
+    // physically scanning a code or tracking number off the screen.
+    parcelScan: (text: string) => `/bema/parcels/scan?toscan=${encodeURIComponent(text)}`,
     deliveryRequests: () => '/bema/parcels?deliveryRequest=1',
     // Legacy `bema/parcels/parcels-reports.cfm` — date-range Total Sale/Payment
     // Collected/Remain Payment report, distinct from the separate "Parcels Reports 2"

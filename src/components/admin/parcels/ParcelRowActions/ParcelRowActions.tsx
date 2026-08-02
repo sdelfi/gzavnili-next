@@ -10,12 +10,13 @@ import s from './ParcelRowActions.module.css';
 // The per-row action list (legacy's `» Edit / View / Print / Delete / View Invoice / View
 // History / Send SMS / Resend SMS` column).
 //
-// Edit, Delete, Send SMS (docs/decisions/0024-bema-send-sms.md), and the public tracking
-// popup are wired. The rest target bema screens that have not been ported yet (parcel
-// view/print, the statements module's invoice and history popups, the Resend SMS composer);
-// they are rendered inert with a title rather than dropped, so the row shows the actions this
-// screen is supposed to have and nothing silently 404s — the same convention the sidebar uses
-// for not-yet-built pages.
+// Edit, View, Print, Scan, Delete, Send SMS (docs/decisions/0024-bema-send-sms.md), and the
+// public tracking popup are wired. View/Print/Scan open in a small popup window, matching
+// legacy's own `window.open(...)` (see docs/decisions/0029-parcels-barcode-print.md). The
+// rest target bema screens that have not been ported yet (the statements module's invoice
+// and history popups, the Resend SMS composer); they are rendered inert with a title rather
+// than dropped, so the row shows the actions this screen is supposed to have and nothing
+// silently 404s — the same convention the sidebar uses for not-yet-built pages.
 const PENDING_TITLE = 'Not implemented yet';
 
 function PendingAction({ label }: { label: string }) {
@@ -37,18 +38,41 @@ export function ParcelRowActions({
   returnTo: string;
   onDelete: () => void;
 }) {
+  const trackingNum = parcel.trackingNum;
+
   return (
     <div className={s.actions}>
       <Link className={s.action} href={`${routes.bema.parcelEdit(parcel.id)}?returnTo=${encodeURIComponent(returnTo)}`}>
         Edit
       </Link>
-      <PendingAction label="View" />
-      <PendingAction label="Print" />
+      <Link className={s.action} href={routes.bema.parcelView(parcel.id)} target="_blank">
+        View
+      </Link>
+      <Button
+        type="button"
+        variant="plain"
+        className={s.action}
+        onClick={() =>
+          window.open(routes.bema.parcelPrint([parcel.id]), 'vieworder', 'width=640,height=480,scrollbars=yes')
+        }
+      >
+        Print
+      </Button>
       <Button type="button" variant="plain" className={cn(s.action, s.danger)} onClick={onDelete}>
         Delete
       </Button>
       {parcel.invoiceId && <PendingAction label="View Invoice" />}
       <PendingAction label="View History" />
+      {trackingNum && (
+        <Button
+          type="button"
+          variant="plain"
+          className={s.action}
+          onClick={() => window.open(routes.bema.parcelScan(trackingNum), 'viewhistory', 'width=640,height=480,scrollbars=yes')}
+        >
+          Scan
+        </Button>
+      )}
       <Link
         className={s.action}
         href={

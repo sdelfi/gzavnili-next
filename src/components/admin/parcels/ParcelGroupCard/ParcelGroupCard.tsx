@@ -68,6 +68,7 @@ export function ParcelGroupCard({
   const singleInvoiceId = invoiceIds.size === 1;
 
   const columnCount = showBuser ? 11 : 10;
+  const pcode = group.pcode;
 
   return (
     <div className={cn(s.card, { [s.pinned]: group.topFlag })}>
@@ -133,7 +134,18 @@ export function ParcelGroupCard({
                   </span>
                 )}
 
-                {group.pcode && <span className={s.code}>Code — {group.pcode}</span>}
+                {pcode && (
+                  <Button
+                    type="button"
+                    variant="plain"
+                    className={s.code}
+                    onClick={() =>
+                      window.open(routes.bema.parcelScan(pcode), 'viewhistory', 'width=640,height=480,scrollbars=yes')
+                    }
+                  >
+                    Code — {pcode}
+                  </Button>
+                )}
 
                 {/* Legacy's "Customer account" is a one-click login-as-that-customer link
                     (`user_login.cfm`) — same open design question as the row-level "Login as

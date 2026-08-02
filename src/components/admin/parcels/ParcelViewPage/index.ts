@@ -1,0 +1,1 @@
+export { ParcelViewPage } from './ParcelViewPage';
