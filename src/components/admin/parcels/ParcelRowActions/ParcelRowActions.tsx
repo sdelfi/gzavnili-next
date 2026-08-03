@@ -84,6 +84,7 @@ export function ParcelRowActions({
         Send SMS
       </Link>
       <PendingAction label="Resend SMS" />
+      {/* todo: implement */}
       {parcel.trackingNum && (
         <a
           className={s.action}

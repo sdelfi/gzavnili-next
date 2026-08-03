@@ -132,8 +132,8 @@ export function ParcelChangeStatusPage() {
       <ErrorList errors={errors} />
       {saved && <Alert variant="success">{saved}</Alert>}
 
-      <form className={s.row} onSubmit={handleSubmit}>
-        <Field label="Delivery Office:" htmlFor="officeid">
+      <form className={s.form} onSubmit={handleSubmit}>
+        <Field label="Delivery Office:" htmlFor="officeid" className={s.field}>
           <Select
             instanceId="change-status-office"
             options={[
@@ -145,7 +145,7 @@ export function ParcelChangeStatusPage() {
             onChange={setOfficeId}
           />
         </Field>
-        <Field label="Bema User:" htmlFor="buser">
+        <Field label="Bema User:" htmlFor="buser" className={s.field}>
           <Select
             instanceId="change-status-buser"
             options={bemaUsers.map((u) => ({
@@ -156,7 +156,7 @@ export function ParcelChangeStatusPage() {
             onChange={setBuser}
           />
         </Field>
-        <Field label="Status:" htmlFor="operation">
+        <Field label="Status:" htmlFor="operation" className={s.field}>
           <Select
             instanceId="change-status-operation"
             options={STATUS_OPTIONS}
@@ -164,10 +164,10 @@ export function ParcelChangeStatusPage() {
             onChange={(v) => setOperation(v as ChangeParcelStatusPayload['operation'])}
           />
         </Field>
-        <Field label="Location:" htmlFor="ilocation">
+        <Field label="Location:" htmlFor="ilocation" className={s.field}>
           <Input id="ilocation" value={iLocation} onChange={(e) => setILocation(e.target.value)} />
         </Field>
-        <Field label="Tracking Number:" htmlFor="trackingnum">
+        <Field label="Tracking Number:" htmlFor="trackingnum" className={s.field}>
           <Input id="trackingnum" autoFocus value={trackingNum} onChange={(e) => setTrackingNum(e.target.value)} />
         </Field>
         <Button type="submit" disabled={submitting}>

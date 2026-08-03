@@ -1,11 +1,10 @@
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 15px;
+.form {
   background: #f9f9f9;
   border: 1px solid #ddd;
   border-radius: 4px;
   padding: 15px;
-  margin-bottom: 12px;
+
+  .field {
+    margin-bottom: 12px;
+  }
 }
