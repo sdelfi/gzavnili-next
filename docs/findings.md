@@ -1552,6 +1552,68 @@ above) does.
 adding real complexity (a second resize pass on every image upload) for zero observable
 behavior, since the one consumer that would read it is itself unreachable.
 
+## Send message (`bema/messages/message_add.cfm` / `message_view.cfm`) — 2026-08-03
+
+### `messageFormatted`/`gemessageFormatted` are real columns, confirmed by this change
+
+**Found:** an earlier finding (Messages/SMS list, above) flagged `messageFormatted` as "not
+confirmed to exist" since no DDL was available. `message_add.cfm`'s own `INSERT INTO Messages
+(..., message, gemessage, messageFormatted, gemessageFormatted) VALUES (...)` confirms both
+columns are real — the substituted template plus the composer's free-text body, computed once
+at write time. `cron/sendMessages.cfm`'s own INSERT writes the identical value into both the
+raw (`Message`/`GeMessage`) and formatted columns for an auto-generated message.
+
+**Modeled and ported**: `Message.bodyFormatted`/`bodyFormattedGe` added; `notificationEngine.
+ts`'s one Mail-type `db.message.create()` call now sets them too. See
+docs/decisions/0033-bema-send-message.md.
+
+### A reply keeps the original message's own recipient/sender, not flipped
+
+**Found:** `message_view.cfm`'s reply POST handler `INSERT`s the new row with `UserID =
+message.userid` and `sender = message.sender` — the exact same values as the message it's
+replying to. A reply is not addressed back to whoever sent the original; it stays addressed
+to the same recipient, from the same original sender.
+
+**Ported as-is** in `replyToMessage()` (`src/lib/services/messageCompose.ts`) — a real legacy
+quirk, not "fixed" into a flipped-direction reply.
+
+### `HTMLCodeFormat()` on the view screen shows raw markup as text, not rendered HTML
+
+**Found:** `message_view.cfm` displays `messageFormatted`/`gemessageFormatted` via
+`HTMLCodeFormat()` — HTML-escaped, so an operator sees the literal `<div class="mail-h">...`
+markup as text, not a rendered preview. This is the opposite of `message_add.cfm`'s own
+client-side live preview, which renders real HTML via jQuery's `.html()`.
+
+**Both reproduced as their own legacy behavior**: `MessageViewPage` renders
+`bodyFormatted`/`bodyFormattedGe` as plain escaped text (a `<pre>`, no
+`dangerouslySetInnerHTML`); `MessageComposeForm`'s live preview does use
+`dangerouslySetInnerHTML`, matching the compose screen's real rendering. Not unified into one
+behavior — this is a genuine asymmetry in legacy itself.
+
+### Compose form's `{paidmessage}`/`{unpaidmessage}` tokens are always substituted with blank
+
+**Found:** `vwMessagesAdd.cfm`'s Paid/Unpaid Message inputs are commented out of the visible
+form (`<!--- ... --->`), so `form.paidmessage`/`form.unpaidmessage` are always `""` — but
+`message_add.cfm` still runs `Replace(template, "{paidmessage}", "", 'all')` for every
+compose, removing the token text from any template that contains it (several do — see
+`mailTemplates.ts`).
+
+**Ported as-is**: `composeMessage()` always substitutes both tokens with an empty string,
+even though nothing ever sets them to anything else — an initial implementation omitted them
+from the substitution map entirely (leaving the literal `{paidmessage}` text in the output for
+any template using it), caught and fixed before this change shipped.
+
+### The compose form's `#language` hidden field has no observable effect
+
+**Found:** `messages-add.js`'s `previewTemplate()` reads `jQuery('#messagetype').data(
+'template-' + jQuery('#language').val())` into `template`, but the very next line
+unconditionally reassigns `template` to `data('template-en')` — the language-based lookup is
+immediately shadowed and discarded. Both English and Georgian previews render side-by-side
+regardless of `#language#`'s value either way.
+
+**Not modeled** — `MessageComposeForm` doesn't fetch or track a customer's language for this
+screen at all; it has no effect on anything legacy itself renders.
+
 ---
 
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not

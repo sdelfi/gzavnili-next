@@ -88,3 +88,60 @@ export function sendBulkSms(payload: {
 export function cleanSmsQueue() {
   return apiDelete<{ cleared: number }>('/api/bema/sms/bulk');
 }
+
+// bema "Send message" (legacy `bema/messages/message_add.cfm` + `message_view.cfm`) — see
+// docs/decisions/0033-bema-send-message.md.
+
+export type ComposeMessagePayload = {
+  userId: string;
+  parcelId?: string | null;
+  messageTypeKey: string;
+  subject: string;
+  subjectGe: string;
+  message: string;
+  gemessage: string;
+  trackingnum: string;
+  trackingnum2: string;
+  today: string;
+  firstname: string;
+  rname: string;
+  rcity: string;
+  receiverid: string;
+  senddate: string;
+  deliverydate: string;
+  servicetransit: string;
+  missinginfo: string;
+  service: string;
+};
+
+export function composeMessage(payload: ComposeMessagePayload) {
+  return apiPost<{ id: number }>('/api/bema/messages/compose', payload);
+}
+
+export function getMessageTemplate(key: string) {
+  return apiGet<{ en: string; ge: string }>(`/api/bema/messages/templates/${encodeURIComponent(key)}`);
+}
+
+export type MessageDetail = {
+  id: number;
+  chain: number | null;
+  replyToId: number | null;
+  senderUsername: string | null;
+  username: string | null;
+  trackingNum: string | null;
+  subject: string | null;
+  subjectGe: string | null;
+  bodyFormatted: string | null;
+  bodyFormattedGe: string | null;
+  createdAt: string;
+};
+
+export function getMessage(id: number) {
+  return apiGet<{ message: MessageDetail; replyMessage: { bodyFormatted: string | null; bodyFormattedGe: string | null } | null }>(
+    `/api/bema/messages/${id}`,
+  );
+}
+
+export function replyToMessage(id: number, payload: { reply: string; gereply: string }) {
+  return apiPost<{ id: number }>(`/api/bema/messages/${id}/reply`, payload);
+}

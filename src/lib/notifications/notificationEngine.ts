@@ -256,6 +256,12 @@ export async function processNextOperation(now: Date): Promise<ProcessResult> {
           subjectGe: messageType.labelGe ?? messageType.label,
           body: enBody,
           bodyGe: geBody,
+          // `sendMessages.cfm`'s own INSERT writes the same substituted template into
+          // `Message`/`GeMessage` and `MessageFormatted`/`GeMessageFormatted` — there's no
+          // separate free-text portion for a cron-generated message the way a composed one
+          // has. See docs/decisions/0033-bema-send-message.md.
+          bodyFormatted: enBody,
+          bodyFormattedGe: geBody,
         },
       });
       await db.message.update({ where: { id: created.id }, data: { chain: created.id } });

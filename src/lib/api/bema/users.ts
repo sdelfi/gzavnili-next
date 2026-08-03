@@ -36,5 +36,5 @@ export function updateUser<TUser>(id: string, payload: unknown) {
 }
 
 export function listMessageTypes() {
-  return apiGet<{ messageTypes: { key: string; label: string }[] }>('/api/bema/message-types');
+  return apiGet<{ messageTypes: { key: string; label: string; labelGe: string | null }[] }>('/api/bema/message-types');
 }

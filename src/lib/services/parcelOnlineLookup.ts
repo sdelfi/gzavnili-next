@@ -65,6 +65,13 @@ export type OnlineParcelLookup = {
   debt: string | null;
   notes: string | null;
   bNotify: boolean;
+  // "Send message" (docs/decisions/0033-bema-send-message.md) needs these three for its
+  // senddate/deliverydate/servicetransit hidden fields — `bema/ajax/getParcel.cfm`'s
+  // TRIPDATE/TRACKINGESTSHIP/TRACKINGESTDELIVERY, not previously exposed here since no
+  // earlier caller needed them.
+  tripDate: string | null;
+  trackingEstShip: string | null;
+  trackingEstDelivery: string | null;
 };
 
 // Tracking numbers are always stored upper-cased on save (matching every other write path in
@@ -107,6 +114,9 @@ function toLookupResult(parcel: ParcelWithIncludes): OnlineParcelLookup {
     debt: parcel.debt?.toString() ?? null,
     notes: parcel.notes,
     bNotify: parcel.bNotify,
+    tripDate: parcel.tripDate?.toISOString() ?? null,
+    trackingEstShip: parcel.trackingEstShip?.toISOString() ?? null,
+    trackingEstDelivery: parcel.trackingEstDelivery?.toISOString() ?? null,
   };
 }
 

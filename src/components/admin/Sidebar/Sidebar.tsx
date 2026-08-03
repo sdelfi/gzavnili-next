@@ -119,7 +119,11 @@ const NAV_GROUPS: NavGroup[] = [
         href: routes.bema.smsList(),
         isActive: (pathname) => pathname === '/bema/sms',
       },
-      { label: 'Send message' },
+      {
+        label: 'Send message',
+        href: routes.bema.messageAdd(),
+        isActive: (pathname) => pathname.startsWith('/bema/messages/add') || pathname.startsWith('/bema/messages/'),
+      },
       {
         label: 'Messages',
         href: routes.bema.messages(),

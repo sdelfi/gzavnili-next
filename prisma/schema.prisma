@@ -270,8 +270,9 @@ model Message {
   messageTypeKey String?      @map("message_type_key")
   messageType    MessageType? @relation(fields: [messageTypeKey], references: [key])
 
-  // Threading — legacy `chain`/`replytoID`, display-only in the ported browse list (no
-  // reply/view screen is built yet, see docs/decisions/0021-bema-messages.md).
+  // Threading — legacy `chain`/`replytoID`. A composed message self-chains (`chain` = its own
+  // id); a reply inherits the original message's `chain` (or its id, if that was blank) rather
+  // than starting a new one — see docs/decisions/0033-bema-send-message.md.
   chain     Int?
   replyToId Int? @map("reply_to_id")
 
@@ -287,6 +288,18 @@ model Message {
   // column never displays this (see docs/findings.md's "Messages" section for the display
   // bug this reproduces).
   body    String?
+
+  // Legacy `MessageFormatted`/`GeMessageFormatted` — the message-type template with its
+  // `{tokens}` substituted plus the composer's own free-text `message` appended, computed
+  // once at write time (both by `message_add.cfm`'s compose path and `sendMessages.cfm`'s
+  // cron path, which writes the same value into both `Message`/`GeMessage` and these two
+  // columns since there's no separate free-text portion there). This is what `message_view.cfm`
+  // (`MessageViewPage`) actually displays — `body`/`bodyGe` above are `Message`/`GeMessage`,
+  // the pre-substitution raw text. See docs/decisions/0033-bema-send-message.md — an earlier
+  // pass ("Messages"/"SMS list") had flagged these columns as "not confirmed to exist"; this
+  // change confirms them via `message_add.cfm`'s own INSERT statement.
+  bodyFormatted   String? @map("body_formatted")
+  bodyFormattedGe String? @map("body_formatted_ge")
 
   active Boolean @default(true) @map("status")
   read   Boolean @default(false) @map("b_read")

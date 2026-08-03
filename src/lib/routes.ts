@@ -118,6 +118,10 @@ export const routes = {
     // `bema/messages/messages.cfm` / `sms.cfm`, one shared `messages` table.
     messages: () => '/bema/messages',
     smsList: () => '/bema/sms',
+    // Send message (docs/decisions/0033-bema-send-message.md) — legacy
+    // `bema/messages/message_add.cfm` / `message_view.cfm`.
+    messageAdd: () => '/bema/messages/add',
+    messageView: (id: number | string) => `/bema/messages/${id}`,
     // Send SMS (docs/decisions/0024-bema-send-sms.md) — legacy `bema/messages/sms_add.cfm`.
     smsAdd: () => '/bema/sms/add',
     // Send Bulk SMS (docs/decisions/0025-bema-send-bulk-sms.md) — legacy

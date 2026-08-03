@@ -1,0 +1,32 @@
+.dualBody {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.body {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #f7f7f7;
+  border: 1px solid #e3e3e3;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 0;
+  font-family: inherit;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.replyForm {
+  margin-top: 24px;
+  background: #fff;
+  padding: 16px;
+  border-radius: 6px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}

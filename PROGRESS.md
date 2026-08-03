@@ -1374,6 +1374,30 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
       file with proportional resize (confirmed via the served file's actual pixel
       dimensions), list/search/paginate, delete file, delete folder — including the static
       `/uploads/editor/...` URL actually serving the uploaded file.
+- [x] **Send message** (`message_add.cfm`/`message_view.cfm`) ported — see
+      docs/decisions/0033-bema-send-message.md. `Message` gained `bodyFormatted`/
+      `bodyFormattedGe` (legacy's `messageFormatted`/`gemessageFormatted` — previously flagged
+      "not confirmed to exist", now confirmed via `message_add.cfm`'s own INSERT and modeled;
+      `notificationEngine.ts`'s Mail-type write path updated to populate them too).
+      `MessageComposeForm`: `CustomerPicker` + tracking-number lookup (extended
+      `OnlineParcelLookup` with tripDate/trackingEstShip/trackingEstDelivery for
+      senddate/deliverydate/servicetransit) prefill the recipient/parcel context; a
+      message-type `Select` fetches its template pair and drives a live dual-language
+      preview; server-side substitution on submit matches legacy's own token set exactly
+      (including always-blank `{paidmessage}`/`{unpaidmessage}`, caught before shipping —
+      see docs/findings.md). `MessageViewPage`: read-only From/To/Date/Subject/Parcel +
+      escaped-text (not rendered) body display matching legacy's `HTMLCodeFormat()`, plus a
+      reply form. Reply reproduces a real legacy quirk: the new row keeps the *original*
+      message's own recipient/sender rather than flipping direction, uses a hardcoded
+      `'other'` message type, and inherits the original's chain instead of self-chaining. New
+      routes: `POST /api/bema/messages/compose`, `GET` added to `/api/bema/messages/:id`,
+      `POST .../:id/reply`, `GET /api/bema/messages/templates/:key`. `MessagesListPage`
+      gained a "Send message" button, a working View action (legacy's own "Reply"/"View"
+      links go to the identical URL — one action suffices), and a linked Reply-to column.
+      Verified end-to-end against a running dev server: compose with a picked customer +
+      message type shows the correct live EN/GE preview, submits and lands on the new
+      message's View page with the exact substituted body, Reply creates a correctly-chained
+      row, and the list shows both with working links.
 
 ## Not started
 
@@ -1394,8 +1418,8 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
   taxes)**: not modeled — legacy's only write path destructively wipes them on every Payment
   Preferences save (see docs/decisions/0020-payment-config.md, docs/findings.md). Needs a
   product decision once a checkout/orders domain is actually designed.
-- **Message compose/reply/view** (`message_add.cfm`/`message_view.cfm`) and the **other bulk/
-  scheduled SMS composers** (`sms_add_batch.cfm`/`sms_add_user.cfm`, one of which drives the
-  "Send SMS by Trip Date" nav item): not built — see docs/decisions/0021-bema-messages.md. The
-  "Send SMS by Trip Date"/"Send SMS Custom"/"Send message" Sidebar placeholders remain
-  unwired.
+- **The other bulk/scheduled SMS composers** (`sms_add_batch.cfm`/`sms_add_user.cfm`, one of
+  which drives the "Send SMS by Trip Date" nav item): not built — see
+  docs/decisions/0021-bema-messages.md. The "Send SMS by Trip Date"/"Send SMS Custom" Sidebar
+  placeholders remain unwired. ("Send message" is done — see above,
+  docs/decisions/0033-bema-send-message.md.)

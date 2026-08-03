@@ -41,3 +41,40 @@ export const sendBulkSmsSchema = z.object({
   sendTo: z.array(z.enum(['customer', 'receiver'])).default([]),
   message: z.string(),
 });
+
+// bema "Send message" (legacy `bema/messages/message_add.cfm`) — see
+// docs/decisions/0033-bema-send-message.md. Legacy's own server-side validation is limited to
+// what the form's `required` HTML attributes cover (customer, message type); everything else
+// (subject, body text, the tracking-number-lookup-derived fields) is accepted as-is, including
+// blank.
+export const composeMessageSchema = z.object({
+  userId: z.string().uuid('Customer is required.'),
+  parcelId: z.string().uuid().optional().nullable(),
+  messageTypeKey: z.string().min(1, 'Message type is required.'),
+  subject: z.string().optional().default(''),
+  subjectGe: z.string().optional().default(''),
+  message: z.string().optional().default(''),
+  gemessage: z.string().optional().default(''),
+  trackingnum: z.string().optional().default(''),
+  trackingnum2: z.string().optional().default(''),
+  // Legacy renders this hidden field once, server-side, at page-load time
+  // (`DateFormat(Now(), "mmm-dd-yyyy")`) and submits it back unchanged — not recomputed at
+  // POST time. Computed client-side here for the same reason.
+  today: z.string().optional().default(''),
+  firstname: z.string().optional().default(''),
+  rname: z.string().optional().default(''),
+  rcity: z.string().optional().default(''),
+  receiverid: z.string().optional().default(''),
+  senddate: z.string().optional().default(''),
+  deliverydate: z.string().optional().default(''),
+  servicetransit: z.string().optional().default(''),
+  missinginfo: z.string().optional().default(''),
+  service: z.string().optional().default(''),
+});
+
+// `message_view.cfm`'s reply POST handler has no validation at all — a blank reply is
+// accepted (creates an empty-body reply row) just like legacy.
+export const replyMessageSchema = z.object({
+  reply: z.string().optional().default(''),
+  gereply: z.string().optional().default(''),
+});
