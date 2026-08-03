@@ -47,3 +47,9 @@ export function formatWithLari(value: number | null | undefined, rate: number | 
   const usd = value.toFixed(2);
   return rate ? `${usd} (${(value * rate).toFixed(2)} GEL)` : usd;
 }
+
+/** Legacy `dollarFormat(x)`: `$1,234.56`, thousands-separated, used only on the shipping
+ *  label print ("Print Labels") — distinct from `formatAmount()`'s plain `numberFormat`. */
+export function formatDollar(value: number | null | undefined): string {
+  return `$${(value ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}

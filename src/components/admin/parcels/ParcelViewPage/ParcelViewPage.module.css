@@ -1,0 +1,28 @@
+.detail {
+  border-collapse: collapse;
+}
+
+.detail td {
+  padding: 4px 8px;
+  vertical-align: top;
+}
+
+.service {
+  font-size: 18px;
+}
+
+.top {
+  vertical-align: top;
+}
+
+.wrap {
+  white-space: pre-wrap;
+}
+
+.old {
+  color: #ff0000;
+}
+
+.new {
+  color: #2e75b6;
+}

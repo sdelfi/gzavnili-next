@@ -1,0 +1,115 @@
+.label {
+  width: 450px;
+  margin-bottom: 10px;
+  page-break-after: always;
+  font-size: 10px;
+  text-align: center;
+}
+
+.label:last-child {
+  page-break-after: auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px 0;
+}
+
+.badge {
+  font-size: 70px;
+  line-height: 1;
+  border: 4px solid #000;
+  text-align: center;
+  width: 138px;
+  white-space: nowrap;
+  padding-bottom: 6px;
+  display: block;
+}
+
+.badgeOffice {
+  font-size: 104px;
+}
+
+.barcodeCol {
+  text-align: center;
+}
+
+.trackingNum {
+  font-size: 38px;
+  line-height: 30px;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.trackingNumSmall {
+  font-size: 30px;
+}
+
+.addressTable {
+  border-collapse: collapse;
+  margin: 0 auto;
+  width: auto;
+  text-align: left;
+}
+
+.receiverCell {
+  padding: 0;
+  vertical-align: top;
+  font-size: 14px;
+  width: 70%;
+}
+
+.receiverName {
+  font-size: 26px;
+  line-height: 22px;
+  margin-top: 15px;
+}
+
+.qrCell {
+  padding: 0;
+  vertical-align: top;
+}
+
+.datesBox {
+  border: 2px solid #000;
+  margin: 10px 12px;
+}
+
+.datesTable {
+  border-collapse: collapse;
+  margin: 0;
+  width: 100%;
+}
+
+.datesLeft {
+  padding: 8px;
+  vertical-align: top;
+  font-size: 16px;
+  text-align: left;
+  width: 50%;
+}
+
+.datesRight {
+  padding: 8px;
+  vertical-align: top;
+  font-size: 16px;
+  text-align: right;
+  width: 50%;
+}
+
+.statBox {
+  padding: 8px;
+  vertical-align: top;
+  font-size: 12px;
+  text-align: left;
+  width: 33%;
+}
+
+.statValue {
+  font-size: 16px;
+}

@@ -1,0 +1,1 @@
+export { ParcelScanPage } from './ParcelScanPage';

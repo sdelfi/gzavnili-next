@@ -25,6 +25,9 @@ export async function GET(request: NextRequest) {
     offices: offices.map((office) => ({
       id: office.id,
       label: office.letter ? `${office.officeName} (${office.letter.trim()})` : office.officeName,
+      // Raw letter, separate from `label` — "Print Labels" renders it as its own badge glyph
+      // rather than parsing it back out of the combined display string.
+      letter: office.letter,
     })),
   });
 }

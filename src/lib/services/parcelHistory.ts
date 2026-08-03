@@ -83,6 +83,30 @@ export async function recordParcelHistory(
   });
 }
 
+export type ParcelHistoryRow = {
+  editDateTime: string;
+  editStatus: string;
+  valueName: string;
+  oldValue: string;
+  newValue: string;
+  updaterName: string;
+};
+
+/** "View Parcel"'s History table (`vwParcelsView.cfm`'s `gHistory` query) — every edit-log
+ *  row for one parcel, oldest first, matching legacy's unordered `SELECT *` which SQL Server
+ *  happened to return in insertion order. */
+export async function listParcelHistory(parcelId: string): Promise<ParcelHistoryRow[]> {
+  const rows = await db.parcelHistory.findMany({ where: { parcelId }, orderBy: { editDateTime: 'asc' } });
+  return rows.map((row) => ({
+    editDateTime: row.editDateTime.toISOString(),
+    editStatus: row.editStatus ?? '',
+    valueName: row.valueName ?? '',
+    oldValue: row.oldValue ?? '',
+    newValue: row.newValue ?? '',
+    updaterName: row.updaterName ?? '',
+  }));
+}
+
 /** Legacy compares the old/new *form strings* to decide whether a field changed, so a value
  *  that only differs in formatting (`5` vs `5.00`) still logs a row. Reproduced by comparing
  *  the same rendered strings rather than parsed numbers. */
