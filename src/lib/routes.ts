@@ -128,5 +128,9 @@ export const routes = {
     deliveryOffices: () => '/bema/config/offices',
     deliveryOfficeNew: () => '/bema/config/offices/new',
     deliveryOfficeEdit: (id: string) => `/bema/config/offices/${id}`,
+    // System Emails (docs/decisions/0031-system-emails.md) — legacy `bema/config/emails.cfm`
+    // / `email_edit.cfm`.
+    systemEmails: () => '/bema/config/emails',
+    systemEmailEdit: (id: string) => `/bema/config/emails/${encodeURIComponent(id)}`,
   },
 };

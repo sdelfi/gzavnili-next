@@ -1407,6 +1407,96 @@ looks like a working city search, isn't one.
 the same AND-across-both-columns shape rather than switching to an OR that would make the
 search box actually work — see docs/decisions/0030-georgian-offices.md.
 
+## System Emails (`bema/config/emails.cfm`/`email_edit.cfm`) — 2026-08-03
+
+### `updateEmailConfig()`'s per-template bulk-update loop is commented out
+
+**Found:** `MSSQLEmailDAO.updateEmailConfig()` writes the Basic Configuration `config` row,
+but the `<cfloop>` that would `UPDATE emails SET Sender/Recipients/Subject/Message ... WHERE
+EmailId = ...` for every template is wrapped in `<!--- ... --->` — the "Specific Emails" table
+on `emails.cfm` has never been bulk-editable from that screen, despite `emails.cfm`'s GET
+handler populating `form['email_{id}_subject']`/`_message` fields as if it were. Individual
+template edits are only ever saved through the separate `email_edit.cfm` screen, whose own POST
+handler calls the DAO's real, uncommented `update()`.
+
+**Ported as-is**: `PATCH /api/bema/config/emails` (Basic Configuration) only ever writes
+`emailSender`/`emailRecipients`/`emailHeader`/`emailFooter`; per-template edits are a
+separate `PATCH /api/bema/config/emails/templates/[id]`, matching legacy's own two-screen
+split rather than adding the bulk-edit capability legacy itself never shipped. See
+docs/decisions/0031-system-emails.md.
+
+### `Forgot Password`/`Forgot Username` template lookups are commented out in `Authenticate.cfc`
+
+**Found:** `controllers.Authenticate.doForgotLogin`'s "password" and "username" cases both
+have a `getTemplateById('Forgot Password')`/`getTemplateById('Forgot Username')` call, but
+each is wrapped in `/* ... */` and replaced by a hardcoded-content `EmailSimple` send (fixed
+subject `"Forgot Password. Gzavnili.com"`, a fixed template name, no admin-editable body).
+This matches the choice already made for gzavnili-next's own `requestPasswordReset()`
+(`src/lib/auth/customerPasswordReset.ts`), which also sends a fixed hardcoded HTML email
+rather than looking up a `EmailConfig` template — so the two dead `EmailId`s and the existing
+forgot-password code path are already consistent with each other, coincidentally.
+
+**Ported as-is (as data, not as a live send)**: both rows exist and are editable through the
+"System Emails" screen, same as legacy's own admin screen shows them, but editing either one
+currently changes no live email a customer receives — a property of the legacy send code
+this screen doesn't change, not a bug in the screen itself.
+
+### `Account Change` is a live legacy email send with no gzavnili-next equivalent yet — open
+
+**Found:** `controllers.Authenticate.doPasswordReset` (the real, non-commented `/authenticate/
+reset/` POST handler) sends a real `getTemplateById('Account Change').filterPasswordReset(user)`
+email after a successful password reset. gzavnili-next's `resetPasswordWithToken()`
+(`src/lib/auth/customerPasswordReset.ts`) updates the password hash but sends no confirmation
+email at all.
+
+**Open — needs a decision.** Wiring `resetPasswordWithToken()` to send the `Account Change`
+template is out of scope for this change (a CRUD admin screen for the template data, not a
+rewire of an already-shipped, unrelated auth flow) but is a real, live legacy behavior this
+port doesn't yet reproduce.
+
+### `filterPickUpServiceForm`'s `comment` argument is accepted but never substituted
+
+**Found:** `Template.cfc`'s `filterPickUpServiceForm(firstName, lastName, email, gzNumber,
+address, comment)` declares a `comment` argument, but its `replaceNoCase()` calls only cover
+`{firstName}`/`{lastName}`/`{email}`/`{gzNumber}`/`{address}`/`{phone}`/`{pickUpDate}` — the
+last two aren't declared arguments at all (present only because the caller,
+`Static.cfc.doPickUpService`, passes the entire form via `argumentCollection`, so they're
+reachable through `arguments.scope` regardless). `comment` is accepted and silently dropped;
+whatever a customer types in that field never reaches the email.
+
+**Not ported** — this is legacy dead-argument behavior in a filter function this screen
+doesn't call (the form submission itself, `doPickUpService`, isn't part of this change); noted
+here as it was found while reading `Template.cfc` for the "Usable Tags" list. `{comment}` is
+not included in the seeded `Pick Up Service` template's `tags`, matching what the message
+substitution actually supports.
+
+### `RecipientOverwrite`/seed content: transcribed, not the real production data
+
+**Found:** the real `emails` table's production `Description`/`Tags`/`RecipientOverwrite`
+values aren't available to this port (no SQL dump). `scripts/seed-email-templates.ts`
+transcribes `description`/`tags` from the legacy call sites and `Template.cfc`'s `filterXxx()`
+methods, and defaults `recipientOverwrite: false` for all 10 rows absent real data.
+
+**Open — needs a decision** if/when real production values become available: an admin can
+correct `recipientOverwrite` and the seeded description/tags per row through the edit screen
+in the meantime; the seed only needs to run once (idempotent upsert-by-id) and never
+overwrites an existing row.
+
+### Mailing-list/digest DAO methods are a separate, out-of-scope feature
+
+**Found:** `MSSQLEmailDAO` also has `createMailingList`/`confirmAccount`(the mailing-list one,
+distinct from `MSSQLUserDAO.confirmAccount()`)/`getEmailByRememberMe`/
+`getMailingListConfirmed`/`getMailingListDigestEmailsAdmin`/`getMailingListDigestEmails`/
+`removeMailingList`/`deleteMailingList`, backing `bema/reports/mailing-list.cfm` and
+`bema/export.cfm`'s `mailinglist` export case — a newsletter/article-digest subscriber list
+(`mailinglist`/`addressbook` tables, a `LastArticleId` column implying a blog/article feature)
+from the e-commerce framework this codebase was cloned from.
+
+**Not reachable from "System Emails," nothing to port here** — there's no Sidebar entry or
+`emails.cfm` reference to this functionality; it's a distinct admin screen
+(`bema/reports/mailing-list.cfm`) that was out of scope before this change and stays out of
+scope now.
+
 ---
 
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not

@@ -146,7 +146,11 @@ const NAV_GROUPS: NavGroup[] = [
         href: routes.bema.deliveryOffices(),
         isActive: (pathname) => pathname.startsWith('/bema/config/offices'),
       },
-      { label: 'System Emails' },
+      {
+        label: 'System Emails',
+        href: routes.bema.systemEmails(),
+        isActive: (pathname) => pathname.startsWith('/bema/config/emails'),
+      },
       {
         label: 'Payment Setup',
         href: routes.bema.paymentConfig(),

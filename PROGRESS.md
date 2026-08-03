@@ -1332,6 +1332,28 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
       own `letterExists()` check. Verified end-to-end against a real Postgres + dev server:
       list shows the seeded "Need delivery" office under the default Active filter, add-office
       saves and appears in the list, and a duplicate letter is correctly rejected.
+- [x] **System Emails** (`bema/config/emails.cfm`/`email_edit.cfm`) ported — see
+      docs/decisions/0031-system-emails.md. "Basic Configuration" (sender/recipients/header/
+      footer, four new `Config` fields) + "Specific Emails" (a new `EmailTemplate` model,
+      seeded with the 10 fixed `EmailId` rows legacy's DAO allow-list hardcodes — `create()`/
+      `delete()` are empty stubs in legacy, so no add/remove UI). `GET/PATCH
+      /api/bema/config/emails` (Basic Configuration) + `GET /api/bema/config/emails/templates`
+      (list) + `GET/PATCH .../templates/:id` (per-template edit); `SystemEmailsPage`
+      (Basic Configuration form + Specific Emails table) and `EmailTemplateEditForm` at
+      `/bema/config/emails[/:id]`, wired to the pre-existing Sidebar placeholder. Checked
+      reachability of all 10 `EmailId`s against `http/index.cfm`'s front controller: 8 are
+      live production sends (Invoice, Help To Shop, Support Form, Pick Up Service, Quotation,
+      Register Email Confirmation, Account Change, Registration); `Forgot Password`/`Forgot
+      Username` are dead — their `getTemplateById` calls are commented out in
+      `Authenticate.cfc`, superseded by a hardcoded email (matching the choice already made
+      for gzavnili-next's own `requestPasswordReset`). Found `updateEmailConfig()`'s
+      per-template bulk-update loop is commented out in legacy (edits only ever happened via
+      the separate per-template screen) and that `Account Change`'s live legacy send has no
+      gzavnili-next equivalent yet (open, see docs/findings.md). Verified end-to-end against
+      real Postgres + a running dev server: Basic Configuration saves and its values populate
+      the per-template edit hints, all 10 templates list with seeded descriptions, per-template
+      edit loads/validates (empty Subject correctly rejected)/saves, and an `EmailId`
+      containing a space (`Account Change`) round-trips correctly through the route.
 
 ## Not started
 
@@ -1345,8 +1367,6 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
 - **`cleanTmpParcels.cfm`**: nothing to clean until/unless `bema/ajax/tmpTracking.cfm`'s
   concurrent-tracking-number-entry warning (never built) exists. See docs/findings.md.
 - **`getCoupons.cfm`/`getStores.cfm`**: coupons module, already out of scope.
-- **System Emails** (`bema/config/emails.cfm`/`email_edit.cfm`): config screen, Sidebar
-  placeholder unwired. (Georgian Offices, its sibling config screen, is done — see above.)
 - **Files** (`bema/content/files.cfm` + `bema/ajax/uploadFiles.cfm`): content module, Sidebar
   placeholder unwired; also the parcel/statements "Invoice File" upload row depends on this.
 - **Export Airway manifest body**: `airway.cfm`'s per-receiver data rows and NO. OF PIECES/

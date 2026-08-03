@@ -561,9 +561,46 @@ model Config {
   popupMessageEn String? @map("popup_message_en")
   popupMessageGe String? @map("popup_message_ge")
 
+  // System Emails "Basic Configuration" (bema `bema/config/emails.cfm`) — legacy `config`
+  // table's `EmailSender`/`EmailRecipients`/`EmailHeader`/`EmailFooter`. `emailRecipients`
+  // stays a single delimited string, same shape as the legacy column and the plain text
+  // input that edits it (`ListToArray`/`ArrayToList` round-trip on the CFML side, never
+  // normalized into a real array column there). `EmailConfig.getTemplateById()` wraps every
+  // per-template message with `emailHeader` + message + `emailFooter` before sending — see
+  // docs/decisions/0031-system-emails.md.
+  emailSender     String? @map("email_sender")
+  emailRecipients String? @map("email_recipients")
+  emailHeader     String? @map("email_header")
+  emailFooter     String? @map("email_footer")
+
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@map("config")
+}
+
+// System Emails "Specific Emails" (bema `bema/config/emails.cfm` list + `email_edit.cfm`
+// per-row edit) — legacy `emails` table, filtered through
+// `MSSQLEmailDAO.retrieveEmailConfig()`'s hardcoded 10-EmailId allow-list. Legacy's
+// `create()`/`delete()` DAO functions are empty stubs — the row set is fixed and never
+// admin-creatable/removable — so these 10 rows are seeded once
+// (`scripts/seed-email-templates.ts`) rather than exposed via a create/delete API. See
+// docs/decisions/0031-system-emails.md for the reachability findings behind each row.
+model EmailTemplate {
+  /// The legacy `EmailId`, e.g. `"Invoice"`, `"Forgot Password"` — used as-is, not a
+  /// generated id, since it's the fixed key the legacy allow-list and every `getTemplateById`
+  /// call site already address it by.
+  id                 String   @id
+  subject            String?
+  message            String?
+  sender             String?
+  recipients         String?
+  description        String?
+  tags               String?
+  recipientOverwrite Boolean  @default(false) @map("recipient_overwrite")
+
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("email_templates")
 }
 
 // New in this schema (docs/migrations/04-postgres-schema-design.md §2): the user-level
