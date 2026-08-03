@@ -747,7 +747,8 @@ false` instead). Zod validation (`src/lib/validation/userSchema.ts`) ports the
 - [x] Parcel view, parcel print, and the per-row/group "Scan" barcode popup — see
       docs/decisions/0029-parcels-barcode-print.md. The statements module's invoice/history
       popups and the messages module's Send/Resend SMS, plus the edit form's "Invoice File"
-      upload/preview row (files module), remain unbuilt — `ParcelRowActions`'/
+      upload/preview row (`ParcelInvoice.cfc` — unrelated to the "Files" bema screen; see
+      docs/findings.md), remain unbuilt — `ParcelRowActions`'/
       `ParcelGroupCard`'s "View Invoice"/"Generate Invoice" stay pending placeholders.
 - [x] Parcels list "Export Airway" (`export=2` → `airway.cfm`) link and endpoint
       (`src/app/api/bema/parcels/export-airway/route.ts`). No legacy source was recoverable;
@@ -1354,6 +1355,25 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
       the per-template edit hints, all 10 templates list with seeded descriptions, per-template
       edit loads/validates (empty Subject correctly rejected)/saves, and an `EmailId`
       containing a space (`Account Change`) round-trips correctly through the route.
+- [x] **Files** (`bema/files.cfm`) ported — see docs/decisions/0032-bema-files.md. Not
+      `bema/content/files.cfm` (a TinyMCE file-browser popup with no reachable consumer here,
+      since `PageForm` uses a plain textarea, not TinyMCE — not ported; this also corrects
+      the earlier note below claiming the parcel/statements "Invoice File" row depended on it
+      — it doesn't, `ParcelInvoice.cfc` is unrelated). No database model: pure filesystem
+      operations (`src/lib/services/editorFiles.ts`) against `public/uploads/editor`
+      (gitignored), same as legacy's own DB-free `Folder`/`File`/`Image` CFCs; served as a
+      plain unauthenticated static asset, matching legacy. `GET/POST /api/bema/files/folders`
+      + `DELETE .../folders/:folder` + `GET/POST /api/bema/files` + `DELETE
+      /api/bema/files/:folder/:filename`; `FilesManagerPage` at `/bema/files`, wired to the
+      pre-existing Sidebar placeholder. Closed (not reproduced) a real path-traversal gap in
+      legacy's own folder-existence check — a security fix, not a business-logic deviation.
+      Did not reproduce the upload handler's `/thumbs/` copy — write-only dead code, nothing
+      in this screen's own view ever reads it. Optional resize-on-upload reproduces
+      `ImageResize`'s documented width/height semantics via `sharp` (new dependency).
+      Verified end-to-end against a running dev server: create folder, select it, upload a
+      file with proportional resize (confirmed via the served file's actual pixel
+      dimensions), list/search/paginate, delete file, delete folder — including the static
+      `/uploads/editor/...` URL actually serving the uploaded file.
 
 ## Not started
 
@@ -1367,8 +1387,6 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
 - **`cleanTmpParcels.cfm`**: nothing to clean until/unless `bema/ajax/tmpTracking.cfm`'s
   concurrent-tracking-number-entry warning (never built) exists. See docs/findings.md.
 - **`getCoupons.cfm`/`getStores.cfm`**: coupons module, already out of scope.
-- **Files** (`bema/content/files.cfm` + `bema/ajax/uploadFiles.cfm`): content module, Sidebar
-  placeholder unwired; also the parcel/statements "Invoice File" upload row depends on this.
 - **Export Airway manifest body**: `airway.cfm`'s per-receiver data rows and NO. OF PIECES/
   TOTAL ACTUAL WEIGHT/TOTAL Value totals (queried live at export time) are not ported — the
   export still always emits an empty data-row table. See docs/findings.md.

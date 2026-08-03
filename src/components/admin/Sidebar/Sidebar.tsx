@@ -135,7 +135,11 @@ const NAV_GROUPS: NavGroup[] = [
         href: routes.bema.pages(),
         isActive: (pathname) => pathname.startsWith('/bema/pages'),
       },
-      { label: 'Files' },
+      {
+        label: 'Files',
+        href: routes.bema.files(),
+        isActive: (pathname) => pathname.startsWith('/bema/files'),
+      },
     ],
   },
   {

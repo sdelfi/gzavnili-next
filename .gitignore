@@ -48,3 +48,6 @@ next-env.d.ts
 /src/generated/prisma
 
 /tmp
+
+# bema "Files" (docs/decisions/0032-bema-files.md) — admin-uploaded content, not source.
+/public/uploads/

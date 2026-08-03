@@ -1,0 +1,1 @@
+export { FilesManagerPage } from './FilesManagerPage';

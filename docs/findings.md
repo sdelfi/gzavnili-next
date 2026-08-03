@@ -1497,6 +1497,61 @@ from the e-commerce framework this codebase was cloned from.
 (`bema/reports/mailing-list.cfm`) that was out of scope before this change and stays out of
 scope now.
 
+## Files (`bema/files.cfm`) — 2026-08-03
+
+### `bema/content/files.cfm` is a different, unreachable file — not the Sidebar's "Files" link
+
+**Found:** the Sidebar's "Files" entry (`views/layouts/lytBema.cfm`) links to `bema/files.cfm`
+(a standalone folder/file manager). A separate file, `bema/content/files.cfm`, has a similar
+name and a similarly-named view (`views/content/vwFiles.cfm`) but is a different feature
+entirely: a TinyMCE `file_browser_callback` popup, opened only from inside a WYSIWYG editor
+toolbar. No plain `<a href>` anywhere in legacy's own `http/` tree ever links to it. Since
+gzavnili-next's Site Pages editor (`PageForm`) deliberately uses a plain `<textarea>` instead
+of TinyMCE, this popup has no reachable consumer in gzavnili-next at all.
+
+**Not reachable, nothing to port** — nor its supporting `bema/ajax/uploadFile.cfm`/
+`uploadSingleFile.cfm`/`uploadImage.cfm`/`uploadPhoto.cfm`/`uploadFiles.cfm` endpoints or the
+product/brand/category editors that would have opened it (all already out of scope, no
+products domain here). See docs/decisions/0032-bema-files.md.
+
+### Correction: "Invoice File" (statements/parcels) does not depend on this Files module
+
+**Found:** an earlier pass of `PROGRESS.md` speculated that the parcel/statements "Invoice
+File" preview row (`vwParcelsUpdate.cfm`) depended on the Files module being built first.
+Reading `ParcelInvoice.cfc`/`MSSQLParcelInvoiceDAO.cfc` shows this is wrong: that feature
+stores a base64/data-URL blob per parcel, populated from the public customer account area
+(`views/account/parcel.html`, `Account.cfc`), entirely unrelated to `bema/files.cfm`'s
+on-disk folder manager.
+
+**Corrected in `PROGRESS.md`** as part of this change. The Invoice File feature itself is
+still not ported — tracked separately, not by this bullet.
+
+### Legacy's own folder-existence check has a path-traversal gap — closed, not ported
+
+**Found:** `bema/files.cfm`'s folder-name sanitization (`reFindNoCase("[^A-Za-z0-9\-_]",
+form.folder)`) only runs on the create-folder branch. The "does this folder exist" check that
+runs on every page load uses `form.folder` unsanitized in `directoryExists()` and the
+subsequent directory listing — a crafted `folder=../../../whatever` would list an arbitrary
+server directory if one existed at that relative path.
+
+**Not ported as-is — closed instead.** `assertSafeName()` in `src/lib/services/
+editorFiles.ts` validates every folder/filename argument against a safe charset before it
+ever reaches the filesystem. This is a security fix, not a business-logic deviation — AGENTS.
+md's "bugs are ported, not fixed" rule is scoped to business/pricing logic, not to security
+vulnerabilities.
+
+### The upload handler's `/thumbs/` copy is write-only dead code
+
+**Found:** `bema/files.cfm`'s upload handler always writes a second, resized (max 100×75)
+copy of every uploaded image into a `thumbs/` subfolder (`Image.save(destination = .../
+thumbs/..., keepCopy = true)`). Nothing in `vwFiles.cfm` (this screen's own view) ever reads
+from that subfolder — only the unreachable `content/vwFiles.cfm` (the TinyMCE popup, see
+above) does.
+
+**Not ported** — `saveUploadedFile()` writes only the main file. Reproducing this would mean
+adding real complexity (a second resize pass on every image upload) for zero observable
+behavior, since the one consumer that would read it is itself unreachable.
+
 ---
 
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not

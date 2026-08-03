@@ -33,6 +33,16 @@ export const apiPost = <T = void>(path: string, json?: unknown) => apiFetch<T>(p
 export const apiPatch = <T = void>(path: string, json: unknown) => apiFetch<T>(path, { method: 'PATCH', json });
 export const apiDelete = <T = void>(path: string) => apiFetch<T>(path, { method: 'DELETE' });
 
+/** For the rare `multipart/form-data` upload — a separate path from `apiFetch` so the
+ *  browser sets its own `Content-Type` (with boundary) for the `FormData` body, rather than
+ *  the JSON header `apiFetch` always attaches. */
+export async function apiUpload<T>(path: string, formData: FormData): Promise<T> {
+  const res = await fetch(path, { method: 'POST', credentials: 'same-origin', body: formData });
+  const body = await res.json().catch(() => null);
+  if (!res.ok) throw new ApiError(res.status, body);
+  return body as T;
+}
+
 // Every bema form's zod-validation-error response has the same `{ error: { formErrors,
 // fieldErrors } }` shape (see any `/api/bema/*` route's `parsed.error.flatten()`) — shared
 // so `UserForm`/`PageForm`/etc. don't each reimplement this flattening. Never expose an

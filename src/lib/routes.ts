@@ -132,5 +132,9 @@ export const routes = {
     // / `email_edit.cfm`.
     systemEmails: () => '/bema/config/emails',
     systemEmailEdit: (id: string) => `/bema/config/emails/${encodeURIComponent(id)}`,
+    // Files (docs/decisions/0032-bema-files.md) — legacy `bema/files.cfm`. Not to be confused
+    // with `bema/content/files.cfm`, a TinyMCE file-browser popup with no reachable consumer
+    // here (see the decision doc) and therefore no route of its own.
+    files: () => '/bema/files',
   },
 };
