@@ -1316,6 +1316,22 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
       correct data (including a multi-row history log and delivery-office letter), barcode/QR
       images load and are scannable-format-correct, and the list's View/Print/Scan/Code links
       all open the right popups.
+- [x] **Georgian Offices** (`bema/config/offices.cfm`/`office_edit.cfm`) ported — see
+      docs/decisions/0030-georgian-offices.md. Plain CRUD: browse (search+Active/Inactive/All
+      filter+sort+paginate) and add/edit (City/Office Name/Office Name GE/Letter/Active), no
+      delete (none in legacy's own UI either). `DeliveryOffice` gained an `active` column
+      (previously absent — nothing before this needed it). `GET/POST /api/bema/config/offices`
+      + `GET/PATCH .../offices/:id`; `DeliveryOfficeListPage`/`DeliveryOfficeForm` at
+      `/bema/config/offices`, wired to the pre-existing Sidebar placeholder. Found and
+      reproduced two real bugs: every save wipes the office's `searchPatterns` column blank
+      (its own form field is commented out, but the POST handler writes the always-empty
+      value anyway), and the list's keyword search ANDs `city LIKE` with `searchPatterns
+      LIKE` per term — since `searchPatterns` is therefore always blank, the search box can
+      never return a match for anything, a dead feature that looks like it should work (both
+      in docs/findings.md). Letter-uniqueness enforced server-side on save, matching legacy's
+      own `letterExists()` check. Verified end-to-end against a real Postgres + dev server:
+      list shows the seeded "Need delivery" office under the default Active filter, add-office
+      saves and appears in the list, and a duplicate letter is correctly rejected.
 
 ## Not started
 
@@ -1329,8 +1345,8 @@ paymentmethods` and re-inserts only the two hardcoded lists, permanently losing 
 - **`cleanTmpParcels.cfm`**: nothing to clean until/unless `bema/ajax/tmpTracking.cfm`'s
   concurrent-tracking-number-entry warning (never built) exists. See docs/findings.md.
 - **`getCoupons.cfm`/`getStores.cfm`**: coupons module, already out of scope.
-- **Georgian Offices** (`bema/config/offices.cfm`/`office_edit.cfm`) and **System Emails**
-  (`bema/config/emails.cfm`/`email_edit.cfm`): config screens, Sidebar placeholders unwired.
+- **System Emails** (`bema/config/emails.cfm`/`email_edit.cfm`): config screen, Sidebar
+  placeholder unwired. (Georgian Offices, its sibling config screen, is done — see above.)
 - **Files** (`bema/content/files.cfm` + `bema/ajax/uploadFiles.cfm`): content module, Sidebar
   placeholder unwired; also the parcel/statements "Invoice File" upload row depends on this.
 - **Export Airway manifest body**: `airway.cfm`'s per-receiver data rows and NO. OF PIECES/

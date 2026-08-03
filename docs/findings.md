@@ -1377,6 +1377,36 @@ label string.
 alongside the existing `label`; the office-picker dropdown (`ParcelChangeStatusPage`) is
 unaffected since it only ever read `label`.
 
+## Georgian Offices (`bema/config/offices.cfm`/`office_edit.cfm`) — 2026-08-02
+
+### Editing any office wipes its `searchPatterns` value — the field's own input is commented out
+
+**Found:** `views/config/vwOfficeEditForm.cfm` has a `searchPatterns` `<tr>`, but the whole row
+is wrapped in `<!--- ... --->` — never rendered. `office_edit.cfm` still `param`s
+`form.searchPatterns default = ""` (so it's always the empty string, never what a user typed,
+since there's no field to type it into) and passes that straight into
+`deliveryOffice.init(..., searchPatterns = form.searchPatterns)` on both create and update,
+with no "only write if provided" guard. Every single save — of any office, whether or not
+anything else changed — silently blanks its `searchPatterns` column.
+
+**Ported as-is**: `DeliveryOfficeForm` has no `searchPatterns` field; the create/update API
+routes (`src/app/api/bema/config/offices/route.ts`, `.../[id]/route.ts`) write
+`searchPatterns: null` unconditionally on every save, reproducing the always-blank overwrite
+rather than "fixing" it to leave an existing value alone.
+
+### The office list's keyword search ANDs city and searchPatterns — dead in practice given the finding above
+
+**Found:** `MSSQLDeliveryOfficeDAO.getOffices()`'s keyword loop appends `AND city LIKE
+'%keyword%' AND searchPatterns LIKE '%keyword%'` for every space-separated search term — a
+conjunction across both columns, not "match either." Since `searchPatterns` is always blank
+(previous finding), the second AND'd condition can essentially never be true, which means the
+"Search" box on this screen never returns a match for any query, regardless of what's typed —
+looks like a working city search, isn't one.
+
+**Ported as-is**: the list route's (`GET /api/bema/config/offices`) keyword filter reproduces
+the same AND-across-both-columns shape rather than switching to an OR that would make the
+search box actually work — see docs/decisions/0030-georgian-offices.md.
+
 ---
 
 *(Older findings from before this log existed — e.g. `officeid = 999` "Need delivery" not

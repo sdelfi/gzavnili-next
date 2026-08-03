@@ -1,0 +1,25 @@
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  background: #fff;
+  border: 1px solid #e3e3e3;
+  padding: 12px 16px;
+  border-radius: 6px;
+}
+
+.filterControl {
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.actions {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+}
